@@ -3,44 +3,49 @@
 [![Python 3.11+](https://img.shields.io/badge/python-3.11+-blue.svg)](https://www.python.org/downloads/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![API Coverage](https://img.shields.io/badge/API%20Coverage-100%25-brightgreen.svg)]()
+[![Tests](https://img.shields.io/badge/Tests-Passing-brightgreen.svg)]()
 
-**完整覆盖 Amazon Ads API 的 Python SDK**
+**完整覆盖 Amazon Ads API 的 Python SDK - 101 个 API 类**
 
 ## ✨ 特性
 
-- 🎯 **100% API 覆盖** - 支持所有 Amazon Ads API 端点
+- 🎯 **100% API 覆盖** - 支持所有 101 个 Amazon Ads API 类
 - 🚀 **简洁易用** - 统一客户端入口，链式调用
 - 🔄 **自动认证** - OAuth2 Token 自动刷新
 - ⚡ **自动重试** - 内置指数退避重试机制
 - 🛡️ **Rate Limit** - 自动处理限流
 - 📊 **类型安全** - 完整的类型提示
+- 🧪 **完整测试** - 单元测试 + 集成测试
 
-## 📦 支持的 API 模块
+## 📦 支持的 API 模块 (30 个模块)
 
-| 模块 | 描述 | 状态 |
-|------|------|------|
-| **SP** | Sponsored Products | ✅ |
-| **SB** | Sponsored Brands | ✅ |
-| **SD** | Sponsored Display | ✅ |
-| **DSP** | Amazon DSP | ✅ |
-| **Reporting** | 报告 API | ✅ |
-| **Accounts** | 账户管理 | ✅ |
-| **Insights** | 洞察分析 | ✅ |
-| **AMC** | Amazon Marketing Cloud | ✅ |
-| **Sponsored TV** | 电视广告 | ✅ |
-| **Retail Ad Service** | 零售广告 | ✅ |
-| **+ 20 更多模块** | 完整覆盖 | ✅ |
+| 模块 | 描述 | API 类数 |
+|------|------|----------|
+| **SP** | Sponsored Products | 8 |
+| **SB** | Sponsored Brands | 6 |
+| **SD** | Sponsored Display | 5 |
+| **DSP** | Amazon DSP | 9 |
+| **Reporting** | 报告 API | 4 |
+| **Accounts** | 账户管理 | 5 |
+| **Insights** | 洞察分析 | 3 |
+| **AMC** | Amazon Marketing Cloud | 3 |
+| **Sponsored TV** | 电视广告 | 5 |
+| **Retail Ad Service** | 零售广告 | 4 |
+| **Amazon Ads V1** | 新统一 API | 15 |
+| **+ 19 更多模块** | 完整覆盖 | 34 |
 
 ## 🚀 快速开始
 
 ### 安装
 
 ```bash
-# 从本地安装
-pip install -e /path/to/amazon-ads-api-python-sdk
+# 从 GitHub 安装
+pip install git+https://github.com/vanling1111/amazon-ads-api-python-sdk.git
 
-# 或发布到 PyPI 后
-pip install amazon-ads-api
+# 或克隆后本地安装
+git clone https://github.com/vanling1111/amazon-ads-api-python-sdk.git
+cd amazon-ads-api-python-sdk
+pip install -e .
 ```
 
 ### 基础使用
@@ -97,6 +102,10 @@ query_result = client.amc.queries.execute_query(
 
 # Sponsored TV
 tv_campaigns = client.st.campaigns.list_campaigns()
+
+# Amazon Ads V1 - 新统一 API
+recommendations = client.ads_v1.recommendations.list(context="CAMPAIGN_CREATION")
+campaigns_v1 = client.ads_v1.campaigns.list()
 ```
 
 ## 📖 API 文档
@@ -105,7 +114,7 @@ tv_campaigns = client.st.campaigns.list_campaigns()
 
 ```
 client
-├── sp                    # Sponsored Products
+├── sp                    # Sponsored Products (8)
 │   ├── campaigns
 │   ├── ad_groups
 │   ├── keywords
@@ -114,20 +123,20 @@ client
 │   ├── recommendations
 │   ├── product_eligibility
 │   └── theme_targeting
-├── sb                    # Sponsored Brands
+├── sb                    # Sponsored Brands (6)
 │   ├── campaigns
 │   ├── ads
 │   ├── keywords
 │   ├── creatives
 │   ├── brand_video
 │   └── moderation
-├── sd                    # Sponsored Display
+├── sd                    # Sponsored Display (5)
 │   ├── campaigns
 │   ├── targeting
 │   ├── creatives
 │   ├── audiences
 │   └── moderation
-├── dsp                   # Amazon DSP
+├── dsp                   # Amazon DSP (9)
 │   ├── audiences
 │   ├── advertisers
 │   ├── orders
@@ -137,46 +146,65 @@ client
 │   ├── measurement
 │   ├── conversions
 │   └── target_kpi
-├── reporting             # Reporting
+├── reporting             # Reporting (4)
 │   ├── reports
 │   ├── brand_metrics
 │   ├── stores_analytics
 │   └── mmm
-├── accounts              # Accounts
+├── accounts              # Accounts (5)
 │   ├── profiles
 │   ├── portfolios
 │   ├── billing
 │   ├── budgets
 │   └── test_accounts
-├── insights              # Insights
+├── insights              # Insights (3)
 │   ├── category
 │   ├── keywords
 │   └── audience
-├── amc                   # Amazon Marketing Cloud
+├── amc                   # Amazon Marketing Cloud (3)
 │   ├── queries
 │   ├── audiences
 │   └── workflows
-├── st                    # Sponsored TV
-├── ras                   # Retail Ad Service
-├── eligibility           # Eligibility
-├── recommendations       # Recommendations
-├── data_provider         # Data Provider
-├── products              # Products
-├── moderation            # Moderation
-├── stream                # Marketing Stream
-├── locations             # Locations
-├── exports               # Exports
-├── media_planning        # Media Planning
-├── manager_accounts      # Manager Accounts
-├── posts                 # Posts
-├── product_metadata      # Product Metadata
-├── audiences_discovery   # Audiences Discovery
-├── ads_v1                # Amazon Ads API v1
-├── ad_library            # Ad Library
-├── brand_home            # Brand Home
-├── localization          # Localization
-├── ads_data_manager      # Ads Data Manager
-└── brand_associations    # Brand Associations
+├── st                    # Sponsored TV (5)
+├── ras                   # Retail Ad Service (4)
+├── ads_v1                # Amazon Ads V1 (15)
+│   ├── ad_associations
+│   ├── ad_groups
+│   ├── ads
+│   ├── campaigns
+│   ├── targets
+│   ├── recommendations
+│   ├── advertising_deals
+│   ├── advertising_deal_targets
+│   ├── branded_keywords_pricings
+│   ├── campaign_forecasts
+│   ├── commitments
+│   ├── commitment_spends
+│   ├── keyword_reservation_validations
+│   └── recommendation_types
+├── eligibility           # Eligibility (1)
+├── recommendations       # Recommendations (3)
+├── data_provider         # Data Provider (3)
+├── products              # Products (1)
+├── moderation            # Moderation (2)
+├── stream                # Marketing Stream (1)
+├── locations             # Locations (1)
+├── exports               # Exports (1)
+├── media_planning        # Media Planning (1)
+├── manager_accounts      # Manager Accounts (1)
+├── posts                 # Posts (1)
+├── product_metadata      # Product Metadata (1)
+├── audiences_discovery   # Audiences Discovery (1)
+├── ad_library            # Ad Library (1)
+├── brand_home            # Brand Home (1)
+├── localization          # Localization (1)
+├── ads_data_manager      # Ads Data Manager (1)
+├── brand_associations    # Brand Associations (1)
+└── common                # Common (4)
+    ├── attribution
+    ├── stores
+    ├── assets
+    └── history
 ```
 
 ## 🔧 配置选项
@@ -217,11 +245,38 @@ client = AmazonAdsClient(
 # 安装开发依赖
 pip install -e ".[dev]"
 
-# 运行测试
+# 运行所有测试
 pytest
+
+# 只运行单元测试
+pytest tests/unit/
+
+# 只运行集成测试
+pytest tests/integration/
 
 # 覆盖率报告
 pytest --cov=amazon_ads_api --cov-report=html
+
+# 运行导入测试
+python tests/test_imports.py
+```
+
+### 测试结构
+
+```
+tests/
+├── conftest.py              # 测试配置和fixtures
+├── test_imports.py          # 导入测试 (101个类)
+├── unit/                    # 单元测试
+│   ├── test_base.py         # BaseAdsClient 测试
+│   ├── test_client.py       # AmazonAdsClient 测试
+│   ├── test_sp.py           # SP 模块测试
+│   ├── test_sb.py           # SB 模块测试
+│   └── ...
+└── integration/             # 集成测试
+    ├── test_auth.py         # 认证流程测试
+    ├── test_sp_api.py       # SP API 集成测试
+    └── ...
 ```
 
 ## 📝 许可证
@@ -232,9 +287,25 @@ MIT License
 
 欢迎提交 Issue 和 Pull Request！
 
+1. Fork 本仓库
+2. 创建特性分支 (`git checkout -b feature/amazing-feature`)
+3. 提交更改 (`git commit -m 'Add some amazing feature'`)
+4. 推送到分支 (`git push origin feature/amazing-feature`)
+5. 提交 Pull Request
+
 ## 📞 支持
 
-- 📧 Email: support@example.com
-- 📖 文档: [GitHub Wiki](https://github.com/yourusername/amazon-ads-api-python-sdk/wiki)
-- 🐛 问题: [GitHub Issues](https://github.com/yourusername/amazon-ads-api-python-sdk/issues)
+- 📧 Email: vanling1111@gmail.com
+- 📖 文档: [GitHub Wiki](https://github.com/vanling1111/amazon-ads-api-python-sdk/wiki)
+- 🐛 问题: [GitHub Issues](https://github.com/vanling1111/amazon-ads-api-python-sdk/issues)
 
+## 📊 项目状态
+
+- **API 类数量**: 101
+- **模块数量**: 30
+- **测试覆盖率**: 目标 >80%
+- **Python 版本**: 3.13+
+
+---
+
+Made with ❤️ by [vanling1111](https://github.com/vanling1111)
