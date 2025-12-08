@@ -1,17 +1,22 @@
 """
-Sponsored Products - Keywords API
+Sponsored Products - Keywords API (异步版本)
 SP关键词管理（正向关键词 + 否定关键词）
 """
 
 from ..base import BaseAdsClient, JSONData, JSONList
 
+# API v3 Content-Types
+CONTENT_TYPE_KEYWORD = "application/vnd.spKeyword.v3+json"
+CONTENT_TYPE_NEGATIVE_KEYWORD = "application/vnd.spNegativeKeyword.v3+json"
+CONTENT_TYPE_CAMPAIGN_NEGATIVE_KEYWORD = "application/vnd.spCampaignNegativeKeyword.v3+json"
+
 
 class SPKeywordsAPI(BaseAdsClient):
-    """SP Keywords API"""
+    """SP Keywords API (全异步)"""
 
     # ============ 正向关键词 ============
 
-    def list_keywords(
+    async def list_keywords(
         self,
         ad_group_id: str | None = None,
         campaign_id: str | None = None,
@@ -30,15 +35,15 @@ class SPKeywordsAPI(BaseAdsClient):
         if next_token:
             params["nextToken"] = next_token
 
-        result = self.post("/sp/keywords/list", json_data=params)
+        result = await self.post("/sp/keywords/list", json_data=params, content_type=CONTENT_TYPE_KEYWORD)
         return result if isinstance(result, dict) else {"keywords": []}
 
-    def get_keyword(self, keyword_id: str) -> JSONData:
+    async def get_keyword(self, keyword_id: str) -> JSONData:
         """获取单个Keyword详情"""
-        result = self.get(f"/sp/keywords/{keyword_id}")
+        result = await self.get(f"/sp/keywords/{keyword_id}", content_type=CONTENT_TYPE_KEYWORD)
         return result if isinstance(result, dict) else {}
 
-    def create_keywords(self, keywords: JSONList) -> JSONData:
+    async def create_keywords(self, keywords: JSONList) -> JSONData:
         """
         批量创建Keyword
         
@@ -55,49 +60,49 @@ class SPKeywordsAPI(BaseAdsClient):
                 }
             ]
         """
-        result = self.post("/sp/keywords", json_data={"keywords": keywords})
+        result = await self.post("/sp/keywords", json_data={"keywords": keywords}, content_type=CONTENT_TYPE_KEYWORD)
         return result if isinstance(result, dict) else {"keywords": {"success": [], "error": []}}
 
-    def update_keywords(self, keywords: JSONList) -> JSONData:
+    async def update_keywords(self, keywords: JSONList) -> JSONData:
         """
         批量更新Keyword
         
         Args:
             keywords: [{"keywordId": "xxx", "state": "paused", "bid": 1.5}]
         """
-        result = self.put("/sp/keywords", json_data={"keywords": keywords})
+        result = await self.put("/sp/keywords", json_data={"keywords": keywords}, content_type=CONTENT_TYPE_KEYWORD)
         return result if isinstance(result, dict) else {"keywords": {"success": [], "error": []}}
 
-    def delete_keyword(self, keyword_id: str) -> JSONData:
-        """归档Keyword"""
-        return self.delete(f"/sp/keywords/{keyword_id}")
+    async def delete_keyword(self, keyword_id: str) -> JSONData:
+        """归档Keyword（使用 update 设置 state=archived）"""
+        return await self.update_keywords([{"keywordId": keyword_id, "state": "archived"}])
 
     # ============ 便捷方法 ============
 
-    def pause_keyword(self, keyword_id: str) -> JSONData:
+    async def pause_keyword(self, keyword_id: str) -> JSONData:
         """暂停Keyword"""
-        return self.update_keywords([{"keywordId": keyword_id, "state": "paused"}])
+        return await self.update_keywords([{"keywordId": keyword_id, "state": "paused"}])
 
-    def enable_keyword(self, keyword_id: str) -> JSONData:
+    async def enable_keyword(self, keyword_id: str) -> JSONData:
         """启用Keyword"""
-        return self.update_keywords([{"keywordId": keyword_id, "state": "enabled"}])
+        return await self.update_keywords([{"keywordId": keyword_id, "state": "enabled"}])
 
-    def update_bid(self, keyword_id: str, bid: float) -> JSONData:
+    async def update_bid(self, keyword_id: str, bid: float) -> JSONData:
         """更新Keyword竞价"""
-        return self.update_keywords([{"keywordId": keyword_id, "bid": bid}])
+        return await self.update_keywords([{"keywordId": keyword_id, "bid": bid}])
 
-    def batch_update_bids(self, bid_updates: list[dict]) -> JSONData:
+    async def batch_update_bids(self, bid_updates: list[dict]) -> JSONData:
         """
         批量更新竞价
         
         Args:
             bid_updates: [{"keywordId": "xxx", "bid": 1.5}, ...]
         """
-        return self.update_keywords(bid_updates)
+        return await self.update_keywords(bid_updates)
 
     # ============ Ad Group级别否定关键词 ============
 
-    def list_negative_keywords(
+    async def list_negative_keywords(
         self,
         ad_group_id: str | None = None,
         campaign_id: str | None = None,
@@ -113,10 +118,10 @@ class SPKeywordsAPI(BaseAdsClient):
         if next_token:
             params["nextToken"] = next_token
 
-        result = self.post("/sp/negativeKeywords/list", json_data=params)
+        result = await self.post("/sp/negativeKeywords/list", json_data=params, content_type=CONTENT_TYPE_NEGATIVE_KEYWORD)
         return result if isinstance(result, dict) else {"negativeKeywords": []}
 
-    def create_negative_keywords(self, keywords: JSONList) -> JSONData:
+    async def create_negative_keywords(self, keywords: JSONList) -> JSONData:
         """
         批量创建Negative Keyword
         
@@ -131,16 +136,17 @@ class SPKeywordsAPI(BaseAdsClient):
                 }
             ]
         """
-        result = self.post("/sp/negativeKeywords", json_data={"negativeKeywords": keywords})
+        result = await self.post("/sp/negativeKeywords", json_data={"negativeKeywords": keywords}, content_type=CONTENT_TYPE_NEGATIVE_KEYWORD)
         return result if isinstance(result, dict) else {"negativeKeywords": {"success": [], "error": []}}
 
-    def delete_negative_keyword(self, keyword_id: str) -> JSONData:
-        """删除Negative Keyword"""
-        return self.delete(f"/sp/negativeKeywords/{keyword_id}")
+    async def delete_negative_keyword(self, keyword_id: str) -> JSONData:
+        """归档Negative Keyword（使用 update 设置 state=archived）"""
+        result = await self.put("/sp/negativeKeywords", json_data={"negativeKeywords": [{"keywordId": keyword_id, "state": "archived"}]}, content_type=CONTENT_TYPE_NEGATIVE_KEYWORD)
+        return result if isinstance(result, dict) else {}
 
     # ============ Campaign级别否定关键词 ============
 
-    def list_campaign_negative_keywords(
+    async def list_campaign_negative_keywords(
         self,
         campaign_id: str | None = None,
         max_results: int = 100,
@@ -153,10 +159,10 @@ class SPKeywordsAPI(BaseAdsClient):
         if next_token:
             params["nextToken"] = next_token
 
-        result = self.post("/sp/campaignNegativeKeywords/list", json_data=params)
+        result = await self.post("/sp/campaignNegativeKeywords/list", json_data=params, content_type=CONTENT_TYPE_CAMPAIGN_NEGATIVE_KEYWORD)
         return result if isinstance(result, dict) else {"campaignNegativeKeywords": []}
 
-    def create_campaign_negative_keywords(self, keywords: JSONList) -> JSONData:
+    async def create_campaign_negative_keywords(self, keywords: JSONList) -> JSONData:
         """
         批量创建Campaign Negative Keyword
         
@@ -170,16 +176,17 @@ class SPKeywordsAPI(BaseAdsClient):
                 }
             ]
         """
-        result = self.post("/sp/campaignNegativeKeywords", json_data={"campaignNegativeKeywords": keywords})
+        result = await self.post("/sp/campaignNegativeKeywords", json_data={"campaignNegativeKeywords": keywords}, content_type=CONTENT_TYPE_CAMPAIGN_NEGATIVE_KEYWORD)
         return result if isinstance(result, dict) else {"campaignNegativeKeywords": {"success": [], "error": []}}
 
-    def delete_campaign_negative_keyword(self, keyword_id: str) -> JSONData:
-        """删除Campaign Negative Keyword"""
-        return self.delete(f"/sp/campaignNegativeKeywords/{keyword_id}")
+    async def delete_campaign_negative_keyword(self, keyword_id: str) -> JSONData:
+        """归档Campaign Negative Keyword（使用 update 设置 state=archived）"""
+        result = await self.put("/sp/campaignNegativeKeywords", json_data={"campaignNegativeKeywords": [{"keywordId": keyword_id, "state": "archived"}]}, content_type=CONTENT_TYPE_CAMPAIGN_NEGATIVE_KEYWORD)
+        return result if isinstance(result, dict) else {}
 
     # ============ 批量获取 ============
 
-    def list_all_keywords(
+    async def list_all_keywords(
         self,
         campaign_id: str | None = None,
         ad_group_id: str | None = None,
@@ -190,7 +197,7 @@ class SPKeywordsAPI(BaseAdsClient):
         next_token = None
 
         while True:
-            result = self.list_keywords(
+            result = await self.list_keywords(
                 campaign_id=campaign_id,
                 ad_group_id=ad_group_id,
                 state_filter=state_filter,
@@ -205,4 +212,3 @@ class SPKeywordsAPI(BaseAdsClient):
                 break
 
         return all_keywords
-

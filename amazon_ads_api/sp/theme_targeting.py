@@ -1,5 +1,5 @@
 """
-Sponsored Products - Theme Targeting API
+Sponsored Products - Theme Targeting API (异步版本)
 SP主题定向和品类定向
 """
 
@@ -7,11 +7,11 @@ from ..base import BaseAdsClient, JSONData, JSONList
 
 
 class SPThemeTargetingAPI(BaseAdsClient):
-    """SP Theme Targeting API"""
+    """SP Theme Targeting API (全异步)"""
 
     # ============ Theme-based Targeting ============
 
-    def get_theme_recommendations(
+    async def get_theme_recommendations(
         self,
         asins: list[str],
         max_results: int = 100,
@@ -21,32 +21,32 @@ class SPThemeTargetingAPI(BaseAdsClient):
         
         基于ASIN推荐相关主题
         """
-        result = self.post("/sp/themes/recommendations", json_data={
+        result = await self.post("/sp/themes/recommendations", json_data={
             "asins": asins,
             "maxResults": max_results,
         })
         return result if isinstance(result, dict) else {"themes": []}
 
-    def search_themes(
+    async def search_themes(
         self,
         query: str,
         max_results: int = 100,
     ) -> JSONData:
         """搜索主题"""
-        result = self.post("/sp/themes/search", json_data={
+        result = await self.post("/sp/themes/search", json_data={
             "query": query,
             "maxResults": max_results,
         })
         return result if isinstance(result, dict) else {"themes": []}
 
-    def get_theme_details(self, theme_id: str) -> JSONData:
+    async def get_theme_details(self, theme_id: str) -> JSONData:
         """获取主题详情"""
-        result = self.get(f"/sp/themes/{theme_id}")
+        result = await self.get(f"/sp/themes/{theme_id}")
         return result if isinstance(result, dict) else {}
 
     # ============ Category Targeting ============
 
-    def list_targetable_categories(
+    async def list_targetable_categories(
         self,
         parent_category_id: str | None = None,
     ) -> JSONList:
@@ -55,10 +55,10 @@ class SPThemeTargetingAPI(BaseAdsClient):
         if parent_category_id:
             params["parentCategoryId"] = parent_category_id
 
-        result = self.get("/sp/targets/categories", params=params or None)
+        result = await self.get("/sp/targets/categories", params=params or None)
         return result if isinstance(result, list) else []
 
-    def get_category_refinements(
+    async def get_category_refinements(
         self,
         category_id: str,
     ) -> JSONData:
@@ -67,16 +67,16 @@ class SPThemeTargetingAPI(BaseAdsClient):
         
         返回可用于细化定向的品牌、价格范围等
         """
-        result = self.get(f"/sp/targets/categories/{category_id}/refinements")
+        result = await self.get(f"/sp/targets/categories/{category_id}/refinements")
         return result if isinstance(result, dict) else {}
 
-    def get_category_bid_recommendations(
+    async def get_category_bid_recommendations(
         self,
         category_id: str,
         ad_group_id: str,
     ) -> JSONData:
         """获取品类定向竞价建议"""
-        result = self.post("/sp/targets/categories/bidRecommendations", json_data={
+        result = await self.post("/sp/targets/categories/bidRecommendations", json_data={
             "categoryId": category_id,
             "adGroupId": ad_group_id,
         })
@@ -84,63 +84,63 @@ class SPThemeTargetingAPI(BaseAdsClient):
 
     # ============ Product Attribute Targeting ============
 
-    def get_brand_targeting_options(
+    async def get_brand_targeting_options(
         self,
         category_id: str,
     ) -> JSONList:
         """获取品牌定向选项"""
-        result = self.get(f"/sp/targets/categories/{category_id}/brands")
+        result = await self.get(f"/sp/targets/categories/{category_id}/brands")
         return result if isinstance(result, list) else []
 
-    def get_price_range_targeting_options(
+    async def get_price_range_targeting_options(
         self,
         category_id: str,
     ) -> JSONData:
         """获取价格范围定向选项"""
-        result = self.get(f"/sp/targets/categories/{category_id}/priceRanges")
+        result = await self.get(f"/sp/targets/categories/{category_id}/priceRanges")
         return result if isinstance(result, dict) else {}
 
-    def get_review_rating_targeting_options(
+    async def get_review_rating_targeting_options(
         self,
         category_id: str,
     ) -> JSONList:
         """获取评分定向选项"""
-        result = self.get(f"/sp/targets/categories/{category_id}/reviewRatings")
+        result = await self.get(f"/sp/targets/categories/{category_id}/reviewRatings")
         return result if isinstance(result, list) else []
 
     # ============ Similar Product Targeting ============
 
-    def get_similar_products(
+    async def get_similar_products(
         self,
         asin: str,
         max_results: int = 50,
     ) -> JSONData:
         """获取相似产品（用于定向）"""
-        result = self.post("/sp/targets/similarProducts", json_data={
+        result = await self.post("/sp/targets/similarProducts", json_data={
             "asin": asin,
             "maxResults": max_results,
         })
         return result if isinstance(result, dict) else {"products": []}
 
-    def get_complementary_products(
+    async def get_complementary_products(
         self,
         asin: str,
         max_results: int = 50,
     ) -> JSONData:
         """获取互补产品（用于定向）"""
-        result = self.post("/sp/targets/complementaryProducts", json_data={
+        result = await self.post("/sp/targets/complementaryProducts", json_data={
             "asin": asin,
             "maxResults": max_results,
         })
         return result if isinstance(result, dict) else {"products": []}
 
-    def get_substitute_products(
+    async def get_substitute_products(
         self,
         asin: str,
         max_results: int = 50,
     ) -> JSONData:
         """获取替代产品（用于定向）"""
-        result = self.post("/sp/targets/substituteProducts", json_data={
+        result = await self.post("/sp/targets/substituteProducts", json_data={
             "asin": asin,
             "maxResults": max_results,
         })
@@ -148,13 +148,13 @@ class SPThemeTargetingAPI(BaseAdsClient):
 
     # ============ Contextual Targeting ============
 
-    def get_contextual_targeting_recommendations(
+    async def get_contextual_targeting_recommendations(
         self,
         asins: list[str],
         max_results: int = 100,
     ) -> JSONData:
         """获取上下文定向建议"""
-        result = self.post("/sp/targets/contextual/recommendations", json_data={
+        result = await self.post("/sp/targets/contextual/recommendations", json_data={
             "asins": asins,
             "maxResults": max_results,
         })
@@ -162,7 +162,7 @@ class SPThemeTargetingAPI(BaseAdsClient):
 
     # ============ Audience-based Targeting ============
 
-    def get_audience_targeting_recommendations(
+    async def get_audience_targeting_recommendations(
         self,
         asins: list[str],
         max_results: int = 50,
@@ -172,7 +172,7 @@ class SPThemeTargetingAPI(BaseAdsClient):
         
         SP的受众定向功能
         """
-        result = self.post("/sp/targets/audiences/recommendations", json_data={
+        result = await self.post("/sp/targets/audiences/recommendations", json_data={
             "asins": asins,
             "maxResults": max_results,
         })
@@ -244,39 +244,38 @@ class SPThemeTargetingAPI(BaseAdsClient):
 
     # ============ 便捷方法 ============
 
-    def get_all_targetable_categories(self) -> JSONList:
+    async def get_all_targetable_categories(self) -> JSONList:
         """获取所有可定向品类（递归）"""
         all_categories = []
 
-        def fetch_recursive(parent_id: str | None = None):
-            categories = self.list_targetable_categories(parent_id)
+        async def fetch_recursive(parent_id: str | None = None):
+            categories = await self.list_targetable_categories(parent_id)
             for cat in categories:
                 all_categories.append(cat)
                 cat_id = cat.get("categoryId")
                 if cat_id and cat.get("hasChildren"):
-                    fetch_recursive(cat_id)
+                    await fetch_recursive(cat_id)
 
-        fetch_recursive()
+        await fetch_recursive()
         return all_categories
 
-    def get_comprehensive_targeting_suggestions(
+    async def get_comprehensive_targeting_suggestions(
         self,
         asins: list[str],
     ) -> JSONData:
         """获取综合定向建议"""
-        themes = self.get_theme_recommendations(asins)
+        themes = await self.get_theme_recommendations(asins)
         similar = []
         complementary = []
 
         for asin in asins[:5]:  # 限制数量
-            similar.extend(self.get_similar_products(asin, 10).get("products", []))
-            complementary.extend(
-                self.get_complementary_products(asin, 10).get("products", [])
-            )
+            similar_result = await self.get_similar_products(asin, 10)
+            similar.extend(similar_result.get("products", []))
+            comp_result = await self.get_complementary_products(asin, 10)
+            complementary.extend(comp_result.get("products", []))
 
         return {
             "themes": themes.get("themes", []),
             "similarProducts": similar,
             "complementaryProducts": complementary,
         }
-

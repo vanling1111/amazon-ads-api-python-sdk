@@ -1,5 +1,5 @@
 """
-Keyword Insights API
+Keyword Insights API (异步版本)
 关键词洞察分析
 """
 
@@ -7,11 +7,11 @@ from ..base import BaseAdsClient, JSONData, JSONList
 
 
 class KeywordInsightsAPI(BaseAdsClient):
-    """Keyword Insights API"""
+    """Keyword Insights API (全异步)"""
 
     # ============ Keyword Research ============
 
-    def search_keywords(
+    async def search_keywords(
         self,
         seed_keyword: str,
         marketplace: str = "US",
@@ -24,14 +24,14 @@ class KeywordInsightsAPI(BaseAdsClient):
             seed_keyword: 种子关键词
             marketplace: 市场
         """
-        result = self.post("/insights/keywords/search", json_data={
+        result = await self.post("/insights/keywords/search", json_data={
             "seedKeyword": seed_keyword,
             "marketplace": marketplace,
             "maxResults": max_results,
         })
         return result if isinstance(result, dict) else {"keywords": []}
 
-    def get_keyword_suggestions(
+    async def get_keyword_suggestions(
         self,
         asins: list[str],
         max_results: int = 100,
@@ -43,7 +43,7 @@ class KeywordInsightsAPI(BaseAdsClient):
         Args:
             sort_by: RELEVANCE | SEARCH_VOLUME | OPPORTUNITY
         """
-        result = self.post("/insights/keywords/suggestions", json_data={
+        result = await self.post("/insights/keywords/suggestions", json_data={
             "asins": asins,
             "maxResults": max_results,
             "sortBy": sort_by,
@@ -52,7 +52,7 @@ class KeywordInsightsAPI(BaseAdsClient):
 
     # ============ Keyword Metrics ============
 
-    def get_keyword_metrics(
+    async def get_keyword_metrics(
         self,
         keywords: list[str],
         marketplace: str = "US",
@@ -62,13 +62,13 @@ class KeywordInsightsAPI(BaseAdsClient):
         
         返回搜索量、竞争度、CPC等
         """
-        result = self.post("/insights/keywords/metrics", json_data={
+        result = await self.post("/insights/keywords/metrics", json_data={
             "keywords": keywords,
             "marketplace": marketplace,
         })
         return result if isinstance(result, dict) else {"keywords": []}
 
-    def get_keyword_trends(
+    async def get_keyword_trends(
         self,
         keyword: str,
         marketplace: str = "US",
@@ -80,20 +80,20 @@ class KeywordInsightsAPI(BaseAdsClient):
         Args:
             period: LAST_30_DAYS | LAST_90_DAYS | LAST_12_MONTHS
         """
-        result = self.get("/insights/keywords/trends", params={
+        result = await self.get("/insights/keywords/trends", params={
             "keyword": keyword,
             "marketplace": marketplace,
             "period": period,
         })
         return result if isinstance(result, dict) else {}
 
-    def get_keyword_seasonality(
+    async def get_keyword_seasonality(
         self,
         keyword: str,
         marketplace: str = "US",
     ) -> JSONData:
         """获取关键词季节性数据"""
-        result = self.get("/insights/keywords/seasonality", params={
+        result = await self.get("/insights/keywords/seasonality", params={
             "keyword": keyword,
             "marketplace": marketplace,
         })
@@ -101,7 +101,7 @@ class KeywordInsightsAPI(BaseAdsClient):
 
     # ============ Keyword Competition ============
 
-    def get_keyword_competition(
+    async def get_keyword_competition(
         self,
         keyword: str,
         marketplace: str = "US",
@@ -111,27 +111,27 @@ class KeywordInsightsAPI(BaseAdsClient):
         
         返回竞争广告主数量、CPC范围、首页品牌等
         """
-        result = self.get("/insights/keywords/competition", params={
+        result = await self.get("/insights/keywords/competition", params={
             "keyword": keyword,
             "marketplace": marketplace,
         })
         return result if isinstance(result, dict) else {}
 
-    def get_keyword_top_asins(
+    async def get_keyword_top_asins(
         self,
         keyword: str,
         marketplace: str = "US",
         limit: int = 50,
     ) -> JSONList:
         """获取关键词Top排名ASIN"""
-        result = self.get("/insights/keywords/topAsins", params={
+        result = await self.get("/insights/keywords/topAsins", params={
             "keyword": keyword,
             "marketplace": marketplace,
             "limit": limit,
         })
         return result if isinstance(result, list) else []
 
-    def get_keyword_ad_placements(
+    async def get_keyword_ad_placements(
         self,
         keyword: str,
         marketplace: str = "US",
@@ -141,7 +141,7 @@ class KeywordInsightsAPI(BaseAdsClient):
         
         分析该关键词的广告位分布情况
         """
-        result = self.get("/insights/keywords/adPlacements", params={
+        result = await self.get("/insights/keywords/adPlacements", params={
             "keyword": keyword,
             "marketplace": marketplace,
         })
@@ -149,41 +149,41 @@ class KeywordInsightsAPI(BaseAdsClient):
 
     # ============ Related Keywords ============
 
-    def get_related_keywords(
+    async def get_related_keywords(
         self,
         keyword: str,
         marketplace: str = "US",
         max_results: int = 100,
     ) -> JSONList:
         """获取相关关键词"""
-        result = self.get("/insights/keywords/related", params={
+        result = await self.get("/insights/keywords/related", params={
             "keyword": keyword,
             "marketplace": marketplace,
             "maxResults": max_results,
         })
         return result if isinstance(result, list) else []
 
-    def get_long_tail_keywords(
+    async def get_long_tail_keywords(
         self,
         seed_keyword: str,
         marketplace: str = "US",
         max_results: int = 100,
     ) -> JSONList:
         """获取长尾关键词"""
-        result = self.post("/insights/keywords/longTail", json_data={
+        result = await self.post("/insights/keywords/longTail", json_data={
             "seedKeyword": seed_keyword,
             "marketplace": marketplace,
             "maxResults": max_results,
         })
         return result if isinstance(result, list) else []
 
-    def get_negative_keyword_suggestions(
+    async def get_negative_keyword_suggestions(
         self,
         keywords: list[str],
         marketplace: str = "US",
     ) -> JSONList:
         """获取否定关键词建议"""
-        result = self.post("/insights/keywords/negativeSuggestions", json_data={
+        result = await self.post("/insights/keywords/negativeSuggestions", json_data={
             "keywords": keywords,
             "marketplace": marketplace,
         })
@@ -191,7 +191,7 @@ class KeywordInsightsAPI(BaseAdsClient):
 
     # ============ Keyword Bid Insights ============
 
-    def get_keyword_bid_landscape(
+    async def get_keyword_bid_landscape(
         self,
         keyword: str,
         match_type: str = "EXACT",
@@ -202,14 +202,14 @@ class KeywordInsightsAPI(BaseAdsClient):
         
         分析不同竞价水平下的预期效果
         """
-        result = self.get("/insights/keywords/bidLandscape", params={
+        result = await self.get("/insights/keywords/bidLandscape", params={
             "keyword": keyword,
             "matchType": match_type,
             "marketplace": marketplace,
         })
         return result if isinstance(result, dict) else {}
 
-    def get_keyword_position_analysis(
+    async def get_keyword_position_analysis(
         self,
         keyword: str,
         current_bid: float,
@@ -220,7 +220,7 @@ class KeywordInsightsAPI(BaseAdsClient):
         
         预测当前竞价下的广告排名
         """
-        result = self.post("/insights/keywords/positionAnalysis", json_data={
+        result = await self.post("/insights/keywords/positionAnalysis", json_data={
             "keyword": keyword,
             "currentBid": current_bid,
             "marketplace": marketplace,
@@ -229,19 +229,19 @@ class KeywordInsightsAPI(BaseAdsClient):
 
     # ============ Search Term Insights ============
 
-    def get_search_term_insights(
+    async def get_search_term_insights(
         self,
         search_term: str,
         marketplace: str = "US",
     ) -> JSONData:
         """获取搜索词洞察"""
-        result = self.get("/insights/searchTerms", params={
+        result = await self.get("/insights/searchTerms", params={
             "searchTerm": search_term,
             "marketplace": marketplace,
         })
         return result if isinstance(result, dict) else {}
 
-    def get_trending_search_terms(
+    async def get_trending_search_terms(
         self,
         category_id: str | None = None,
         marketplace: str = "US",
@@ -257,12 +257,12 @@ class KeywordInsightsAPI(BaseAdsClient):
         if category_id:
             params["categoryId"] = category_id
 
-        result = self.get("/insights/searchTerms/trending", params=params)
+        result = await self.get("/insights/searchTerms/trending", params=params)
         return result if isinstance(result, list) else []
 
     # ============ Keyword Opportunity Score ============
 
-    def get_keyword_opportunity_score(
+    async def get_keyword_opportunity_score(
         self,
         keywords: list[str],
         asins: list[str] | None = None,
@@ -280,22 +280,22 @@ class KeywordInsightsAPI(BaseAdsClient):
         if asins:
             body["asins"] = asins
 
-        result = self.post("/insights/keywords/opportunityScore", json_data=body)
+        result = await self.post("/insights/keywords/opportunityScore", json_data=body)
         return result if isinstance(result, dict) else {}
 
     # ============ 便捷方法 ============
 
-    def get_keyword_full_analysis(
+    async def get_keyword_full_analysis(
         self,
         keyword: str,
         marketplace: str = "US",
     ) -> JSONData:
         """获取关键词完整分析"""
-        metrics = self.get_keyword_metrics([keyword], marketplace)
-        competition = self.get_keyword_competition(keyword, marketplace)
-        trends = self.get_keyword_trends(keyword, marketplace)
-        related = self.get_related_keywords(keyword, marketplace, max_results=20)
-        bid_landscape = self.get_keyword_bid_landscape(keyword, "EXACT", marketplace)
+        metrics = await self.get_keyword_metrics([keyword], marketplace)
+        competition = await self.get_keyword_competition(keyword, marketplace)
+        trends = await self.get_keyword_trends(keyword, marketplace)
+        related = await self.get_related_keywords(keyword, marketplace, max_results=20)
+        bid_landscape = await self.get_keyword_bid_landscape(keyword, "EXACT", marketplace)
 
         return {
             "keyword": keyword,
@@ -306,7 +306,7 @@ class KeywordInsightsAPI(BaseAdsClient):
             "bidLandscape": bid_landscape,
         }
 
-    def find_high_opportunity_keywords(
+    async def find_high_opportunity_keywords(
         self,
         seed_keywords: list[str],
         min_search_volume: int = 1000,
@@ -321,7 +321,7 @@ class KeywordInsightsAPI(BaseAdsClient):
         all_keywords = []
 
         for seed in seed_keywords:
-            result = self.search_keywords(seed, marketplace, max_results=50)
+            result = await self.search_keywords(seed, marketplace, max_results=50)
             all_keywords.extend(result.get("keywords", []))
 
         # 获取详细指标
@@ -329,7 +329,7 @@ class KeywordInsightsAPI(BaseAdsClient):
         if not keyword_texts:
             return []
 
-        metrics = self.get_keyword_metrics(keyword_texts[:100], marketplace)
+        metrics = await self.get_keyword_metrics(keyword_texts[:100], marketplace)
 
         # 筛选
         opportunities = []
@@ -342,7 +342,7 @@ class KeywordInsightsAPI(BaseAdsClient):
 
         return sorted(opportunities, key=lambda x: x.get("searchVolume", 0), reverse=True)
 
-    def batch_get_keyword_metrics(
+    async def batch_get_keyword_metrics(
         self,
         keywords: list[str],
         marketplace: str = "US",
@@ -353,8 +353,7 @@ class KeywordInsightsAPI(BaseAdsClient):
 
         for i in range(0, len(keywords), batch_size):
             batch = keywords[i:i + batch_size]
-            result = self.get_keyword_metrics(batch, marketplace)
+            result = await self.get_keyword_metrics(batch, marketplace)
             all_results.extend(result.get("keywords", []))
 
         return all_results
-

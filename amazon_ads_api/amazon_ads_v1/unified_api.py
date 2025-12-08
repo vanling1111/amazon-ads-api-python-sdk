@@ -1,17 +1,17 @@
 """
-Amazon Ads API v1 - 统一API
+Amazon Ads API v1 - 统一API (异步版本)
 
 这是Amazon 2024-2025年推出的全新统一API架构
 端点前缀: /adsApi/v1/
 """
 
 from typing import Any, Dict, List, Optional
-from ..base import BaseAdsClient
+from ..base import BaseAdsClient, JSONData
 
 
 class AmazonAdsV1API(BaseAdsClient):
     """
-    Amazon Ads API v1 统一入口
+    Amazon Ads API v1 统一入口 (全异步)
     
     提供跨所有Amazon广告产品的统一模型
     覆盖所有官方资源
@@ -38,18 +38,18 @@ class AmazonAdsV1API(BaseAdsClient):
 
 
 class AdAssociationsAPI(BaseAdsClient):
-    """Ad Associations API"""
+    """Ad Associations API (全异步)"""
     
     async def create(
         self,
         ad_associations: List[Dict[str, Any]],
-    ) -> Dict[str, Any]:
+    ) -> JSONData:
         """创建Ad Association"""
-        return await self._request(
-            "POST",
+        result = await self.post(
             "/adsApi/v1/create/adAssociations",
-            json={"adAssociations": ad_associations}
+            json_data={"adAssociations": ad_associations}
         )
+        return result if isinstance(result, dict) else {}
     
     async def query(
         self,
@@ -59,7 +59,7 @@ class AdAssociationsAPI(BaseAdsClient):
         ad_ids: Optional[List[str]] = None,
         max_results: int = 100,
         next_token: Optional[str] = None,
-    ) -> Dict[str, Any]:
+    ) -> JSONData:
         """查询Ad Association"""
         request_body: Dict[str, Any] = {"maxResults": max_results}
         
@@ -72,48 +72,48 @@ class AdAssociationsAPI(BaseAdsClient):
         if next_token:
             request_body["nextToken"] = next_token
             
-        return await self._request(
-            "POST",
+        result = await self.post(
             "/adsApi/v1/query/adAssociations",
-            json=request_body
+            json_data=request_body
         )
+        return result if isinstance(result, dict) else {"adAssociations": []}
     
     async def update(
         self,
         ad_associations: List[Dict[str, Any]],
-    ) -> Dict[str, Any]:
+    ) -> JSONData:
         """更新Ad Association"""
-        return await self._request(
-            "POST",
+        result = await self.post(
             "/adsApi/v1/update/adAssociations",
-            json={"adAssociations": ad_associations}
+            json_data={"adAssociations": ad_associations}
         )
+        return result if isinstance(result, dict) else {}
     
     async def delete(
         self,
         ad_association_ids: List[str],
-    ) -> Dict[str, Any]:
+    ) -> JSONData:
         """删除Ad Association"""
-        return await self._request(
-            "POST",
+        result = await self.post(
             "/adsApi/v1/delete/adAssociations",
-            json={"adAssociationIds": ad_association_ids}
+            json_data={"adAssociationIds": ad_association_ids}
         )
+        return result if isinstance(result, dict) else {}
 
 
 class AdGroupsAPI(BaseAdsClient):
-    """Ad Groups API v1"""
+    """Ad Groups API v1 (全异步)"""
     
     async def create(
         self,
         ad_groups: List[Dict[str, Any]],
-    ) -> Dict[str, Any]:
+    ) -> JSONData:
         """创建Ad Group"""
-        return await self._request(
-            "POST",
+        result = await self.post(
             "/adsApi/v1/create/adGroups",
-            json={"adGroups": ad_groups}
+            json_data={"adGroups": ad_groups}
         )
+        return result if isinstance(result, dict) else {}
     
     async def query(
         self,
@@ -125,7 +125,7 @@ class AdGroupsAPI(BaseAdsClient):
         name_filter: Optional[Dict[str, Any]] = None,
         max_results: int = 100,
         next_token: Optional[str] = None,
-    ) -> Dict[str, Any]:
+    ) -> JSONData:
         """查询Ad Group"""
         request_body: Dict[str, Any] = {"maxResults": max_results}
         
@@ -142,48 +142,48 @@ class AdGroupsAPI(BaseAdsClient):
         if next_token:
             request_body["nextToken"] = next_token
             
-        return await self._request(
-            "POST",
+        result = await self.post(
             "/adsApi/v1/query/adGroups",
-            json=request_body
+            json_data=request_body
         )
+        return result if isinstance(result, dict) else {"adGroups": []}
     
     async def update(
         self,
         ad_groups: List[Dict[str, Any]],
-    ) -> Dict[str, Any]:
+    ) -> JSONData:
         """更新Ad Group"""
-        return await self._request(
-            "POST",
+        result = await self.post(
             "/adsApi/v1/update/adGroups",
-            json={"adGroups": ad_groups}
+            json_data={"adGroups": ad_groups}
         )
+        return result if isinstance(result, dict) else {}
     
     async def delete(
         self,
         ad_group_ids: List[str],
-    ) -> Dict[str, Any]:
+    ) -> JSONData:
         """删除Ad Group"""
-        return await self._request(
-            "POST",
+        result = await self.post(
             "/adsApi/v1/delete/adGroups",
-            json={"adGroupIds": ad_group_ids}
+            json_data={"adGroupIds": ad_group_ids}
         )
+        return result if isinstance(result, dict) else {}
 
 
 class AdsAPI(BaseAdsClient):
-    """Ads API v1"""
+    """Ads API v1 (全异步)"""
     
     async def create(
         self,
         ads: List[Dict[str, Any]],
-    ) -> Dict[str, Any]:
+    ) -> JSONData:
         """创建Ad"""
-        return await self._request(
-            "POST",
+        result = await self.post(
             "/adsApi/v1/create/ads",
-            json={"ads": ads}
+            json_data={"ads": ads}
         )
+        return result if isinstance(result, dict) else {}
     
     async def query(
         self,
@@ -196,7 +196,7 @@ class AdsAPI(BaseAdsClient):
         name_filter: Optional[Dict[str, Any]] = None,
         max_results: int = 100,
         next_token: Optional[str] = None,
-    ) -> Dict[str, Any]:
+    ) -> JSONData:
         """查询Ad"""
         request_body: Dict[str, Any] = {"maxResults": max_results}
         
@@ -215,48 +215,48 @@ class AdsAPI(BaseAdsClient):
         if next_token:
             request_body["nextToken"] = next_token
             
-        return await self._request(
-            "POST",
+        result = await self.post(
             "/adsApi/v1/query/ads",
-            json=request_body
+            json_data=request_body
         )
+        return result if isinstance(result, dict) else {"ads": []}
     
     async def update(
         self,
         ads: List[Dict[str, Any]],
-    ) -> Dict[str, Any]:
+    ) -> JSONData:
         """更新Ad"""
-        return await self._request(
-            "POST",
+        result = await self.post(
             "/adsApi/v1/update/ads",
-            json={"ads": ads}
+            json_data={"ads": ads}
         )
+        return result if isinstance(result, dict) else {}
     
     async def delete(
         self,
         ad_ids: List[str],
-    ) -> Dict[str, Any]:
+    ) -> JSONData:
         """删除Ad"""
-        return await self._request(
-            "POST",
+        result = await self.post(
             "/adsApi/v1/delete/ads",
-            json={"adIds": ad_ids}
+            json_data={"adIds": ad_ids}
         )
+        return result if isinstance(result, dict) else {}
 
 
 class CampaignsAPI(BaseAdsClient):
-    """Campaigns API v1"""
+    """Campaigns API v1 (全异步)"""
     
     async def create(
         self,
         campaigns: List[Dict[str, Any]],
-    ) -> Dict[str, Any]:
+    ) -> JSONData:
         """创建Campaign"""
-        return await self._request(
-            "POST",
+        result = await self.post(
             "/adsApi/v1/create/campaigns",
-            json={"campaigns": campaigns}
+            json_data={"campaigns": campaigns}
         )
+        return result if isinstance(result, dict) else {}
     
     async def query(
         self,
@@ -269,7 +269,7 @@ class CampaignsAPI(BaseAdsClient):
         goal_filter: Optional[str] = None,
         max_results: int = 100,
         next_token: Optional[str] = None,
-    ) -> Dict[str, Any]:
+    ) -> JSONData:
         """查询Campaign"""
         request_body: Dict[str, Any] = {"maxResults": max_results}
         
@@ -288,48 +288,48 @@ class CampaignsAPI(BaseAdsClient):
         if next_token:
             request_body["nextToken"] = next_token
             
-        return await self._request(
-            "POST",
+        result = await self.post(
             "/adsApi/v1/query/campaigns",
-            json=request_body
+            json_data=request_body
         )
+        return result if isinstance(result, dict) else {"campaigns": []}
     
     async def update(
         self,
         campaigns: List[Dict[str, Any]],
-    ) -> Dict[str, Any]:
+    ) -> JSONData:
         """更新Campaign"""
-        return await self._request(
-            "POST",
+        result = await self.post(
             "/adsApi/v1/update/campaigns",
-            json={"campaigns": campaigns}
+            json_data={"campaigns": campaigns}
         )
+        return result if isinstance(result, dict) else {}
     
     async def delete(
         self,
         campaign_ids: List[str],
-    ) -> Dict[str, Any]:
+    ) -> JSONData:
         """删除Campaign"""
-        return await self._request(
-            "POST",
+        result = await self.post(
             "/adsApi/v1/delete/campaigns",
-            json={"campaignIds": campaign_ids}
+            json_data={"campaignIds": campaign_ids}
         )
+        return result if isinstance(result, dict) else {}
 
 
 class TargetsAPI(BaseAdsClient):
-    """Targets API v1"""
+    """Targets API v1 (全异步)"""
     
     async def create(
         self,
         targets: List[Dict[str, Any]],
-    ) -> Dict[str, Any]:
+    ) -> JSONData:
         """创建Target"""
-        return await self._request(
-            "POST",
+        result = await self.post(
             "/adsApi/v1/create/targets",
-            json={"targets": targets}
+            json_data={"targets": targets}
         )
+        return result if isinstance(result, dict) else {}
     
     async def query(
         self,
@@ -342,7 +342,7 @@ class TargetsAPI(BaseAdsClient):
         target_type: Optional[str] = None,
         max_results: int = 100,
         next_token: Optional[str] = None,
-    ) -> Dict[str, Any]:
+    ) -> JSONData:
         """查询Target"""
         request_body: Dict[str, Any] = {"maxResults": max_results}
         
@@ -361,37 +361,37 @@ class TargetsAPI(BaseAdsClient):
         if next_token:
             request_body["nextToken"] = next_token
             
-        return await self._request(
-            "POST",
+        result = await self.post(
             "/adsApi/v1/query/targets",
-            json=request_body
+            json_data=request_body
         )
+        return result if isinstance(result, dict) else {"targets": []}
     
     async def update(
         self,
         targets: List[Dict[str, Any]],
-    ) -> Dict[str, Any]:
+    ) -> JSONData:
         """更新Target"""
-        return await self._request(
-            "POST",
+        result = await self.post(
             "/adsApi/v1/update/targets",
-            json={"targets": targets}
+            json_data={"targets": targets}
         )
+        return result if isinstance(result, dict) else {}
     
     async def delete(
         self,
         target_ids: List[str],
-    ) -> Dict[str, Any]:
+    ) -> JSONData:
         """删除Target"""
-        return await self._request(
-            "POST",
+        result = await self.post(
             "/adsApi/v1/delete/targets",
-            json={"targetIds": target_ids}
+            json_data={"targetIds": target_ids}
         )
+        return result if isinstance(result, dict) else {}
 
 
 class RecommendationsAPI(BaseAdsClient):
-    """Recommendations API v1 (扩展)"""
+    """Recommendations API v1 (扩展) (全异步)"""
     
     async def get_recommendations(
         self,
@@ -400,7 +400,7 @@ class RecommendationsAPI(BaseAdsClient):
         entity_type: Optional[str] = None,
         entity_ids: Optional[List[str]] = None,
         max_results: int = 100,
-    ) -> Dict[str, Any]:
+    ) -> JSONData:
         """获取推荐"""
         request_body: Dict[str, Any] = {"maxResults": max_results}
         
@@ -411,26 +411,26 @@ class RecommendationsAPI(BaseAdsClient):
         if entity_ids:
             request_body["entityIds"] = entity_ids
             
-        return await self._request(
-            "POST",
+        result = await self.post(
             "/adsApi/v1/recommendations",
-            json=request_body
+            json_data=request_body
         )
+        return result if isinstance(result, dict) else {"recommendations": []}
 
 
 class AdvertisingDealsAPI(BaseAdsClient):
-    """Advertising Deals API v1 - 广告交易"""
+    """Advertising Deals API v1 - 广告交易 (全异步)"""
     
     async def create(
         self,
         advertising_deals: List[Dict[str, Any]],
-    ) -> Dict[str, Any]:
+    ) -> JSONData:
         """创建广告交易"""
-        return await self._request(
-            "POST",
+        result = await self.post(
             "/adsApi/v1/create/advertisingDeals",
-            json={"advertisingDeals": advertising_deals}
+            json_data={"advertisingDeals": advertising_deals}
         )
+        return result if isinstance(result, dict) else {}
     
     async def query(
         self,
@@ -439,7 +439,7 @@ class AdvertisingDealsAPI(BaseAdsClient):
         states: Optional[List[str]] = None,
         max_results: int = 100,
         next_token: Optional[str] = None,
-    ) -> Dict[str, Any]:
+    ) -> JSONData:
         """查询广告交易"""
         request_body: Dict[str, Any] = {"maxResults": max_results}
         if deal_ids:
@@ -448,48 +448,48 @@ class AdvertisingDealsAPI(BaseAdsClient):
             request_body["stateFilter"] = {"include": states}
         if next_token:
             request_body["nextToken"] = next_token
-        return await self._request(
-            "POST",
+        result = await self.post(
             "/adsApi/v1/query/advertisingDeals",
-            json=request_body
+            json_data=request_body
         )
+        return result if isinstance(result, dict) else {"advertisingDeals": []}
     
     async def update(
         self,
         advertising_deals: List[Dict[str, Any]],
-    ) -> Dict[str, Any]:
+    ) -> JSONData:
         """更新广告交易"""
-        return await self._request(
-            "POST",
+        result = await self.post(
             "/adsApi/v1/update/advertisingDeals",
-            json={"advertisingDeals": advertising_deals}
+            json_data={"advertisingDeals": advertising_deals}
         )
+        return result if isinstance(result, dict) else {}
     
     async def delete(
         self,
         deal_ids: List[str],
-    ) -> Dict[str, Any]:
+    ) -> JSONData:
         """删除广告交易"""
-        return await self._request(
-            "POST",
+        result = await self.post(
             "/adsApi/v1/delete/advertisingDeals",
-            json={"dealIds": deal_ids}
+            json_data={"dealIds": deal_ids}
         )
+        return result if isinstance(result, dict) else {}
 
 
 class AdvertisingDealTargetsAPI(BaseAdsClient):
-    """Advertising Deal Targets API v1 - 广告交易定向"""
+    """Advertising Deal Targets API v1 - 广告交易定向 (全异步)"""
     
     async def create(
         self,
         deal_targets: List[Dict[str, Any]],
-    ) -> Dict[str, Any]:
+    ) -> JSONData:
         """创建交易定向"""
-        return await self._request(
-            "POST",
+        result = await self.post(
             "/adsApi/v1/create/advertisingDealTargets",
-            json={"advertisingDealTargets": deal_targets}
+            json_data={"advertisingDealTargets": deal_targets}
         )
+        return result if isinstance(result, dict) else {}
     
     async def query(
         self,
@@ -498,7 +498,7 @@ class AdvertisingDealTargetsAPI(BaseAdsClient):
         deal_ids: Optional[List[str]] = None,
         max_results: int = 100,
         next_token: Optional[str] = None,
-    ) -> Dict[str, Any]:
+    ) -> JSONData:
         """查询交易定向"""
         request_body: Dict[str, Any] = {"maxResults": max_results}
         if deal_target_ids:
@@ -507,68 +507,68 @@ class AdvertisingDealTargetsAPI(BaseAdsClient):
             request_body["dealIdFilter"] = {"include": deal_ids}
         if next_token:
             request_body["nextToken"] = next_token
-        return await self._request(
-            "POST",
+        result = await self.post(
             "/adsApi/v1/query/advertisingDealTargets",
-            json=request_body
+            json_data=request_body
         )
+        return result if isinstance(result, dict) else {"advertisingDealTargets": []}
     
     async def update(
         self,
         deal_targets: List[Dict[str, Any]],
-    ) -> Dict[str, Any]:
+    ) -> JSONData:
         """更新交易定向"""
-        return await self._request(
-            "POST",
+        result = await self.post(
             "/adsApi/v1/update/advertisingDealTargets",
-            json={"advertisingDealTargets": deal_targets}
+            json_data={"advertisingDealTargets": deal_targets}
         )
+        return result if isinstance(result, dict) else {}
     
     async def delete(
         self,
         deal_target_ids: List[str],
-    ) -> Dict[str, Any]:
+    ) -> JSONData:
         """删除交易定向"""
-        return await self._request(
-            "POST",
+        result = await self.post(
             "/adsApi/v1/delete/advertisingDealTargets",
-            json={"dealTargetIds": deal_target_ids}
+            json_data={"dealTargetIds": deal_target_ids}
         )
+        return result if isinstance(result, dict) else {}
 
 
 class BrandedKeywordsPricingsAPI(BaseAdsClient):
-    """Branded Keywords Pricings API v1 - 品牌关键词定价"""
+    """Branded Keywords Pricings API v1 - 品牌关键词定价 (全异步)"""
     
     async def query(
         self,
         *,
         keywords: List[str],
         marketplace_id: str,
-    ) -> Dict[str, Any]:
+    ) -> JSONData:
         """查询品牌关键词定价"""
-        return await self._request(
-            "POST",
+        result = await self.post(
             "/adsApi/v1/query/brandedKeywordsPricings",
-            json={
+            json_data={
                 "keywords": keywords,
                 "marketplaceId": marketplace_id,
             }
         )
+        return result if isinstance(result, dict) else {"pricings": []}
 
 
 class CampaignForecastsAPI(BaseAdsClient):
-    """Campaign Forecasts API v1 - 广告活动预测"""
+    """Campaign Forecasts API v1 - 广告活动预测 (全异步)"""
     
     async def create(
         self,
         forecasts: List[Dict[str, Any]],
-    ) -> Dict[str, Any]:
+    ) -> JSONData:
         """创建广告活动预测"""
-        return await self._request(
-            "POST",
+        result = await self.post(
             "/adsApi/v1/create/campaignForecasts",
-            json={"campaignForecasts": forecasts}
+            json_data={"campaignForecasts": forecasts}
         )
+        return result if isinstance(result, dict) else {}
     
     async def query(
         self,
@@ -577,7 +577,7 @@ class CampaignForecastsAPI(BaseAdsClient):
         campaign_ids: Optional[List[str]] = None,
         max_results: int = 100,
         next_token: Optional[str] = None,
-    ) -> Dict[str, Any]:
+    ) -> JSONData:
         """查询广告活动预测"""
         request_body: Dict[str, Any] = {"maxResults": max_results}
         if forecast_ids:
@@ -586,26 +586,26 @@ class CampaignForecastsAPI(BaseAdsClient):
             request_body["campaignIdFilter"] = {"include": campaign_ids}
         if next_token:
             request_body["nextToken"] = next_token
-        return await self._request(
-            "POST",
+        result = await self.post(
             "/adsApi/v1/query/campaignForecasts",
-            json=request_body
+            json_data=request_body
         )
+        return result if isinstance(result, dict) else {"campaignForecasts": []}
 
 
 class CommitmentsAPI(BaseAdsClient):
-    """Commitments API v1 - 承诺"""
+    """Commitments API v1 - 承诺 (全异步)"""
     
     async def create(
         self,
         commitments: List[Dict[str, Any]],
-    ) -> Dict[str, Any]:
+    ) -> JSONData:
         """创建承诺"""
-        return await self._request(
-            "POST",
+        result = await self.post(
             "/adsApi/v1/create/commitments",
-            json={"commitments": commitments}
+            json_data={"commitments": commitments}
         )
+        return result if isinstance(result, dict) else {}
     
     async def query(
         self,
@@ -614,7 +614,7 @@ class CommitmentsAPI(BaseAdsClient):
         states: Optional[List[str]] = None,
         max_results: int = 100,
         next_token: Optional[str] = None,
-    ) -> Dict[str, Any]:
+    ) -> JSONData:
         """查询承诺"""
         request_body: Dict[str, Any] = {"maxResults": max_results}
         if commitment_ids:
@@ -623,26 +623,26 @@ class CommitmentsAPI(BaseAdsClient):
             request_body["stateFilter"] = {"include": states}
         if next_token:
             request_body["nextToken"] = next_token
-        return await self._request(
-            "POST",
+        result = await self.post(
             "/adsApi/v1/query/commitments",
-            json=request_body
+            json_data=request_body
         )
+        return result if isinstance(result, dict) else {"commitments": []}
     
     async def update(
         self,
         commitments: List[Dict[str, Any]],
-    ) -> Dict[str, Any]:
+    ) -> JSONData:
         """更新承诺"""
-        return await self._request(
-            "POST",
+        result = await self.post(
             "/adsApi/v1/update/commitments",
-            json={"commitments": commitments}
+            json_data={"commitments": commitments}
         )
+        return result if isinstance(result, dict) else {}
 
 
 class CommitmentSpendsAPI(BaseAdsClient):
-    """Commitment Spends API v1 - 承诺支出"""
+    """Commitment Spends API v1 - 承诺支出 (全异步)"""
     
     async def query(
         self,
@@ -652,7 +652,7 @@ class CommitmentSpendsAPI(BaseAdsClient):
         end_date: Optional[str] = None,
         max_results: int = 100,
         next_token: Optional[str] = None,
-    ) -> Dict[str, Any]:
+    ) -> JSONData:
         """查询承诺支出"""
         request_body: Dict[str, Any] = {"maxResults": max_results}
         if commitment_ids:
@@ -663,15 +663,15 @@ class CommitmentSpendsAPI(BaseAdsClient):
             request_body["endDate"] = end_date
         if next_token:
             request_body["nextToken"] = next_token
-        return await self._request(
-            "POST",
+        result = await self.post(
             "/adsApi/v1/query/commitmentSpends",
-            json=request_body
+            json_data=request_body
         )
+        return result if isinstance(result, dict) else {"commitmentSpends": []}
 
 
 class KeywordReservationValidationsAPI(BaseAdsClient):
-    """Keyword Reservation Validations API v1 - 关键词预留验证"""
+    """Keyword Reservation Validations API v1 - 关键词预留验证 (全异步)"""
     
     async def validate(
         self,
@@ -679,34 +679,33 @@ class KeywordReservationValidationsAPI(BaseAdsClient):
         keywords: List[str],
         marketplace_id: str,
         ad_product: str,
-    ) -> Dict[str, Any]:
+    ) -> JSONData:
         """验证关键词预留"""
-        return await self._request(
-            "POST",
+        result = await self.post(
             "/adsApi/v1/keywordReservationValidations",
-            json={
+            json_data={
                 "keywords": keywords,
                 "marketplaceId": marketplace_id,
                 "adProduct": ad_product,
             }
         )
+        return result if isinstance(result, dict) else {"validations": []}
 
 
 class RecommendationTypesAPI(BaseAdsClient):
-    """Recommendation Types API v1 - 推荐类型"""
+    """Recommendation Types API v1 - 推荐类型 (全异步)"""
     
     async def list(
         self,
         *,
         ad_product: Optional[str] = None,
-    ) -> Dict[str, Any]:
+    ) -> JSONData:
         """获取推荐类型列表"""
         params: Dict[str, Any] = {}
         if ad_product:
             params["adProduct"] = ad_product
-        return await self._request(
-            "GET",
+        result = await self.get(
             "/adsApi/v1/recommendationTypes",
-            params=params
+            params=params if params else None
         )
-
+        return result if isinstance(result, dict) else {"recommendationTypes": []}

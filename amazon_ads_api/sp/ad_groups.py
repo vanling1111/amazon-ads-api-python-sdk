@@ -1,15 +1,18 @@
 """
-Sponsored Products - Ad Groups API
+Sponsored Products - Ad Groups API (异步版本)
 SP广告组管理
 """
 
 from ..base import BaseAdsClient, JSONData, JSONList
 
+# API v3 Content-Type
+CONTENT_TYPE_AD_GROUP = "application/vnd.spAdGroup.v3+json"
+
 
 class SPAdGroupsAPI(BaseAdsClient):
-    """SP Ad Groups API"""
+    """SP Ad Groups API (全异步)"""
 
-    def list_ad_groups(
+    async def list_ad_groups(
         self,
         campaign_id: str | None = None,
         state_filter: str | None = None,
@@ -33,15 +36,15 @@ class SPAdGroupsAPI(BaseAdsClient):
         if next_token:
             params["nextToken"] = next_token
 
-        result = self.post("/sp/adGroups/list", json_data=params)
+        result = await self.post("/sp/adGroups/list", json_data=params, content_type=CONTENT_TYPE_AD_GROUP)
         return result if isinstance(result, dict) else {"adGroups": []}
 
-    def get_ad_group(self, ad_group_id: str) -> JSONData:
+    async def get_ad_group(self, ad_group_id: str) -> JSONData:
         """获取单个Ad Group详情"""
-        result = self.get(f"/sp/adGroups/{ad_group_id}")
+        result = await self.get(f"/sp/adGroups/{ad_group_id}", content_type=CONTENT_TYPE_AD_GROUP)
         return result if isinstance(result, dict) else {}
 
-    def create_ad_groups(self, ad_groups: JSONList) -> JSONData:
+    async def create_ad_groups(self, ad_groups: JSONList) -> JSONData:
         """
         批量创建Ad Group
         
@@ -56,10 +59,10 @@ class SPAdGroupsAPI(BaseAdsClient):
                 }
             ]
         """
-        result = self.post("/sp/adGroups", json_data={"adGroups": ad_groups})
+        result = await self.post("/sp/adGroups", json_data={"adGroups": ad_groups}, content_type=CONTENT_TYPE_AD_GROUP)
         return result if isinstance(result, dict) else {"adGroups": {"success": [], "error": []}}
 
-    def update_ad_groups(self, ad_groups: JSONList) -> JSONData:
+    async def update_ad_groups(self, ad_groups: JSONList) -> JSONData:
         """
         批量更新Ad Group
         
@@ -67,28 +70,28 @@ class SPAdGroupsAPI(BaseAdsClient):
             ad_groups: 包含adGroupId的更新数据
             [{"adGroupId": "xxx", "state": "paused", "defaultBid": 1.5}]
         """
-        result = self.put("/sp/adGroups", json_data={"adGroups": ad_groups})
+        result = await self.put("/sp/adGroups", json_data={"adGroups": ad_groups}, content_type=CONTENT_TYPE_AD_GROUP)
         return result if isinstance(result, dict) else {"adGroups": {"success": [], "error": []}}
 
-    def delete_ad_group(self, ad_group_id: str) -> JSONData:
-        """归档Ad Group"""
-        return self.delete(f"/sp/adGroups/{ad_group_id}")
+    async def delete_ad_group(self, ad_group_id: str) -> JSONData:
+        """归档Ad Group（使用 update 设置 state=archived）"""
+        return await self.update_ad_groups([{"adGroupId": ad_group_id, "state": "archived"}])
 
     # ============ 便捷方法 ============
 
-    def pause_ad_group(self, ad_group_id: str) -> JSONData:
+    async def pause_ad_group(self, ad_group_id: str) -> JSONData:
         """暂停Ad Group"""
-        return self.update_ad_groups([{"adGroupId": ad_group_id, "state": "paused"}])
+        return await self.update_ad_groups([{"adGroupId": ad_group_id, "state": "paused"}])
 
-    def enable_ad_group(self, ad_group_id: str) -> JSONData:
+    async def enable_ad_group(self, ad_group_id: str) -> JSONData:
         """启用Ad Group"""
-        return self.update_ad_groups([{"adGroupId": ad_group_id, "state": "enabled"}])
+        return await self.update_ad_groups([{"adGroupId": ad_group_id, "state": "enabled"}])
 
-    def update_default_bid(self, ad_group_id: str, bid: float) -> JSONData:
+    async def update_default_bid(self, ad_group_id: str, bid: float) -> JSONData:
         """更新Ad Group默认竞价"""
-        return self.update_ad_groups([{"adGroupId": ad_group_id, "defaultBid": bid}])
+        return await self.update_ad_groups([{"adGroupId": ad_group_id, "defaultBid": bid}])
 
-    def list_all_ad_groups(
+    async def list_all_ad_groups(
         self,
         campaign_id: str | None = None,
         state_filter: str | None = None,
@@ -98,7 +101,7 @@ class SPAdGroupsAPI(BaseAdsClient):
         next_token = None
 
         while True:
-            result = self.list_ad_groups(
+            result = await self.list_ad_groups(
                 campaign_id=campaign_id,
                 state_filter=state_filter,
                 max_results=100,
@@ -112,4 +115,3 @@ class SPAdGroupsAPI(BaseAdsClient):
                 break
 
         return all_ad_groups
-

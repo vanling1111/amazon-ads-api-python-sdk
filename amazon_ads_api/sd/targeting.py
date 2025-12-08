@@ -1,5 +1,5 @@
 """
-Sponsored Display - Targeting API
+Sponsored Display - Targeting API (异步版本)
 SD定向管理（受众定向 + 上下文定向）
 """
 
@@ -7,11 +7,11 @@ from ..base import BaseAdsClient, JSONData, JSONList
 
 
 class SDTargetingAPI(BaseAdsClient):
-    """SD Targeting API"""
+    """SD Targeting API (全异步)"""
 
     # ============ Targets ============
 
-    def list_targets(
+    async def list_targets(
         self,
         ad_group_id: str | None = None,
         campaign_id: str | None = None,
@@ -27,15 +27,15 @@ class SDTargetingAPI(BaseAdsClient):
         if state_filter:
             params["stateFilter"] = state_filter
 
-        result = self.post("/sd/targets/list", json_data=params)
+        result = await self.post("/sd/targets/list", json_data=params)
         return result if isinstance(result, dict) else {"targets": []}
 
-    def get_target(self, target_id: str) -> JSONData:
+    async def get_target(self, target_id: str) -> JSONData:
         """获取单个Target详情"""
-        result = self.get(f"/sd/targets/{target_id}")
+        result = await self.get(f"/sd/targets/{target_id}")
         return result if isinstance(result, dict) else {}
 
-    def create_targets(self, targets: JSONList) -> JSONData:
+    async def create_targets(self, targets: JSONList) -> JSONData:
         """
         批量创建SD Target
         
@@ -59,21 +59,21 @@ class SDTargetingAPI(BaseAdsClient):
             "bid": 1.0
         }
         """
-        result = self.post("/sd/targets", json_data=targets)
+        result = await self.post("/sd/targets", json_data=targets)
         return result if isinstance(result, dict) else {"targets": {"success": [], "error": []}}
 
-    def update_targets(self, targets: JSONList) -> JSONData:
+    async def update_targets(self, targets: JSONList) -> JSONData:
         """批量更新SD Target"""
-        result = self.put("/sd/targets", json_data=targets)
+        result = await self.put("/sd/targets", json_data=targets)
         return result if isinstance(result, dict) else {"targets": {"success": [], "error": []}}
 
-    def delete_target(self, target_id: str) -> JSONData:
+    async def delete_target(self, target_id: str) -> JSONData:
         """归档Target"""
-        return self.delete(f"/sd/targets/{target_id}")
+        return await self.delete(f"/sd/targets/{target_id}")
 
     # ============ Negative Targets ============
 
-    def list_negative_targets(
+    async def list_negative_targets(
         self,
         ad_group_id: str | None = None,
         campaign_id: str | None = None,
@@ -86,21 +86,21 @@ class SDTargetingAPI(BaseAdsClient):
         if campaign_id:
             params["campaignIdFilter"] = [campaign_id]
 
-        result = self.post("/sd/negativeTargets/list", json_data=params)
+        result = await self.post("/sd/negativeTargets/list", json_data=params)
         return result if isinstance(result, dict) else {"negativeTargets": []}
 
-    def create_negative_targets(self, targets: JSONList) -> JSONData:
+    async def create_negative_targets(self, targets: JSONList) -> JSONData:
         """批量创建SD Negative Target"""
-        result = self.post("/sd/negativeTargets", json_data=targets)
+        result = await self.post("/sd/negativeTargets", json_data=targets)
         return result if isinstance(result, dict) else {"negativeTargets": {"success": [], "error": []}}
 
-    def delete_negative_target(self, target_id: str) -> JSONData:
+    async def delete_negative_target(self, target_id: str) -> JSONData:
         """删除Negative Target"""
-        return self.delete(f"/sd/negativeTargets/{target_id}")
+        return await self.delete(f"/sd/negativeTargets/{target_id}")
 
     # ============ Targeting Recommendations ============
 
-    def get_targeting_recommendations(
+    async def get_targeting_recommendations(
         self,
         ad_group_id: str | None = None,
         asins: list[str] | None = None,
@@ -123,16 +123,16 @@ class SDTargetingAPI(BaseAdsClient):
         if tactic:
             body["tactic"] = tactic
 
-        result = self.post("/sd/targets/recommendations", json_data=body)
+        result = await self.post("/sd/targets/recommendations", json_data=body)
         return result if isinstance(result, dict) else {"recommendations": []}
 
-    def get_bid_recommendations(
+    async def get_bid_recommendations(
         self,
         ad_group_id: str,
         targets: list[dict],
     ) -> JSONData:
         """获取竞价建议"""
-        result = self.post("/sd/targets/bid/recommendations", json_data={
+        result = await self.post("/sd/targets/bid/recommendations", json_data={
             "adGroupId": ad_group_id,
             "targets": targets,
         })
@@ -140,36 +140,36 @@ class SDTargetingAPI(BaseAdsClient):
 
     # ============ Audiences ============
 
-    def list_audiences(self) -> JSONList:
+    async def list_audiences(self) -> JSONList:
         """
         获取可用的受众列表
         
         包括In-Market、Lifestyle等受众类型
         """
-        result = self.get("/sd/audiences")
+        result = await self.get("/sd/audiences")
         return result if isinstance(result, list) else []
 
-    def get_audience_categories(self) -> JSONData:
+    async def get_audience_categories(self) -> JSONData:
         """
         获取受众类别树
         
         用于受众定向选择
         """
-        result = self.get("/sd/audiences/categories")
+        result = await self.get("/sd/audiences/categories")
         return result if isinstance(result, dict) else {"categories": []}
 
     # ============ Brand Safety ============
 
-    def get_brand_safety_list(self, ad_group_id: str) -> JSONData:
+    async def get_brand_safety_list(self, ad_group_id: str) -> JSONData:
         """
         获取品牌安全列表
         
         排除不想展示广告的位置
         """
-        result = self.get(f"/sd/adGroups/{ad_group_id}/brandSafetyList")
+        result = await self.get(f"/sd/adGroups/{ad_group_id}/brandSafetyList")
         return result if isinstance(result, dict) else {}
 
-    def update_brand_safety_list(
+    async def update_brand_safety_list(
         self,
         ad_group_id: str,
         domains: list[str] | None = None,
@@ -188,20 +188,20 @@ class SDTargetingAPI(BaseAdsClient):
         if apps:
             body["apps"] = apps
 
-        result = self.put(f"/sd/adGroups/{ad_group_id}/brandSafetyList", json_data=body)
+        result = await self.put(f"/sd/adGroups/{ad_group_id}/brandSafetyList", json_data=body)
         return result if isinstance(result, dict) else {}
 
     # ============ 便捷方法 ============
 
-    def update_bid(self, target_id: str, bid: float) -> JSONData:
+    async def update_bid(self, target_id: str, bid: float) -> JSONData:
         """更新Target竞价"""
-        return self.update_targets([{"targetId": target_id, "bid": bid}])
+        return await self.update_targets([{"targetId": target_id, "bid": bid}])
 
-    def batch_update_bids(self, bid_updates: list[dict]) -> JSONData:
+    async def batch_update_bids(self, bid_updates: list[dict]) -> JSONData:
         """批量更新竞价"""
-        return self.update_targets(bid_updates)
+        return await self.update_targets(bid_updates)
 
-    def create_audience_target(
+    async def create_audience_target(
         self,
         ad_group_id: str,
         audience_type: str,
@@ -221,9 +221,9 @@ class SDTargetingAPI(BaseAdsClient):
             "expression": [{"type": audience_type, "value": audience_value}],
             "bid": bid,
         }]
-        return self.create_targets(targets)
+        return await self.create_targets(targets)
 
-    def create_asin_target(
+    async def create_asin_target(
         self,
         ad_group_id: str,
         asin: str,
@@ -236,9 +236,9 @@ class SDTargetingAPI(BaseAdsClient):
             "expression": [{"type": "asinSameAs", "value": asin}],
             "bid": bid,
         }]
-        return self.create_targets(targets)
+        return await self.create_targets(targets)
 
-    def create_category_target(
+    async def create_category_target(
         self,
         ad_group_id: str,
         category_id: str,
@@ -251,5 +251,4 @@ class SDTargetingAPI(BaseAdsClient):
             "expression": [{"type": "asinCategorySameAs", "value": category_id}],
             "bid": bid,
         }]
-        return self.create_targets(targets)
-
+        return await self.create_targets(targets)

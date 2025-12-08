@@ -1,5 +1,5 @@
 """
-Sponsored Brands - Ads API
+Sponsored Brands - Ads API (异步版本)
 SB广告管理（不同类型的品牌广告）
 """
 
@@ -7,11 +7,11 @@ from ..base import BaseAdsClient, JSONData, JSONList
 
 
 class SBAdsAPI(BaseAdsClient):
-    """SB Ads API"""
+    """SB Ads API (全异步)"""
 
     # ============ Ads (V4) ============
 
-    def list_ads(
+    async def list_ads(
         self,
         campaign_id: str | None = None,
         ad_group_id: str | None = None,
@@ -37,15 +37,15 @@ class SBAdsAPI(BaseAdsClient):
         if next_token:
             params["nextToken"] = next_token
 
-        result = self.post("/sb/v4/ads/list", json_data=params)
+        result = await self.post("/sb/v4/ads/list", json_data=params)
         return result if isinstance(result, dict) else {"ads": []}
 
-    def get_ad(self, ad_id: str) -> JSONData:
+    async def get_ad(self, ad_id: str) -> JSONData:
         """获取单个SB Ad详情"""
-        result = self.get(f"/sb/v4/ads/{ad_id}")
+        result = await self.get(f"/sb/v4/ads/{ad_id}")
         return result if isinstance(result, dict) else {}
 
-    def create_ads(self, ads: JSONList) -> JSONData:
+    async def create_ads(self, ads: JSONList) -> JSONData:
         """
         批量创建SB Ad
         
@@ -69,21 +69,21 @@ class SBAdsAPI(BaseAdsClient):
                 }
             ]
         """
-        result = self.post("/sb/v4/ads", json_data={"ads": ads})
+        result = await self.post("/sb/v4/ads", json_data={"ads": ads})
         return result if isinstance(result, dict) else {"ads": {"success": [], "error": []}}
 
-    def update_ads(self, ads: JSONList) -> JSONData:
+    async def update_ads(self, ads: JSONList) -> JSONData:
         """批量更新SB Ad"""
-        result = self.put("/sb/v4/ads", json_data={"ads": ads})
+        result = await self.put("/sb/v4/ads", json_data={"ads": ads})
         return result if isinstance(result, dict) else {"ads": {"success": [], "error": []}}
 
-    def delete_ad(self, ad_id: str) -> JSONData:
+    async def delete_ad(self, ad_id: str) -> JSONData:
         """归档SB Ad"""
-        return self.delete(f"/sb/v4/ads/{ad_id}")
+        return await self.delete(f"/sb/v4/ads/{ad_id}")
 
     # ============ Product Collection Ads ============
 
-    def create_product_collection_ad(
+    async def create_product_collection_ad(
         self,
         campaign_id: str,
         ad_group_id: str,
@@ -114,11 +114,11 @@ class SBAdsAPI(BaseAdsClient):
                 "url": landing_page_url
             }
         }]
-        return self.create_ads(ads)
+        return await self.create_ads(ads)
 
     # ============ Video Ads ============
 
-    def create_video_ad(
+    async def create_video_ad(
         self,
         campaign_id: str,
         ad_group_id: str,
@@ -140,11 +140,11 @@ class SBAdsAPI(BaseAdsClient):
                 "asin": asin
             }
         }]
-        return self.create_ads(ads)
+        return await self.create_ads(ads)
 
     # ============ Store Spotlight Ads ============
 
-    def create_store_spotlight_ad(
+    async def create_store_spotlight_ad(
         self,
         campaign_id: str,
         ad_group_id: str,
@@ -175,11 +175,11 @@ class SBAdsAPI(BaseAdsClient):
                 "storePages": store_pages[:3]  # 最多3个页面
             }
         }]
-        return self.create_ads(ads)
+        return await self.create_ads(ads)
 
     # ============ Landing Pages ============
 
-    def get_landing_page_asins(
+    async def get_landing_page_asins(
         self,
         landing_page_url: str,
     ) -> JSONData:
@@ -188,48 +188,48 @@ class SBAdsAPI(BaseAdsClient):
         
         用于验证和选择要推广的产品
         """
-        result = self.post("/sb/landingPageAsins", json_data={
+        result = await self.post("/sb/landingPageAsins", json_data={
             "landingPageUrl": landing_page_url
         })
         return result if isinstance(result, dict) else {"asins": []}
 
     # ============ Brands & Stores ============
 
-    def list_brands(self) -> JSONList:
+    async def list_brands(self) -> JSONList:
         """获取可用的品牌列表"""
-        result = self.get("/sb/brands")
+        result = await self.get("/sb/brands")
         return result if isinstance(result, list) else []
 
-    def list_stores(self, brand_entity_id: str | None = None) -> JSONList:
+    async def list_stores(self, brand_entity_id: str | None = None) -> JSONList:
         """获取品牌旗舰店列表"""
         params = {}
         if brand_entity_id:
             params["brandEntityId"] = brand_entity_id
-        result = self.get("/sb/stores", params=params or None)
+        result = await self.get("/sb/stores", params=params or None)
         return result if isinstance(result, list) else []
 
     # ============ Moderation (审核状态) ============
 
-    def get_moderation_status(self, ad_ids: list[str]) -> JSONList:
+    async def get_moderation_status(self, ad_ids: list[str]) -> JSONList:
         """
         获取广告审核状态
         
         SB广告需要经过Amazon审核
         """
-        result = self.post("/sb/moderation", json_data={"adIds": ad_ids})
+        result = await self.post("/sb/moderation", json_data={"adIds": ad_ids})
         return result if isinstance(result, list) else []
 
     # ============ 便捷方法 ============
 
-    def pause_ad(self, ad_id: str) -> JSONData:
+    async def pause_ad(self, ad_id: str) -> JSONData:
         """暂停广告"""
-        return self.update_ads([{"adId": ad_id, "state": "paused"}])
+        return await self.update_ads([{"adId": ad_id, "state": "paused"}])
 
-    def enable_ad(self, ad_id: str) -> JSONData:
+    async def enable_ad(self, ad_id: str) -> JSONData:
         """启用广告"""
-        return self.update_ads([{"adId": ad_id, "state": "enabled"}])
+        return await self.update_ads([{"adId": ad_id, "state": "enabled"}])
 
-    def list_all_ads(
+    async def list_all_ads(
         self,
         campaign_id: str | None = None,
         state_filter: str | None = None,
@@ -239,7 +239,7 @@ class SBAdsAPI(BaseAdsClient):
         next_token = None
 
         while True:
-            result = self.list_ads(
+            result = await self.list_ads(
                 campaign_id=campaign_id,
                 state_filter=state_filter,
                 max_results=100,
@@ -253,4 +253,3 @@ class SBAdsAPI(BaseAdsClient):
                 break
 
         return all_ads
-

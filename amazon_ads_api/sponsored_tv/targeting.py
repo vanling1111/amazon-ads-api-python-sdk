@@ -1,42 +1,37 @@
 """
-Sponsored TV Targeting API
-
-端点前缀: /st/targets, /st/locations
+Amazon Ads Sponsored TV Targeting API (异步版本)
 """
 
-from typing import Any, Dict, List, Optional
-from ..base import BaseAdsClient
+from typing import Any
+from ..base import BaseAdsClient, JSONData
 
 
 class SponsoredTVTargetingAPI(BaseAdsClient):
-    """Sponsored TV Targeting管理"""
-    
+    """Sponsored TV Targeting API (全异步)"""
+
     # ==================== Targeting Clauses ====================
-    
+
     async def create_targeting_clauses(
         self,
-        targets: List[Dict[str, Any]],
-    ) -> Dict[str, Any]:
+        targets: list[dict[str, Any]],
+    ) -> JSONData:
         """创建定向条件"""
-        return await self._request(
-            "POST",
-            "/st/targets",
-            json={"targets": targets}
-        )
-    
+        result = await self.post("/st/targets", json_data={"targets": targets})
+        return result if isinstance(result, dict) else {}
+
     async def list_targeting_clauses(
         self,
         *,
-        campaign_id_filter: Optional[List[str]] = None,
-        ad_group_id_filter: Optional[List[str]] = None,
-        target_id_filter: Optional[List[str]] = None,
-        states: Optional[List[str]] = None,
+        campaign_id_filter: list[str] | None = None,
+        ad_group_id_filter: list[str] | None = None,
+        target_id_filter: list[str] | None = None,
+        states: list[str] | None = None,
         max_results: int = 100,
-        next_token: Optional[str] = None,
-    ) -> Dict[str, Any]:
+        next_token: str | None = None,
+    ) -> JSONData:
         """获取定向条件列表"""
-        request_body: Dict[str, Any] = {"maxResults": max_results}
-        
+        request_body: dict[str, Any] = {"maxResults": max_results}
+
         if campaign_id_filter:
             request_body["campaignIdFilter"] = {"include": campaign_id_filter}
         if ad_group_id_filter:
@@ -47,72 +42,61 @@ class SponsoredTVTargetingAPI(BaseAdsClient):
             request_body["stateFilter"] = {"include": states}
         if next_token:
             request_body["nextToken"] = next_token
-            
-        return await self._request("POST", "/st/targets/list", json=request_body)
-    
+
+        result = await self.post("/st/targets/list", json_data=request_body)
+        return result if isinstance(result, dict) else {"targets": []}
+
     async def update_targeting_clauses(
         self,
-        targets: List[Dict[str, Any]],
-    ) -> Dict[str, Any]:
+        targets: list[dict[str, Any]],
+    ) -> JSONData:
         """更新定向条件"""
-        return await self._request(
-            "PUT",
-            "/st/targets",
-            json={"targets": targets}
-        )
-    
+        result = await self.put("/st/targets", json_data={"targets": targets})
+        return result if isinstance(result, dict) else {}
+
     async def delete_targeting_clauses(
         self,
-        target_ids: List[str],
-    ) -> Dict[str, Any]:
+        target_ids: list[str],
+    ) -> JSONData:
         """删除定向条件"""
-        return await self._request(
-            "POST",
-            "/st/targets/delete",
-            json={"targetIds": target_ids}
-        )
-    
+        result = await self.post("/st/targets/delete", json_data={"targetIds": target_ids})
+        return result if isinstance(result, dict) else {}
+
     # ==================== Locations ====================
-    
+
     async def create_locations(
         self,
-        locations: List[Dict[str, Any]],
-    ) -> Dict[str, Any]:
+        locations: list[dict[str, Any]],
+    ) -> JSONData:
         """创建地理位置定向"""
-        return await self._request(
-            "POST",
-            "/st/locations",
-            json={"locations": locations}
-        )
-    
+        result = await self.post("/st/locations", json_data={"locations": locations})
+        return result if isinstance(result, dict) else {}
+
     async def list_locations(
         self,
         *,
-        campaign_id_filter: Optional[List[str]] = None,
-        location_id_filter: Optional[List[str]] = None,
+        campaign_id_filter: list[str] | None = None,
+        location_id_filter: list[str] | None = None,
         max_results: int = 100,
-        next_token: Optional[str] = None,
-    ) -> Dict[str, Any]:
+        next_token: str | None = None,
+    ) -> JSONData:
         """获取地理位置定向列表"""
-        request_body: Dict[str, Any] = {"maxResults": max_results}
-        
+        request_body: dict[str, Any] = {"maxResults": max_results}
+
         if campaign_id_filter:
             request_body["campaignIdFilter"] = {"include": campaign_id_filter}
         if location_id_filter:
             request_body["locationIdFilter"] = {"include": location_id_filter}
         if next_token:
             request_body["nextToken"] = next_token
-            
-        return await self._request("POST", "/st/locations/list", json=request_body)
-    
+
+        result = await self.post("/st/locations/list", json_data=request_body)
+        return result if isinstance(result, dict) else {"locations": []}
+
     async def delete_locations(
         self,
-        location_ids: List[str],
-    ) -> Dict[str, Any]:
+        location_ids: list[str],
+    ) -> JSONData:
         """删除地理位置定向"""
-        return await self._request(
-            "POST",
-            "/st/locations/delete",
-            json={"locationIds": location_ids}
-        )
-
+        result = await self.post("/st/locations/delete", json_data={"locationIds": location_ids})
+        return result if isinstance(result, dict) else {}

@@ -1,57 +1,33 @@
 """
-Amazon Ads Marketing Mix Modeling (MMM) API
-
-官方文档: https://advertising.amazon.com/API/docs/en-us/guides/reporting/marketing-mix-modeling/overview
-OpenAPI: https://d1y2lf8k3vrkfu.cloudfront.net/openapi/en-us/dest/MarketingMixModeling_prod_3p.json
+Amazon Ads Marketing Mix Modeling (MMM) API (异步版本)
+营销组合建模
 """
 
-from typing import Any, Dict, List, Optional
-from ..base import BaseAdsClient
+from typing import Any
+from ..base import BaseAdsClient, JSONData, JSONList
 
 
 class MarketingMixModelingAPI(BaseAdsClient):
-    """Marketing Mix Modeling API - 营销组合建模
-    
-    获取用于营销组合建模的数据馈送。
-    """
-    
-    # ==================== 数据馈送 ====================
-    
-    async def list_data_feeds(self) -> List[Dict[str, Any]]:
-        """获取可用的MMM数据馈送列表
-        
-        Returns:
-            数据馈送列表
-        """
-        response = await self._make_request(
-            "GET",
-            "/mmm/feeds",
-        )
-        return response.get("feeds", [])
-    
+    """Marketing Mix Modeling API (全异步)"""
+
+    async def list_data_feeds(self) -> JSONList:
+        """获取可用的MMM数据馈送列表"""
+        response = await self.get("/mmm/feeds")
+        if isinstance(response, dict):
+            return response.get("feeds", [])
+        return []
+
     async def create_data_feed(
         self,
         name: str,
         start_date: str,
         end_date: str,
         granularity: str = "DAILY",
-        dimensions: Optional[List[str]] = None,
-        metrics: Optional[List[str]] = None,
-    ) -> Dict[str, Any]:
-        """创建MMM数据馈送请求
-        
-        Args:
-            name: 馈送名称
-            start_date: 开始日期 (YYYY-MM-DD)
-            end_date: 结束日期 (YYYY-MM-DD)
-            granularity: 时间粒度 (DAILY, WEEKLY)
-            dimensions: 维度列表
-            metrics: 指标列表
-            
-        Returns:
-            创建的数据馈送
-        """
-        data = {
+        dimensions: list[str] | None = None,
+        metrics: list[str] | None = None,
+    ) -> JSONData:
+        """创建MMM数据馈送请求"""
+        data: dict[str, Any] = {
             "name": name,
             "startDate": start_date,
             "endDate": end_date,
@@ -61,102 +37,47 @@ class MarketingMixModelingAPI(BaseAdsClient):
             data["dimensions"] = dimensions
         if metrics:
             data["metrics"] = metrics
-            
-        return await self._make_request(
-            "POST",
-            "/mmm/feeds",
-            json=data,
-        )
-    
-    async def get_data_feed(
-        self,
-        feed_id: str,
-    ) -> Dict[str, Any]:
-        """获取数据馈送状态
-        
-        Args:
-            feed_id: 馈送ID
-            
-        Returns:
-            馈送详情
-        """
-        return await self._make_request(
-            "GET",
-            f"/mmm/feeds/{feed_id}",
-        )
-    
-    async def download_data_feed(
-        self,
-        feed_id: str,
-    ) -> bytes:
-        """下载数据馈送文件
-        
-        Args:
-            feed_id: 馈送ID
-            
-        Returns:
-            文件内容
-        """
-        return await self._make_request(
-            "GET",
-            f"/mmm/feeds/{feed_id}/download",
-        )
-    
-    # ==================== 数据规范 ====================
-    
-    async def get_available_dimensions(self) -> List[Dict[str, Any]]:
-        """获取可用维度列表
-        
-        Returns:
-            维度列表
-        """
-        response = await self._make_request(
-            "GET",
-            "/mmm/dimensions",
-        )
-        return response.get("dimensions", [])
-    
-    async def get_available_metrics(self) -> List[Dict[str, Any]]:
-        """获取可用指标列表
-        
-        Returns:
-            指标列表
-        """
-        response = await self._make_request(
-            "GET",
-            "/mmm/metrics",
-        )
-        return response.get("metrics", [])
-    
-    # ==================== 数据验证 ====================
-    
+
+        result = await self.post("/mmm/feeds", json_data=data)
+        return result if isinstance(result, dict) else {}
+
+    async def get_data_feed(self, feed_id: str) -> JSONData:
+        """获取数据馈送状态"""
+        result = await self.get(f"/mmm/feeds/{feed_id}")
+        return result if isinstance(result, dict) else {}
+
+    async def download_data_feed(self, feed_id: str) -> JSONData:
+        """下载数据馈送文件"""
+        result = await self.get(f"/mmm/feeds/{feed_id}/download")
+        return result if isinstance(result, dict) else {}
+
+    async def get_available_dimensions(self) -> JSONList:
+        """获取可用维度列表"""
+        response = await self.get("/mmm/dimensions")
+        if isinstance(response, dict):
+            return response.get("dimensions", [])
+        return []
+
+    async def get_available_metrics(self) -> JSONList:
+        """获取可用指标列表"""
+        response = await self.get("/mmm/metrics")
+        if isinstance(response, dict):
+            return response.get("metrics", [])
+        return []
+
     async def validate_feed_request(
         self,
         start_date: str,
         end_date: str,
-        dimensions: List[str],
-        metrics: List[str],
-    ) -> Dict[str, Any]:
-        """验证数据馈送请求
-        
-        Args:
-            start_date: 开始日期
-            end_date: 结束日期
-            dimensions: 维度列表
-            metrics: 指标列表
-            
-        Returns:
-            验证结果
-        """
+        dimensions: list[str],
+        metrics: list[str],
+    ) -> JSONData:
+        """验证数据馈送请求"""
         data = {
             "startDate": start_date,
             "endDate": end_date,
             "dimensions": dimensions,
             "metrics": metrics,
         }
-        return await self._make_request(
-            "POST",
-            "/mmm/feeds/validate",
-            json=data,
-        )
-
+        result = await self.post("/mmm/feeds/validate", json_data=data)
+        return result if isinstance(result, dict) else {}

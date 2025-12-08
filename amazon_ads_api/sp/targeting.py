@@ -1,5 +1,5 @@
 """
-Sponsored Products - Targeting API
+Sponsored Products - Targeting API (异步版本)
 SP产品定向管理（Product Ads + Targets + Negative Targets）
 """
 
@@ -7,11 +7,11 @@ from ..base import BaseAdsClient, JSONData, JSONList
 
 
 class SPTargetingAPI(BaseAdsClient):
-    """SP Targeting API"""
+    """SP Targeting API (全异步)"""
 
     # ============ Product Ads ============
 
-    def list_product_ads(
+    async def list_product_ads(
         self,
         ad_group_id: str | None = None,
         campaign_id: str | None = None,
@@ -30,15 +30,15 @@ class SPTargetingAPI(BaseAdsClient):
         if next_token:
             params["nextToken"] = next_token
 
-        result = self.post("/sp/productAds/list", json_data=params)
+        result = await self.post("/sp/productAds/list", json_data=params)
         return result if isinstance(result, dict) else {"productAds": []}
 
-    def get_product_ad(self, ad_id: str) -> JSONData:
+    async def get_product_ad(self, ad_id: str) -> JSONData:
         """获取单个Product Ad详情"""
-        result = self.get(f"/sp/productAds/{ad_id}")
+        result = await self.get(f"/sp/productAds/{ad_id}")
         return result if isinstance(result, dict) else {}
 
-    def create_product_ads(self, product_ads: JSONList) -> JSONData:
+    async def create_product_ads(self, product_ads: JSONList) -> JSONData:
         """
         批量创建Product Ad
         
@@ -53,21 +53,21 @@ class SPTargetingAPI(BaseAdsClient):
                 }
             ]
         """
-        result = self.post("/sp/productAds", json_data={"productAds": product_ads})
+        result = await self.post("/sp/productAds", json_data={"productAds": product_ads})
         return result if isinstance(result, dict) else {"productAds": {"success": [], "error": []}}
 
-    def update_product_ads(self, product_ads: JSONList) -> JSONData:
+    async def update_product_ads(self, product_ads: JSONList) -> JSONData:
         """批量更新Product Ad"""
-        result = self.put("/sp/productAds", json_data={"productAds": product_ads})
+        result = await self.put("/sp/productAds", json_data={"productAds": product_ads})
         return result if isinstance(result, dict) else {"productAds": {"success": [], "error": []}}
 
-    def delete_product_ad(self, ad_id: str) -> JSONData:
+    async def delete_product_ad(self, ad_id: str) -> JSONData:
         """归档Product Ad"""
-        return self.delete(f"/sp/productAds/{ad_id}")
+        return await self.delete(f"/sp/productAds/{ad_id}")
 
     # ============ Targets (Product Targeting) ============
 
-    def list_targets(
+    async def list_targets(
         self,
         ad_group_id: str | None = None,
         campaign_id: str | None = None,
@@ -86,15 +86,15 @@ class SPTargetingAPI(BaseAdsClient):
         if next_token:
             params["nextToken"] = next_token
 
-        result = self.post("/sp/targets/list", json_data=params)
+        result = await self.post("/sp/targets/list", json_data=params)
         return result if isinstance(result, dict) else {"targetingClauses": []}
 
-    def get_target(self, target_id: str) -> JSONData:
+    async def get_target(self, target_id: str) -> JSONData:
         """获取单个Target详情"""
-        result = self.get(f"/sp/targets/{target_id}")
+        result = await self.get(f"/sp/targets/{target_id}")
         return result if isinstance(result, dict) else {}
 
-    def create_targets(self, targets: JSONList) -> JSONData:
+    async def create_targets(self, targets: JSONList) -> JSONData:
         """
         批量创建Target
         
@@ -112,41 +112,41 @@ class SPTargetingAPI(BaseAdsClient):
                 }
             ]
         """
-        result = self.post("/sp/targets", json_data={"targetingClauses": targets})
+        result = await self.post("/sp/targets", json_data={"targetingClauses": targets})
         return result if isinstance(result, dict) else {"targetingClauses": {"success": [], "error": []}}
 
-    def update_targets(self, targets: JSONList) -> JSONData:
+    async def update_targets(self, targets: JSONList) -> JSONData:
         """
         批量更新Target
         
         Args:
             targets: [{"targetId": "xxx", "state": "paused", "bid": 1.5}]
         """
-        result = self.put("/sp/targets", json_data={"targetingClauses": targets})
+        result = await self.put("/sp/targets", json_data={"targetingClauses": targets})
         return result if isinstance(result, dict) else {"targetingClauses": {"success": [], "error": []}}
 
-    def delete_target(self, target_id: str) -> JSONData:
+    async def delete_target(self, target_id: str) -> JSONData:
         """归档Target"""
-        return self.delete(f"/sp/targets/{target_id}")
+        return await self.delete(f"/sp/targets/{target_id}")
 
     # ============ 便捷方法 ============
 
-    def update_target_bid(self, target_id: str, bid: float) -> JSONData:
+    async def update_target_bid(self, target_id: str, bid: float) -> JSONData:
         """更新Target竞价"""
-        return self.update_targets([{"targetId": target_id, "bid": bid}])
+        return await self.update_targets([{"targetId": target_id, "bid": bid}])
 
-    def batch_update_target_bids(self, bid_updates: list[dict]) -> JSONData:
+    async def batch_update_target_bids(self, bid_updates: list[dict]) -> JSONData:
         """
         批量更新Target竞价
         
         Args:
             bid_updates: [{"targetId": "xxx", "bid": 1.5}, ...]
         """
-        return self.update_targets(bid_updates)
+        return await self.update_targets(bid_updates)
 
     # ============ Negative Targets (Ad Group级别) ============
 
-    def list_negative_targets(
+    async def list_negative_targets(
         self,
         ad_group_id: str | None = None,
         campaign_id: str | None = None,
@@ -162,10 +162,10 @@ class SPTargetingAPI(BaseAdsClient):
         if next_token:
             params["nextToken"] = next_token
 
-        result = self.post("/sp/negativeTargets/list", json_data=params)
+        result = await self.post("/sp/negativeTargets/list", json_data=params)
         return result if isinstance(result, dict) else {"negativeTargetingClauses": []}
 
-    def create_negative_targets(self, targets: JSONList) -> JSONData:
+    async def create_negative_targets(self, targets: JSONList) -> JSONData:
         """
         批量创建Negative Target
         
@@ -182,16 +182,16 @@ class SPTargetingAPI(BaseAdsClient):
                 }
             ]
         """
-        result = self.post("/sp/negativeTargets", json_data={"negativeTargetingClauses": targets})
+        result = await self.post("/sp/negativeTargets", json_data={"negativeTargetingClauses": targets})
         return result if isinstance(result, dict) else {"negativeTargetingClauses": {"success": [], "error": []}}
 
-    def delete_negative_target(self, target_id: str) -> JSONData:
+    async def delete_negative_target(self, target_id: str) -> JSONData:
         """删除Negative Target"""
-        return self.delete(f"/sp/negativeTargets/{target_id}")
+        return await self.delete(f"/sp/negativeTargets/{target_id}")
 
     # ============ Campaign Negative Targets ============
 
-    def list_campaign_negative_targets(
+    async def list_campaign_negative_targets(
         self,
         campaign_id: str | None = None,
         max_results: int = 100,
@@ -204,21 +204,21 @@ class SPTargetingAPI(BaseAdsClient):
         if next_token:
             params["nextToken"] = next_token
 
-        result = self.post("/sp/campaignNegativeTargets/list", json_data=params)
+        result = await self.post("/sp/campaignNegativeTargets/list", json_data=params)
         return result if isinstance(result, dict) else {"campaignNegativeTargetingClauses": []}
 
-    def create_campaign_negative_targets(self, targets: JSONList) -> JSONData:
+    async def create_campaign_negative_targets(self, targets: JSONList) -> JSONData:
         """批量创建Campaign Negative Target"""
-        result = self.post("/sp/campaignNegativeTargets", json_data={"campaignNegativeTargetingClauses": targets})
+        result = await self.post("/sp/campaignNegativeTargets", json_data={"campaignNegativeTargetingClauses": targets})
         return result if isinstance(result, dict) else {"campaignNegativeTargetingClauses": {"success": [], "error": []}}
 
-    def delete_campaign_negative_target(self, target_id: str) -> JSONData:
+    async def delete_campaign_negative_target(self, target_id: str) -> JSONData:
         """删除Campaign Negative Target"""
-        return self.delete(f"/sp/campaignNegativeTargets/{target_id}")
+        return await self.delete(f"/sp/campaignNegativeTargets/{target_id}")
 
     # ============ 批量获取 ============
 
-    def list_all_targets(
+    async def list_all_targets(
         self,
         campaign_id: str | None = None,
         ad_group_id: str | None = None,
@@ -229,7 +229,7 @@ class SPTargetingAPI(BaseAdsClient):
         next_token = None
 
         while True:
-            result = self.list_targets(
+            result = await self.list_targets(
                 campaign_id=campaign_id,
                 ad_group_id=ad_group_id,
                 state_filter=state_filter,
@@ -244,4 +244,3 @@ class SPTargetingAPI(BaseAdsClient):
                 break
 
         return all_targets
-

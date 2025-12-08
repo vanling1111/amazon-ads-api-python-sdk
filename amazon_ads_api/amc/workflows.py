@@ -1,71 +1,43 @@
 """
-Amazon Marketing Cloud Workflows API
-
-官方文档: https://advertising.amazon.com/API/docs/en-us/amc/amc-workflows
-OpenAPI: https://d1y2lf8k3vrkfu.cloudfront.net/openapi/en-us/dest/AMC_Workflow_API_prod_3p.json
+Amazon Marketing Cloud Workflows API (异步版本)
+AMC工作流管理
 """
 
-from typing import Any, Dict, List, Optional
-from ..base import BaseAdsClient
+from typing import Any
+from ..base import BaseAdsClient, JSONData, JSONList
 
 
 class AMCWorkflowsAPI(BaseAdsClient):
-    """AMC Workflows API - 工作流管理
-    
-    管理AMC自动化工作流。
-    """
-    
+    """AMC Workflows API (全异步)"""
+
     # ==================== 工作流管理 ====================
-    
+
     async def list_workflows(
         self,
-        state: Optional[str] = None,
+        state: str | None = None,
         max_results: int = 100,
-        next_token: Optional[str] = None,
-    ) -> Dict[str, Any]:
-        """获取工作流列表
-        
-        Args:
-            state: 状态 (ACTIVE, PAUSED, DELETED)
-            max_results: 最大结果数
-            next_token: 分页token
-            
-        Returns:
-            工作流列表
-        """
-        params = {"maxResults": max_results}
+        next_token: str | None = None,
+    ) -> JSONData:
+        """获取工作流列表"""
+        params: dict[str, Any] = {"maxResults": max_results}
         if state:
             params["state"] = state
         if next_token:
             params["nextToken"] = next_token
-            
-        return await self._make_request(
-            "GET",
-            "/amc/workflows",
-            params=params,
-        )
-    
+
+        result = await self.get("/amc/workflows", params=params)
+        return result if isinstance(result, dict) else {"workflows": []}
+
     async def create_workflow(
         self,
         name: str,
         query_id: str,
         schedule: str,
-        description: Optional[str] = None,
-        output_config: Optional[Dict[str, Any]] = None,
-    ) -> Dict[str, Any]:
-        """创建工作流
-        
-        Args:
-            name: 工作流名称
-            query_id: 关联的查询ID
-            schedule: 调度表达式（cron格式）
-            description: 描述
-            output_config: 输出配置
-            
-        Returns:
-            创建的工作流
-        """
-        data = {
+        description: str | None = None,
+        output_config: dict[str, Any] | None = None,
+    ) -> JSONData:
+        """创建工作流"""
+        data: dict[str, Any] = {
             "name": name,
             "queryId": query_id,
             "schedule": schedule,
@@ -74,51 +46,25 @@ class AMCWorkflowsAPI(BaseAdsClient):
             data["description"] = description
         if output_config:
             data["outputConfig"] = output_config
-            
-        return await self._make_request(
-            "POST",
-            "/amc/workflows",
-            json=data,
-        )
-    
-    async def get_workflow(
-        self,
-        workflow_id: str,
-    ) -> Dict[str, Any]:
-        """获取工作流详情
-        
-        Args:
-            workflow_id: 工作流ID
-            
-        Returns:
-            工作流详情
-        """
-        return await self._make_request(
-            "GET",
-            f"/amc/workflows/{workflow_id}",
-        )
-    
+
+        result = await self.post("/amc/workflows", json_data=data)
+        return result if isinstance(result, dict) else {}
+
+    async def get_workflow(self, workflow_id: str) -> JSONData:
+        """获取工作流详情"""
+        result = await self.get(f"/amc/workflows/{workflow_id}")
+        return result if isinstance(result, dict) else {}
+
     async def update_workflow(
         self,
         workflow_id: str,
-        name: Optional[str] = None,
-        schedule: Optional[str] = None,
-        description: Optional[str] = None,
-        state: Optional[str] = None,
-    ) -> Dict[str, Any]:
-        """更新工作流
-        
-        Args:
-            workflow_id: 工作流ID
-            name: 工作流名称
-            schedule: 调度表达式
-            description: 描述
-            state: 状态 (ACTIVE, PAUSED)
-            
-        Returns:
-            更新后的工作流
-        """
-        data = {}
+        name: str | None = None,
+        schedule: str | None = None,
+        description: str | None = None,
+        state: str | None = None,
+    ) -> JSONData:
+        """更新工作流"""
+        data: dict[str, Any] = {}
         if name:
             data["name"] = name
         if schedule:
@@ -127,138 +73,78 @@ class AMCWorkflowsAPI(BaseAdsClient):
             data["description"] = description
         if state:
             data["state"] = state
-            
-        return await self._make_request(
-            "PUT",
-            f"/amc/workflows/{workflow_id}",
-            json=data,
-        )
-    
-    async def delete_workflow(
-        self,
-        workflow_id: str,
-    ) -> None:
-        """删除工作流
-        
-        Args:
-            workflow_id: 工作流ID
-        """
-        await self._make_request(
-            "DELETE",
-            f"/amc/workflows/{workflow_id}",
-        )
-    
+
+        result = await self.put(f"/amc/workflows/{workflow_id}", json_data=data)
+        return result if isinstance(result, dict) else {}
+
+    async def delete_workflow(self, workflow_id: str) -> JSONData:
+        """删除工作流"""
+        result = await self.delete(f"/amc/workflows/{workflow_id}")
+        return result if isinstance(result, dict) else {}
+
     # ==================== 工作流执行 ====================
-    
+
     async def trigger_workflow(
         self,
         workflow_id: str,
-        parameters: Optional[Dict[str, Any]] = None,
-    ) -> Dict[str, Any]:
-        """手动触发工作流
-        
-        Args:
-            workflow_id: 工作流ID
-            parameters: 执行参数
-            
-        Returns:
-            执行任务信息
-        """
-        return await self._make_request(
-            "POST",
+        parameters: dict[str, Any] | None = None,
+    ) -> JSONData:
+        """手动触发工作流"""
+        result = await self.post(
             f"/amc/workflows/{workflow_id}/trigger",
-            json=parameters if parameters else None,
+            json_data=parameters if parameters else None,
         )
-    
+        return result if isinstance(result, dict) else {}
+
     async def list_workflow_executions(
         self,
         workflow_id: str,
-        status: Optional[str] = None,
+        status: str | None = None,
         max_results: int = 100,
-        next_token: Optional[str] = None,
-    ) -> Dict[str, Any]:
-        """获取工作流执行历史
-        
-        Args:
-            workflow_id: 工作流ID
-            status: 执行状态 (RUNNING, COMPLETED, FAILED)
-            max_results: 最大结果数
-            next_token: 分页token
-            
-        Returns:
-            执行历史列表
-        """
-        params = {"maxResults": max_results}
+        next_token: str | None = None,
+    ) -> JSONData:
+        """获取工作流执行历史"""
+        params: dict[str, Any] = {"maxResults": max_results}
         if status:
             params["status"] = status
         if next_token:
             params["nextToken"] = next_token
-            
-        return await self._make_request(
-            "GET",
-            f"/amc/workflows/{workflow_id}/executions",
-            params=params,
-        )
-    
+
+        result = await self.get(f"/amc/workflows/{workflow_id}/executions", params=params)
+        return result if isinstance(result, dict) else {"executions": []}
+
     async def get_workflow_execution(
         self,
         workflow_id: str,
         execution_id: str,
-    ) -> Dict[str, Any]:
-        """获取工作流执行详情
-        
-        Args:
-            workflow_id: 工作流ID
-            execution_id: 执行ID
-            
-        Returns:
-            执行详情
-        """
-        return await self._make_request(
-            "GET",
-            f"/amc/workflows/{workflow_id}/executions/{execution_id}",
-        )
-    
+    ) -> JSONData:
+        """获取工作流执行详情"""
+        result = await self.get(f"/amc/workflows/{workflow_id}/executions/{execution_id}")
+        return result if isinstance(result, dict) else {}
+
     # ==================== 输出管理 ====================
-    
+
     async def list_workflow_outputs(
         self,
         workflow_id: str,
         execution_id: str,
-    ) -> List[Dict[str, Any]]:
-        """获取工作流输出列表
-        
-        Args:
-            workflow_id: 工作流ID
-            execution_id: 执行ID
-            
-        Returns:
-            输出列表
-        """
-        response = await self._make_request(
-            "GET",
-            f"/amc/workflows/{workflow_id}/executions/{execution_id}/outputs",
+    ) -> JSONList:
+        """获取工作流输出列表"""
+        response = await self.get(
+            f"/amc/workflows/{workflow_id}/executions/{execution_id}/outputs"
         )
-        return response.get("outputs", [])
-    
+        if isinstance(response, dict):
+            return response.get("outputs", [])
+        return []
+
     async def download_workflow_output(
         self,
         workflow_id: str,
         execution_id: str,
         output_id: str,
-    ) -> bytes:
-        """下载工作流输出
-        
-        Args:
-            workflow_id: 工作流ID
-            execution_id: 执行ID
-            output_id: 输出ID
-            
-        Returns:
-            输出内容
-        """
-        return await self._make_request(
-            "GET",
-            f"/amc/workflows/{workflow_id}/executions/{execution_id}/outputs/{output_id}/download",
+    ) -> JSONData:
+        """下载工作流输出"""
+        result = await self.get(
+            f"/amc/workflows/{workflow_id}/executions/{execution_id}/outputs/{output_id}/download"
         )
-
+        return result if isinstance(result, dict) else {}

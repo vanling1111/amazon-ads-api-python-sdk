@@ -46,20 +46,20 @@ Amazon Ads API Python SDK
     ```
 """
 
-# 基础类
+# ============ 基础类 ============
 from .base import (
     BaseAdsClient,
     AdsRegion,
     AmazonAdsError,
 )
 
-# 统一客户端
+# ============ 统一客户端 ============
 from .client import (
     AmazonAdsClient,
     AdsAPIClient,  # 兼容别名
 )
 
-# SP模块
+# ============ SP (Sponsored Products) ============
 from .sp import (
     SPCampaignsAPI,
     SPAdGroupsAPI,
@@ -67,48 +67,170 @@ from .sp import (
     SPTargetingAPI,
     SPBudgetRulesAPI,
     SPRecommendationsAPI,
+    SPProductEligibilityAPI,
+    SPThemeTargetingAPI,
 )
 
-# SB模块
+# ============ SB (Sponsored Brands) ============
 from .sb import (
     SBCampaignsAPI,
     SBAdsAPI,
     SBKeywordsAPI,
     SBCreativesAPI,
+    SBBrandVideoAPI,
+    SBModerationAPI,
 )
 
-# SD模块
+# ============ SD (Sponsored Display) ============
 from .sd import (
     SDCampaignsAPI,
     SDTargetingAPI,
     SDCreativesAPI,
+    SDAudiencesAPI,
+    SDModerationAPI,
 )
 
-# DSP模块
+# ============ DSP ============
 from .dsp import (
     DSPAudiencesAPI,
+    DSPAdvertisersAPI,
+    DSPOrdersAPI,
+    DSPLineItemsAPI,
+    DSPCreativesAPI,
+    DSPInventoryAPI,
+    DSPMeasurementAPI,
+    DSPConversionsAPI,
+    DSPTargetKPIAPI,
 )
 
-# Reporting模块
+# ============ Reporting ============
 from .reporting import (
     ReportsV3API,
     BrandMetricsAPI,
+    StoresAnalyticsAPI,
+    MarketingMixModelingAPI,
 )
 
-# Accounts模块
+# ============ Accounts ============
 from .accounts import (
     ProfilesAPI,
     PortfoliosAPI,
     BillingAPI,
+    AccountBudgetsAPI,
+    TestAccountsAPI,
 )
 
-# Common模块
+# ============ Common ============
 from .common import (
     AttributionAPI,
     StoresAPI,
     AssetsAPI,
     HistoryAPI,
 )
+
+# ============ Insights ============
+from .insights import (
+    CategoryInsightsAPI,
+    KeywordInsightsAPI,
+    AudienceInsightsAPI,
+)
+
+# ============ Recommendations ============
+from .recommendations import (
+    PartnerOpportunitiesAPI,
+    TacticalRecommendationsAPI,
+    PersonaBuilderAPI,
+)
+
+# ============ Data Provider ============
+from .data_provider import (
+    DataProviderMetadataAPI,
+    DataProviderRecordsAPI,
+    HashedRecordsAPI,
+)
+
+# ============ Moderation ============
+from .moderation import (
+    PreModerationAPI,
+    UnifiedModerationAPI,
+)
+
+# ============ AMC ============
+from .amc import (
+    AMCQueriesAPI,
+    AMCAudiencesAPI,
+    AMCWorkflowsAPI,
+)
+
+# ============ Sponsored TV ============
+from .sponsored_tv import (
+    SponsoredTVCampaignsAPI,
+    SponsoredTVAdGroupsAPI,
+    SponsoredTVAdsAPI,
+    SponsoredTVCreativesAPI,
+    SponsoredTVTargetingAPI,
+)
+
+# ============ Retail Ad Service ============
+from .retail_ad_service import (
+    RASCampaignsAPI,
+    RASAdGroupsAPI,
+    RASProductAdsAPI,
+    RASTargetsAPI,
+)
+
+# ============ Eligibility ============
+from .eligibility import EligibilityAPI
+
+# ============ Locations ============
+from .locations import LocationsAPI
+
+# ============ Exports ============
+from .exports import ExportsAPI
+
+# ============ Marketing Stream ============
+from .stream import MarketingStreamAPI
+
+# ============ Media Planning ============
+from .media_planning import ReachForecastingAPI
+
+# ============ Manager Accounts ============
+from .manager_accounts import ManagerAccountsAPI
+
+# ============ Posts ============
+from .posts import PostsAPI
+
+# ============ Product Metadata ============
+from .product_metadata import ProductMetadataAPI
+
+# ============ Audiences Discovery ============
+from .audiences_discovery import AudiencesDiscoveryAPI
+
+# ============ Products ============
+from .products import ProductSelectorAPI
+
+# ============ Amazon Ads V1 ============
+from .amazon_ads_v1 import AmazonAdsV1API
+
+# ============ Ad Library ============
+from .ad_library import (
+    AdLibraryAPI,
+    AdType,
+    NameMatchType,
+)
+
+# ============ Brand Home ============
+from .brand_home import BrandHomeAPI
+
+# ============ Localization ============
+from .localization import LocalizationAPI
+
+# ============ Ads Data Manager ============
+from .ads_data_manager import AdsDataManagerAPI
+
+# ============ Brand Associations ============
+from .brand_associations import BrandAssociationsAPI
+
 
 __version__ = "1.0.0"
 
@@ -129,27 +251,100 @@ __all__ = [
     "SPTargetingAPI",
     "SPBudgetRulesAPI",
     "SPRecommendationsAPI",
+    "SPProductEligibilityAPI",
+    "SPThemeTargetingAPI",
     # SB
     "SBCampaignsAPI",
     "SBAdsAPI",
     "SBKeywordsAPI",
     "SBCreativesAPI",
+    "SBBrandVideoAPI",
+    "SBModerationAPI",
     # SD
     "SDCampaignsAPI",
     "SDTargetingAPI",
     "SDCreativesAPI",
+    "SDAudiencesAPI",
+    "SDModerationAPI",
     # DSP
     "DSPAudiencesAPI",
+    "DSPAdvertisersAPI",
+    "DSPOrdersAPI",
+    "DSPLineItemsAPI",
+    "DSPCreativesAPI",
+    "DSPInventoryAPI",
+    "DSPMeasurementAPI",
+    "DSPConversionsAPI",
+    "DSPTargetKPIAPI",
     # Reporting
     "ReportsV3API",
     "BrandMetricsAPI",
+    "StoresAnalyticsAPI",
+    "MarketingMixModelingAPI",
     # Accounts
     "ProfilesAPI",
     "PortfoliosAPI",
     "BillingAPI",
+    "AccountBudgetsAPI",
+    "TestAccountsAPI",
     # Common
     "AttributionAPI",
     "StoresAPI",
     "AssetsAPI",
     "HistoryAPI",
+    # Insights
+    "CategoryInsightsAPI",
+    "KeywordInsightsAPI",
+    "AudienceInsightsAPI",
+    # Recommendations
+    "PartnerOpportunitiesAPI",
+    "TacticalRecommendationsAPI",
+    "PersonaBuilderAPI",
+    # Data Provider
+    "DataProviderMetadataAPI",
+    "DataProviderRecordsAPI",
+    "HashedRecordsAPI",
+    # Moderation
+    "PreModerationAPI",
+    "UnifiedModerationAPI",
+    # AMC
+    "AMCQueriesAPI",
+    "AMCAudiencesAPI",
+    "AMCWorkflowsAPI",
+    # Sponsored TV
+    "SponsoredTVCampaignsAPI",
+    "SponsoredTVAdGroupsAPI",
+    "SponsoredTVAdsAPI",
+    "SponsoredTVCreativesAPI",
+    "SponsoredTVTargetingAPI",
+    # Retail Ad Service
+    "RASCampaignsAPI",
+    "RASAdGroupsAPI",
+    "RASProductAdsAPI",
+    "RASTargetsAPI",
+    # 其他
+    "EligibilityAPI",
+    "LocationsAPI",
+    "ExportsAPI",
+    "MarketingStreamAPI",
+    "ReachForecastingAPI",
+    "ManagerAccountsAPI",
+    "PostsAPI",
+    "ProductMetadataAPI",
+    "AudiencesDiscoveryAPI",
+    "ProductSelectorAPI",
+    # Amazon Ads V1
+    "AmazonAdsV1API",
+    # Ad Library
+    "AdLibraryAPI",
+    "AdType",
+    "NameMatchType",
+    # Brand Home
+    "BrandHomeAPI",
+    # Localization
+    "LocalizationAPI",
+    # Ads Data Manager
+    "AdsDataManagerAPI",
+    # Brand Associations
+    "BrandAssociationsAPI",
 ]

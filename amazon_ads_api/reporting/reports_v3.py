@@ -1,19 +1,19 @@
 """
-Reports API V3
+Reports API V3 (异步版本)
 统一报告接口（支持SP、SB、SD）
 """
 
-import time
+import asyncio
 from ..base import BaseAdsClient, JSONData, JSONList
 from loguru import logger
 
 
 class ReportsV3API(BaseAdsClient):
-    """Reports V3 API"""
+    """Reports V3 API (全异步)"""
 
     # ============ Report Request ============
 
-    def create_report(
+    async def create_report(
         self,
         report_type: str,
         time_unit: str,
@@ -54,26 +54,26 @@ class ReportsV3API(BaseAdsClient):
         if filters:
             body["configuration"]["filters"] = filters
 
-        result = self.post("/reporting/reports", json_data=body)
+        result = await self.post("/reporting/reports", json_data=body)
         return result if isinstance(result, dict) else {}
 
-    def get_report_status(self, report_id: str) -> JSONData:
+    async def get_report_status(self, report_id: str) -> JSONData:
         """
         获取报告状态
         
         Returns:
             status: PENDING | IN_PROGRESS | COMPLETED | FAILED
         """
-        result = self.get(f"/reporting/reports/{report_id}")
+        result = await self.get(f"/reporting/reports/{report_id}")
         return result if isinstance(result, dict) else {}
 
-    def download_report(self, report_id: str) -> JSONList:
+    async def download_report_data(self, report_id: str) -> JSONList:
         """
         下载报告数据
         
         需先确认报告状态为COMPLETED
         """
-        status = self.get_report_status(report_id)
+        status = await self.get_report_status(report_id)
         if status.get("status") != "COMPLETED":
             return []
 
@@ -81,11 +81,11 @@ class ReportsV3API(BaseAdsClient):
         if not url:
             return []
 
-        return super().download_report(url)
+        return await super().download_report(url)
 
-    # ============ 同步等待报告 ============
+    # ============ 异步等待报告 ============
 
-    def create_and_wait_report(
+    async def create_and_wait_report(
         self,
         report_type: str,
         time_unit: str,
@@ -98,14 +98,14 @@ class ReportsV3API(BaseAdsClient):
         poll_interval: int = 10,
     ) -> JSONList:
         """
-        创建报告并等待完成
+        创建报告并等待完成（异步）
         
         Args:
             max_wait_seconds: 最大等待秒数
             poll_interval: 轮询间隔秒数
         """
         # 创建报告
-        result = self.create_report(
+        result = await self.create_report(
             report_type=report_type,
             time_unit=time_unit,
             start_date=start_date,
@@ -122,21 +122,21 @@ class ReportsV3API(BaseAdsClient):
 
         logger.info(f"Report created: {report_id}")
 
-        # 等待完成
+        # 异步等待完成
         elapsed = 0
         while elapsed < max_wait_seconds:
-            status = self.get_report_status(report_id)
+            status = await self.get_report_status(report_id)
             state = status.get("status")
 
             if state == "COMPLETED":
                 logger.info(f"Report {report_id} completed")
-                return self.download_report(report_id)
+                return await self.download_report_data(report_id)
             elif state == "FAILED":
                 logger.error(f"Report {report_id} failed: {status}")
                 return []
 
             logger.debug(f"Report {report_id} status: {state}")
-            time.sleep(poll_interval)
+            await asyncio.sleep(poll_interval)  # 异步睡眠
             elapsed += poll_interval
 
         logger.warning(f"Report {report_id} timed out after {max_wait_seconds}s")
@@ -144,7 +144,7 @@ class ReportsV3API(BaseAdsClient):
 
     # ============ 常用报告快捷方法 ============
 
-    def get_campaign_performance_report(
+    async def get_campaign_performance_report(
         self,
         ad_product: str,
         start_date: str,
@@ -163,7 +163,7 @@ class ReportsV3API(BaseAdsClient):
             "sales14d", "unitsSold14d", "dpv14d",
         ]
 
-        return self.create_and_wait_report(
+        return await self.create_and_wait_report(
             report_type=report_type,
             time_unit=time_unit,
             start_date=start_date,
@@ -171,7 +171,7 @@ class ReportsV3API(BaseAdsClient):
             metrics=metrics,
         )
 
-    def get_keyword_performance_report(
+    async def get_keyword_performance_report(
         self,
         start_date: str,
         end_date: str,
@@ -183,7 +183,7 @@ class ReportsV3API(BaseAdsClient):
             "sales14d", "keywordId", "keyword", "matchType",
         ]
 
-        return self.create_and_wait_report(
+        return await self.create_and_wait_report(
             report_type="spKeywords",
             time_unit=time_unit,
             start_date=start_date,
@@ -191,7 +191,7 @@ class ReportsV3API(BaseAdsClient):
             metrics=metrics,
         )
 
-    def get_search_term_report(
+    async def get_search_term_report(
         self,
         start_date: str,
         end_date: str,
@@ -203,7 +203,7 @@ class ReportsV3API(BaseAdsClient):
             "sales14d", "searchTerm", "keywordId", "keyword",
         ]
 
-        return self.create_and_wait_report(
+        return await self.create_and_wait_report(
             report_type="spSearchTerm",
             time_unit=time_unit,
             start_date=start_date,
@@ -211,7 +211,7 @@ class ReportsV3API(BaseAdsClient):
             metrics=metrics,
         )
 
-    def get_targeting_report(
+    async def get_targeting_report(
         self,
         ad_product: str,
         start_date: str,
@@ -225,7 +225,7 @@ class ReportsV3API(BaseAdsClient):
             "sales14d", "targetId", "targetingExpression",
         ]
 
-        return self.create_and_wait_report(
+        return await self.create_and_wait_report(
             report_type=report_type,
             time_unit=time_unit,
             start_date=start_date,
@@ -233,7 +233,7 @@ class ReportsV3API(BaseAdsClient):
             metrics=metrics,
         )
 
-    def get_placement_report(
+    async def get_placement_report(
         self,
         start_date: str,
         end_date: str,
@@ -245,7 +245,7 @@ class ReportsV3API(BaseAdsClient):
             "sales14d", "campaignId", "placement",
         ]
 
-        return self.create_and_wait_report(
+        return await self.create_and_wait_report(
             report_type="spCampaigns",
             time_unit=time_unit,
             start_date=start_date,
@@ -256,17 +256,16 @@ class ReportsV3API(BaseAdsClient):
 
     # ============ 报告可用字段 ============
 
-    def get_report_type_configuration(self, report_type: str) -> JSONData:
+    async def get_report_type_configuration(self, report_type: str) -> JSONData:
         """
         获取报告类型配置
         
         返回该报告类型可用的metrics、groupBy、filters
         """
-        result = self.get(f"/reporting/reportTypes/{report_type}")
+        result = await self.get(f"/reporting/reportTypes/{report_type}")
         return result if isinstance(result, dict) else {}
 
-    def list_report_types(self) -> JSONList:
+    async def list_report_types(self) -> JSONList:
         """获取所有可用的报告类型"""
-        result = self.get("/reporting/reportTypes")
+        result = await self.get("/reporting/reportTypes")
         return result if isinstance(result, list) else []
-

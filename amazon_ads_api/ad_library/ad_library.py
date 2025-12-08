@@ -1,18 +1,11 @@
 """
-Ad Library API - 广告库服务
-
-提供广告内容的搜索和查看功能，包括：
-- 广告搜索
-- 广告详情获取
-- 广告筛选
-
-官方文档: https://advertising.amazon.com/API/docs/en-us/ad-library
+Amazon Ads Ad Library API (异步版本)
+广告库服务
 """
 
-from typing import Any, Dict, List, Optional
+from typing import Any
 from enum import Enum
-
-from ..base import BaseAdsClient
+from ..base import BaseAdsClient, JSONData
 
 
 class AdType(str, Enum):
@@ -31,46 +24,25 @@ class NameMatchType(str, Enum):
 
 
 class AdLibraryAPI(BaseAdsClient):
-    """
-    Ad Library API - 广告库
-    
-    用于搜索和查看Amazon平台上的广告内容
-    """
-    
+    """Ad Library API (全异步)"""
+
     # ==================== 广告搜索 ====================
-    
+
     async def list_ads(
         self,
         *,
-        advertiser_name: Optional[str] = None,
-        name_match_type: Optional[NameMatchType] = None,
-        ad_types: Optional[List[AdType]] = None,
-        start_date: Optional[str] = None,
-        end_date: Optional[str] = None,
-        marketplace_ids: Optional[List[str]] = None,
-        page_token: Optional[str] = None,
+        advertiser_name: str | None = None,
+        name_match_type: NameMatchType | None = None,
+        ad_types: list[AdType] | None = None,
+        start_date: str | None = None,
+        end_date: str | None = None,
+        marketplace_ids: list[str] | None = None,
+        page_token: str | None = None,
         page_size: int = 100,
-    ) -> Dict[str, Any]:
-        """
-        搜索广告列表
-        
-        Args:
-            advertiser_name: 广告主名称筛选
-            name_match_type: 名称匹配类型
-            ad_types: 广告类型筛选
-            start_date: 开始日期 (YYYY-MM-DD)
-            end_date: 结束日期 (YYYY-MM-DD)
-            marketplace_ids: 市场ID列表
-            page_token: 分页令牌
-            page_size: 每页数量
-            
-        Returns:
-            广告列表响应
-        """
-        request_body = {
-            "pageSize": page_size,
-        }
-        
+    ) -> JSONData:
+        """搜索广告列表"""
+        request_body: dict[str, Any] = {"pageSize": page_size}
+
         if advertiser_name:
             request_body["advertiserName"] = advertiser_name
         if name_match_type:
@@ -85,68 +57,38 @@ class AdLibraryAPI(BaseAdsClient):
             request_body["marketplaceIds"] = marketplace_ids
         if page_token:
             request_body["pageToken"] = page_token
-            
-        return await self._request(
-            "POST",
-            "/adLibrary/ads/list",
-            json=request_body
-        )
-    
-    async def get_ads_by_id(
-        self,
-        ad_ids: List[str],
-    ) -> Dict[str, Any]:
-        """
-        根据ID获取广告详情
-        
-        Args:
-            ad_ids: 广告ID列表
-            
-        Returns:
-            广告详情响应
-        """
-        return await self._request(
-            "POST",
-            "/adLibrary/ads",
-            json={"adIds": ad_ids}
-        )
-    
+
+        result = await self.post("/adLibrary/ads/list", json_data=request_body)
+        return result if isinstance(result, dict) else {"ads": []}
+
+    async def get_ads_by_id(self, ad_ids: list[str]) -> JSONData:
+        """根据ID获取广告详情"""
+        result = await self.post("/adLibrary/ads", json_data={"adIds": ad_ids})
+        return result if isinstance(result, dict) else {"ads": []}
+
     # ==================== 广告主搜索 ====================
-    
+
     async def search_advertisers(
         self,
         *,
         query: str,
-        marketplace_ids: Optional[List[str]] = None,
+        marketplace_ids: list[str] | None = None,
         page_size: int = 100,
-    ) -> Dict[str, Any]:
-        """
-        搜索广告主
-        
-        Args:
-            query: 搜索关键词
-            marketplace_ids: 市场ID列表
-            page_size: 每页数量
-            
-        Returns:
-            广告主列表响应
-        """
-        request_body = {
+    ) -> JSONData:
+        """搜索广告主"""
+        request_body: dict[str, Any] = {
             "query": query,
             "pageSize": page_size,
         }
-        
+
         if marketplace_ids:
             request_body["marketplaceIds"] = marketplace_ids
-            
-        return await self._request(
-            "POST",
-            "/adLibrary/advertisers/search",
-            json=request_body
-        )
-    
+
+        result = await self.post("/adLibrary/advertisers/search", json_data=request_body)
+        return result if isinstance(result, dict) else {"advertisers": []}
+
     # ==================== 统计信息 ====================
-    
+
     async def get_ad_statistics(
         self,
         *,
@@ -154,67 +96,27 @@ class AdLibraryAPI(BaseAdsClient):
         start_date: str,
         end_date: str,
         granularity: str = "DAILY",
-    ) -> Dict[str, Any]:
-        """
-        获取广告统计信息
-        
-        Args:
-            advertiser_id: 广告主ID
-            start_date: 开始日期
-            end_date: 结束日期
-            granularity: 时间粒度 (DAILY, WEEKLY, MONTHLY)
-            
-        Returns:
-            统计信息响应
-        """
-        return await self._request(
-            "POST",
+    ) -> JSONData:
+        """获取广告统计信息"""
+        result = await self.post(
             "/adLibrary/statistics",
-            json={
+            json_data={
                 "advertiserId": advertiser_id,
                 "startDate": start_date,
                 "endDate": end_date,
                 "granularity": granularity,
-            }
+            },
         )
-    
-    # ==================== 类别和筛选 ====================
-    
-    async def get_categories(
-        self,
-        marketplace_id: str,
-    ) -> Dict[str, Any]:
-        """
-        获取可用的广告类别
-        
-        Args:
-            marketplace_id: 市场ID
-            
-        Returns:
-            类别列表响应
-        """
-        return await self._request(
-            "GET",
-            f"/adLibrary/categories",
-            params={"marketplaceId": marketplace_id}
-        )
-    
-    async def get_filters(
-        self,
-        marketplace_id: str,
-    ) -> Dict[str, Any]:
-        """
-        获取可用的筛选选项
-        
-        Args:
-            marketplace_id: 市场ID
-            
-        Returns:
-            筛选选项响应
-        """
-        return await self._request(
-            "GET",
-            f"/adLibrary/filters",
-            params={"marketplaceId": marketplace_id}
-        )
+        return result if isinstance(result, dict) else {}
 
+    # ==================== 类别和筛选 ====================
+
+    async def get_categories(self, marketplace_id: str) -> JSONData:
+        """获取可用的广告类别"""
+        result = await self.get("/adLibrary/categories", params={"marketplaceId": marketplace_id})
+        return result if isinstance(result, dict) else {"categories": []}
+
+    async def get_filters(self, marketplace_id: str) -> JSONData:
+        """获取可用的筛选选项"""
+        result = await self.get("/adLibrary/filters", params={"marketplaceId": marketplace_id})
+        return result if isinstance(result, dict) else {}

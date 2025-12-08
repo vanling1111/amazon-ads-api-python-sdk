@@ -1,15 +1,18 @@
 """
-Sponsored Products - Campaigns API
+Sponsored Products - Campaigns API (异步版本)
 SP广告系列管理
 """
 
 from ..base import BaseAdsClient, JSONData, JSONList
 
+# API v3 Content-Type
+CONTENT_TYPE_CAMPAIGN = "application/vnd.spCampaign.v3+json"
+
 
 class SPCampaignsAPI(BaseAdsClient):
-    """SP Campaigns API"""
+    """SP Campaigns API (全异步)"""
 
-    def list_campaigns(
+    async def list_campaigns(
         self,
         state_filter: str | None = None,
         name_filter: str | None = None,
@@ -36,15 +39,15 @@ class SPCampaignsAPI(BaseAdsClient):
         if next_token:
             params["nextToken"] = next_token
 
-        result = self.post("/sp/campaigns/list", json_data=params)
+        result = await self.post("/sp/campaigns/list", json_data=params, content_type=CONTENT_TYPE_CAMPAIGN)
         return result if isinstance(result, dict) else {"campaigns": []}
 
-    def get_campaign(self, campaign_id: str) -> JSONData:
+    async def get_campaign(self, campaign_id: str) -> JSONData:
         """获取单个Campaign详情"""
-        result = self.get(f"/sp/campaigns/{campaign_id}")
+        result = await self.get(f"/sp/campaigns/{campaign_id}", content_type=CONTENT_TYPE_CAMPAIGN)
         return result if isinstance(result, dict) else {}
 
-    def create_campaigns(self, campaigns: JSONList) -> JSONData:
+    async def create_campaigns(self, campaigns: JSONList) -> JSONData:
         """
         批量创建Campaign
         
@@ -63,10 +66,10 @@ class SPCampaignsAPI(BaseAdsClient):
                 }
             ]
         """
-        result = self.post("/sp/campaigns", json_data={"campaigns": campaigns})
+        result = await self.post("/sp/campaigns", json_data={"campaigns": campaigns}, content_type=CONTENT_TYPE_CAMPAIGN)
         return result if isinstance(result, dict) else {"campaigns": {"success": [], "error": []}}
 
-    def update_campaigns(self, campaigns: JSONList) -> JSONData:
+    async def update_campaigns(self, campaigns: JSONList) -> JSONData:
         """
         批量更新Campaign
         
@@ -74,45 +77,45 @@ class SPCampaignsAPI(BaseAdsClient):
             campaigns: 包含campaignId的更新数据
             [{"campaignId": "xxx", "state": "paused", "dailyBudget": 20.0}]
         """
-        result = self.put("/sp/campaigns", json_data={"campaigns": campaigns})
+        result = await self.put("/sp/campaigns", json_data={"campaigns": campaigns}, content_type=CONTENT_TYPE_CAMPAIGN)
         return result if isinstance(result, dict) else {"campaigns": {"success": [], "error": []}}
 
-    def delete_campaign(self, campaign_id: str) -> JSONData:
-        """归档Campaign"""
-        return self.delete(f"/sp/campaigns/{campaign_id}")
+    async def delete_campaign(self, campaign_id: str) -> JSONData:
+        """归档Campaign（使用 update 设置 state=archived）"""
+        return await self.update_campaigns([{"campaignId": campaign_id, "state": "archived"}])
 
     # ============ 便捷方法 ============
 
-    def pause_campaign(self, campaign_id: str) -> JSONData:
+    async def pause_campaign(self, campaign_id: str) -> JSONData:
         """暂停Campaign"""
-        return self.update_campaigns([{"campaignId": campaign_id, "state": "paused"}])
+        return await self.update_campaigns([{"campaignId": campaign_id, "state": "paused"}])
 
-    def enable_campaign(self, campaign_id: str) -> JSONData:
+    async def enable_campaign(self, campaign_id: str) -> JSONData:
         """启用Campaign"""
-        return self.update_campaigns([{"campaignId": campaign_id, "state": "enabled"}])
+        return await self.update_campaigns([{"campaignId": campaign_id, "state": "enabled"}])
 
-    def update_budget(self, campaign_id: str, daily_budget: float) -> JSONData:
+    async def update_budget(self, campaign_id: str, daily_budget: float) -> JSONData:
         """更新Campaign日预算"""
-        return self.update_campaigns([{
+        return await self.update_campaigns([{
             "campaignId": campaign_id,
             "dailyBudget": daily_budget
         }])
 
-    def update_bidding_strategy(self, campaign_id: str, strategy: str) -> JSONData:
+    async def update_bidding_strategy(self, campaign_id: str, strategy: str) -> JSONData:
         """
         更新竞价策略
         
         Args:
             strategy: LEGACY_FOR_SALES | AUTO_FOR_SALES | MANUAL
         """
-        return self.update_campaigns([{
+        return await self.update_campaigns([{
             "campaignId": campaign_id,
             "bidding": {"strategy": strategy}
         }])
 
     # ============ 批量获取所有Campaign ============
 
-    def list_all_campaigns(
+    async def list_all_campaigns(
         self,
         state_filter: str | None = None,
     ) -> JSONList:
@@ -121,7 +124,7 @@ class SPCampaignsAPI(BaseAdsClient):
         next_token = None
 
         while True:
-            result = self.list_campaigns(
+            result = await self.list_campaigns(
                 state_filter=state_filter,
                 max_results=100,
                 next_token=next_token,
@@ -135,3 +138,52 @@ class SPCampaignsAPI(BaseAdsClient):
 
         return all_campaigns
 
+    async def get_campaigns_batch(self, campaign_ids: list[str]) -> JSONList:
+        """
+        并行批量获取Campaign详情
+        
+        Args:
+            campaign_ids: Campaign ID列表
+            
+        Returns:
+            Campaign详情列表
+        """
+        tasks = [self.get_campaign(cid) for cid in campaign_ids]
+        results = await self.parallel_execute(tasks, max_concurrent=10)
+        return [r for r in results if r and not isinstance(r, Exception)]
+
+    async def list_campaigns_summary(self, state_filter: str | None = None) -> JSONData:
+        """
+        获取Campaign汇总统计（快速）
+        
+        Returns:
+            {
+                "total": 100,
+                "enabled": 50,
+                "paused": 30,
+                "archived": 20,
+                "total_budget": 5000.0
+            }
+        """
+        campaigns = await self.list_all_campaigns(state_filter=state_filter)
+        
+        summary = {
+            "total": len(campaigns),
+            "enabled": 0,
+            "paused": 0,
+            "archived": 0,
+            "total_budget": 0.0,
+        }
+        
+        for c in campaigns:
+            state = c.get("state", "").lower()
+            if state in summary:
+                summary[state] += 1
+            
+            budget = c.get("budget", {})
+            if isinstance(budget, dict):
+                summary["total_budget"] += budget.get("budget", 0) or 0
+            elif isinstance(budget, (int, float)):
+                summary["total_budget"] += budget
+        
+        return summary

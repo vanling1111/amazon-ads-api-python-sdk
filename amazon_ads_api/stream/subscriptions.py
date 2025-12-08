@@ -1,53 +1,33 @@
 """
-Amazon Marketing Stream Subscriptions API
-
-官方文档: https://advertising.amazon.com/API/docs/en-us/guides/amazon-marketing-stream/overview
-OpenAPI: https://dtrnk0o2zy01c.cloudfront.net/openapi/en-us/dest/AmazonMarketingStream_prod_3p.json
+Amazon Marketing Stream API (异步版本)
+营销数据流订阅
 """
 
-from typing import Any, Dict, List, Optional
-from ..base import BaseAdsClient
+from typing import Any
+from ..base import BaseAdsClient, JSONData, JSONList
 
 
 class MarketingStreamAPI(BaseAdsClient):
-    """Amazon Marketing Stream API - 营销数据流
-    
-    管理实时营销数据流订阅。
-    """
-    
+    """Amazon Marketing Stream API (全异步)"""
+
     # ==================== 订阅管理 ====================
-    
-    async def list_subscriptions(self) -> List[Dict[str, Any]]:
-        """获取订阅列表
-        
-        Returns:
-            订阅列表
-        """
-        response = await self._make_request(
-            "GET",
-            "/streams/subscriptions",
-        )
-        return response.get("subscriptions", [])
-    
+
+    async def list_subscriptions(self) -> JSONList:
+        """获取订阅列表"""
+        response = await self.get("/streams/subscriptions")
+        if isinstance(response, dict):
+            return response.get("subscriptions", [])
+        return []
+
     async def create_subscription(
         self,
         data_set_id: str,
         destination_arn: str,
-        client_request_token: Optional[str] = None,
-        notes: Optional[str] = None,
-    ) -> Dict[str, Any]:
-        """创建订阅
-        
-        Args:
-            data_set_id: 数据集ID (SP_TRAFFIC, SP_CONVERSION, etc.)
-            destination_arn: 目标SQS队列或SNS主题ARN
-            client_request_token: 客户端请求令牌（幂等性）
-            notes: 备注
-            
-        Returns:
-            创建的订阅
-        """
-        data = {
+        client_request_token: str | None = None,
+        notes: str | None = None,
+    ) -> JSONData:
+        """创建订阅"""
+        data: dict[str, Any] = {
             "dataSetId": data_set_id,
             "destinationArn": destination_arn,
         }
@@ -55,148 +35,73 @@ class MarketingStreamAPI(BaseAdsClient):
             data["clientRequestToken"] = client_request_token
         if notes:
             data["notes"] = notes
-            
-        return await self._make_request(
-            "POST",
-            "/streams/subscriptions",
-            json=data,
-        )
-    
-    async def get_subscription(
-        self,
-        subscription_id: str,
-    ) -> Dict[str, Any]:
-        """获取订阅详情
-        
-        Args:
-            subscription_id: 订阅ID
-            
-        Returns:
-            订阅详情
-        """
-        return await self._make_request(
-            "GET",
-            f"/streams/subscriptions/{subscription_id}",
-        )
-    
+
+        result = await self.post("/streams/subscriptions", json_data=data)
+        return result if isinstance(result, dict) else {}
+
+    async def get_subscription(self, subscription_id: str) -> JSONData:
+        """获取订阅详情"""
+        result = await self.get(f"/streams/subscriptions/{subscription_id}")
+        return result if isinstance(result, dict) else {}
+
     async def update_subscription(
         self,
         subscription_id: str,
-        status: Optional[str] = None,
-        notes: Optional[str] = None,
-    ) -> Dict[str, Any]:
-        """更新订阅
-        
-        Args:
-            subscription_id: 订阅ID
-            status: 状态 (ACTIVE, PAUSED)
-            notes: 备注
-            
-        Returns:
-            更新后的订阅
-        """
-        data = {}
+        status: str | None = None,
+        notes: str | None = None,
+    ) -> JSONData:
+        """更新订阅"""
+        data: dict[str, Any] = {}
         if status:
             data["status"] = status
         if notes:
             data["notes"] = notes
-            
-        return await self._make_request(
-            "PUT",
-            f"/streams/subscriptions/{subscription_id}",
-            json=data,
+
+        result = await self.put(
+            f"/streams/subscriptions/{subscription_id}", json_data=data
         )
-    
-    async def delete_subscription(
-        self,
-        subscription_id: str,
-    ) -> None:
-        """删除订阅
-        
-        Args:
-            subscription_id: 订阅ID
-        """
-        await self._make_request(
-            "DELETE",
-            f"/streams/subscriptions/{subscription_id}",
-        )
-    
+        return result if isinstance(result, dict) else {}
+
+    async def delete_subscription(self, subscription_id: str) -> JSONData:
+        """删除订阅"""
+        result = await self.delete(f"/streams/subscriptions/{subscription_id}")
+        return result if isinstance(result, dict) else {}
+
     # ==================== 数据集 ====================
-    
-    async def list_data_sets(self) -> List[Dict[str, Any]]:
-        """获取可用数据集列表
-        
-        Returns:
-            数据集列表
-        """
-        response = await self._make_request(
-            "GET",
-            "/streams/dataSets",
-        )
-        return response.get("dataSets", [])
-    
-    async def get_data_set_schema(
-        self,
-        data_set_id: str,
-    ) -> Dict[str, Any]:
-        """获取数据集模式
-        
-        Args:
-            data_set_id: 数据集ID
-            
-        Returns:
-            数据集模式
-        """
-        return await self._make_request(
-            "GET",
-            f"/streams/dataSets/{data_set_id}/schema",
-        )
-    
+
+    async def list_data_sets(self) -> JSONList:
+        """获取可用数据集列表"""
+        response = await self.get("/streams/dataSets")
+        if isinstance(response, dict):
+            return response.get("dataSets", [])
+        return []
+
+    async def get_data_set_schema(self, data_set_id: str) -> JSONData:
+        """获取数据集模式"""
+        result = await self.get(f"/streams/dataSets/{data_set_id}/schema")
+        return result if isinstance(result, dict) else {}
+
     # ==================== 目标配置 ====================
-    
-    async def validate_destination(
-        self,
-        destination_arn: str,
-    ) -> Dict[str, Any]:
-        """验证目标配置
-        
-        Args:
-            destination_arn: 目标ARN
-            
-        Returns:
-            验证结果
-        """
+
+    async def validate_destination(self, destination_arn: str) -> JSONData:
+        """验证目标配置"""
         data = {"destinationArn": destination_arn}
-        return await self._make_request(
-            "POST",
-            "/streams/destinations/validate",
-            json=data,
-        )
-    
+        result = await self.post("/streams/destinations/validate", json_data=data)
+        return result if isinstance(result, dict) else {}
+
     # ==================== 消息处理 ====================
-    
+
     async def get_sample_messages(
         self,
         data_set_id: str,
         count: int = 10,
-    ) -> List[Dict[str, Any]]:
-        """获取示例消息
-        
-        Args:
-            data_set_id: 数据集ID
-            count: 消息数量
-            
-        Returns:
-            示例消息列表
-        """
+    ) -> JSONList:
+        """获取示例消息"""
         params = {
             "dataSetId": data_set_id,
             "count": count,
         }
-        response = await self._make_request(
-            "GET",
-            "/streams/samples",
-            params=params,
-        )
-        return response.get("messages", [])
-
+        response = await self.get("/streams/samples", params=params)
+        if isinstance(response, dict):
+            return response.get("messages", [])
+        return []

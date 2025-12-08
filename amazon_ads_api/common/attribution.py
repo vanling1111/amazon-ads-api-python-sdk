@@ -1,5 +1,5 @@
 """
-Attribution API
+Attribution API (异步版本)
 广告归因分析
 """
 
@@ -7,51 +7,51 @@ from ..base import BaseAdsClient, JSONData, JSONList
 
 
 class AttributionAPI(BaseAdsClient):
-    """Attribution API"""
+    """Attribution API (全异步)"""
 
     # ============ Publishers ============
 
-    def list_publishers(self) -> JSONList:
+    async def list_publishers(self) -> JSONList:
         """
         获取归因Publisher列表
         
         Publisher = 广告投放渠道
         """
-        result = self.get("/attribution/publishers")
+        result = await self.get("/attribution/publishers")
         return result if isinstance(result, list) else []
 
     # ============ Advertisers ============
 
-    def list_advertisers(self) -> JSONList:
+    async def list_advertisers(self) -> JSONList:
         """获取归因Advertiser列表"""
-        result = self.get("/attribution/advertisers")
+        result = await self.get("/attribution/advertisers")
         return result if isinstance(result, list) else []
 
     # ============ Attribution Tags ============
 
-    def list_tags(self, advertiser_id: str) -> JSONList:
+    async def list_tags(self, advertiser_id: str) -> JSONList:
         """
         获取归因标签列表
         
         Attribution Tag用于追踪站外广告效果
         """
-        result = self.get(f"/attribution/advertisers/{advertiser_id}/tags")
+        result = await self.get(f"/attribution/advertisers/{advertiser_id}/tags")
         return result if isinstance(result, list) else []
 
-    def create_tag(
+    async def create_tag(
         self,
         advertiser_id: str,
         name: str,
         publisher_id: str,
     ) -> JSONData:
         """创建归因标签"""
-        result = self.post(f"/attribution/advertisers/{advertiser_id}/tags", json_data={
+        result = await self.post(f"/attribution/advertisers/{advertiser_id}/tags", json_data={
             "name": name,
             "publisherId": publisher_id,
         })
         return result if isinstance(result, dict) else {}
 
-    def get_tag_macro(
+    async def get_tag_macro(
         self,
         advertiser_id: str,
         tag_id: str,
@@ -63,14 +63,14 @@ class AttributionAPI(BaseAdsClient):
         Args:
             format_type: CLICK | IMPRESSION
         """
-        result = self.get(f"/attribution/advertisers/{advertiser_id}/tags/{tag_id}/macro", params={
+        result = await self.get(f"/attribution/advertisers/{advertiser_id}/tags/{tag_id}/macro", params={
             "formatType": format_type
         })
         return result if isinstance(result, dict) else {}
 
     # ============ Attribution Reports ============
 
-    def create_attribution_report(
+    async def create_attribution_report(
         self,
         advertiser_id: str,
         report_type: str,
@@ -100,17 +100,17 @@ class AttributionAPI(BaseAdsClient):
         if group_by:
             body["groupBy"] = group_by
 
-        result = self.post("/attribution/report", json_data=body)
+        result = await self.post("/attribution/report", json_data=body)
         return result if isinstance(result, dict) else {}
 
-    def get_attribution_report_status(self, report_id: str) -> JSONData:
+    async def get_attribution_report_status(self, report_id: str) -> JSONData:
         """获取归因报告状态"""
-        result = self.get(f"/attribution/report/{report_id}")
+        result = await self.get(f"/attribution/report/{report_id}")
         return result if isinstance(result, dict) else {}
 
     # ============ Performance Data ============
 
-    def get_non_amazon_media_performance(
+    async def get_non_amazon_media_performance(
         self,
         advertiser_id: str,
         start_date: str,
@@ -130,17 +130,17 @@ class AttributionAPI(BaseAdsClient):
         if publisher_ids:
             body["publisherIds"] = publisher_ids
 
-        result = self.post("/attribution/performanceReport", json_data=body)
+        result = await self.post("/attribution/performanceReport", json_data=body)
         return result if isinstance(result, dict) else {}
 
-    def get_product_performance(
+    async def get_product_performance(
         self,
         advertiser_id: str,
         start_date: str,
         end_date: str,
     ) -> JSONData:
         """获取产品归因效果"""
-        result = self.post("/attribution/productReport", json_data={
+        result = await self.post("/attribution/productReport", json_data={
             "advertiserId": advertiser_id,
             "startDate": start_date,
             "endDate": end_date,
@@ -149,7 +149,7 @@ class AttributionAPI(BaseAdsClient):
 
     # ============ Conversion Path ============
 
-    def get_conversion_path(
+    async def get_conversion_path(
         self,
         advertiser_id: str,
         start_date: str,
@@ -161,7 +161,7 @@ class AttributionAPI(BaseAdsClient):
         
         分析消费者从广告曝光到购买的完整路径
         """
-        result = self.post("/attribution/conversionPath", json_data={
+        result = await self.post("/attribution/conversionPath", json_data={
             "advertiserId": advertiser_id,
             "startDate": start_date,
             "endDate": end_date,
@@ -171,7 +171,7 @@ class AttributionAPI(BaseAdsClient):
 
     # ============ Multi-Touch Attribution ============
 
-    def get_multi_touch_attribution(
+    async def get_multi_touch_attribution(
         self,
         advertiser_id: str,
         start_date: str,
@@ -189,7 +189,7 @@ class AttributionAPI(BaseAdsClient):
                 - LAST_TOUCH: 末次触点
                 - FIRST_TOUCH: 首次触点
         """
-        result = self.post("/attribution/multiTouch", json_data={
+        result = await self.post("/attribution/multiTouch", json_data={
             "advertiserId": advertiser_id,
             "startDate": start_date,
             "endDate": end_date,
@@ -199,7 +199,7 @@ class AttributionAPI(BaseAdsClient):
 
     # ============ 便捷方法 ============
 
-    def get_channel_performance_summary(
+    async def get_channel_performance_summary(
         self,
         advertiser_id: str,
         start_date: str,
@@ -210,7 +210,7 @@ class AttributionAPI(BaseAdsClient):
         
         对比各渠道（Google、Facebook、TikTok等）的归因效果
         """
-        report = self.get_non_amazon_media_performance(
+        report = await self.get_non_amazon_media_performance(
             advertiser_id=advertiser_id,
             start_date=start_date,
             end_date=end_date,
@@ -231,4 +231,3 @@ class AttributionAPI(BaseAdsClient):
             summary[publisher]["sales"] += item.get("totalSales14d", 0)
 
         return summary
-

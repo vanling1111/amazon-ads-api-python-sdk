@@ -1,15 +1,15 @@
 """
-Audiences Discovery API - 受众发现
+Audiences Discovery API - 受众发现 (异步版本)
 
 端点前缀: /audiences/, /dsp/audiences/
 """
 
 from typing import Any, Dict, List, Optional
-from ..base import BaseAdsClient
+from ..base import BaseAdsClient, JSONData
 
 
 class AudiencesDiscoveryAPI(BaseAdsClient):
-    """受众发现API"""
+    """受众发现API (全异步)"""
     
     # ==================== Discovery ====================
     
@@ -19,7 +19,7 @@ class AudiencesDiscoveryAPI(BaseAdsClient):
         parent_id: Optional[str] = None,
         max_results: int = 100,
         next_token: Optional[str] = None,
-    ) -> Dict[str, Any]:
+    ) -> JSONData:
         """
         浏览受众类别分类
         
@@ -35,11 +35,8 @@ class AudiencesDiscoveryAPI(BaseAdsClient):
         if next_token:
             request_body["nextToken"] = next_token
             
-        return await self._request(
-            "POST",
-            "/audiences/taxonomy/list",
-            json=request_body
-        )
+        result = await self.post("/audiences/taxonomy/list", json_data=request_body)
+        return result if isinstance(result, dict) else {"taxonomy": []}
     
     async def list_audiences(
         self,
@@ -50,7 +47,7 @@ class AudiencesDiscoveryAPI(BaseAdsClient):
         name_filter: Optional[str] = None,
         max_results: int = 100,
         next_token: Optional[str] = None,
-    ) -> Dict[str, Any]:
+    ) -> JSONData:
         """
         根据筛选条件获取受众片段
         
@@ -75,33 +72,23 @@ class AudiencesDiscoveryAPI(BaseAdsClient):
         if next_token:
             request_body["nextToken"] = next_token
             
-        return await self._request(
-            "POST",
-            "/audiences/list",
-            json=request_body
-        )
+        result = await self.post("/audiences/list", json_data=request_body)
+        return result if isinstance(result, dict) else {"audiences": []}
     
     # ==================== DSP Audiences ====================
     
     async def edit_dsp_audience(
         self,
         audiences: List[Dict[str, Any]],
-    ) -> Dict[str, Any]:
+    ) -> JSONData:
         """编辑DSP受众"""
-        return await self._request(
-            "PUT",
-            "/dsp/audiences/edit",
-            json={"audiences": audiences}
-        )
+        result = await self.put("/dsp/audiences/edit", json_data={"audiences": audiences})
+        return result if isinstance(result, dict) else {}
     
     async def delete_dsp_audience(
         self,
         audience_ids: List[str],
-    ) -> Dict[str, Any]:
+    ) -> JSONData:
         """删除DSP受众"""
-        return await self._request(
-            "POST",
-            "/dsp/audiences/delete",
-            json={"audienceIds": audience_ids}
-        )
-
+        result = await self.post("/dsp/audiences/delete", json_data={"audienceIds": audience_ids})
+        return result if isinstance(result, dict) else {}

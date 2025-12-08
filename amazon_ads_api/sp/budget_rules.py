@@ -1,5 +1,5 @@
 """
-Sponsored Products - Budget Rules API
+Sponsored Products - Budget Rules API (异步版本)
 SP预算规则管理
 """
 
@@ -7,11 +7,11 @@ from ..base import BaseAdsClient, JSONData, JSONList
 
 
 class SPBudgetRulesAPI(BaseAdsClient):
-    """SP Budget Rules API"""
+    """SP Budget Rules API (全异步)"""
 
     # ============ Budget Rules ============
 
-    def list_budget_rules(
+    async def list_budget_rules(
         self,
         campaign_id: str | None = None,
         rule_state: str | None = None,
@@ -29,15 +29,15 @@ class SPBudgetRulesAPI(BaseAdsClient):
         if rule_state:
             params["ruleState"] = rule_state
 
-        result = self.get("/sp/campaigns/budgetRules", params=params or None)
+        result = await self.get("/sp/campaigns/budgetRules", params=params or None)
         return result if isinstance(result, list) else []
 
-    def get_budget_rule(self, rule_id: str) -> JSONData:
+    async def get_budget_rule(self, rule_id: str) -> JSONData:
         """获取单个Budget Rule详情"""
-        result = self.get(f"/sp/campaigns/budgetRules/{rule_id}")
+        result = await self.get(f"/sp/campaigns/budgetRules/{rule_id}")
         return result if isinstance(result, dict) else {}
 
-    def create_budget_rules(self, rules: JSONList) -> JSONList:
+    async def create_budget_rules(self, rules: JSONList) -> JSONList:
         """
         批量创建Budget Rule
         
@@ -59,37 +59,37 @@ class SPBudgetRulesAPI(BaseAdsClient):
                 }
             ]
         """
-        result = self.post("/sp/campaigns/budgetRules", json_data=rules)
+        result = await self.post("/sp/campaigns/budgetRules", json_data=rules)
         return result if isinstance(result, list) else []
 
-    def update_budget_rules(self, rules: JSONList) -> JSONList:
+    async def update_budget_rules(self, rules: JSONList) -> JSONList:
         """
         批量更新Budget Rule
         
         Args:
             rules: [{"ruleId": "xxx", "ruleState": "PAUSED"}]
         """
-        result = self.put("/sp/campaigns/budgetRules", json_data=rules)
+        result = await self.put("/sp/campaigns/budgetRules", json_data=rules)
         return result if isinstance(result, list) else []
 
-    def delete_budget_rule(self, rule_id: str) -> JSONData:
+    async def delete_budget_rule(self, rule_id: str) -> JSONData:
         """删除Budget Rule"""
-        return self.delete(f"/sp/campaigns/budgetRules/{rule_id}")
+        return await self.delete(f"/sp/campaigns/budgetRules/{rule_id}")
 
     # ============ Budget Rule Recommendations ============
 
-    def get_budget_rule_recommendations(self, campaign_id: str) -> JSONList:
+    async def get_budget_rule_recommendations(self, campaign_id: str) -> JSONList:
         """
         获取Budget Rule建议
         
         根据Campaign历史表现推荐预算规则
         """
-        result = self.get(f"/sp/campaigns/{campaign_id}/budgetRules/recommendations")
+        result = await self.get(f"/sp/campaigns/{campaign_id}/budgetRules/recommendations")
         return result if isinstance(result, list) else []
 
     # ============ Budget Usage ============
 
-    def get_budget_usage(self, campaign_ids: list[str]) -> JSONList:
+    async def get_budget_usage(self, campaign_ids: list[str]) -> JSONList:
         """
         获取预算使用情况
         
@@ -99,12 +99,12 @@ class SPBudgetRulesAPI(BaseAdsClient):
         Returns:
             预算使用详情列表
         """
-        result = self.post("/sp/campaigns/budget/usage", json_data={"campaignIds": campaign_ids})
+        result = await self.post("/sp/campaigns/budget/usage", json_data={"campaignIds": campaign_ids})
         return result if isinstance(result, list) else []
 
     # ============ Budget Recommendations ============
 
-    def get_budget_recommendations_for_new_campaign(
+    async def get_budget_recommendations_for_new_campaign(
         self,
         daily_budget: float,
         targeting_type: str,
@@ -118,25 +118,25 @@ class SPBudgetRulesAPI(BaseAdsClient):
             targeting_type: MANUAL | AUTO
             asins: 要推广的ASIN列表
         """
-        result = self.post("/sp/campaigns/initialBudgetRecommendation", json_data={
+        result = await self.post("/sp/campaigns/initialBudgetRecommendation", json_data={
             "dailyBudget": daily_budget,
             "targetingType": targeting_type,
             "asins": asins,
         })
         return result if isinstance(result, dict) else {}
 
-    def get_budget_recommendations(self, campaign_id: str) -> JSONData:
+    async def get_budget_recommendations(self, campaign_id: str) -> JSONData:
         """
         获取现有Campaign预算建议
         
         基于Campaign表现给出预算优化建议
         """
-        result = self.get(f"/sp/campaigns/{campaign_id}/budgetRecommendations")
+        result = await self.get(f"/sp/campaigns/{campaign_id}/budgetRecommendations")
         return result if isinstance(result, dict) else {}
 
     # ============ 便捷方法 ============
 
-    def create_schedule_rule(
+    async def create_schedule_rule(
         self,
         campaign_id: str,
         name: str,
@@ -163,10 +163,10 @@ class SPBudgetRulesAPI(BaseAdsClient):
                 "schedule": [{"dayOfWeek": day} for day in days_of_week]
             }
         }]
-        result = self.create_budget_rules(rules)
+        result = await self.create_budget_rules(rules)
         return result[0] if result else {}
 
-    def create_performance_rule(
+    async def create_performance_rule(
         self,
         campaign_id: str,
         name: str,
@@ -197,14 +197,13 @@ class SPBudgetRulesAPI(BaseAdsClient):
                 }]
             }
         }]
-        result = self.create_budget_rules(rules)
+        result = await self.create_budget_rules(rules)
         return result[0] if result else {}
 
-    def pause_rule(self, rule_id: str) -> JSONList:
+    async def pause_rule(self, rule_id: str) -> JSONList:
         """暂停Budget Rule"""
-        return self.update_budget_rules([{"ruleId": rule_id, "ruleState": "PAUSED"}])
+        return await self.update_budget_rules([{"ruleId": rule_id, "ruleState": "PAUSED"}])
 
-    def activate_rule(self, rule_id: str) -> JSONList:
+    async def activate_rule(self, rule_id: str) -> JSONList:
         """激活Budget Rule"""
-        return self.update_budget_rules([{"ruleId": rule_id, "ruleState": "ACTIVE"}])
-
+        return await self.update_budget_rules([{"ruleId": rule_id, "ruleState": "ACTIVE"}])

@@ -1,5 +1,5 @@
 """
-Sponsored Products - Recommendations API
+Sponsored Products - Recommendations API (异步版本)
 SP智能建议（竞价建议、关键词建议、产品建议等）
 """
 
@@ -7,11 +7,11 @@ from ..base import BaseAdsClient, JSONData, JSONList
 
 
 class SPRecommendationsAPI(BaseAdsClient):
-    """SP Recommendations API"""
+    """SP Recommendations API (全异步)"""
 
     # ============ Bid Recommendations ============
 
-    def get_bid_recommendations(
+    async def get_bid_recommendations(
         self,
         ad_group_id: str,
         keywords: list[dict] | None = None,
@@ -31,32 +31,32 @@ class SPRecommendationsAPI(BaseAdsClient):
         if targets:
             body["targets"] = targets
 
-        result = self.post("/sp/targets/bid/recommendations", json_data=body)
+        result = await self.post("/sp/targets/bid/recommendations", json_data=body)
         return result if isinstance(result, dict) else {}
 
-    def get_keyword_bid_recommendations(self, keyword_ids: list[str]) -> JSONList:
+    async def get_keyword_bid_recommendations(self, keyword_ids: list[str]) -> JSONList:
         """
         获取已有关键词竞价建议
         
         Args:
             keyword_ids: 关键词ID列表
         """
-        result = self.post("/sp/keywords/bidRecommendations", json_data={"keywordIds": keyword_ids})
+        result = await self.post("/sp/keywords/bidRecommendations", json_data={"keywordIds": keyword_ids})
         return result if isinstance(result, list) else []
 
-    def get_target_bid_recommendations(self, target_ids: list[str]) -> JSONList:
+    async def get_target_bid_recommendations(self, target_ids: list[str]) -> JSONList:
         """
         获取已有Target竞价建议
         
         Args:
             target_ids: Target ID列表
         """
-        result = self.post("/sp/targets/bidRecommendations", json_data={"targetIds": target_ids})
+        result = await self.post("/sp/targets/bidRecommendations", json_data={"targetIds": target_ids})
         return result if isinstance(result, list) else []
 
     # ============ Keyword Recommendations ============
 
-    def get_keyword_recommendations(
+    async def get_keyword_recommendations(
         self,
         ad_group_id: str | None = None,
         asins: list[str] | None = None,
@@ -81,10 +81,10 @@ class SPRecommendationsAPI(BaseAdsClient):
         if asins:
             body["asins"] = asins
 
-        result = self.post("/sp/targets/keywords/recommendations", json_data=body)
+        result = await self.post("/sp/targets/keywords/recommendations", json_data=body)
         return result if isinstance(result, dict) else {"recommendations": []}
 
-    def get_ranked_keyword_recommendations(
+    async def get_ranked_keyword_recommendations(
         self,
         asins: list[str],
         max_recommendations: int = 100,
@@ -96,7 +96,7 @@ class SPRecommendationsAPI(BaseAdsClient):
             asins: ASIN列表
             max_recommendations: 最大建议数
         """
-        result = self.post("/sp/keywords/recommendations", json_data={
+        result = await self.post("/sp/keywords/recommendations", json_data={
             "asins": asins,
             "maxRecommendations": max_recommendations,
         })
@@ -104,7 +104,7 @@ class SPRecommendationsAPI(BaseAdsClient):
 
     # ============ Product Recommendations ============
 
-    def get_product_recommendations(
+    async def get_product_recommendations(
         self,
         ad_group_id: str | None = None,
         asins: list[str] | None = None,
@@ -124,10 +124,10 @@ class SPRecommendationsAPI(BaseAdsClient):
         if asins:
             body["asins"] = asins
 
-        result = self.post("/sp/targets/products/recommendations", json_data=body)
+        result = await self.post("/sp/targets/products/recommendations", json_data=body)
         return result if isinstance(result, dict) else {"recommendations": []}
 
-    def get_category_recommendations(
+    async def get_category_recommendations(
         self,
         asins: list[str],
         max_recommendations: int = 50,
@@ -139,7 +139,7 @@ class SPRecommendationsAPI(BaseAdsClient):
             asins: ASIN列表
             max_recommendations: 最大建议数
         """
-        result = self.post("/sp/targets/categories/recommendations", json_data={
+        result = await self.post("/sp/targets/categories/recommendations", json_data={
             "asins": asins,
             "maxRecommendations": max_recommendations,
         })
@@ -147,7 +147,7 @@ class SPRecommendationsAPI(BaseAdsClient):
 
     # ============ Consolidated Recommendations ============
 
-    def get_consolidated_recommendations(
+    async def get_consolidated_recommendations(
         self,
         campaign_id: str,
         recommendation_types: list[str] | None = None,
@@ -166,12 +166,12 @@ class SPRecommendationsAPI(BaseAdsClient):
         if recommendation_types:
             body["recommendationTypes"] = recommendation_types
 
-        result = self.post("/sp/campaigns/recommendations", json_data=body)
+        result = await self.post("/sp/campaigns/recommendations", json_data=body)
         return result if isinstance(result, dict) else {}
 
     # ============ Negative Keyword/Target Recommendations ============
 
-    def get_negative_keyword_recommendations(
+    async def get_negative_keyword_recommendations(
         self,
         ad_group_id: str,
         max_recommendations: int = 100,
@@ -181,13 +181,13 @@ class SPRecommendationsAPI(BaseAdsClient):
         
         基于Search Term Report分析，推荐应该否定的关键词
         """
-        result = self.post("/sp/negativeKeywords/recommendations", json_data={
+        result = await self.post("/sp/negativeKeywords/recommendations", json_data={
             "adGroupId": ad_group_id,
             "maxRecommendations": max_recommendations,
         })
         return result if isinstance(result, dict) else {"recommendations": []}
 
-    def get_negative_target_recommendations(
+    async def get_negative_target_recommendations(
         self,
         ad_group_id: str,
         max_recommendations: int = 100,
@@ -197,7 +197,7 @@ class SPRecommendationsAPI(BaseAdsClient):
         
         推荐应该排除的ASIN/品类
         """
-        result = self.post("/sp/negativeTargets/recommendations", json_data={
+        result = await self.post("/sp/negativeTargets/recommendations", json_data={
             "adGroupId": ad_group_id,
             "maxRecommendations": max_recommendations,
         })
@@ -205,7 +205,7 @@ class SPRecommendationsAPI(BaseAdsClient):
 
     # ============ ASIN Recommendations ============
 
-    def get_asin_recommendations(
+    async def get_asin_recommendations(
         self,
         campaign_id: str | None = None,
         ad_group_id: str | None = None,
@@ -221,12 +221,12 @@ class SPRecommendationsAPI(BaseAdsClient):
         if ad_group_id:
             body["adGroupId"] = ad_group_id
 
-        result = self.post("/sp/productAds/recommendations", json_data=body)
+        result = await self.post("/sp/productAds/recommendations", json_data=body)
         return result if isinstance(result, dict) else {"recommendations": []}
 
     # ============ Theme-based Bid Suggestions ============
 
-    def get_theme_based_bid_suggestions(
+    async def get_theme_based_bid_suggestions(
         self,
         ad_group_id: str,
         keywords: list[dict],
@@ -243,7 +243,7 @@ class SPRecommendationsAPI(BaseAdsClient):
                 }
             ]
         """
-        result = self.post("/sp/adGroups/bidRecommendations", json_data={
+        result = await self.post("/sp/adGroups/bidRecommendations", json_data={
             "adGroupId": ad_group_id,
             "keywords": keywords,
         })
@@ -251,7 +251,7 @@ class SPRecommendationsAPI(BaseAdsClient):
 
     # ============ 批量应用建议 ============
 
-    def apply_keyword_recommendations(
+    async def apply_keyword_recommendations(
         self,
         ad_group_id: str,
         recommendations: list[dict],
@@ -273,10 +273,10 @@ class SPRecommendationsAPI(BaseAdsClient):
                 "state": "enabled",
             })
 
-        result = self.post("/sp/keywords", json_data={"keywords": keywords})
+        result = await self.post("/sp/keywords", json_data={"keywords": keywords})
         return result if isinstance(result, dict) else {}
 
-    def apply_bid_recommendations(
+    async def apply_bid_recommendations(
         self,
         recommendations: list[dict],
     ) -> JSONData:
@@ -308,11 +308,10 @@ class SPRecommendationsAPI(BaseAdsClient):
 
         results = {}
         if keyword_updates:
-            result = self.put("/sp/keywords", json_data={"keywords": keyword_updates})
+            result = await self.put("/sp/keywords", json_data={"keywords": keyword_updates})
             results["keywords"] = result
         if target_updates:
-            result = self.put("/sp/targets", json_data={"targetingClauses": target_updates})
+            result = await self.put("/sp/targets", json_data={"targetingClauses": target_updates})
             results["targets"] = result
 
         return results
-

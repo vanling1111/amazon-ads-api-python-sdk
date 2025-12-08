@@ -1,5 +1,5 @@
 """
-Tactical Recommendations API
+Tactical Recommendations API (异步版本)
 
 官方文档: https://advertising.amazon.com/API/docs/en-us/guides/recommendations/tactical-recommendations/overview
 OpenAPI: https://dtrnk0o2zy01c.cloudfront.net/openapi/en-us/dest/Recommendations_prod_3p.json
@@ -10,7 +10,7 @@ from ..base import BaseAdsClient
 
 
 class TacticalRecommendationsAPI(BaseAdsClient):
-    """Tactical Recommendations API - 战术建议
+    """Tactical Recommendations API - 战术建议 (全异步)
     
     获取广告优化的战术建议。
     """
@@ -28,7 +28,7 @@ class TacticalRecommendationsAPI(BaseAdsClient):
         """获取建议列表
         
         Args:
-            recommendation_type: 建议类型 (BID, BUDGET, KEYWORD, TARGET, etc.)
+            recommendation_type: 建议类型 (BID, BUDGET, KEYWORD, TARGET, NEGATIVE_KEYWORD, etc.)
             entity_type: 实体类型 (CAMPAIGN, AD_GROUP, KEYWORD, etc.)
             state: 状态 (NEW, APPLIED, DISMISSED)
             max_results: 最大结果数
@@ -37,7 +37,7 @@ class TacticalRecommendationsAPI(BaseAdsClient):
         Returns:
             建议列表
         """
-        params = {"maxResults": max_results}
+        params: Dict[str, Any] = {"maxResults": max_results}
         if recommendation_type:
             params["recommendationType"] = recommendation_type
         if entity_type:
@@ -47,11 +47,8 @@ class TacticalRecommendationsAPI(BaseAdsClient):
         if next_token:
             params["nextToken"] = next_token
             
-        return await self._make_request(
-            "GET",
-            "/recommendations",
-            params=params,
-        )
+        result = await self.get("/recommendations", params=params)
+        return result if isinstance(result, dict) else {"recommendations": []}
     
     async def get_recommendation(
         self,
@@ -65,10 +62,8 @@ class TacticalRecommendationsAPI(BaseAdsClient):
         Returns:
             建议详情
         """
-        return await self._make_request(
-            "GET",
-            f"/recommendations/{recommendation_id}",
-        )
+        result = await self.get(f"/recommendations/{recommendation_id}")
+        return result if isinstance(result, dict) else {}
     
     # ==================== 建议操作 ====================
     
@@ -84,10 +79,8 @@ class TacticalRecommendationsAPI(BaseAdsClient):
         Returns:
             应用结果
         """
-        return await self._make_request(
-            "POST",
-            f"/recommendations/{recommendation_id}/apply",
-        )
+        result = await self.post(f"/recommendations/{recommendation_id}/apply")
+        return result if isinstance(result, dict) else {}
     
     async def apply_recommendations_batch(
         self,
@@ -102,11 +95,8 @@ class TacticalRecommendationsAPI(BaseAdsClient):
             批量应用结果
         """
         data = {"recommendationIds": recommendation_ids}
-        return await self._make_request(
-            "POST",
-            "/recommendations/apply",
-            json=data,
-        )
+        result = await self.post("/recommendations/apply", json_data=data)
+        return result if isinstance(result, dict) else {"success": [], "error": []}
     
     async def dismiss_recommendation(
         self,
@@ -122,15 +112,15 @@ class TacticalRecommendationsAPI(BaseAdsClient):
         Returns:
             操作结果
         """
-        data = {}
+        data: Dict[str, Any] = {}
         if reason:
             data["reason"] = reason
             
-        return await self._make_request(
-            "POST",
+        result = await self.post(
             f"/recommendations/{recommendation_id}/dismiss",
-            json=data if data else None,
+            json_data=data if data else None,
         )
+        return result if isinstance(result, dict) else {}
     
     # ==================== 建议分析 ====================
     
@@ -146,10 +136,8 @@ class TacticalRecommendationsAPI(BaseAdsClient):
         Returns:
             预估影响
         """
-        return await self._make_request(
-            "GET",
-            f"/recommendations/{recommendation_id}/impact",
-        )
+        result = await self.get(f"/recommendations/{recommendation_id}/impact")
+        return result if isinstance(result, dict) else {}
     
     async def list_recommendation_types(self) -> List[Dict[str, Any]]:
         """获取可用建议类型
@@ -157,11 +145,10 @@ class TacticalRecommendationsAPI(BaseAdsClient):
         Returns:
             建议类型列表
         """
-        response = await self._make_request(
-            "GET",
-            "/recommendations/types",
-        )
-        return response.get("types", [])
+        result = await self.get("/recommendations/types")
+        if isinstance(result, dict):
+            return result.get("types", [])
+        return result if isinstance(result, list) else []
     
     # ==================== 建议配置 ====================
     
@@ -171,10 +158,8 @@ class TacticalRecommendationsAPI(BaseAdsClient):
         Returns:
             当前配置
         """
-        return await self._make_request(
-            "GET",
-            "/recommendations/settings",
-        )
+        result = await self.get("/recommendations/settings")
+        return result if isinstance(result, dict) else {}
     
     async def update_recommendation_settings(
         self,
@@ -190,15 +175,49 @@ class TacticalRecommendationsAPI(BaseAdsClient):
         Returns:
             更新后的配置
         """
-        data = {}
+        data: Dict[str, Any] = {}
         if enabled_types is not None:
             data["enabledTypes"] = enabled_types
         if auto_apply is not None:
             data["autoApply"] = auto_apply
             
-        return await self._make_request(
-            "PUT",
-            "/recommendations/settings",
-            json=data,
-        )
-
+        result = await self.put("/recommendations/settings", json_data=data)
+        return result if isinstance(result, dict) else {}
+    
+    # ==================== 批量获取 ====================
+    
+    async def list_all_recommendations(
+        self,
+        recommendation_type: Optional[str] = None,
+        entity_type: Optional[str] = None,
+        state: Optional[str] = None,
+    ) -> List[Dict[str, Any]]:
+        """获取所有建议（自动分页）
+        
+        Args:
+            recommendation_type: 建议类型
+            entity_type: 实体类型
+            state: 状态
+            
+        Returns:
+            所有建议列表
+        """
+        all_recommendations = []
+        next_token = None
+        
+        while True:
+            result = await self.list_recommendations(
+                recommendation_type=recommendation_type,
+                entity_type=entity_type,
+                state=state,
+                max_results=100,
+                next_token=next_token,
+            )
+            recommendations = result.get("recommendations", [])
+            all_recommendations.extend(recommendations)
+            
+            next_token = result.get("nextToken")
+            if not next_token:
+                break
+        
+        return all_recommendations

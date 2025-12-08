@@ -520,73 +520,74 @@ class AmazonAdsClient:
 
     # ============ IAdsApiClient 接口实现（供依赖注入使用） ============
     # 这些方法代理到模块化API，保持接口抽象
+    # 注意：所有方法都是异步的
 
-    def list_campaigns(self, state_filter: str | None = None) -> list:
+    async def list_campaigns(self, state_filter: str | None = None) -> list:
         """获取SP Campaign列表"""
-        result = self.sp.campaigns.list_campaigns(state_filter=state_filter)
+        result = await self.sp.campaigns.list_campaigns(state_filter=state_filter)
         return result.get("campaigns", [])
 
-    def get_campaign(self, campaign_id: str) -> dict:
+    async def get_campaign(self, campaign_id: str) -> dict:
         """获取单个Campaign"""
-        return self.sp.campaigns.get_campaign(campaign_id)
+        return await self.sp.campaigns.get_campaign(campaign_id)
 
-    def update_campaign(self, campaign_id: str, updates: dict) -> dict:
+    async def update_campaign(self, campaign_id: str, updates: dict) -> dict:
         """更新Campaign"""
         updates["campaignId"] = campaign_id
-        result = self.sp.campaigns.update_campaigns([updates])
+        result = await self.sp.campaigns.update_campaigns([updates])
         campaigns = result.get("campaigns", {}).get("success", [])
         return campaigns[0] if campaigns else {}
 
-    def list_keywords(self, campaign_id: str | None = None) -> list:
+    async def list_keywords(self, campaign_id: str | None = None) -> list:
         """获取关键词列表"""
-        result = self.sp.keywords.list_keywords(campaign_id=campaign_id)
+        result = await self.sp.keywords.list_keywords(campaign_id=campaign_id)
         return result.get("keywords", [])
 
-    def get_keyword(self, keyword_id: str) -> dict:
+    async def get_keyword(self, keyword_id: str) -> dict:
         """获取单个关键词"""
-        return self.sp.keywords.get_keyword(keyword_id)
+        return await self.sp.keywords.get_keyword(keyword_id)
 
-    def update_keyword_bid(self, keyword_id: str, new_bid: float) -> dict:
+    async def update_keyword_bid(self, keyword_id: str, new_bid: float) -> dict:
         """更新关键词竞价"""
-        return self.sp.keywords.update_bid(keyword_id, new_bid)
+        return await self.sp.keywords.update_bid(keyword_id, new_bid)
 
-    def create_keyword(self, keyword_data: dict) -> dict:
+    async def create_keyword(self, keyword_data: dict) -> dict:
         """创建关键词"""
-        result = self.sp.keywords.create_keywords([keyword_data])
+        result = await self.sp.keywords.create_keywords([keyword_data])
         keywords = result.get("keywords", {}).get("success", [])
         return keywords[0] if keywords else {}
 
-    def list_negative_keywords(
+    async def list_negative_keywords(
         self,
         campaign_id: str | None = None,
         ad_group_id: str | None = None,
     ) -> list:
         """获取否定关键词列表"""
-        result = self.sp.keywords.list_negative_keywords(
+        result = await self.sp.keywords.list_negative_keywords(
             campaign_id=campaign_id,
             ad_group_id=ad_group_id,
         )
         return result.get("negativeKeywords", [])
 
-    def create_negative_keyword(self, keyword_data: dict) -> dict:
+    async def create_negative_keyword(self, keyword_data: dict) -> dict:
         """创建否定关键词"""
-        result = self.sp.keywords.create_negative_keywords([keyword_data])
+        result = await self.sp.keywords.create_negative_keywords([keyword_data])
         keywords = result.get("negativeKeywords", {}).get("success", [])
         return keywords[0] if keywords else {}
 
-    def list_ad_groups(self, campaign_id: str | None = None) -> list:
+    async def list_ad_groups(self, campaign_id: str | None = None) -> list:
         """获取广告组列表"""
-        result = self.sp.ad_groups.list_ad_groups(campaign_id=campaign_id)
+        result = await self.sp.ad_groups.list_ad_groups(campaign_id=campaign_id)
         return result.get("adGroups", [])
 
-    def get_report(
+    async def get_report(
         self,
         record_type: str,
         report_date: str,
         metrics: list[str],
     ) -> list:
         """获取报表"""
-        return self.reporting.reports.create_and_wait_report(
+        return await self.reporting.reports.create_and_wait_report(
             report_type=f"sp{record_type.capitalize()}",
             time_unit="DAILY",
             start_date=report_date,
@@ -594,7 +595,7 @@ class AmazonAdsClient:
             metrics=metrics,
         )
 
-    def get_keyword_recommendations(
+    async def get_keyword_recommendations(
         self,
         asin: str | None = None,
         asins: list[str] | None = None,
@@ -602,15 +603,15 @@ class AmazonAdsClient:
     ) -> list:
         """获取关键词建议"""
         target_asins = asins or ([asin] if asin else [])
-        result = self.sp.recommendations.get_keyword_recommendations(
+        result = await self.sp.recommendations.get_keyword_recommendations(
             asins=target_asins,
             max_recommendations=max_recommendations,
         )
         return result.get("recommendations", [])
 
-    def get_bid_recommendations(self, keyword_ids: list[str]) -> list:
+    async def get_bid_recommendations(self, keyword_ids: list[str]) -> list:
         """获取竞价建议"""
-        return self.sp.recommendations.get_keyword_bid_recommendations(keyword_ids)
+        return await self.sp.recommendations.get_keyword_bid_recommendations(keyword_ids)
 
 
 # ============ 模块容器类 ============
@@ -1294,6 +1295,69 @@ class _RASModule:
         if self._targets is None:
             self._targets = self._parent._create_client(RASTargetsAPI)  # type: ignore
         return self._targets
+
+
+# ============ 并行异步方法 ============
+
+async def sync_all_sp_data(client: AmazonAdsClient) -> dict:
+    """
+    并行同步所有 SP 数据（Campaigns, Ad Groups, Keywords）
+    
+    Args:
+        client: AmazonAdsClient 实例
+        
+    Returns:
+        {
+            "campaigns": [...],
+            "ad_groups": [...],
+            "keywords": [...],
+            "negative_keywords": [...],
+            "elapsed_seconds": 30.5
+        }
+    """
+    import asyncio
+    import time
+    
+    start = time.time()
+    
+    async def fetch_campaigns():
+        return await client.sp.campaigns.list_all_campaigns()
+    
+    async def fetch_ad_groups():
+        return await client.sp.ad_groups.list_all_ad_groups()
+    
+    async def fetch_keywords():
+        return await client.sp.keywords.list_all_keywords()
+    
+    async def fetch_negative_keywords():
+        all_nk = []
+        next_token = None
+        while True:
+            result = await client.sp.keywords.list_negative_keywords(max_results=100, next_token=next_token)
+            all_nk.extend(result.get("negativeKeywords", []))
+            next_token = result.get("nextToken")
+            if not next_token:
+                break
+        return all_nk
+    
+    # 并行执行所有异步任务
+    campaigns, ad_groups, keywords, negative_keywords = await asyncio.gather(
+        fetch_campaigns(),
+        fetch_ad_groups(),
+        fetch_keywords(),
+        fetch_negative_keywords(),
+        return_exceptions=True,
+    )
+    
+    results = {
+        "campaigns": campaigns if isinstance(campaigns, list) else [],
+        "ad_groups": ad_groups if isinstance(ad_groups, list) else [],
+        "keywords": keywords if isinstance(keywords, list) else [],
+        "negative_keywords": negative_keywords if isinstance(negative_keywords, list) else [],
+        "elapsed_seconds": round(time.time() - start, 1),
+    }
+    
+    return results
 
 
 # 兼容旧代码的别名

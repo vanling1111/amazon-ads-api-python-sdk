@@ -1,71 +1,43 @@
 """
-Amazon Marketing Cloud Audiences API
-
-官方文档: https://advertising.amazon.com/API/docs/en-us/amc/amc-audiences
-OpenAPI: https://d1y2lf8k3vrkfu.cloudfront.net/openapi/en-us/dest/AMC_Audiences_API_prod_3p.json
+Amazon Marketing Cloud Audiences API (异步版本)
+AMC受众管理
 """
 
-from typing import Any, Dict, List, Optional
-from ..base import BaseAdsClient
+from typing import Any
+from ..base import BaseAdsClient, JSONData
 
 
 class AMCAudiencesAPI(BaseAdsClient):
-    """AMC Audiences API - 受众管理
-    
-    管理通过AMC查询创建的自定义受众。
-    """
-    
+    """AMC Audiences API (全异步)"""
+
     # ==================== 受众管理 ====================
-    
+
     async def list_audiences(
         self,
-        state: Optional[str] = None,
+        state: str | None = None,
         max_results: int = 100,
-        next_token: Optional[str] = None,
-    ) -> Dict[str, Any]:
-        """获取受众列表
-        
-        Args:
-            state: 状态 (ACTIVE, PROCESSING, FAILED)
-            max_results: 最大结果数
-            next_token: 分页token
-            
-        Returns:
-            受众列表
-        """
-        params = {"maxResults": max_results}
+        next_token: str | None = None,
+    ) -> JSONData:
+        """获取受众列表"""
+        params: dict[str, Any] = {"maxResults": max_results}
         if state:
             params["state"] = state
         if next_token:
             params["nextToken"] = next_token
-            
-        return await self._make_request(
-            "GET",
-            "/amc/audiences",
-            params=params,
-        )
-    
+
+        result = await self.get("/amc/audiences", params=params)
+        return result if isinstance(result, dict) else {"audiences": []}
+
     async def create_audience(
         self,
         name: str,
         query_id: str,
-        description: Optional[str] = None,
+        description: str | None = None,
         ttl_days: int = 365,
-        destinations: Optional[List[str]] = None,
-    ) -> Dict[str, Any]:
-        """创建受众
-        
-        Args:
-            name: 受众名称
-            query_id: 关联的查询ID
-            description: 描述
-            ttl_days: 数据保留天数
-            destinations: 目标广告产品列表 (SP, SB, SD, DSP)
-            
-        Returns:
-            创建的受众
-        """
-        data = {
+        destinations: list[str] | None = None,
+    ) -> JSONData:
+        """创建受众"""
+        data: dict[str, Any] = {
             "name": name,
             "queryId": query_id,
             "ttlDays": ttl_days,
@@ -74,188 +46,85 @@ class AMCAudiencesAPI(BaseAdsClient):
             data["description"] = description
         if destinations:
             data["destinations"] = destinations
-            
-        return await self._make_request(
-            "POST",
-            "/amc/audiences",
-            json=data,
-        )
-    
-    async def get_audience(
-        self,
-        audience_id: str,
-    ) -> Dict[str, Any]:
-        """获取受众详情
-        
-        Args:
-            audience_id: 受众ID
-            
-        Returns:
-            受众详情
-        """
-        return await self._make_request(
-            "GET",
-            f"/amc/audiences/{audience_id}",
-        )
-    
+
+        result = await self.post("/amc/audiences", json_data=data)
+        return result if isinstance(result, dict) else {}
+
+    async def get_audience(self, audience_id: str) -> JSONData:
+        """获取受众详情"""
+        result = await self.get(f"/amc/audiences/{audience_id}")
+        return result if isinstance(result, dict) else {}
+
     async def update_audience(
         self,
         audience_id: str,
-        name: Optional[str] = None,
-        description: Optional[str] = None,
-        ttl_days: Optional[int] = None,
-    ) -> Dict[str, Any]:
-        """更新受众
-        
-        Args:
-            audience_id: 受众ID
-            name: 受众名称
-            description: 描述
-            ttl_days: 数据保留天数
-            
-        Returns:
-            更新后的受众
-        """
-        data = {}
+        name: str | None = None,
+        description: str | None = None,
+        ttl_days: int | None = None,
+    ) -> JSONData:
+        """更新受众"""
+        data: dict[str, Any] = {}
         if name:
             data["name"] = name
         if description:
             data["description"] = description
         if ttl_days:
             data["ttlDays"] = ttl_days
-            
-        return await self._make_request(
-            "PUT",
-            f"/amc/audiences/{audience_id}",
-            json=data,
-        )
-    
-    async def delete_audience(
-        self,
-        audience_id: str,
-    ) -> None:
-        """删除受众
-        
-        Args:
-            audience_id: 受众ID
-        """
-        await self._make_request(
-            "DELETE",
-            f"/amc/audiences/{audience_id}",
-        )
-    
+
+        result = await self.put(f"/amc/audiences/{audience_id}", json_data=data)
+        return result if isinstance(result, dict) else {}
+
+    async def delete_audience(self, audience_id: str) -> JSONData:
+        """删除受众"""
+        result = await self.delete(f"/amc/audiences/{audience_id}")
+        return result if isinstance(result, dict) else {}
+
     # ==================== 受众刷新 ====================
-    
-    async def refresh_audience(
-        self,
-        audience_id: str,
-    ) -> Dict[str, Any]:
-        """刷新受众数据
-        
-        Args:
-            audience_id: 受众ID
-            
-        Returns:
-            刷新任务信息
-        """
-        return await self._make_request(
-            "POST",
-            f"/amc/audiences/{audience_id}/refresh",
-        )
-    
+
+    async def refresh_audience(self, audience_id: str) -> JSONData:
+        """刷新受众数据"""
+        result = await self.post(f"/amc/audiences/{audience_id}/refresh")
+        return result if isinstance(result, dict) else {}
+
     async def get_refresh_status(
         self,
         audience_id: str,
         refresh_id: str,
-    ) -> Dict[str, Any]:
-        """获取刷新状态
-        
-        Args:
-            audience_id: 受众ID
-            refresh_id: 刷新任务ID
-            
-        Returns:
-            刷新状态
-        """
-        return await self._make_request(
-            "GET",
-            f"/amc/audiences/{audience_id}/refreshes/{refresh_id}",
-        )
-    
+    ) -> JSONData:
+        """获取刷新状态"""
+        result = await self.get(f"/amc/audiences/{audience_id}/refreshes/{refresh_id}")
+        return result if isinstance(result, dict) else {}
+
     # ==================== 受众分析 ====================
-    
-    async def get_audience_size(
-        self,
-        audience_id: str,
-    ) -> Dict[str, Any]:
-        """获取受众规模
-        
-        Args:
-            audience_id: 受众ID
-            
-        Returns:
-            受众规模信息
-        """
-        return await self._make_request(
-            "GET",
-            f"/amc/audiences/{audience_id}/size",
-        )
-    
-    async def get_audience_overlap(
-        self,
-        audience_ids: List[str],
-    ) -> Dict[str, Any]:
-        """获取受众重叠分析
-        
-        Args:
-            audience_ids: 受众ID列表
-            
-        Returns:
-            重叠分析结果
-        """
+
+    async def get_audience_size(self, audience_id: str) -> JSONData:
+        """获取受众规模"""
+        result = await self.get(f"/amc/audiences/{audience_id}/size")
+        return result if isinstance(result, dict) else {}
+
+    async def get_audience_overlap(self, audience_ids: list[str]) -> JSONData:
+        """获取受众重叠分析"""
         params = {"audienceIds": ",".join(audience_ids)}
-        return await self._make_request(
-            "GET",
-            "/amc/audiences/overlap",
-            params=params,
-        )
-    
+        result = await self.get("/amc/audiences/overlap", params=params)
+        return result if isinstance(result, dict) else {}
+
     # ==================== 目标配置 ====================
-    
+
     async def add_destination(
         self,
         audience_id: str,
         destination: str,
-    ) -> Dict[str, Any]:
-        """添加投放目标
-        
-        Args:
-            audience_id: 受众ID
-            destination: 目标广告产品 (SP, SB, SD, DSP)
-            
-        Returns:
-            操作结果
-        """
+    ) -> JSONData:
+        """添加投放目标"""
         data = {"destination": destination}
-        return await self._make_request(
-            "POST",
-            f"/amc/audiences/{audience_id}/destinations",
-            json=data,
-        )
-    
+        result = await self.post(f"/amc/audiences/{audience_id}/destinations", json_data=data)
+        return result if isinstance(result, dict) else {}
+
     async def remove_destination(
         self,
         audience_id: str,
         destination: str,
-    ) -> None:
-        """移除投放目标
-        
-        Args:
-            audience_id: 受众ID
-            destination: 目标广告产品
-        """
-        await self._make_request(
-            "DELETE",
-            f"/amc/audiences/{audience_id}/destinations/{destination}",
-        )
-
+    ) -> JSONData:
+        """移除投放目标"""
+        result = await self.delete(f"/amc/audiences/{audience_id}/destinations/{destination}")
+        return result if isinstance(result, dict) else {}

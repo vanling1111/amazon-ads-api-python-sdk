@@ -1,5 +1,5 @@
 """
-Sponsored Display - Audiences API
+Sponsored Display - Audiences API (异步版本)
 SD受众定向管理
 """
 
@@ -7,43 +7,38 @@ from ..base import BaseAdsClient, JSONData, JSONList
 
 
 class SDAudiencesAPI(BaseAdsClient):
-    """SD Audiences API"""
+    """SD Audiences API (全异步)"""
 
     # ============ Amazon Audiences ============
 
-    def list_amazon_audiences(
+    async def list_amazon_audiences(
         self,
         audience_type: str | None = None,
         max_results: int = 100,
         next_token: str | None = None,
     ) -> JSONData:
-        """
-        获取亚马逊预定义受众列表
-        
-        Args:
-            audience_type: IN_MARKET | LIFESTYLE | INTEREST | LIFE_EVENT
-        """
+        """获取亚马逊预定义受众列表"""
         params: JSONData = {"maxResults": max_results}
         if audience_type:
             params["audienceType"] = audience_type
         if next_token:
             params["nextToken"] = next_token
 
-        result = self.get("/sd/audiences/amazon", params=params)
+        result = await self.get("/sd/audiences/amazon", params=params)
         return result if isinstance(result, dict) else {"audiences": []}
 
-    def get_amazon_audience(self, audience_id: str) -> JSONData:
+    async def get_amazon_audience(self, audience_id: str) -> JSONData:
         """获取亚马逊受众详情"""
-        result = self.get(f"/sd/audiences/amazon/{audience_id}")
+        result = await self.get(f"/sd/audiences/amazon/{audience_id}")
         return result if isinstance(result, dict) else {}
 
-    def search_amazon_audiences(
+    async def search_amazon_audiences(
         self,
         query: str,
         max_results: int = 100,
     ) -> JSONData:
         """搜索亚马逊受众"""
-        result = self.post("/sd/audiences/amazon/search", json_data={
+        result = await self.post("/sd/audiences/amazon/search", json_data={
             "query": query,
             "maxResults": max_results,
         })
@@ -51,50 +46,35 @@ class SDAudiencesAPI(BaseAdsClient):
 
     # ============ Custom Audiences (Remarketing) ============
 
-    def list_custom_audiences(
+    async def list_custom_audiences(
         self,
         audience_type: str | None = None,
         max_results: int = 100,
         next_token: str | None = None,
     ) -> JSONData:
-        """
-        获取自定义受众列表
-        
-        Args:
-            audience_type: VIEWS | PURCHASES | ADVERTISER_GENERATED
-        """
+        """获取自定义受众列表"""
         params: JSONData = {"maxResults": max_results}
         if audience_type:
             params["audienceType"] = audience_type
         if next_token:
             params["nextToken"] = next_token
 
-        result = self.get("/sd/audiences/custom", params=params)
+        result = await self.get("/sd/audiences/custom", params=params)
         return result if isinstance(result, dict) else {"audiences": []}
 
-    def get_custom_audience(self, audience_id: str) -> JSONData:
+    async def get_custom_audience(self, audience_id: str) -> JSONData:
         """获取自定义受众详情"""
-        result = self.get(f"/sd/audiences/custom/{audience_id}")
+        result = await self.get(f"/sd/audiences/custom/{audience_id}")
         return result if isinstance(result, dict) else {}
 
-    def create_custom_audience(
+    async def create_custom_audience(
         self,
         name: str,
         audience_type: str,
         definition: JSONData,
         description: str | None = None,
     ) -> JSONData:
-        """
-        创建自定义受众
-        
-        Args:
-            audience_type: VIEWS_REMARKETING | PURCHASES_REMARKETING | ASIN_SEED
-            definition: {
-                "lookbackDays": 30,  # for remarketing
-                "asins": ["B00XXX"],  # for ASIN_SEED
-                "categories": ["category_id"]  # optional
-            }
-        """
+        """创建自定义受众"""
         body: JSONData = {
             "name": name,
             "audienceType": audience_type,
@@ -103,36 +83,32 @@ class SDAudiencesAPI(BaseAdsClient):
         if description:
             body["description"] = description
 
-        result = self.post("/sd/audiences/custom", json_data=body)
+        result = await self.post("/sd/audiences/custom", json_data=body)
         return result if isinstance(result, dict) else {}
 
-    def update_custom_audience(
+    async def update_custom_audience(
         self,
         audience_id: str,
         updates: JSONData,
     ) -> JSONData:
         """更新自定义受众"""
-        result = self.put(f"/sd/audiences/custom/{audience_id}", json_data=updates)
+        result = await self.put(f"/sd/audiences/custom/{audience_id}", json_data=updates)
         return result if isinstance(result, dict) else {}
 
-    def delete_custom_audience(self, audience_id: str) -> JSONData:
+    async def delete_custom_audience(self, audience_id: str) -> JSONData:
         """删除自定义受众"""
-        return self.delete(f"/sd/audiences/custom/{audience_id}")
+        return await self.delete(f"/sd/audiences/custom/{audience_id}")
 
     # ============ Views Remarketing ============
 
-    def create_views_remarketing_audience(
+    async def create_views_remarketing_audience(
         self,
         name: str,
         asins: list[str],
         lookback_days: int = 30,
     ) -> JSONData:
-        """
-        创建浏览再营销受众
-        
-        定向浏览过指定产品但未购买的用户
-        """
-        return self.create_custom_audience(
+        """创建浏览再营销受众"""
+        return await self.create_custom_audience(
             name=name,
             audience_type="VIEWS_REMARKETING",
             definition={
@@ -141,18 +117,14 @@ class SDAudiencesAPI(BaseAdsClient):
             }
         )
 
-    def create_purchases_remarketing_audience(
+    async def create_purchases_remarketing_audience(
         self,
         name: str,
         asins: list[str],
         lookback_days: int = 365,
     ) -> JSONData:
-        """
-        创建购买再营销受众
-        
-        定向购买过指定产品的用户（用于交叉销售）
-        """
-        return self.create_custom_audience(
+        """创建购买再营销受众"""
+        return await self.create_custom_audience(
             name=name,
             audience_type="PURCHASES_REMARKETING",
             definition={
@@ -163,33 +135,27 @@ class SDAudiencesAPI(BaseAdsClient):
 
     # ============ Lookalike Audiences ============
 
-    def create_lookalike_audience(
+    async def create_lookalike_audience(
         self,
         name: str,
         seed_audience_id: str,
         expansion_level: int = 5,
     ) -> JSONData:
-        """
-        创建相似受众
-        
-        Args:
-            seed_audience_id: 种子受众ID
-            expansion_level: 扩展级别1-10（越高越广泛但相似度越低）
-        """
-        result = self.post("/sd/audiences/lookalike", json_data={
+        """创建相似受众"""
+        result = await self.post("/sd/audiences/lookalike", json_data={
             "name": name,
             "seedAudienceId": seed_audience_id,
             "expansionLevel": expansion_level,
         })
         return result if isinstance(result, dict) else {}
 
-    def get_lookalike_audience_preview(
+    async def get_lookalike_audience_preview(
         self,
         seed_audience_id: str,
         expansion_level: int = 5,
     ) -> JSONData:
-        """预览相似受众（估算规模等）"""
-        result = self.post("/sd/audiences/lookalike/preview", json_data={
+        """预览相似受众"""
+        result = await self.post("/sd/audiences/lookalike/preview", json_data={
             "seedAudienceId": seed_audience_id,
             "expansionLevel": expansion_level,
         })
@@ -197,23 +163,18 @@ class SDAudiencesAPI(BaseAdsClient):
 
     # ============ Audience Size ============
 
-    def get_audience_size(self, audience_id: str) -> JSONData:
+    async def get_audience_size(self, audience_id: str) -> JSONData:
         """获取受众规模"""
-        result = self.get(f"/sd/audiences/{audience_id}/size")
+        result = await self.get(f"/sd/audiences/{audience_id}/size")
         return result if isinstance(result, dict) else {}
 
-    def estimate_combined_audience_size(
+    async def estimate_combined_audience_size(
         self,
         audience_ids: list[str],
         combination_type: str = "UNION",
     ) -> JSONData:
-        """
-        估算组合受众规模
-        
-        Args:
-            combination_type: UNION | INTERSECTION | EXCLUSION
-        """
-        result = self.post("/sd/audiences/estimateSize", json_data={
+        """估算组合受众规模"""
+        result = await self.post("/sd/audiences/estimateSize", json_data={
             "audienceIds": audience_ids,
             "combinationType": combination_type,
         })
@@ -221,34 +182,25 @@ class SDAudiencesAPI(BaseAdsClient):
 
     # ============ Audience Recommendations ============
 
-    def get_audience_recommendations(
+    async def get_audience_recommendations(
         self,
         asins: list[str],
         max_results: int = 20,
     ) -> JSONData:
-        """
-        基于ASIN获取受众推荐
-        
-        推荐最适合这些产品的受众
-        """
-        result = self.post("/sd/audiences/recommendations", json_data={
+        """基于ASIN获取受众推荐"""
+        result = await self.post("/sd/audiences/recommendations", json_data={
             "asins": asins,
             "maxResults": max_results,
         })
         return result if isinstance(result, dict) else {"audiences": []}
 
-    def get_high_performing_audiences(
+    async def get_high_performing_audiences(
         self,
         metric: str = "ROAS",
         limit: int = 20,
     ) -> JSONList:
-        """
-        获取高效果受众
-        
-        Args:
-            metric: ROAS | CVR | CTR
-        """
-        result = self.get("/sd/audiences/highPerforming", params={
+        """获取高效果受众"""
+        result = await self.get("/sd/audiences/highPerforming", params={
             "metric": metric,
             "limit": limit,
         })
@@ -256,14 +208,14 @@ class SDAudiencesAPI(BaseAdsClient):
 
     # ============ Audience Targeting in Campaigns ============
 
-    def add_audience_to_ad_group(
+    async def add_audience_to_ad_group(
         self,
         ad_group_id: str,
         audience_id: str,
         bid: float,
     ) -> JSONData:
         """将受众添加到Ad Group"""
-        result = self.post("/sd/targets", json_data={
+        result = await self.post("/sd/targets", json_data={
             "adGroupId": ad_group_id,
             "targetingClause": {
                 "type": "audience",
@@ -273,32 +225,32 @@ class SDAudiencesAPI(BaseAdsClient):
         })
         return result if isinstance(result, dict) else {}
 
-    def remove_audience_from_ad_group(
+    async def remove_audience_from_ad_group(
         self,
         ad_group_id: str,
         target_id: str,
     ) -> JSONData:
         """从Ad Group移除受众"""
-        return self.delete(f"/sd/targets/{target_id}")
+        return await self.delete(f"/sd/targets/{target_id}")
 
-    def update_audience_bid(
+    async def update_audience_bid(
         self,
         target_id: str,
         bid: float,
     ) -> JSONData:
         """更新受众竞价"""
-        result = self.put(f"/sd/targets/{target_id}", json_data={"bid": bid})
+        result = await self.put(f"/sd/targets/{target_id}", json_data={"bid": bid})
         return result if isinstance(result, dict) else {}
 
     # ============ Negative Audiences ============
 
-    def add_negative_audience(
+    async def add_negative_audience(
         self,
         ad_group_id: str,
         audience_id: str,
     ) -> JSONData:
         """添加否定受众"""
-        result = self.post("/sd/negativeTargets", json_data={
+        result = await self.post("/sd/negativeTargets", json_data={
             "adGroupId": ad_group_id,
             "targetingClause": {
                 "type": "audience",
@@ -307,19 +259,19 @@ class SDAudiencesAPI(BaseAdsClient):
         })
         return result if isinstance(result, dict) else {}
 
-    def remove_negative_audience(self, target_id: str) -> JSONData:
+    async def remove_negative_audience(self, target_id: str) -> JSONData:
         """移除否定受众"""
-        return self.delete(f"/sd/negativeTargets/{target_id}")
+        return await self.delete(f"/sd/negativeTargets/{target_id}")
 
     # ============ 便捷方法 ============
 
-    def list_all_amazon_audiences(self) -> JSONList:
+    async def list_all_amazon_audiences(self) -> JSONList:
         """获取所有亚马逊受众（自动分页）"""
         all_audiences = []
         next_token = None
 
         while True:
-            result = self.list_amazon_audiences(
+            result = await self.list_amazon_audiences(
                 max_results=100,
                 next_token=next_token,
             )
@@ -332,13 +284,13 @@ class SDAudiencesAPI(BaseAdsClient):
 
         return all_audiences
 
-    def list_all_custom_audiences(self) -> JSONList:
+    async def list_all_custom_audiences(self) -> JSONList:
         """获取所有自定义受众（自动分页）"""
         all_audiences = []
         next_token = None
 
         while True:
-            result = self.list_custom_audiences(
+            result = await self.list_custom_audiences(
                 max_results=100,
                 next_token=next_token,
             )
@@ -351,65 +303,60 @@ class SDAudiencesAPI(BaseAdsClient):
 
         return all_audiences
 
-    def get_in_market_audiences(self) -> JSONList:
+    async def get_in_market_audiences(self) -> JSONList:
         """获取In-Market受众"""
-        result = self.list_amazon_audiences(audience_type="IN_MARKET", max_results=100)
+        result = await self.list_amazon_audiences(audience_type="IN_MARKET", max_results=100)
         return result.get("audiences", [])
 
-    def get_lifestyle_audiences(self) -> JSONList:
+    async def get_lifestyle_audiences(self) -> JSONList:
         """获取Lifestyle受众"""
-        result = self.list_amazon_audiences(audience_type="LIFESTYLE", max_results=100)
+        result = await self.list_amazon_audiences(audience_type="LIFESTYLE", max_results=100)
         return result.get("audiences", [])
 
-    def setup_full_funnel_audiences(
+    async def setup_full_funnel_audiences(
         self,
         ad_group_id: str,
         asins: list[str],
         base_bid: float,
     ) -> JSONData:
-        """
-        设置全漏斗受众定向
-        
-        包括浏览者、购买者和相似受众
-        """
+        """设置全漏斗受众定向"""
         results = {}
 
         # 1. 浏览再营销（高意向）
-        views_audience = self.create_views_remarketing_audience(
+        views_audience = await self.create_views_remarketing_audience(
             name=f"Views_{'_'.join(asins[:3])}",
             asins=asins,
             lookback_days=30,
         )
         if views_audience.get("audienceId"):
-            results["viewsAudience"] = self.add_audience_to_ad_group(
+            results["viewsAudience"] = await self.add_audience_to_ad_group(
                 ad_group_id=ad_group_id,
                 audience_id=views_audience["audienceId"],
-                bid=base_bid * 1.5,  # 高竞价
+                bid=base_bid * 1.5,
             )
 
         # 2. 购买再营销（交叉销售）
-        purchases_audience = self.create_purchases_remarketing_audience(
+        purchases_audience = await self.create_purchases_remarketing_audience(
             name=f"Purchases_{'_'.join(asins[:3])}",
             asins=asins,
             lookback_days=180,
         )
         if purchases_audience.get("audienceId"):
-            results["purchasesAudience"] = self.add_audience_to_ad_group(
+            results["purchasesAudience"] = await self.add_audience_to_ad_group(
                 ad_group_id=ad_group_id,
                 audience_id=purchases_audience["audienceId"],
                 bid=base_bid * 1.2,
             )
 
         # 3. 受众推荐
-        recommendations = self.get_audience_recommendations(asins, max_results=5)
+        recommendations = await self.get_audience_recommendations(asins, max_results=5)
         for rec in recommendations.get("audiences", []):
             audience_id = rec.get("audienceId")
             if audience_id:
-                results[f"recommended_{audience_id}"] = self.add_audience_to_ad_group(
+                results[f"recommended_{audience_id}"] = await self.add_audience_to_ad_group(
                     ad_group_id=ad_group_id,
                     audience_id=audience_id,
                     bid=base_bid,
                 )
 
         return results
-

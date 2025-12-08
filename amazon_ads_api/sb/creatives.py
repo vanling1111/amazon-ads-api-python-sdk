@@ -1,5 +1,5 @@
 """
-Sponsored Brands - Creatives API
+Sponsored Brands - Creatives API (异步版本)
 SB创意管理（标题、Logo、视频等）
 """
 
@@ -7,16 +7,16 @@ from ..base import BaseAdsClient, JSONData, JSONList
 
 
 class SBCreativesAPI(BaseAdsClient):
-    """SB Creatives API"""
+    """SB Creatives API (全异步)"""
 
     # ============ Ad Creatives ============
 
-    def get_ad_creative(self, ad_id: str) -> JSONData:
+    async def get_ad_creative(self, ad_id: str) -> JSONData:
         """获取广告创意详情"""
-        result = self.get(f"/sb/v4/ads/{ad_id}/creative")
+        result = await self.get(f"/sb/v4/ads/{ad_id}/creative")
         return result if isinstance(result, dict) else {}
 
-    def update_ad_creative(
+    async def update_ad_creative(
         self,
         ad_id: str,
         creative: JSONData,
@@ -32,12 +32,12 @@ class SBCreativesAPI(BaseAdsClient):
                 "asins": ["B00XXXX"]
             }
         """
-        result = self.put(f"/sb/v4/ads/{ad_id}/creative", json_data=creative)
+        result = await self.put(f"/sb/v4/ads/{ad_id}/creative", json_data=creative)
         return result if isinstance(result, dict) else {}
 
     # ============ Headline Recommendations ============
 
-    def get_headline_recommendations(
+    async def get_headline_recommendations(
         self,
         asins: list[str],
         max_recommendations: int = 10,
@@ -46,12 +46,8 @@ class SBCreativesAPI(BaseAdsClient):
         获取标题建议
         
         AI生成的广告标题推荐
-        
-        Args:
-            asins: 要推广的ASIN列表
-            max_recommendations: 最大建议数
         """
-        result = self.post("/sb/recommendations/creative/headline", json_data={
+        result = await self.post("/sb/recommendations/creative/headline", json_data={
             "asins": asins,
             "maxRecommendations": max_recommendations,
         })
@@ -59,105 +55,75 @@ class SBCreativesAPI(BaseAdsClient):
 
     # ============ Brand Logo ============
 
-    def list_brand_logos(self, brand_entity_id: str | None = None) -> JSONList:
-        """
-        获取可用的品牌Logo列表
-        
-        Logo必须先上传到Creative Assets
-        """
+    async def list_brand_logos(self, brand_entity_id: str | None = None) -> JSONList:
+        """获取可用的品牌Logo列表"""
         params = {}
         if brand_entity_id:
             params["brandEntityId"] = brand_entity_id
 
-        result = self.get("/sb/brands/logos", params=params or None)
+        result = await self.get("/sb/brands/logos", params=params or None)
         return result if isinstance(result, list) else []
 
-    def validate_brand_logo(self, asset_id: str) -> JSONData:
-        """
-        验证品牌Logo是否符合要求
-        
-        SB对Logo有特定要求（尺寸、格式等）
-        """
-        result = self.post("/sb/brands/logos/validate", json_data={
+    async def validate_brand_logo(self, asset_id: str) -> JSONData:
+        """验证品牌Logo是否符合要求"""
+        result = await self.post("/sb/brands/logos/validate", json_data={
             "assetId": asset_id
         })
         return result if isinstance(result, dict) else {}
 
     # ============ Video Creatives ============
 
-    def validate_video(self, video_asset_id: str) -> JSONData:
-        """
-        验证视频是否符合SB要求
-        
-        视频要求：
-        - 时长：6-45秒
-        - 分辨率：最小1280x720
-        - 格式：MP4, MOV
-        """
-        result = self.post("/sb/videos/validate", json_data={
+    async def validate_video(self, video_asset_id: str) -> JSONData:
+        """验证视频是否符合SB要求"""
+        result = await self.post("/sb/videos/validate", json_data={
             "videoAssetId": video_asset_id
         })
         return result if isinstance(result, dict) else {}
 
-    def get_video_status(self, video_asset_id: str) -> JSONData:
+    async def get_video_status(self, video_asset_id: str) -> JSONData:
         """获取视频处理状态"""
-        result = self.get(f"/sb/videos/{video_asset_id}/status")
+        result = await self.get(f"/sb/videos/{video_asset_id}/status")
         return result if isinstance(result, dict) else {}
 
     # ============ Store Page Creatives ============
 
-    def get_store_page_info(self, store_page_url: str) -> JSONData:
-        """
-        获取品牌旗舰店页面信息
-        
-        用于Store Spotlight广告
-        """
-        result = self.post("/sb/stores/pageInfo", json_data={
+    async def get_store_page_info(self, store_page_url: str) -> JSONData:
+        """获取品牌旗舰店页面信息"""
+        result = await self.post("/sb/stores/pageInfo", json_data={
             "storePageUrl": store_page_url
         })
         return result if isinstance(result, dict) else {}
 
-    def list_store_pages(self, brand_entity_id: str) -> JSONList:
+    async def list_store_pages(self, brand_entity_id: str) -> JSONList:
         """获取品牌旗舰店页面列表"""
-        result = self.get(f"/sb/brands/{brand_entity_id}/stores/pages")
+        result = await self.get(f"/sb/brands/{brand_entity_id}/stores/pages")
         return result if isinstance(result, list) else []
 
     # ============ Pre-moderation (预审核) ============
 
-    def submit_for_premoderation(
+    async def submit_for_premoderation(
         self,
         creative: JSONData,
     ) -> JSONData:
-        """
-        提交创意预审核
-        
-        在正式创建广告前，可以先验证创意是否符合政策
-        
-        Args:
-            creative: 创意内容（与create_ad相同格式）
-        """
-        result = self.post("/sb/preModeration", json_data=creative)
+        """提交创意预审核"""
+        result = await self.post("/sb/preModeration", json_data=creative)
         return result if isinstance(result, dict) else {}
 
-    def get_premoderation_result(self, premoderation_id: str) -> JSONData:
+    async def get_premoderation_result(self, premoderation_id: str) -> JSONData:
         """获取预审核结果"""
-        result = self.get(f"/sb/preModeration/{premoderation_id}")
+        result = await self.get(f"/sb/preModeration/{premoderation_id}")
         return result if isinstance(result, dict) else {}
 
     # ============ Creative Policy ============
 
-    def get_creative_policy(self) -> JSONData:
-        """
-        获取创意政策信息
-        
-        返回当前的创意要求和限制
-        """
-        result = self.get("/sb/creative/policy")
+    async def get_creative_policy(self) -> JSONData:
+        """获取创意政策信息"""
+        result = await self.get("/sb/creative/policy")
         return result if isinstance(result, dict) else {}
 
     # ============ A/B Testing (Beta) ============
 
-    def create_creative_test(
+    async def create_creative_test(
         self,
         campaign_id: str,
         ad_group_id: str,
@@ -165,12 +131,8 @@ class SBCreativesAPI(BaseAdsClient):
         creative_b: JSONData,
         test_duration_days: int = 14,
     ) -> JSONData:
-        """
-        创建创意A/B测试
-        
-        测试不同标题、图片的效果
-        """
-        result = self.post("/sb/creativeTests", json_data={
+        """创建创意A/B测试"""
+        result = await self.post("/sb/creativeTests", json_data={
             "campaignId": campaign_id,
             "adGroupId": ad_group_id,
             "creativeA": creative_a,
@@ -179,22 +141,21 @@ class SBCreativesAPI(BaseAdsClient):
         })
         return result if isinstance(result, dict) else {}
 
-    def get_creative_test_results(self, test_id: str) -> JSONData:
+    async def get_creative_test_results(self, test_id: str) -> JSONData:
         """获取A/B测试结果"""
-        result = self.get(f"/sb/creativeTests/{test_id}/results")
+        result = await self.get(f"/sb/creativeTests/{test_id}/results")
         return result if isinstance(result, dict) else {}
 
     # ============ 便捷方法 ============
 
-    def update_headline(self, ad_id: str, headline: str) -> JSONData:
+    async def update_headline(self, ad_id: str, headline: str) -> JSONData:
         """更新广告标题"""
-        return self.update_ad_creative(ad_id, {"headline": headline})
+        return await self.update_ad_creative(ad_id, {"headline": headline})
 
-    def update_brand_logo(self, ad_id: str, logo_asset_id: str) -> JSONData:
+    async def update_brand_logo(self, ad_id: str, logo_asset_id: str) -> JSONData:
         """更新品牌Logo"""
-        return self.update_ad_creative(ad_id, {"brandLogoAssetID": logo_asset_id})
+        return await self.update_ad_creative(ad_id, {"brandLogoAssetID": logo_asset_id})
 
-    def update_asins(self, ad_id: str, asins: list[str]) -> JSONData:
+    async def update_asins(self, ad_id: str, asins: list[str]) -> JSONData:
         """更新广告ASIN"""
-        return self.update_ad_creative(ad_id, {"asins": asins[:3]})
-
+        return await self.update_ad_creative(ad_id, {"asins": asins[:3]})

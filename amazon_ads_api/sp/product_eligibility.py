@@ -1,5 +1,5 @@
 """
-Sponsored Products - Product Eligibility API
+Sponsored Products - Product Eligibility API (异步版本)
 SP产品资格和推广资格
 """
 
@@ -7,11 +7,11 @@ from ..base import BaseAdsClient, JSONData, JSONList
 
 
 class SPProductEligibilityAPI(BaseAdsClient):
-    """SP Product Eligibility API"""
+    """SP Product Eligibility API (全异步)"""
 
     # ============ Product Eligibility ============
 
-    def check_product_eligibility(
+    async def check_product_eligibility(
         self,
         asins: list[str],
     ) -> JSONData:
@@ -38,24 +38,24 @@ class SPProductEligibilityAPI(BaseAdsClient):
                 ]
             }
         """
-        result = self.post("/sp/eligibility/products", json_data={
+        result = await self.post("/sp/eligibility/products", json_data={
             "asins": asins
         })
         return result if isinstance(result, dict) else {"productEligibility": []}
 
-    def get_product_details(
+    async def get_product_details(
         self,
         asins: list[str],
     ) -> JSONData:
         """获取产品详情（用于广告）"""
-        result = self.post("/sp/products", json_data={
+        result = await self.post("/sp/products", json_data={
             "asins": asins
         })
         return result if isinstance(result, dict) else {"products": []}
 
     # ============ SKU Eligibility ============
 
-    def check_sku_eligibility(
+    async def check_sku_eligibility(
         self,
         skus: list[str],
     ) -> JSONData:
@@ -65,12 +65,12 @@ class SPProductEligibilityAPI(BaseAdsClient):
         Args:
             skus: SKU列表
         """
-        result = self.post("/sp/eligibility/skus", json_data={
+        result = await self.post("/sp/eligibility/skus", json_data={
             "skus": skus
         })
         return result if isinstance(result, dict) else {"skuEligibility": []}
 
-    def list_eligible_skus(
+    async def list_eligible_skus(
         self,
         max_results: int = 100,
         next_token: str | None = None,
@@ -80,12 +80,12 @@ class SPProductEligibilityAPI(BaseAdsClient):
         if next_token:
             params["nextToken"] = next_token
 
-        result = self.get("/sp/eligibility/skus", params=params)
+        result = await self.get("/sp/eligibility/skus", params=params)
         return result if isinstance(result, dict) else {"skus": []}
 
     # ============ Campaign Eligibility ============
 
-    def check_campaign_targeting_eligibility(
+    async def check_campaign_targeting_eligibility(
         self,
         targeting_type: str,
         asins: list[str],
@@ -96,7 +96,7 @@ class SPProductEligibilityAPI(BaseAdsClient):
         Args:
             targeting_type: MANUAL | AUTO
         """
-        result = self.post("/sp/eligibility/campaigns", json_data={
+        result = await self.post("/sp/eligibility/campaigns", json_data={
             "targetingType": targeting_type,
             "asins": asins,
         })
@@ -104,7 +104,7 @@ class SPProductEligibilityAPI(BaseAdsClient):
 
     # ============ Targeting Eligibility ============
 
-    def check_keyword_targeting_eligibility(
+    async def check_keyword_targeting_eligibility(
         self,
         keywords: list[dict],
     ) -> JSONData:
@@ -117,12 +117,12 @@ class SPProductEligibilityAPI(BaseAdsClient):
                 ...
             ]
         """
-        result = self.post("/sp/eligibility/keywords", json_data={
+        result = await self.post("/sp/eligibility/keywords", json_data={
             "keywords": keywords
         })
         return result if isinstance(result, dict) else {}
 
-    def check_product_targeting_eligibility(
+    async def check_product_targeting_eligibility(
         self,
         targets: list[dict],
     ) -> JSONData:
@@ -135,14 +135,14 @@ class SPProductEligibilityAPI(BaseAdsClient):
                 {"type": "asinCategorySameAs", "value": "category_id"}
             ]
         """
-        result = self.post("/sp/eligibility/targets", json_data={
+        result = await self.post("/sp/eligibility/targets", json_data={
             "targets": targets
         })
         return result if isinstance(result, dict) else {}
 
     # ============ Auto Targeting Eligibility ============
 
-    def get_auto_targeting_preview(
+    async def get_auto_targeting_preview(
         self,
         asins: list[str],
     ) -> JSONData:
@@ -151,14 +151,14 @@ class SPProductEligibilityAPI(BaseAdsClient):
         
         查看自动定向会匹配哪些关键词和产品
         """
-        result = self.post("/sp/eligibility/autoTargeting/preview", json_data={
+        result = await self.post("/sp/eligibility/autoTargeting/preview", json_data={
             "asins": asins
         })
         return result if isinstance(result, dict) else {}
 
     # ============ Restrictions ============
 
-    def get_product_restrictions(
+    async def get_product_restrictions(
         self,
         asin: str,
     ) -> JSONData:
@@ -167,26 +167,26 @@ class SPProductEligibilityAPI(BaseAdsClient):
         
         返回该产品的广告投放限制
         """
-        result = self.get(f"/sp/products/{asin}/restrictions")
+        result = await self.get(f"/sp/products/{asin}/restrictions")
         return result if isinstance(result, dict) else {}
 
-    def get_category_restrictions(
+    async def get_category_restrictions(
         self,
         category_id: str,
     ) -> JSONData:
         """获取品类广告限制"""
-        result = self.get(f"/sp/categories/{category_id}/restrictions")
+        result = await self.get(f"/sp/categories/{category_id}/restrictions")
         return result if isinstance(result, dict) else {}
 
     # ============ 便捷方法 ============
 
-    def list_all_eligible_skus(self) -> JSONList:
+    async def list_all_eligible_skus(self) -> JSONList:
         """获取所有有资格的SKU（自动分页）"""
         all_skus = []
         next_token = None
 
         while True:
-            result = self.list_eligible_skus(
+            result = await self.list_eligible_skus(
                 max_results=100,
                 next_token=next_token,
             )
@@ -199,18 +199,18 @@ class SPProductEligibilityAPI(BaseAdsClient):
 
         return all_skus
 
-    def filter_eligible_asins(self, asins: list[str]) -> list[str]:
+    async def filter_eligible_asins(self, asins: list[str]) -> list[str]:
         """过滤有资格的ASIN"""
-        result = self.check_product_eligibility(asins)
+        result = await self.check_product_eligibility(asins)
         eligible = []
         for item in result.get("productEligibility", []):
             if item.get("eligible"):
                 eligible.append(item.get("asin"))
         return eligible
 
-    def get_ineligible_reasons(self, asins: list[str]) -> dict[str, list[str]]:
+    async def get_ineligible_reasons(self, asins: list[str]) -> dict[str, list[str]]:
         """获取不合格ASIN的原因"""
-        result = self.check_product_eligibility(asins)
+        result = await self.check_product_eligibility(asins)
         reasons = {}
         for item in result.get("productEligibility", []):
             if not item.get("eligible"):
@@ -218,7 +218,7 @@ class SPProductEligibilityAPI(BaseAdsClient):
                 reasons[asin] = item.get("ineligibilityReasons", ["UNKNOWN"])
         return reasons
 
-    def batch_check_eligibility(
+    async def batch_check_eligibility(
         self,
         asins: list[str],
         batch_size: int = 100,
@@ -228,8 +228,7 @@ class SPProductEligibilityAPI(BaseAdsClient):
 
         for i in range(0, len(asins), batch_size):
             batch = asins[i:i + batch_size]
-            result = self.check_product_eligibility(batch)
+            result = await self.check_product_eligibility(batch)
             all_results.extend(result.get("productEligibility", []))
 
         return {"productEligibility": all_results}
-

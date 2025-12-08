@@ -1,5 +1,5 @@
 """
-History API
+History API (异步版本)
 变更历史记录
 """
 
@@ -7,11 +7,11 @@ from ..base import BaseAdsClient, JSONData, JSONList
 
 
 class HistoryAPI(BaseAdsClient):
-    """History API"""
+    """History API (全异步)"""
 
     # ============ Change History ============
 
-    def get_change_history(
+    async def get_change_history(
         self,
         start_date: str,
         end_date: str,
@@ -43,12 +43,12 @@ class HistoryAPI(BaseAdsClient):
         if next_token:
             body["nextToken"] = next_token
 
-        result = self.post("/history/changes", json_data=body)
+        result = await self.post("/history/changes", json_data=body)
         return result if isinstance(result, dict) else {"changes": []}
 
     # ============ Entity Snapshots ============
 
-    def get_entity_snapshot(
+    async def get_entity_snapshot(
         self,
         entity_type: str,
         entity_id: str,
@@ -59,14 +59,14 @@ class HistoryAPI(BaseAdsClient):
         
         查看某个实体在特定日期的状态
         """
-        result = self.get(f"/history/snapshot/{entity_type}/{entity_id}", params={
+        result = await self.get(f"/history/snapshot/{entity_type}/{entity_id}", params={
             "snapshotDate": snapshot_date,
         })
         return result if isinstance(result, dict) else {}
 
     # ============ Bid History ============
 
-    def get_bid_history(
+    async def get_bid_history(
         self,
         entity_type: str,
         entity_id: str,
@@ -80,7 +80,7 @@ class HistoryAPI(BaseAdsClient):
             entity_type: KEYWORD | TARGET
             entity_id: 关键词或Target ID
         """
-        result = self.post("/history/bids", json_data={
+        result = await self.post("/history/bids", json_data={
             "entityType": entity_type,
             "entityId": entity_id,
             "startDate": start_date,
@@ -90,14 +90,14 @@ class HistoryAPI(BaseAdsClient):
 
     # ============ Budget History ============
 
-    def get_budget_history(
+    async def get_budget_history(
         self,
         campaign_id: str,
         start_date: str,
         end_date: str,
     ) -> JSONList:
         """获取预算变更历史"""
-        result = self.post("/history/budgets", json_data={
+        result = await self.post("/history/budgets", json_data={
             "campaignId": campaign_id,
             "startDate": start_date,
             "endDate": end_date,
@@ -106,7 +106,7 @@ class HistoryAPI(BaseAdsClient):
 
     # ============ State History ============
 
-    def get_state_history(
+    async def get_state_history(
         self,
         entity_type: str,
         entity_id: str,
@@ -118,7 +118,7 @@ class HistoryAPI(BaseAdsClient):
         
         追踪enabled/paused/archived状态变化
         """
-        result = self.post("/history/states", json_data={
+        result = await self.post("/history/states", json_data={
             "entityType": entity_type,
             "entityId": entity_id,
             "startDate": start_date,
@@ -128,7 +128,7 @@ class HistoryAPI(BaseAdsClient):
 
     # ============ Audit Log ============
 
-    def get_audit_log(
+    async def get_audit_log(
         self,
         start_date: str,
         end_date: str,
@@ -155,26 +155,26 @@ class HistoryAPI(BaseAdsClient):
         if action_type:
             body["actionType"] = action_type
 
-        result = self.post("/history/audit", json_data=body)
+        result = await self.post("/history/audit", json_data=body)
         return result if isinstance(result, dict) else {"logs": []}
 
     # ============ 便捷方法 ============
 
-    def get_campaign_history(
+    async def get_campaign_history(
         self,
         campaign_id: str,
         start_date: str,
         end_date: str,
     ) -> JSONData:
         """获取Campaign完整变更历史"""
-        changes = self.get_change_history(
+        changes = await self.get_change_history(
             start_date=start_date,
             end_date=end_date,
             entity_type="CAMPAIGN",
             entity_id=campaign_id,
         )
-        budget = self.get_budget_history(campaign_id, start_date, end_date)
-        state = self.get_state_history("CAMPAIGN", campaign_id, start_date, end_date)
+        budget = await self.get_budget_history(campaign_id, start_date, end_date)
+        state = await self.get_state_history("CAMPAIGN", campaign_id, start_date, end_date)
 
         return {
             "changes": changes.get("changes", []),
@@ -182,21 +182,21 @@ class HistoryAPI(BaseAdsClient):
             "stateHistory": state,
         }
 
-    def get_keyword_history(
+    async def get_keyword_history(
         self,
         keyword_id: str,
         start_date: str,
         end_date: str,
     ) -> JSONData:
         """获取Keyword完整变更历史"""
-        changes = self.get_change_history(
+        changes = await self.get_change_history(
             start_date=start_date,
             end_date=end_date,
             entity_type="KEYWORD",
             entity_id=keyword_id,
         )
-        bids = self.get_bid_history("KEYWORD", keyword_id, start_date, end_date)
-        state = self.get_state_history("KEYWORD", keyword_id, start_date, end_date)
+        bids = await self.get_bid_history("KEYWORD", keyword_id, start_date, end_date)
+        state = await self.get_state_history("KEYWORD", keyword_id, start_date, end_date)
 
         return {
             "changes": changes.get("changes", []),
@@ -204,7 +204,7 @@ class HistoryAPI(BaseAdsClient):
             "stateHistory": state,
         }
 
-    def list_all_changes(
+    async def list_all_changes(
         self,
         start_date: str,
         end_date: str,
@@ -215,7 +215,7 @@ class HistoryAPI(BaseAdsClient):
         next_token = None
 
         while True:
-            result = self.get_change_history(
+            result = await self.get_change_history(
                 start_date=start_date,
                 end_date=end_date,
                 entity_type=entity_type,
@@ -231,12 +231,11 @@ class HistoryAPI(BaseAdsClient):
 
         return all_changes
 
-    def get_recent_changes(self, days: int = 7) -> JSONList:
+    async def get_recent_changes(self, days: int = 7) -> JSONList:
         """获取最近N天的变更"""
         from datetime import datetime, timedelta
 
         end_date = datetime.now().strftime("%Y-%m-%d")
         start_date = (datetime.now() - timedelta(days=days)).strftime("%Y-%m-%d")
 
-        return self.list_all_changes(start_date, end_date)
-
+        return await self.list_all_changes(start_date, end_date)

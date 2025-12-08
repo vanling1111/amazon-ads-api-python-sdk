@@ -1,17 +1,17 @@
 """
-Ads Data Manager API - 广告数据管理器
+Ads Data Manager API - 广告数据管理器 (异步版本)
 
 官方文档: https://advertising.amazon.com/API/docs/en-us/ads-data-manager
 用于管理和上传第一方数据用于广告定向
 """
 
 from typing import Any, Dict, List, Optional
-from ..base import BaseAdsClient
+from ..base import BaseAdsClient, JSONData
 
 
 class AdsDataManagerAPI(BaseAdsClient):
     """
-    Ads Data Manager API
+    Ads Data Manager API (全异步)
     
     用于管理广告商的第一方数据，包括：
     - 客户数据上传
@@ -27,7 +27,7 @@ class AdsDataManagerAPI(BaseAdsClient):
         name: str,
         description: Optional[str] = None,
         data_type: str = "CUSTOMER_DATA",
-    ) -> Dict[str, Any]:
+    ) -> JSONData:
         """创建数据源"""
         request_body: Dict[str, Any] = {
             "name": name,
@@ -36,33 +36,32 @@ class AdsDataManagerAPI(BaseAdsClient):
         if description:
             request_body["description"] = description
             
-        return await self._request(
-            "POST",
+        result = await self.post(
             "/adsDataManager/dataSources",
-            json=request_body
+            json_data=request_body
         )
+        return result if isinstance(result, dict) else {}
     
     async def list_data_sources(
         self,
         *,
         max_results: int = 100,
         next_token: Optional[str] = None,
-    ) -> Dict[str, Any]:
+    ) -> JSONData:
         """获取数据源列表"""
         params: Dict[str, Any] = {"maxResults": max_results}
         if next_token:
             params["nextToken"] = next_token
-        return await self._request("GET", "/adsDataManager/dataSources", params=params)
+        result = await self.get("/adsDataManager/dataSources", params=params)
+        return result if isinstance(result, dict) else {"dataSources": []}
     
     async def get_data_source(
         self,
         data_source_id: str,
-    ) -> Dict[str, Any]:
+    ) -> JSONData:
         """获取数据源详情"""
-        return await self._request(
-            "GET",
-            f"/adsDataManager/dataSources/{data_source_id}"
-        )
+        result = await self.get(f"/adsDataManager/dataSources/{data_source_id}")
+        return result if isinstance(result, dict) else {}
     
     async def update_data_source(
         self,
@@ -70,7 +69,7 @@ class AdsDataManagerAPI(BaseAdsClient):
         *,
         name: Optional[str] = None,
         description: Optional[str] = None,
-    ) -> Dict[str, Any]:
+    ) -> JSONData:
         """更新数据源"""
         request_body: Dict[str, Any] = {}
         if name:
@@ -78,21 +77,19 @@ class AdsDataManagerAPI(BaseAdsClient):
         if description:
             request_body["description"] = description
             
-        return await self._request(
-            "PUT",
+        result = await self.put(
             f"/adsDataManager/dataSources/{data_source_id}",
-            json=request_body
+            json_data=request_body
         )
+        return result if isinstance(result, dict) else {}
     
     async def delete_data_source(
         self,
         data_source_id: str,
-    ) -> Dict[str, Any]:
+    ) -> JSONData:
         """删除数据源"""
-        return await self._request(
-            "DELETE",
-            f"/adsDataManager/dataSources/{data_source_id}"
-        )
+        result = await self.delete(f"/adsDataManager/dataSources/{data_source_id}")
+        return result if isinstance(result, dict) else {}
     
     # ==================== 数据上传 ====================
     
@@ -102,16 +99,16 @@ class AdsDataManagerAPI(BaseAdsClient):
         *,
         file_name: str,
         content_type: str = "text/csv",
-    ) -> Dict[str, Any]:
+    ) -> JSONData:
         """获取数据上传URL"""
-        return await self._request(
-            "POST",
+        result = await self.post(
             f"/adsDataManager/dataSources/{data_source_id}/uploads",
-            json={
+            json_data={
                 "fileName": file_name,
                 "contentType": content_type,
             }
         )
+        return result if isinstance(result, dict) else {}
     
     async def list_uploads(
         self,
@@ -119,27 +116,27 @@ class AdsDataManagerAPI(BaseAdsClient):
         *,
         max_results: int = 100,
         next_token: Optional[str] = None,
-    ) -> Dict[str, Any]:
+    ) -> JSONData:
         """获取上传历史"""
         params: Dict[str, Any] = {"maxResults": max_results}
         if next_token:
             params["nextToken"] = next_token
-        return await self._request(
-            "GET",
+        result = await self.get(
             f"/adsDataManager/dataSources/{data_source_id}/uploads",
             params=params
         )
+        return result if isinstance(result, dict) else {"uploads": []}
     
     async def get_upload_status(
         self,
         data_source_id: str,
         upload_id: str,
-    ) -> Dict[str, Any]:
+    ) -> JSONData:
         """获取上传状态"""
-        return await self._request(
-            "GET",
+        result = await self.get(
             f"/adsDataManager/dataSources/{data_source_id}/uploads/{upload_id}"
         )
+        return result if isinstance(result, dict) else {}
     
     # ==================== 数据段管理 ====================
     
@@ -150,7 +147,7 @@ class AdsDataManagerAPI(BaseAdsClient):
         name: str,
         description: Optional[str] = None,
         ttl_days: int = 30,
-    ) -> Dict[str, Any]:
+    ) -> JSONData:
         """创建数据段"""
         request_body: Dict[str, Any] = {
             "name": name,
@@ -159,11 +156,11 @@ class AdsDataManagerAPI(BaseAdsClient):
         if description:
             request_body["description"] = description
             
-        return await self._request(
-            "POST",
+        result = await self.post(
             f"/adsDataManager/dataSources/{data_source_id}/segments",
-            json=request_body
+            json_data=request_body
         )
+        return result if isinstance(result, dict) else {}
     
     async def list_segments(
         self,
@@ -171,38 +168,38 @@ class AdsDataManagerAPI(BaseAdsClient):
         *,
         max_results: int = 100,
         next_token: Optional[str] = None,
-    ) -> Dict[str, Any]:
+    ) -> JSONData:
         """获取数据段列表"""
         params: Dict[str, Any] = {"maxResults": max_results}
         if next_token:
             params["nextToken"] = next_token
-        return await self._request(
-            "GET",
+        result = await self.get(
             f"/adsDataManager/dataSources/{data_source_id}/segments",
             params=params
         )
+        return result if isinstance(result, dict) else {"segments": []}
     
     async def get_segment(
         self,
         data_source_id: str,
         segment_id: str,
-    ) -> Dict[str, Any]:
+    ) -> JSONData:
         """获取数据段详情"""
-        return await self._request(
-            "GET",
+        result = await self.get(
             f"/adsDataManager/dataSources/{data_source_id}/segments/{segment_id}"
         )
+        return result if isinstance(result, dict) else {}
     
     async def delete_segment(
         self,
         data_source_id: str,
         segment_id: str,
-    ) -> Dict[str, Any]:
+    ) -> JSONData:
         """删除数据段"""
-        return await self._request(
-            "DELETE",
+        result = await self.delete(
             f"/adsDataManager/dataSources/{data_source_id}/segments/{segment_id}"
         )
+        return result if isinstance(result, dict) else {}
     
     # ==================== 匹配率报告 ====================
     
@@ -212,14 +209,13 @@ class AdsDataManagerAPI(BaseAdsClient):
         *,
         start_date: str,
         end_date: str,
-    ) -> Dict[str, Any]:
+    ) -> JSONData:
         """获取匹配率报告"""
-        return await self._request(
-            "GET",
+        result = await self.get(
             f"/adsDataManager/dataSources/{data_source_id}/matchRateReport",
             params={
                 "startDate": start_date,
                 "endDate": end_date,
             }
         )
-
+        return result if isinstance(result, dict) else {}

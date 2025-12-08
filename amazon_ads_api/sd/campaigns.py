@@ -1,5 +1,5 @@
 """
-Sponsored Display - Campaigns API
+Sponsored Display - Campaigns API (异步版本)
 SD广告系列管理
 """
 
@@ -7,11 +7,11 @@ from ..base import BaseAdsClient, JSONData, JSONList
 
 
 class SDCampaignsAPI(BaseAdsClient):
-    """SD Campaigns API"""
+    """SD Campaigns API (全异步)"""
 
     # ============ Campaigns ============
 
-    def list_campaigns(
+    async def list_campaigns(
         self,
         state_filter: str | None = None,
         name_filter: str | None = None,
@@ -34,15 +34,15 @@ class SDCampaignsAPI(BaseAdsClient):
         if next_token:
             params["nextToken"] = next_token
 
-        result = self.post("/sd/campaigns/list", json_data=params)
+        result = await self.post("/sd/campaigns/list", json_data=params)
         return result if isinstance(result, dict) else {"campaigns": []}
 
-    def get_campaign(self, campaign_id: str) -> JSONData:
+    async def get_campaign(self, campaign_id: str) -> JSONData:
         """获取单个SD Campaign详情"""
-        result = self.get(f"/sd/campaigns/{campaign_id}")
+        result = await self.get(f"/sd/campaigns/{campaign_id}")
         return result if isinstance(result, dict) else {}
 
-    def create_campaigns(self, campaigns: JSONList) -> JSONData:
+    async def create_campaigns(self, campaigns: JSONList) -> JSONData:
         """
         批量创建SD Campaign
         
@@ -64,21 +64,21 @@ class SDCampaignsAPI(BaseAdsClient):
         - T00030: 受众(Purchases)
         - T00001: 上下文定向
         """
-        result = self.post("/sd/campaigns", json_data=campaigns)
+        result = await self.post("/sd/campaigns", json_data=campaigns)
         return result if isinstance(result, dict) else {"campaigns": {"success": [], "error": []}}
 
-    def update_campaigns(self, campaigns: JSONList) -> JSONData:
+    async def update_campaigns(self, campaigns: JSONList) -> JSONData:
         """批量更新SD Campaign"""
-        result = self.put("/sd/campaigns", json_data=campaigns)
+        result = await self.put("/sd/campaigns", json_data=campaigns)
         return result if isinstance(result, dict) else {"campaigns": {"success": [], "error": []}}
 
-    def delete_campaign(self, campaign_id: str) -> JSONData:
+    async def delete_campaign(self, campaign_id: str) -> JSONData:
         """归档SD Campaign"""
-        return self.delete(f"/sd/campaigns/{campaign_id}")
+        return await self.delete(f"/sd/campaigns/{campaign_id}")
 
     # ============ Ad Groups ============
 
-    def list_ad_groups(
+    async def list_ad_groups(
         self,
         campaign_id: str | None = None,
         state_filter: str | None = None,
@@ -94,15 +94,15 @@ class SDCampaignsAPI(BaseAdsClient):
         if next_token:
             params["nextToken"] = next_token
 
-        result = self.post("/sd/adGroups/list", json_data=params)
+        result = await self.post("/sd/adGroups/list", json_data=params)
         return result if isinstance(result, dict) else {"adGroups": []}
 
-    def get_ad_group(self, ad_group_id: str) -> JSONData:
+    async def get_ad_group(self, ad_group_id: str) -> JSONData:
         """获取单个SD Ad Group详情"""
-        result = self.get(f"/sd/adGroups/{ad_group_id}")
+        result = await self.get(f"/sd/adGroups/{ad_group_id}")
         return result if isinstance(result, dict) else {}
 
-    def create_ad_groups(self, ad_groups: JSONList) -> JSONData:
+    async def create_ad_groups(self, ad_groups: JSONList) -> JSONData:
         """
         批量创建SD Ad Group
         
@@ -117,21 +117,21 @@ class SDCampaignsAPI(BaseAdsClient):
                 }
             ]
         """
-        result = self.post("/sd/adGroups", json_data=ad_groups)
+        result = await self.post("/sd/adGroups", json_data=ad_groups)
         return result if isinstance(result, dict) else {"adGroups": {"success": [], "error": []}}
 
-    def update_ad_groups(self, ad_groups: JSONList) -> JSONData:
+    async def update_ad_groups(self, ad_groups: JSONList) -> JSONData:
         """批量更新SD Ad Group"""
-        result = self.put("/sd/adGroups", json_data=ad_groups)
+        result = await self.put("/sd/adGroups", json_data=ad_groups)
         return result if isinstance(result, dict) else {"adGroups": {"success": [], "error": []}}
 
-    def delete_ad_group(self, ad_group_id: str) -> JSONData:
+    async def delete_ad_group(self, ad_group_id: str) -> JSONData:
         """归档SD Ad Group"""
-        return self.delete(f"/sd/adGroups/{ad_group_id}")
+        return await self.delete(f"/sd/adGroups/{ad_group_id}")
 
     # ============ Product Ads ============
 
-    def list_product_ads(
+    async def list_product_ads(
         self,
         ad_group_id: str | None = None,
         campaign_id: str | None = None,
@@ -147,10 +147,10 @@ class SDCampaignsAPI(BaseAdsClient):
         if state_filter:
             params["stateFilter"] = state_filter
 
-        result = self.post("/sd/productAds/list", json_data=params)
+        result = await self.post("/sd/productAds/list", json_data=params)
         return result if isinstance(result, dict) else {"productAds": []}
 
-    def create_product_ads(self, product_ads: JSONList) -> JSONData:
+    async def create_product_ads(self, product_ads: JSONList) -> JSONData:
         """
         批量创建SD Product Ad
         
@@ -164,21 +164,21 @@ class SDCampaignsAPI(BaseAdsClient):
                 }
             ]
         """
-        result = self.post("/sd/productAds", json_data=product_ads)
+        result = await self.post("/sd/productAds", json_data=product_ads)
         return result if isinstance(result, dict) else {"productAds": {"success": [], "error": []}}
 
-    def update_product_ads(self, product_ads: JSONList) -> JSONData:
+    async def update_product_ads(self, product_ads: JSONList) -> JSONData:
         """批量更新SD Product Ad"""
-        result = self.put("/sd/productAds", json_data=product_ads)
+        result = await self.put("/sd/productAds", json_data=product_ads)
         return result if isinstance(result, dict) else {"productAds": {"success": [], "error": []}}
 
-    def delete_product_ad(self, ad_id: str) -> JSONData:
+    async def delete_product_ad(self, ad_id: str) -> JSONData:
         """归档SD Product Ad"""
-        return self.delete(f"/sd/productAds/{ad_id}")
+        return await self.delete(f"/sd/productAds/{ad_id}")
 
     # ============ Forecasts ============
 
-    def get_campaign_forecast(
+    async def get_campaign_forecast(
         self,
         tactic: str,
         targeting: list[dict],
@@ -189,7 +189,7 @@ class SDCampaignsAPI(BaseAdsClient):
         
         预测给定设置下的Impressions、Clicks等
         """
-        result = self.post("/sd/forecasts", json_data={
+        result = await self.post("/sd/forecasts", json_data={
             "tactic": tactic,
             "targeting": targeting,
             "dailyBudget": daily_budget,
@@ -198,25 +198,25 @@ class SDCampaignsAPI(BaseAdsClient):
 
     # ============ 便捷方法 ============
 
-    def pause_campaign(self, campaign_id: str) -> JSONData:
+    async def pause_campaign(self, campaign_id: str) -> JSONData:
         """暂停Campaign"""
-        return self.update_campaigns([{"campaignId": campaign_id, "state": "paused"}])
+        return await self.update_campaigns([{"campaignId": campaign_id, "state": "paused"}])
 
-    def enable_campaign(self, campaign_id: str) -> JSONData:
+    async def enable_campaign(self, campaign_id: str) -> JSONData:
         """启用Campaign"""
-        return self.update_campaigns([{"campaignId": campaign_id, "state": "enabled"}])
+        return await self.update_campaigns([{"campaignId": campaign_id, "state": "enabled"}])
 
-    def update_budget(self, campaign_id: str, budget: float) -> JSONData:
+    async def update_budget(self, campaign_id: str, budget: float) -> JSONData:
         """更新Campaign预算"""
-        return self.update_campaigns([{"campaignId": campaign_id, "budget": budget}])
+        return await self.update_campaigns([{"campaignId": campaign_id, "budget": budget}])
 
-    def list_all_campaigns(self, state_filter: str | None = None) -> JSONList:
+    async def list_all_campaigns(self, state_filter: str | None = None) -> JSONList:
         """获取所有Campaign（自动分页）"""
         all_campaigns = []
         next_token = None
 
         while True:
-            result = self.list_campaigns(
+            result = await self.list_campaigns(
                 state_filter=state_filter,
                 max_results=100,
                 next_token=next_token,
@@ -230,7 +230,7 @@ class SDCampaignsAPI(BaseAdsClient):
 
         return all_campaigns
 
-    def create_audience_campaign(
+    async def create_audience_campaign(
         self,
         name: str,
         daily_budget: float,
@@ -252,9 +252,9 @@ class SDCampaignsAPI(BaseAdsClient):
             "tactic": tactic,
             "costType": "cpc",
         }]
-        return self.create_campaigns(campaigns)
+        return await self.create_campaigns(campaigns)
 
-    def create_contextual_campaign(
+    async def create_contextual_campaign(
         self,
         name: str,
         daily_budget: float,
@@ -274,5 +274,4 @@ class SDCampaignsAPI(BaseAdsClient):
             "tactic": "T00001",  # Contextual targeting
             "costType": "cpc",
         }]
-        return self.create_campaigns(campaigns)
-
+        return await self.create_campaigns(campaigns)

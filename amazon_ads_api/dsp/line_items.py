@@ -1,5 +1,5 @@
 """
-Amazon DSP - Line Items API
+Amazon DSP - Line Items API (异步版本)
 DSP广告行项目管理
 """
 
@@ -7,11 +7,11 @@ from ..base import BaseAdsClient, JSONData, JSONList
 
 
 class DSPLineItemsAPI(BaseAdsClient):
-    """DSP Line Items API"""
+    """DSP Line Items API (全异步)"""
 
     # ============ Line Items ============
 
-    def list_line_items(
+    async def list_line_items(
         self,
         advertiser_id: str,
         order_id: str | None = None,
@@ -19,13 +19,7 @@ class DSPLineItemsAPI(BaseAdsClient):
         max_results: int = 100,
         next_token: str | None = None,
     ) -> JSONData:
-        """
-        获取Line Item列表
-        
-        Args:
-            order_id: 过滤特定Order
-            state_filter: DELIVERING | PAUSED | ENDED | PENDING
-        """
+        """获取Line Item列表"""
         params: JSONData = {
             "advertiserId": advertiser_id,
             "maxResults": max_results,
@@ -37,17 +31,17 @@ class DSPLineItemsAPI(BaseAdsClient):
         if next_token:
             params["nextToken"] = next_token
 
-        result = self.get("/dsp/lineItems", params=params)
+        result = await self.get("/dsp/lineItems", params=params)
         return result if isinstance(result, dict) else {"lineItems": []}
 
-    def get_line_item(self, line_item_id: str, advertiser_id: str) -> JSONData:
+    async def get_line_item(self, line_item_id: str, advertiser_id: str) -> JSONData:
         """获取单个Line Item详情"""
-        result = self.get(f"/dsp/lineItems/{line_item_id}", params={
+        result = await self.get(f"/dsp/lineItems/{line_item_id}", params={
             "advertiserId": advertiser_id
         })
         return result if isinstance(result, dict) else {}
 
-    def create_line_item(
+    async def create_line_item(
         self,
         advertiser_id: str,
         order_id: str,
@@ -60,14 +54,7 @@ class DSPLineItemsAPI(BaseAdsClient):
         targeting: JSONData | None = None,
         creative_ids: list[str] | None = None,
     ) -> JSONData:
-        """
-        创建Line Item
-        
-        Args:
-            line_item_type: DISPLAY | VIDEO | AUDIO | NATIVE
-            targeting: 定向设置
-            creative_ids: 关联的创意ID列表
-        """
+        """创建Line Item"""
         body: JSONData = {
             "advertiserId": advertiser_id,
             "orderId": order_id,
@@ -83,10 +70,10 @@ class DSPLineItemsAPI(BaseAdsClient):
         if creative_ids:
             body["creativeIds"] = creative_ids
 
-        result = self.post("/dsp/lineItems", json_data=body)
+        result = await self.post("/dsp/lineItems", json_data=body)
         return result if isinstance(result, dict) else {}
 
-    def update_line_item(
+    async def update_line_item(
         self,
         line_item_id: str,
         advertiser_id: str,
@@ -94,58 +81,47 @@ class DSPLineItemsAPI(BaseAdsClient):
     ) -> JSONData:
         """更新Line Item"""
         body = {"advertiserId": advertiser_id, **updates}
-        result = self.put(f"/dsp/lineItems/{line_item_id}", json_data=body)
+        result = await self.put(f"/dsp/lineItems/{line_item_id}", json_data=body)
         return result if isinstance(result, dict) else {}
 
-    def delete_line_item(self, line_item_id: str, advertiser_id: str) -> JSONData:
+    async def delete_line_item(self, line_item_id: str, advertiser_id: str) -> JSONData:
         """删除Line Item"""
-        return self.delete(f"/dsp/lineItems/{line_item_id}?advertiserId={advertiser_id}")
+        return await self.delete(f"/dsp/lineItems/{line_item_id}?advertiserId={advertiser_id}")
 
     # ============ Line Item Targeting ============
 
-    def get_line_item_targeting(
+    async def get_line_item_targeting(
         self,
         line_item_id: str,
         advertiser_id: str,
     ) -> JSONData:
         """获取Line Item定向设置"""
-        result = self.get(f"/dsp/lineItems/{line_item_id}/targeting", params={
+        result = await self.get(f"/dsp/lineItems/{line_item_id}/targeting", params={
             "advertiserId": advertiser_id
         })
         return result if isinstance(result, dict) else {}
 
-    def update_line_item_targeting(
+    async def update_line_item_targeting(
         self,
         line_item_id: str,
         advertiser_id: str,
         targeting: JSONData,
     ) -> JSONData:
-        """
-        更新Line Item定向
-        
-        Args:
-            targeting: {
-                "audiences": ["audience_id_1"],
-                "geography": {"countries": ["US"]},
-                "devices": ["DESKTOP", "MOBILE"],
-                "dayParting": {...},
-                "inventorySources": ["AMAZON", "THIRD_PARTY"]
-            }
-        """
+        """更新Line Item定向"""
         body = {"advertiserId": advertiser_id, "targeting": targeting}
-        result = self.put(f"/dsp/lineItems/{line_item_id}/targeting", json_data=body)
+        result = await self.put(f"/dsp/lineItems/{line_item_id}/targeting", json_data=body)
         return result if isinstance(result, dict) else {}
 
     # ============ Line Item Bid ============
 
-    def get_line_item_bid(self, line_item_id: str, advertiser_id: str) -> JSONData:
+    async def get_line_item_bid(self, line_item_id: str, advertiser_id: str) -> JSONData:
         """获取Line Item竞价设置"""
-        result = self.get(f"/dsp/lineItems/{line_item_id}/bid", params={
+        result = await self.get(f"/dsp/lineItems/{line_item_id}/bid", params={
             "advertiserId": advertiser_id
         })
         return result if isinstance(result, dict) else {}
 
-    def update_line_item_bid(
+    async def update_line_item_bid(
         self,
         line_item_id: str,
         advertiser_id: str,
@@ -153,13 +129,7 @@ class DSPLineItemsAPI(BaseAdsClient):
         bid_type: str = "CPM",
         optimization_goal: str | None = None,
     ) -> JSONData:
-        """
-        更新Line Item竞价
-        
-        Args:
-            bid_type: CPM | CPC | VCPM
-            optimization_goal: REACH | CTR | CONVERSIONS
-        """
+        """更新Line Item竞价"""
         body: JSONData = {
             "advertiserId": advertiser_id,
             "bid": bid,
@@ -168,50 +138,50 @@ class DSPLineItemsAPI(BaseAdsClient):
         if optimization_goal:
             body["optimizationGoal"] = optimization_goal
 
-        result = self.put(f"/dsp/lineItems/{line_item_id}/bid", json_data=body)
+        result = await self.put(f"/dsp/lineItems/{line_item_id}/bid", json_data=body)
         return result if isinstance(result, dict) else {}
 
     # ============ Line Item Creatives ============
 
-    def get_line_item_creatives(
+    async def get_line_item_creatives(
         self,
         line_item_id: str,
         advertiser_id: str,
     ) -> JSONList:
         """获取Line Item关联的创意"""
-        result = self.get(f"/dsp/lineItems/{line_item_id}/creatives", params={
+        result = await self.get(f"/dsp/lineItems/{line_item_id}/creatives", params={
             "advertiserId": advertiser_id
         })
         return result if isinstance(result, list) else []
 
-    def associate_creatives(
+    async def associate_creatives(
         self,
         line_item_id: str,
         advertiser_id: str,
         creative_ids: list[str],
     ) -> JSONData:
         """关联创意到Line Item"""
-        result = self.post(f"/dsp/lineItems/{line_item_id}/creatives", json_data={
+        result = await self.post(f"/dsp/lineItems/{line_item_id}/creatives", json_data={
             "advertiserId": advertiser_id,
             "creativeIds": creative_ids,
         })
         return result if isinstance(result, dict) else {}
 
-    def remove_creative(
+    async def remove_creative(
         self,
         line_item_id: str,
         creative_id: str,
         advertiser_id: str,
     ) -> JSONData:
         """从Line Item移除创意"""
-        return self.delete(
+        return await self.delete(
             f"/dsp/lineItems/{line_item_id}/creatives/{creative_id}"
             f"?advertiserId={advertiser_id}"
         )
 
     # ============ Line Item Performance ============
 
-    def get_line_item_performance(
+    async def get_line_item_performance(
         self,
         line_item_id: str,
         advertiser_id: str,
@@ -219,13 +189,8 @@ class DSPLineItemsAPI(BaseAdsClient):
         end_date: str,
         granularity: str = "DAILY",
     ) -> JSONData:
-        """
-        获取Line Item效果数据
-        
-        Args:
-            granularity: DAILY | HOURLY
-        """
-        result = self.get(f"/dsp/lineItems/{line_item_id}/performance", params={
+        """获取Line Item效果数据"""
+        result = await self.get(f"/dsp/lineItems/{line_item_id}/performance", params={
             "advertiserId": advertiser_id,
             "startDate": start_date,
             "endDate": end_date,
@@ -235,7 +200,7 @@ class DSPLineItemsAPI(BaseAdsClient):
 
     # ============ Line Item Forecast ============
 
-    def get_line_item_forecast(
+    async def get_line_item_forecast(
         self,
         advertiser_id: str,
         line_item_type: str,
@@ -243,12 +208,8 @@ class DSPLineItemsAPI(BaseAdsClient):
         budget: float,
         bid: float,
     ) -> JSONData:
-        """
-        获取Line Item预测
-        
-        预测给定设置下的Reach、Impressions等
-        """
-        result = self.post("/dsp/lineItems/forecast", json_data={
+        """获取Line Item预测"""
+        result = await self.post("/dsp/lineItems/forecast", json_data={
             "advertiserId": advertiser_id,
             "lineItemType": line_item_type,
             "targeting": targeting,
@@ -259,15 +220,15 @@ class DSPLineItemsAPI(BaseAdsClient):
 
     # ============ 便捷方法 ============
 
-    def pause_line_item(self, line_item_id: str, advertiser_id: str) -> JSONData:
+    async def pause_line_item(self, line_item_id: str, advertiser_id: str) -> JSONData:
         """暂停Line Item"""
-        return self.update_line_item(line_item_id, advertiser_id, {"state": "PAUSED"})
+        return await self.update_line_item(line_item_id, advertiser_id, {"state": "PAUSED"})
 
-    def resume_line_item(self, line_item_id: str, advertiser_id: str) -> JSONData:
+    async def resume_line_item(self, line_item_id: str, advertiser_id: str) -> JSONData:
         """恢复Line Item"""
-        return self.update_line_item(line_item_id, advertiser_id, {"state": "DELIVERING"})
+        return await self.update_line_item(line_item_id, advertiser_id, {"state": "DELIVERING"})
 
-    def list_all_line_items(
+    async def list_all_line_items(
         self,
         advertiser_id: str,
         order_id: str | None = None,
@@ -277,7 +238,7 @@ class DSPLineItemsAPI(BaseAdsClient):
         next_token = None
 
         while True:
-            result = self.list_line_items(
+            result = await self.list_line_items(
                 advertiser_id=advertiser_id,
                 order_id=order_id,
                 max_results=100,
@@ -292,7 +253,7 @@ class DSPLineItemsAPI(BaseAdsClient):
 
         return all_items
 
-    def create_display_line_item(
+    async def create_display_line_item(
         self,
         advertiser_id: str,
         order_id: str,
@@ -304,7 +265,7 @@ class DSPLineItemsAPI(BaseAdsClient):
         end_date: str,
     ) -> JSONData:
         """快速创建展示广告Line Item"""
-        return self.create_line_item(
+        return await self.create_line_item(
             advertiser_id=advertiser_id,
             order_id=order_id,
             name=name,
@@ -316,7 +277,7 @@ class DSPLineItemsAPI(BaseAdsClient):
             targeting={"audiences": audiences},
         )
 
-    def create_video_line_item(
+    async def create_video_line_item(
         self,
         advertiser_id: str,
         order_id: str,
@@ -328,7 +289,7 @@ class DSPLineItemsAPI(BaseAdsClient):
         end_date: str,
     ) -> JSONData:
         """快速创建视频广告Line Item"""
-        return self.create_line_item(
+        return await self.create_line_item(
             advertiser_id=advertiser_id,
             order_id=order_id,
             name=name,
@@ -339,4 +300,3 @@ class DSPLineItemsAPI(BaseAdsClient):
             end_date=end_date,
             targeting={"audiences": audiences},
         )
-

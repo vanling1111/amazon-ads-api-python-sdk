@@ -1,19 +1,20 @@
 """
-Localization API - 本地化
+Localization API - 本地化 (异步版本)
 
 提供广告内容的本地化/翻译服务
 """
 
 from typing import Any, Dict, List, Optional
-from ..base import BaseAdsClient
+from ..base import BaseAdsClient, JSONData, JSONList
 
 
 class LocalizationAPI(BaseAdsClient):
-    """Localization API - 广告内容本地化"""
+    """Localization API - 广告内容本地化 (全异步)"""
     
-    async def get_supported_locales(self) -> Dict[str, Any]:
+    async def get_supported_locales(self) -> JSONData:
         """获取支持的语言区域列表"""
-        return await self._request("GET", "/localization/locales")
+        result = await self.get("/localization/locales")
+        return result if isinstance(result, dict) else {"locales": []}
     
     async def translate_content(
         self,
@@ -22,7 +23,7 @@ class LocalizationAPI(BaseAdsClient):
         source_locale: str,
         target_locale: str,
         content_type: str = "AD_COPY",
-    ) -> Dict[str, Any]:
+    ) -> JSONData:
         """
         翻译广告内容
         
@@ -32,21 +33,21 @@ class LocalizationAPI(BaseAdsClient):
             target_locale: 目标语言区域 (如 "de_DE")
             content_type: 内容类型 (AD_COPY, HEADLINE, DESCRIPTION等)
         """
-        return await self._request(
-            "POST",
+        result = await self.post(
             "/localization/translate",
-            json={
+            json_data={
                 "content": content,
                 "sourceLocale": source_locale,
                 "targetLocale": target_locale,
                 "contentType": content_type,
             }
         )
+        return result if isinstance(result, dict) else {}
     
     async def batch_translate(
         self,
         translations: List[Dict[str, Any]],
-    ) -> Dict[str, Any]:
+    ) -> JSONData:
         """
         批量翻译广告内容
         
@@ -57,19 +58,16 @@ class LocalizationAPI(BaseAdsClient):
                 - targetLocale: 目标语言
                 - contentType: 内容类型
         """
-        return await self._request(
-            "POST",
+        result = await self.post(
             "/localization/translate/batch",
-            json={"translations": translations}
+            json_data={"translations": translations}
         )
+        return result if isinstance(result, dict) else {"translations": []}
     
     async def get_translation_status(
         self,
         translation_id: str,
-    ) -> Dict[str, Any]:
+    ) -> JSONData:
         """获取翻译状态"""
-        return await self._request(
-            "GET",
-            f"/localization/translations/{translation_id}"
-        )
-
+        result = await self.get(f"/localization/translations/{translation_id}")
+        return result if isinstance(result, dict) else {}
