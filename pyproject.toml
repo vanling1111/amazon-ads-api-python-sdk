@@ -1,0 +1,89 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "amazon-ads-api"
+version = "1.0.0"
+description = "Python SDK for Amazon Ads API - 100% API Coverage (101 classes)"
+readme = "README.md"
+license = {text = "MIT"}
+requires-python = ">=3.11"
+authors = [
+    {name = "vanling1111", email = "vanling1111@gmail.com"}
+]
+maintainers = [
+    {name = "vanling1111", email = "vanling1111@gmail.com"}
+]
+keywords = [
+    "amazon", "ads", "api", "sdk", "advertising",
+    "sponsored-products", "sponsored-brands", "sponsored-display", "dsp",
+    "amazon-marketing-cloud", "amc", "amazon-ads"
+]
+classifiers = [
+    "Development Status :: 5 - Production/Stable",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: Software Development :: Libraries :: Python Modules",
+    "Topic :: Internet :: WWW/HTTP :: Dynamic Content",
+]
+dependencies = [
+    "httpx[http2]>=0.27.0",
+    "loguru>=0.7.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=7.0.0",
+    "pytest-asyncio>=0.21.0",
+    "pytest-cov>=4.0.0",
+    "pytest-mock>=3.10.0",
+    "black>=23.0.0",
+    "ruff>=0.1.0",
+    "mypy>=1.0.0",
+]
+test = [
+    "pytest>=7.0.0",
+    "pytest-asyncio>=0.21.0",
+    "pytest-cov>=4.0.0",
+    "pytest-mock>=3.10.0",
+]
+
+[project.urls]
+Homepage = "https://github.com/vanling1111/amazon-ads-api-python-sdk"
+Documentation = "https://github.com/vanling1111/amazon-ads-api-python-sdk#readme"
+Repository = "https://github.com/vanling1111/amazon-ads-api-python-sdk.git"
+Issues = "https://github.com/vanling1111/amazon-ads-api-python-sdk/issues"
+Changelog = "https://github.com/vanling1111/amazon-ads-api-python-sdk/blob/master/CHANGELOG.md"
+
+[tool.hatch.build.targets.wheel]
+packages = ["amazon_ads_api"]
+
+[tool.black]
+line-length = 100
+target-version = ["py311", "py312"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py311"
+select = ["E", "F", "W", "I", "N", "UP", "B", "C4"]
+ignore = ["E501"]
+
+[tool.mypy]
+python_version = "3.11"
+strict = true
+warn_return_any = true
+warn_unused_configs = true
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+asyncio_mode = "auto"
+markers = [
+    "unit: Unit tests (fast, no external dependencies)",
+    "integration: Integration tests (require credentials)",
+    "slow: Slow tests",
+]
