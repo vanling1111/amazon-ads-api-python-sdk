@@ -93,13 +93,11 @@ exp.sponsored_tv.create_campaign(...)
 ### 安装
 
 ```bash
-# 从 GitHub 安装
-pip install git+https://github.com/vanling1111/amazon-ads-api-python-sdk.git
+# 从 PyPI 安装
+pip install amazon-ads-api
 
-# 或克隆后本地安装
-git clone https://github.com/vanling1111/amazon-ads-api-python-sdk.git
-cd amazon-ads-api-python-sdk
-pip install -e .
+# 或从 GitHub 安装最新版
+pip install git+https://github.com/vanling1111/amazon-ads-api-python-sdk.git
 ```
 
 ### 基础使用
@@ -112,22 +110,78 @@ client = AmazonAdsClient(
     client_id="your_client_id",
     client_secret="your_client_secret",
     refresh_token="your_refresh_token",
+    profile_id="your_profile_id",  # 必需
     region=AdsRegion.NA,  # NA, EU, FE
 )
 
-# 设置 Profile ID
-client.with_profile("your_profile_id")
-
 # 获取 SP Campaigns
-campaigns = client.sp.campaigns.list_campaigns()
+campaigns = await client.sp.campaigns.list_campaigns()
 print(campaigns)
 
 # 获取关键词
-keywords = client.sp.keywords.list_keywords(campaign_id="123456")
+keywords = await client.sp.keywords.list_keywords(campaign_id="123456")
 
 # 更新竞价
-client.sp.keywords.update_bid(keyword_id="789", new_bid=1.50)
+await client.sp.keywords.update_bid(keyword_id="789", new_bid=1.50)
 ```
+
+## 🏢 Multi-Account Support
+
+This SDK is **multi-account capable** and designed for concurrent use:
+
+✅ **What the SDK provides:**
+- Multiple Amazon Ads accounts/profiles can run concurrently
+- Each `AmazonAdsClient` instance is completely isolated
+- Safe for async concurrent operations
+- Handles authentication, rate limiting, and retries per-client
+
+❌ **What the SDK does NOT manage:**
+- SaaS tenant or user management
+- Persistent OAuth token storage
+- Account authorization flows
+- User-to-profile permission mapping
+
+**These are responsibilities of your application's Service layer.**
+
+### Example: Multiple Profiles Concurrently
+
+```python
+import asyncio
+from amazon_ads_api import AmazonAdsClient, AdsRegion
+
+# Create independent clients for different profiles
+client1 = AmazonAdsClient(
+    client_id='...',
+    client_secret='...',
+    refresh_token='token_for_profile_1',
+    profile_id='profile-123',
+    region=AdsRegion.NA
+)
+
+client2 = AmazonAdsClient(
+    client_id='...',
+    client_secret='...',
+    refresh_token='token_for_profile_2',
+    profile_id='profile-456',
+    region=AdsRegion.NA
+)
+
+# Concurrent operations are safe!
+campaigns1, campaigns2 = await asyncio.gather(
+    client1.sp.campaigns.list_campaigns(),
+    client2.sp.campaigns.list_campaigns()
+)
+```
+
+### For SaaS Applications
+
+If you're building a multi-tenant SaaS platform:
+1. Your **database** stores user-to-profile mappings
+2. Your **Service layer** validates user permissions
+3. Your **Service layer** creates one `AmazonAdsClient` per profile
+4. Your **API layer** enforces tenant boundaries
+
+**See [examples/saas_integration.py](examples/saas_integration.py) for a complete example.**
 
 ### 高级用法 - v2.0 分级访问
 
