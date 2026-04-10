@@ -6,9 +6,9 @@ Title:  Advertiser Data Upload
 
 from __future__ import annotations
 
-from typing import Any
+from typing import Any  # noqa: F401
 
-from amazon_ads_api.base import BaseAdsClient, JSONData, JSONList
+from amazon_ads_api.base import BaseAdsClient, JSONData, JSONList  # noqa: F401
 
 try:
     from .models_amc_data_upload import *  # noqa: F403
@@ -234,7 +234,7 @@ class AmcDataUploadClient(BaseAdsClient):
     async def list_uploads(self, instance_id: str, next_token: str | None = None, created_at: str | None = None, created_at_comparator: str | None = None, data_set_id: str | None = None, max_results: str | None = None, status: str | None = None, amazon_ads_account_id: str | None = None, amazon_advertising_api_advertiser_id: str | None = None, amazon_advertising_api_client_id: str | None = None, amazon_advertising_api_marketplace_id: str | None = None, amazon_advertising_api_scope: str | None = None, x_amzn_service_name: str | None = None, x_amzn_service_version: str | None = None) -> JSONData | JSONList:
         """POST /amc/advertiserData/{instanceId}/uploads/list
 
-        Gets a paginated list of previously submitted uploads for a specified instance.  **Requires one of these permissions**: 
+        Gets a paginated list of previously submitted uploads for a specified instance.  **Requires one of these permissions**:
         """
         endpoint = f"/amc/advertiserData/{instance_id}/uploads/list"
         params: dict[str, Any] = {}

@@ -6,10 +6,10 @@ Title:  Creative assets
 
 from __future__ import annotations
 
-from enum import StrEnum
-from typing import Any, Optional
+from enum import StrEnum  # noqa: F401
+from typing import Any, Optional, Union  # noqa: F401
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field  # noqa: F401
 
 
 
@@ -49,37 +49,19 @@ class caAsins(BaseModel):
     pass
 
 
-class caAssetStatus(StrEnum):
-    ACTIVE = "ACTIVE"
-    PROCESSING = "PROCESSING"
-    ARCHIVED = "ARCHIVED"
-
-
-class caAssetSubType(StrEnum):
-    LOGO = "LOGO"
-    PRODUCT_IMAGE = "PRODUCT_IMAGE"
-    AUTHOR_IMAGE = "AUTHOR_IMAGE"
-    LIFESTYLE_IMAGE = "LIFESTYLE_IMAGE"
-    OTHER_IMAGE = "OTHER_IMAGE"
-    BACKGROUND_VIDEO = "BACKGROUND_VIDEO"
-
-
-class caassetSubTypes(BaseModel):
-    """1. For assetType `IMAGE` acceptable assetSubTypes are `LOGO`, `PRODUCT_IMAGE`, `AUTHOR_IMAGE`, `LIFESTYLE_IMAGE`, `OTHER_IMAGE`  2. For assetType `VIDEO` acceptable assetSubtype is `BACKGROUND_VIDEO`."""
+class caVersion(BaseModel):
+    """The version of the asset."""
     pass
 
 
-class caVideoStreamMetadata(BaseModel):
-    """Structure containing metadata of Video Stream.  profile: This is the profile of the stream.  width: This is the resolution width of stream.  height: This is the resolution height of stream.  duration:"""
-    duration: Optional[float] = None
-    frame_rate: Optional[float] = Field(None, alias="frameRate")
-    bit_rate: Optional[int] = Field(None, alias="bitRate")
-    profile: Optional[str] = None
-    width: Optional[int] = None
-    codec_name: Optional[str] = Field(None, alias="codecName")
-    codec_type: Optional[str] = Field(None, alias="codecType")
-    height: Optional[int] = None
-    display_aspect_ratio: Optional[str] = Field(None, alias="displayAspectRatio")
+class caAssetId(BaseModel):
+    """The asset identifier."""
+    pass
+
+
+class caAssetIdentifier(BaseModel):
+    asset_id: Optional["caAssetId"] = Field(None, alias="assetId")
+    version: Optional["caVersion"] = None
 
     model_config = {'populate_by_name': True}
 
@@ -93,6 +75,21 @@ class caAudioStreamMetadata(BaseModel):
     codec_name: Optional[str] = Field(None, alias="codecName")
     codec_type: Optional[str] = Field(None, alias="codecType")
     sample_rate: Optional[int] = Field(None, alias="sampleRate")
+
+    model_config = {'populate_by_name': True}
+
+
+class caVideoStreamMetadata(BaseModel):
+    """Structure containing metadata of Video Stream.  profile: This is the profile of the stream.  width: This is the resolution width of stream.  height: This is the resolution height of stream.  duration:"""
+    duration: Optional[float] = None
+    frame_rate: Optional[float] = Field(None, alias="frameRate")
+    bit_rate: Optional[int] = Field(None, alias="bitRate")
+    profile: Optional[str] = None
+    width: Optional[int] = None
+    codec_name: Optional[str] = Field(None, alias="codecName")
+    codec_type: Optional[str] = Field(None, alias="codecType")
+    height: Optional[int] = None
+    display_aspect_ratio: Optional[str] = Field(None, alias="displayAspectRatio")
 
     model_config = {'populate_by_name': True}
 
@@ -173,23 +170,6 @@ class caAssetFiles(BaseModel):
     model_config = {'populate_by_name': True}
 
 
-class caVersion(BaseModel):
-    """The version of the asset."""
-    pass
-
-
-class caAssetId(BaseModel):
-    """The asset identifier."""
-    pass
-
-
-class caAssetIdentifier(BaseModel):
-    asset_id: Optional["caAssetId"] = Field(None, alias="assetId")
-    version: Optional["caVersion"] = None
-
-    model_config = {'populate_by_name': True}
-
-
 class caSpecificationProgram(StrEnum):
     SPONSORED_BRANDS_VIDEO = "SPONSORED_BRANDS_VIDEO"
     SPONSORED_DISPLAY_VIDEO = "SPONSORED_DISPLAY_VIDEO"
@@ -207,82 +187,6 @@ class caSpecificationProgram(StrEnum):
     DEMAND_SIDE_PLATFORM_H1_DESKTOP = "DEMAND_SIDE_PLATFORM_H1_DESKTOP"
     DEMAND_SIDE_PLATFORM_H1_MOBILE = "DEMAND_SIDE_PLATFORM_H1_MOBILE"
     LIVE_IMAGE_SPONSORED_DISPLAY = "LIVE_IMAGE_SPONSORED_DISPLAY"
-
-
-class caSpecCheckApprovedPrograms(BaseModel):
-    """List of spec programs for which asset spec check is approved"""
-    pass
-
-
-class caFileMetadataContenttype(StrEnum):
-    JPEG = "jpeg"
-    JPG = "jpg"
-    PNG = "png"
-    MP4 = "mp4"
-    IMAGE_JPG = "image/jpg"
-    IMAGE_JPEG = "image/jpeg"
-    IMAGE_PNG = "image/png"
-
-
-class caFileMetadata(BaseModel):
-    duration: Optional[float] = None
-    extension: Optional[str] = Field(None, description="The extension of the file name.")
-    file_size: Optional[float] = Field(None, alias="fileSize", description="The asset size in bytes.")
-    resolution_height: Optional[int] = Field(None, alias="resolutionHeight")
-    width: Optional[float] = Field(None, description="The width of the asset in pixels.")
-    aspect_ratio: Optional[str] = Field(None, alias="aspectRatio", description="The aspect ration of the asset.")
-    resolution_width: Optional[int] = Field(None, alias="resolutionWidth")
-    content_type: Optional[caFileMetadataContenttype] = Field(None, alias="contentType", description="The content type of the asset.")
-    audio_sample_rate: Optional[float] = Field(None, alias="audioSampleRate")
-    height: Optional[float] = Field(None, description="The height of the asset in pixels.")
-
-    model_config = {'populate_by_name': True}
-
-
-class caModerationStatus(StrEnum):
-    REJECTED = "REJECTED"
-    APPROVED = "APPROVED"
-    PENDING = "PENDING"
-
-
-class caAdPolicyModerationResult(BaseModel):
-    marketplace_id: Optional[str] = Field(None, alias="marketplaceId")
-    policy_name: Optional[str] = Field(None, alias="policyName")
-    moderation_status: Optional["caModerationStatus"] = Field(None, alias="moderationStatus")
-    locale: Optional[str] = None
-
-    model_config = {'populate_by_name': True}
-
-
-class caModerationContentStatus(StrEnum):
-    IN_PROGRESS = "IN_PROGRESS"
-    COMPLETED = "COMPLETED"
-    FAILED = "FAILED"
-
-
-class caModerationContent(BaseModel):
-    asset_sub_type: Optional["caAssetSubType"] = Field(None, alias="assetSubType")
-    ad_policy_moderation_result_list: Optional[list["caAdPolicyModerationResult"]] = Field(None, alias="adPolicyModerationResultList")
-    moderation_content_status: Optional["caModerationContentStatus"] = Field(None, alias="moderationContentStatus")
-
-    model_config = {'populate_by_name': True}
-
-
-class caProcessedUrlsMap(BaseModel):
-    """Map containing processed urls of the asset. Key is the processed type and value is the url"""
-    __root__: dict[str, dict[str, Any]] = {}
-
-
-class caStorageLocationUrls(BaseModel):
-    processed_urls: Optional["caProcessedUrlsMap"] = Field(None, alias="processedUrls")
-    default_url: Optional[str] = Field(None, alias="defaultUrl")
-
-    model_config = {'populate_by_name': True}
-
-
-class caURL(BaseModel):
-    """The URL of the asset."""
-    pass
 
 
 class caArgumentList(BaseModel):
@@ -319,6 +223,102 @@ class caProgramSpecificationsList(BaseModel):
     pass
 
 
+class caModerationContentStatus(StrEnum):
+    IN_PROGRESS = "IN_PROGRESS"
+    COMPLETED = "COMPLETED"
+    FAILED = "FAILED"
+
+
+class caModerationStatus(StrEnum):
+    REJECTED = "REJECTED"
+    APPROVED = "APPROVED"
+    PENDING = "PENDING"
+
+
+class caAdPolicyModerationResult(BaseModel):
+    marketplace_id: Optional[str] = Field(None, alias="marketplaceId")
+    policy_name: Optional[str] = Field(None, alias="policyName")
+    moderation_status: Optional["caModerationStatus"] = Field(None, alias="moderationStatus")
+    locale: Optional[str] = None
+
+    model_config = {'populate_by_name': True}
+
+
+class caAssetSubType(StrEnum):
+    LOGO = "LOGO"
+    PRODUCT_IMAGE = "PRODUCT_IMAGE"
+    AUTHOR_IMAGE = "AUTHOR_IMAGE"
+    LIFESTYLE_IMAGE = "LIFESTYLE_IMAGE"
+    OTHER_IMAGE = "OTHER_IMAGE"
+    BACKGROUND_VIDEO = "BACKGROUND_VIDEO"
+
+
+class caModerationContent(BaseModel):
+    asset_sub_type: Optional["caAssetSubType"] = Field(None, alias="assetSubType")
+    ad_policy_moderation_result_list: Optional[list["caAdPolicyModerationResult"]] = Field(None, alias="adPolicyModerationResultList")
+    moderation_content_status: Optional["caModerationContentStatus"] = Field(None, alias="moderationContentStatus")
+
+    model_config = {'populate_by_name': True}
+
+
+class caSpecCheckApprovedPrograms(BaseModel):
+    """List of spec programs for which asset spec check is approved"""
+    pass
+
+
+class caFileMetadataContenttype(StrEnum):
+    JPEG = "jpeg"
+    JPG = "jpg"
+    PNG = "png"
+    MP4 = "mp4"
+    IMAGE_JPG = "image/jpg"
+    IMAGE_JPEG = "image/jpeg"
+    IMAGE_PNG = "image/png"
+
+
+class caFileMetadata(BaseModel):
+    duration: Optional[float] = None
+    extension: Optional[str] = Field(None, description="The extension of the file name.")
+    file_size: Optional[float] = Field(None, alias="fileSize", description="The asset size in bytes.")
+    resolution_height: Optional[int] = Field(None, alias="resolutionHeight")
+    width: Optional[float] = Field(None, description="The width of the asset in pixels.")
+    aspect_ratio: Optional[str] = Field(None, alias="aspectRatio", description="The aspect ration of the asset.")
+    resolution_width: Optional[int] = Field(None, alias="resolutionWidth")
+    content_type: Optional[caFileMetadataContenttype] = Field(None, alias="contentType", description="The content type of the asset.")
+    audio_sample_rate: Optional[float] = Field(None, alias="audioSampleRate")
+    height: Optional[float] = Field(None, description="The height of the asset in pixels.")
+
+    model_config = {'populate_by_name': True}
+
+
+class caProcessedUrlsMap(BaseModel):
+    """Map containing processed urls of the asset. Key is the processed type and value is the url"""
+    __root__: dict[str, dict[str, Any]] = {}
+
+
+class caStorageLocationUrls(BaseModel):
+    processed_urls: Optional["caProcessedUrlsMap"] = Field(None, alias="processedUrls")
+    default_url: Optional[str] = Field(None, alias="defaultUrl")
+
+    model_config = {'populate_by_name': True}
+
+
+class caAssetStatus(StrEnum):
+    ACTIVE = "ACTIVE"
+    PROCESSING = "PROCESSING"
+    ARCHIVED = "ARCHIVED"
+
+
+class caassetSubTypes(BaseModel):
+    """1. For assetType `IMAGE` acceptable assetSubTypes are `LOGO`, `PRODUCT_IMAGE`, `AUTHOR_IMAGE`, `LIFESTYLE_IMAGE`, `OTHER_IMAGE`  2. For assetType `VIDEO` acceptable assetSubtype is `BACKGROUND_VIDEO`."""
+    pass
+
+
+class caURL(BaseModel):
+    """The URL of the asset."""
+    pass
+
+
 class caAssetVersion(BaseModel):
     last_updated_by: Optional[str] = Field(None, alias="lastUpdatedBy")
     creation_time: Optional[int] = Field(None, alias="creationTime")
@@ -346,15 +346,15 @@ class caAssetVersionList(BaseModel):
     pass
 
 
+class caPageSize(BaseModel):
+    pass
+
+
 class caPageIdentifier(BaseModel):
     page_number: Optional[int] = Field(None, alias="pageNumber")
     token: Optional[str] = None
 
     model_config = {'populate_by_name': True}
-
-
-class caPageSize(BaseModel):
-    pass
 
 
 class caPageCriteria(BaseModel):
@@ -377,11 +377,6 @@ class caUnauthorizedRequest(BaseModel):
     model_config = {'populate_by_name': True}
 
 
-class caAccounts(BaseModel):
-    """The list of advertiser accounts the asset can be shared with. All the accounts within this list will be able to search this asset. Additional validation of checking that the accounts are associated wi"""
-    pass
-
-
 class caMarketplaceIds(BaseModel):
     """The list of marketplace Ids."""
     pass
@@ -390,6 +385,11 @@ class caMarketplaceIds(BaseModel):
 class caAssetType(StrEnum):
     IMAGE = "IMAGE"
     VIDEO = "VIDEO"
+
+
+class caAccounts(BaseModel):
+    """The list of advertiser accounts the asset can be shared with. All the accounts within this list will be able to search this asset. Additional validation of checking that the accounts are associated wi"""
+    pass
 
 
 class caAssetGlobal(BaseModel):
@@ -450,11 +450,9 @@ class caAsset(BaseModel):
     model_config = {'populate_by_name': True}
 
 
-class caRange(BaseModel):
-    start: Optional[str] = None
-    end: Optional[str] = None
-
-    model_config = {'populate_by_name': True}
+class DATEUPLOADED(BaseModel):
+    """The value for this should be timestamp in milliseconds. It is the same as creation date."""
+    pass
 
 
 class SIZE(BaseModel):
@@ -462,13 +460,15 @@ class SIZE(BaseModel):
     pass
 
 
-class DATEUPLOADED(BaseModel):
-    """The value for this should be timestamp in milliseconds. It is the same as creation date."""
-    pass
-
-
 class caValueRangeFilterOptions(BaseModel):
     pass
+
+
+class caRange(BaseModel):
+    start: Optional[str] = None
+    end: Optional[str] = None
+
+    model_config = {'populate_by_name': True}
 
 
 class caRangeFilter(BaseModel):
@@ -590,10 +590,6 @@ class TAG(BaseModel):
     pass
 
 
-class PROGRAM(StrEnum):
-    A_PLUS = "A_PLUS"
-
-
 class APPROVEDADPOLICY(StrEnum):
     STORE4V_SPOTLIGHT = "STORE4V_SPOTLIGHT"
     STORES_MODERATION = "STORES_MODERATION"
@@ -601,25 +597,13 @@ class APPROVEDADPOLICY(StrEnum):
     AD_POST = "AD_POST"
 
 
-class CAMPAIGNNAME(BaseModel):
-    """The name of the campaign for which to filter."""
-    pass
-
-
-class ASIN(BaseModel):
-    """The ASIN value on which to filter."""
-    pass
+class PROGRAM(StrEnum):
+    A_PLUS = "A_PLUS"
 
 
 class CAMPAIGNID(BaseModel):
     """The campaignID for which to filter."""
     pass
-
-
-class ASSETEXTENSION(StrEnum):
-    JPG = "JPG"
-    JPEG = "JPEG"
-    PNG = "PNG"
 
 
 class ASSETSUBTYPE(StrEnum):
@@ -628,6 +612,22 @@ class ASSETSUBTYPE(StrEnum):
     PRODUCT_IMAGE = "PRODUCT_IMAGE"
     OTHER_IMAGE = "OTHER_IMAGE"
     LOGO = "LOGO"
+
+
+class ASSETEXTENSION(StrEnum):
+    JPG = "JPG"
+    JPEG = "JPEG"
+    PNG = "PNG"
+
+
+class ASIN(BaseModel):
+    """The ASIN value on which to filter."""
+    pass
+
+
+class CAMPAIGNNAME(BaseModel):
+    """The name of the campaign for which to filter."""
+    pass
 
 
 class ASSETTYPE(StrEnum):

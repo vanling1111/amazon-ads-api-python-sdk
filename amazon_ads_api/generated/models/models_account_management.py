@@ -6,10 +6,10 @@ Title:  Account Management
 
 from __future__ import annotations
 
-from enum import StrEnum
-from typing import Optional
+from enum import StrEnum  # noqa: F401
+from typing import Any, Optional, Union  # noqa: F401
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field  # noqa: F401
 
 
 
@@ -30,18 +30,18 @@ class Property(BaseModel):
     model_config = {'populate_by_name': True}
 
 
-class Status(StrEnum):
-    PENDING = "PENDING"
-    PARTIALLY_CREATED = "PARTIALLY_CREATED"
-    CREATED = "CREATED"
-    DISABLED = "DISABLED"
-
-
 class SellingBusinessIdentifier(BaseModel):
     type_: str = Field(..., alias="type")
     value: Optional[str] = None
 
     model_config = {'populate_by_name': True}
+
+
+class Status(StrEnum):
+    PENDING = "PENDING"
+    PARTIALLY_CREATED = "PARTIALLY_CREATED"
+    CREATED = "CREATED"
+    DISABLED = "DISABLED"
 
 
 class Account(BaseModel):

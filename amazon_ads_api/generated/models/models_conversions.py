@@ -6,10 +6,10 @@ Title:  Conversions API
 
 from __future__ import annotations
 
-from enum import StrEnum
-from typing import Optional
+from enum import StrEnum  # noqa: F401
+from typing import Any, Optional, Union  # noqa: F401
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field  # noqa: F401
 
 
 
@@ -34,6 +34,11 @@ class AmazonAdTagV1(BaseModel):
     model_config = {'populate_by_name': True}
 
 
+class MobileMeasurementPartnerPlatformV1(StrEnum):
+    ANDROID = "ANDROID"
+    FIRE_TV = "FIRE_TV"
+
+
 class MobileMeasurementPartnerNameV1(StrEnum):
     ADJUST = "ADJUST"
     AIRBRIDGE = "AIRBRIDGE"
@@ -42,11 +47,6 @@ class MobileMeasurementPartnerNameV1(StrEnum):
     KOCHAVA = "KOCHAVA"
     SINGULAR = "SINGULAR"
     TENJIN = "TENJIN"
-
-
-class MobileMeasurementPartnerPlatformV1(StrEnum):
-    ANDROID = "ANDROID"
-    FIRE_TV = "FIRE_TV"
 
 
 class MobileMeasurementPartnerAppRegistrationV1(BaseModel):
@@ -81,13 +81,6 @@ class BatchAssociateConversionDefinitionsRequestV3(BaseModel):
     pass
 
 
-class ConversionDefinitionSuccessResponseV1(BaseModel):
-    conversion_definition_id: Optional[str] = Field(None, alias="conversionDefinitionId")
-    index: Optional[int] = Field(None, description="The index of the object in the request, starting from 1.")
-
-    model_config = {'populate_by_name': True}
-
-
 class DspSubErrorV1(BaseModel):
     """The sub error object."""
     error_type: str = Field(..., alias="errorType")
@@ -106,16 +99,18 @@ class ConversionDefinitionErrorResponseV1(BaseModel):
     model_config = {'populate_by_name': True}
 
 
+class ConversionDefinitionSuccessResponseV1(BaseModel):
+    conversion_definition_id: Optional[str] = Field(None, alias="conversionDefinitionId")
+    index: Optional[int] = Field(None, description="The index of the object in the request, starting from 1.")
+
+    model_config = {'populate_by_name': True}
+
+
 class BatchAssociateConversionDefinitionsResponseV1(BaseModel):
     error: Optional[list["ConversionDefinitionErrorResponseV1"]] = None
     success: Optional[list["ConversionDefinitionSuccessResponseV1"]] = None
 
     model_config = {'populate_by_name': True}
-
-
-class ConversionDefinitionSourceV1(StrEnum):
-    AMAZON_AD_TAG = "AMAZON_AD_TAG"
-    SERVER_TO_SERVER = "SERVER_TO_SERVER"
 
 
 class ConversionDefinitionCountingMethodV1(StrEnum):
@@ -130,6 +125,11 @@ class ConversionDefinitionSourceTypeV1(StrEnum):
     IOS = "IOS"
     OFFLINE = "OFFLINE"
     WEBSITE = "WEBSITE"
+
+
+class ConversionDefinitionSourceV1(StrEnum):
+    AMAZON_AD_TAG = "AMAZON_AD_TAG"
+    SERVER_TO_SERVER = "SERVER_TO_SERVER"
 
 
 class ConversionDefinitionTypeV1(StrEnum):
@@ -250,17 +250,17 @@ class BatchDeleteUserEventsRequestV1(BaseModel):
     model_config = {'populate_by_name': True}
 
 
-class ConversionDeletionRequestSuccessResponseV1(BaseModel):
-    index: Optional[int] = Field(None, description="The index of the object in the request, starting from 1.")
-
-    model_config = {'populate_by_name': True}
-
-
 class ConversionDeletionRequestErrorResponseV1(BaseModel):
     code: Optional[str] = Field(None, description="An enumerated success or error code for machine use.")
     errors: Optional[list["DspSubErrorV1"]] = None
     index: Optional[int] = Field(None, description="The index of the object in the request, starting from 1.")
     message: Optional[str] = Field(None, description="A human-readable message of the code.")
+
+    model_config = {'populate_by_name': True}
+
+
+class ConversionDeletionRequestSuccessResponseV1(BaseModel):
+    index: Optional[int] = Field(None, description="The index of the object in the request, starting from 1.")
 
     model_config = {'populate_by_name': True}
 
@@ -342,18 +342,18 @@ class BatchImportConversionEventDataRequestV1(BaseModel):
     model_config = {'populate_by_name': True}
 
 
+class ConversionEventDataSuccessResponseV1(BaseModel):
+    index: Optional[int] = Field(None, description="The index of the object in the request, starting from 1.")
+    message: Optional[str] = Field(None, description="A human-readable message containing further details.")
+
+    model_config = {'populate_by_name': True}
+
+
 class ConversionEventDataErrorResponseV1(BaseModel):
     code: Optional[str] = Field(None, description="An enumerated success or error code for machine use.")
     errors: Optional[list["DspSubErrorV1"]] = None
     index: Optional[int] = Field(None, description="The index of the object in the request, starting from 1.")
     message: Optional[str] = Field(None, description="A human-readable message of the code.")
-
-    model_config = {'populate_by_name': True}
-
-
-class ConversionEventDataSuccessResponseV1(BaseModel):
-    index: Optional[int] = Field(None, description="The index of the object in the request, starting from 1.")
-    message: Optional[str] = Field(None, description="A human-readable message containing further details.")
 
     model_config = {'populate_by_name': True}
 

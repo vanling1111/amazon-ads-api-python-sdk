@@ -6,10 +6,10 @@ Title:  Stores
 
 from __future__ import annotations
 
-from enum import StrEnum
-from typing import Any, Optional, Union
+from enum import StrEnum  # noqa: F401
+from typing import Any, Optional, Union  # noqa: F401
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field  # noqa: F401
 
 
 
@@ -62,6 +62,14 @@ class GetAsinEngagementForStoreResponse(BaseModel):
     model_config = {'populate_by_name': True}
 
 
+class InsightDimension(StrEnum):
+    DATE = "DATE"
+    PAGE = "PAGE"
+    SOURCE = "SOURCE"
+    STORE = "STORE"
+    TAG = "TAG"
+
+
 class TrafficSource(StrEnum):
     ADS = "ADS"
     ORGANIC = "ORGANIC"
@@ -104,14 +112,6 @@ class InsightMetric(StrEnum):
     VISITS = "VISITS"
 
 
-class InsightDimension(StrEnum):
-    DATE = "DATE"
-    PAGE = "PAGE"
-    SOURCE = "SOURCE"
-    STORE = "STORE"
-    TAG = "TAG"
-
-
 class GetInsightsForStoreRequest(BaseModel):
     dimension: "InsightDimension"
     end_date: str = Field(..., alias="endDate", description="The end date (inclusive) in YYYY-MM-DD format for the time period from when to fetch the insights.")
@@ -125,6 +125,17 @@ class GetInsightsForStoreRequest(BaseModel):
     model_config = {'populate_by_name': True}
 
 
+class StoreQualityCompletedRecommendation(BaseModel):
+    """The Object containing recommendations to improve store quality."""
+    category: Optional[str] = Field(None, description="The category in which the store owners could see improvment by this recommendation.")
+    example_link: Optional[str] = Field(None, alias="exampleLink", description="Link to the example store with a sample to showcase a recommended action.")
+    example_text: Optional[str] = Field(None, alias="exampleText", description="The text to describe the example to showcase the recommended action.")
+    observed_average_dwell_time_increase: Optional[str] = Field(None, alias="observedAverageDwellTimeIncrease", description="The percentage by which store quality could improve by this recommendation.")
+    recommended_action: Optional[str] = Field(None, alias="recommendedAction", description="description of the recommendation.")
+
+    model_config = {'populate_by_name': True}
+
+
 class StoreQualityRecommendation(BaseModel):
     """The Object containing recommendations to improve store quality."""
     category: Optional[str] = Field(None, description="The category in which the store owners could see improvment by this recommendation.")
@@ -133,17 +144,6 @@ class StoreQualityRecommendation(BaseModel):
     example_link: Optional[str] = Field(None, alias="exampleLink", description="Link to the example store with a sample to showcase a recommended action.")
     example_text: Optional[str] = Field(None, alias="exampleText", description="The text to describe the example to showcase the recommended action.")
     observed_averag_sales_increase: Optional[str] = Field(None, alias="observedAveragSalesIncrease", description="The percentage by which store's sales could improve by this recommendation.")
-    observed_average_dwell_time_increase: Optional[str] = Field(None, alias="observedAverageDwellTimeIncrease", description="The percentage by which store quality could improve by this recommendation.")
-    recommended_action: Optional[str] = Field(None, alias="recommendedAction", description="description of the recommendation.")
-
-    model_config = {'populate_by_name': True}
-
-
-class StoreQualityCompletedRecommendation(BaseModel):
-    """The Object containing recommendations to improve store quality."""
-    category: Optional[str] = Field(None, description="The category in which the store owners could see improvment by this recommendation.")
-    example_link: Optional[str] = Field(None, alias="exampleLink", description="Link to the example store with a sample to showcase a recommended action.")
-    example_text: Optional[str] = Field(None, alias="exampleText", description="The text to describe the example to showcase the recommended action.")
     observed_average_dwell_time_increase: Optional[str] = Field(None, alias="observedAverageDwellTimeIncrease", description="The percentage by which store quality could improve by this recommendation.")
     recommended_action: Optional[str] = Field(None, alias="recommendedAction", description="description of the recommendation.")
 

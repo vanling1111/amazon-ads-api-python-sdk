@@ -6,10 +6,10 @@ Title:  Sponsored Brands campaign management
 
 from __future__ import annotations
 
-from enum import StrEnum
-from typing import Optional
+from enum import StrEnum  # noqa: F401
+from typing import Any, Optional, Union  # noqa: F401
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field  # noqa: F401
 
 
 
@@ -20,9 +20,15 @@ class timeOfDay(BaseModel):
     model_config = {'populate_by_name': True}
 
 
-class ObjectIdFilter(BaseModel):
-    """Filter entities by the list of objectIds."""
-    include: Optional[list[str]] = None
+class EntityState(StrEnum):
+    ENABLED = "ENABLED"
+    PAUSED = "PAUSED"
+    ARCHIVED = "ARCHIVED"
+
+
+class EntityStateFilter(BaseModel):
+    """Filter entities by state."""
+    include: Optional[list["EntityState"]] = None
 
     model_config = {'populate_by_name': True}
 
@@ -40,15 +46,9 @@ class NameFilter(BaseModel):
     model_config = {'populate_by_name': True}
 
 
-class EntityState(StrEnum):
-    ENABLED = "ENABLED"
-    PAUSED = "PAUSED"
-    ARCHIVED = "ARCHIVED"
-
-
-class EntityStateFilter(BaseModel):
-    """Filter entities by state."""
-    include: Optional[list["EntityState"]] = None
+class ObjectIdFilter(BaseModel):
+    """Filter entities by the list of objectIds."""
+    include: Optional[list[str]] = None
 
     model_config = {'populate_by_name': True}
 
@@ -73,10 +73,12 @@ class ErrorCause(BaseModel):
     model_config = {'populate_by_name': True}
 
 
-class OtherError(BaseModel):
-    """Errors not related to any of the other error types."""
-    reason: str
+class BiddingError(BaseModel):
+    """Errors related to bids."""
+    reason: str = Field(..., description="Exact error reason.")
     cause: "ErrorCause"
+    upper_limit: Optional[str] = Field(None, alias="upperLimit")
+    lower_limit: Optional[str] = Field(None, alias="lowerLimit")
     message: str = Field(..., description="Human readable error message.")
 
     model_config = {'populate_by_name': True}
@@ -91,17 +93,6 @@ class DateError(BaseModel):
     model_config = {'populate_by_name': True}
 
 
-class BiddingError(BaseModel):
-    """Errors related to bids."""
-    reason: str = Field(..., description="Exact error reason.")
-    cause: "ErrorCause"
-    upper_limit: Optional[str] = Field(None, alias="upperLimit")
-    lower_limit: Optional[str] = Field(None, alias="lowerLimit")
-    message: str = Field(..., description="Human readable error message.")
-
-    model_config = {'populate_by_name': True}
-
-
 class RangeError(BaseModel):
     """Errors related to range constraints violations."""
     reason: str
@@ -109,6 +100,15 @@ class RangeError(BaseModel):
     cause: "ErrorCause"
     upper_limit: Optional[str] = Field(None, alias="upperLimit", description="Optional upper limit.")
     lower_limit: Optional[str] = Field(None, alias="lowerLimit", description="Optional lower limit.")
+    message: str = Field(..., description="Human readable error message.")
+
+    model_config = {'populate_by_name': True}
+
+
+class OtherError(BaseModel):
+    """Errors not related to any of the other error types."""
+    reason: str
+    cause: "ErrorCause"
     message: str = Field(..., description="Human readable error message.")
 
     model_config = {'populate_by_name': True}
@@ -140,6 +140,10 @@ class GetLandingPageMetadataResponseContent(BaseModel):
     model_config = {'populate_by_name': True}
 
 
+class InvalidArgumentErrorCode(StrEnum):
+    INVALID_ARGUMENT = "INVALID_ARGUMENT"
+
+
 class InvalidArgumentErrorSelector(BaseModel):
     range_error: Optional["RangeError"] = Field(None, alias="rangeError")
     other_error: Optional["OtherError"] = Field(None, alias="otherError")
@@ -154,10 +158,6 @@ class InvalidArgumentError(BaseModel):
     model_config = {'populate_by_name': True}
 
 
-class InvalidArgumentErrorCode(StrEnum):
-    INVALID_ARGUMENT = "INVALID_ARGUMENT"
-
-
 class InvalidArgumentExceptionResponseContent(BaseModel):
     code: "InvalidArgumentErrorCode"
     message: str = Field(..., description="Human readable error message.")
@@ -166,118 +166,8 @@ class InvalidArgumentExceptionResponseContent(BaseModel):
     model_config = {'populate_by_name': True}
 
 
-class BudgetError(BaseModel):
-    reason: str
-    cause: "ErrorCause"
-    upper_limit: Optional[str] = Field(None, alias="upperLimit")
-    lower_limit: Optional[str] = Field(None, alias="lowerLimit")
-    message: str = Field(..., description="Human readable error message.")
-
-    model_config = {'populate_by_name': True}
-
-
-class BillingError(BaseModel):
-    """Errors related to billing."""
-    reason: str = Field(..., description="Exact error reason.")
-    cause: "ErrorCause"
-    message: str = Field(..., description="Human readable error message.")
-
-    model_config = {'populate_by_name': True}
-
-
-class CampaignMutationErrorSelector(BaseModel):
-    date_error: Optional["DateError"] = Field(None, alias="dateError")
-    bidding_error: Optional["BiddingError"] = Field(None, alias="biddingError")
-    budget_error: Optional["BudgetError"] = Field(None, alias="budgetError")
-    billing_error: Optional["BillingError"] = Field(None, alias="billingError")
-    range_error: Optional["RangeError"] = Field(None, alias="rangeError")
-    other_error: Optional["OtherError"] = Field(None, alias="otherError")
-
-    model_config = {'populate_by_name': True}
-
-
-class CampaignMutationError(BaseModel):
-    error_type: str = Field(..., alias="errorType", description="The type of the error.")
-    error_value: "CampaignMutationErrorSelector" = Field(..., alias="errorValue")
-
-    model_config = {'populate_by_name': True}
-
-
-class CampaignMutationFailureResponseItem(BaseModel):
-    index: float = Field(..., description="the index of the campaign in the array from the request body.")
-    errors: Optional[list["CampaignMutationError"]] = Field(None, description="A list of validation errors.")
-
-    model_config = {'populate_by_name': True}
-
-
-class ProductLocation(StrEnum):
-    SOLD_ON_AMAZON = "SOLD_ON_AMAZON"
-    NOT_SOLD_ON_AMAZON = "NOT_SOLD_ON_AMAZON"
-    SOLD_ON_DTC = "SOLD_ON_DTC"
-
-
-class AudienceSegmentType(StrEnum):
-    SPONSORED_ADS_AMC = "SPONSORED_ADS_AMC"
-    BEHAVIOR_DYNAMIC = "BEHAVIOR_DYNAMIC"
-
-
-class AudienceSegment(BaseModel):
-    audience_id: Optional[str] = Field(None, alias="audienceId")
-    audience_segment_type: Optional["AudienceSegmentType"] = Field(None, alias="audienceSegmentType")
-
-    model_config = {'populate_by_name': True}
-
-
-class ShopperCohortType(StrEnum):
-    AUDIENCE_SEGMENT = "AUDIENCE_SEGMENT"
-
-
-class ShopperCohortBidAdjustment(BaseModel):
-    shopper_cohort_type: Optional["ShopperCohortType"] = Field(None, alias="shopperCohortType")
-    percentage: Optional[float] = None
-    audience_segments: Optional[list["AudienceSegment"]] = Field(None, alias="audienceSegments", description="Required when 'AUDIENCE_SEGMENT' is used for shopperCohortType.")
-
-    model_config = {'populate_by_name': True}
-
-
-class Placement(StrEnum):
-    HOME = "HOME"
-    DETAIL_PAGE = "DETAIL_PAGE"
-    OTHER = "OTHER"
-    TOP_OF_SEARCH = "TOP_OF_SEARCH"
-
-
-class BidAdjustmentByPlacement(BaseModel):
-    percentage: Optional[float] = None
-    placement: Optional["Placement"] = None
-
-    model_config = {'populate_by_name': True}
-
-
-class Bidding(BaseModel):
-    bid_optimization: Optional[bool] = Field(None, alias="bidOptimization", description="Whether to use automatic placement level bid optimization. If set to true, Amazon will automatically set the right place")
-    shopper_cohort_bid_adjustments: Optional[list["ShopperCohortBidAdjustment"]] = Field(None, alias="shopperCohortBidAdjustments", description="Shopper cohort based bid adjustments.")
-    bid_adjustments_by_placement: Optional[list["BidAdjustmentByPlacement"]] = Field(None, alias="bidAdjustmentsByPlacement", description="Placement level bid adjustment. Note that this field can only be set when 'bidOptimization' is set to false.")
-
-    model_config = {'populate_by_name': True}
-
-
 class SiteRestriction(StrEnum):
     AMAZON_BUSINESS = "AMAZON_BUSINESS"
-
-
-class BudgetType(StrEnum):
-    DAILY = "DAILY"
-    LIFETIME = "LIFETIME"
-
-
-class RuleBasedBudget(BaseModel):
-    is_processing: Optional[bool] = Field(None, alias="isProcessing")
-    applicable_rule_name: Optional[str] = Field(None, alias="applicableRuleName")
-    value: Optional[float] = None
-    applicable_rule_id: Optional[str] = Field(None, alias="applicableRuleId")
-
-    model_config = {'populate_by_name': True}
 
 
 class CampaignServingStatus(StrEnum):
@@ -325,6 +215,72 @@ class Tags(BaseModel):
     __root__: dict[str, str] = {}
 
 
+class RuleBasedBudget(BaseModel):
+    is_processing: Optional[bool] = Field(None, alias="isProcessing")
+    applicable_rule_name: Optional[str] = Field(None, alias="applicableRuleName")
+    value: Optional[float] = None
+    applicable_rule_id: Optional[str] = Field(None, alias="applicableRuleId")
+
+    model_config = {'populate_by_name': True}
+
+
+class BudgetType(StrEnum):
+    DAILY = "DAILY"
+    LIFETIME = "LIFETIME"
+
+
+class Placement(StrEnum):
+    HOME = "HOME"
+    DETAIL_PAGE = "DETAIL_PAGE"
+    OTHER = "OTHER"
+    TOP_OF_SEARCH = "TOP_OF_SEARCH"
+
+
+class BidAdjustmentByPlacement(BaseModel):
+    percentage: Optional[float] = None
+    placement: Optional["Placement"] = None
+
+    model_config = {'populate_by_name': True}
+
+
+class AudienceSegmentType(StrEnum):
+    SPONSORED_ADS_AMC = "SPONSORED_ADS_AMC"
+    BEHAVIOR_DYNAMIC = "BEHAVIOR_DYNAMIC"
+
+
+class AudienceSegment(BaseModel):
+    audience_id: Optional[str] = Field(None, alias="audienceId")
+    audience_segment_type: Optional["AudienceSegmentType"] = Field(None, alias="audienceSegmentType")
+
+    model_config = {'populate_by_name': True}
+
+
+class ShopperCohortType(StrEnum):
+    AUDIENCE_SEGMENT = "AUDIENCE_SEGMENT"
+
+
+class ShopperCohortBidAdjustment(BaseModel):
+    shopper_cohort_type: Optional["ShopperCohortType"] = Field(None, alias="shopperCohortType")
+    percentage: Optional[float] = None
+    audience_segments: Optional[list["AudienceSegment"]] = Field(None, alias="audienceSegments", description="Required when 'AUDIENCE_SEGMENT' is used for shopperCohortType.")
+
+    model_config = {'populate_by_name': True}
+
+
+class Bidding(BaseModel):
+    bid_optimization: Optional[bool] = Field(None, alias="bidOptimization", description="Whether to use automatic placement level bid optimization. If set to true, Amazon will automatically set the right place")
+    shopper_cohort_bid_adjustments: Optional[list["ShopperCohortBidAdjustment"]] = Field(None, alias="shopperCohortBidAdjustments", description="Shopper cohort based bid adjustments.")
+    bid_adjustments_by_placement: Optional[list["BidAdjustmentByPlacement"]] = Field(None, alias="bidAdjustmentsByPlacement", description="Placement level bid adjustment. Note that this field can only be set when 'bidOptimization' is set to false.")
+
+    model_config = {'populate_by_name': True}
+
+
+class ProductLocation(StrEnum):
+    SOLD_ON_AMAZON = "SOLD_ON_AMAZON"
+    NOT_SOLD_ON_AMAZON = "NOT_SOLD_ON_AMAZON"
+    SOLD_ON_DTC = "SOLD_ON_DTC"
+
+
 class Campaign(BaseModel):
     budget_type: "BudgetType" = Field(..., alias="budgetType")
     rule_based_budget: Optional["RuleBasedBudget"] = Field(None, alias="ruleBasedBudget")
@@ -354,6 +310,50 @@ class CampaignMutationSuccessResponseItem(BaseModel):
     campaign_id: Optional[str] = Field(None, alias="campaignId", description="The campaign ID.")
     index: float = Field(..., description="The index of the campaign in the array from the request body.")
     campaign: Optional["Campaign"] = None
+
+    model_config = {'populate_by_name': True}
+
+
+class BudgetError(BaseModel):
+    reason: str
+    cause: "ErrorCause"
+    upper_limit: Optional[str] = Field(None, alias="upperLimit")
+    lower_limit: Optional[str] = Field(None, alias="lowerLimit")
+    message: str = Field(..., description="Human readable error message.")
+
+    model_config = {'populate_by_name': True}
+
+
+class BillingError(BaseModel):
+    """Errors related to billing."""
+    reason: str = Field(..., description="Exact error reason.")
+    cause: "ErrorCause"
+    message: str = Field(..., description="Human readable error message.")
+
+    model_config = {'populate_by_name': True}
+
+
+class CampaignMutationErrorSelector(BaseModel):
+    date_error: Optional["DateError"] = Field(None, alias="dateError")
+    bidding_error: Optional["BiddingError"] = Field(None, alias="biddingError")
+    budget_error: Optional["BudgetError"] = Field(None, alias="budgetError")
+    billing_error: Optional["BillingError"] = Field(None, alias="billingError")
+    range_error: Optional["RangeError"] = Field(None, alias="rangeError")
+    other_error: Optional["OtherError"] = Field(None, alias="otherError")
+
+    model_config = {'populate_by_name': True}
+
+
+class CampaignMutationError(BaseModel):
+    error_type: str = Field(..., alias="errorType", description="The type of the error.")
+    error_value: "CampaignMutationErrorSelector" = Field(..., alias="errorValue")
+
+    model_config = {'populate_by_name': True}
+
+
+class CampaignMutationFailureResponseItem(BaseModel):
+    index: float = Field(..., description="the index of the campaign in the array from the request body.")
+    errors: Optional[list["CampaignMutationError"]] = Field(None, description="A list of validation errors.")
 
     model_config = {'populate_by_name': True}
 
@@ -470,21 +470,6 @@ class CreateSponsoredBrandsVideoAdsBetaRequestContent(BaseModel):
     model_config = {'populate_by_name': True}
 
 
-class LandingPageType(StrEnum):
-    PRODUCT_LIST = "PRODUCT_LIST"
-    STORE = "STORE"
-    CUSTOM_URL = "CUSTOM_URL"
-    DETAIL_PAGE = "DETAIL_PAGE"
-
-
-class LandingPage(BaseModel):
-    asins: Optional[list[str]] = None
-    page_type: Optional["LandingPageType"] = Field(None, alias="pageType")
-    url: Optional[str] = Field(None, description="URL of an existing simple landing page or Store page. Vendors may also specify the URL of a custom landing page. If a cu")
-
-    model_config = {'populate_by_name': True}
-
-
 class BrandLogoCrop(BaseModel):
     """The crop to apply to the selected Brand logo. A Brand logo must have minimum dimensions of 400x400. If a brandLogoAssetID is supplied but a crop is not, the crop will be defaulted to the whole image."""
     top: Optional[float] = None
@@ -503,6 +488,21 @@ class CreateBrandVideoCreative(BaseModel):
     video_asset_ids: Optional[list[str]] = Field(None, alias="videoAssetIds")
     brand_logo_asset_id: Optional[str] = Field(None, alias="brandLogoAssetID")
     headline: Optional[str] = Field(None, description="The headline text. Maximum length of the string is 50 characters for all marketplaces other than Japan, which has a maxi")
+
+    model_config = {'populate_by_name': True}
+
+
+class LandingPageType(StrEnum):
+    PRODUCT_LIST = "PRODUCT_LIST"
+    STORE = "STORE"
+    CUSTOM_URL = "CUSTOM_URL"
+    DETAIL_PAGE = "DETAIL_PAGE"
+
+
+class LandingPage(BaseModel):
+    asins: Optional[list[str]] = None
+    page_type: Optional["LandingPageType"] = Field(None, alias="pageType")
+    url: Optional[str] = Field(None, description="URL of an existing simple landing page or Store page. Vendors may also specify the URL of a custom landing page. If a cu")
 
     model_config = {'populate_by_name': True}
 
@@ -541,6 +541,34 @@ class CreativeRecommendationsRequestContent(BaseModel):
     model_config = {'populate_by_name': True}
 
 
+class Subpage(BaseModel):
+    page_title: Optional[str] = Field(None, alias="pageTitle")
+    asin: Optional[str] = None
+    url: Optional[str] = None
+
+    model_config = {'populate_by_name': True}
+
+
+class CreativeType(StrEnum):
+    PRODUCT_COLLECTION = "PRODUCT_COLLECTION"
+    STORE_SPOTLIGHT = "STORE_SPOTLIGHT"
+    VIDEO = "VIDEO"
+    BRAND_VIDEO = "BRAND_VIDEO"
+
+
+class CreativeStatus(StrEnum):
+    SUBMITTED_FOR_MODERATION = "SUBMITTED_FOR_MODERATION"
+    PENDING_TRANSLATION = "PENDING_TRANSLATION"
+    PENDING_MODERATION_REVIEW = "PENDING_MODERATION_REVIEW"
+    APPROVED_BY_MODERATION = "APPROVED_BY_MODERATION"
+    REJECTED_BY_MODERATION = "REJECTED_BY_MODERATION"
+    PUBLISHED = "PUBLISHED"
+
+
+class CreativePropertyToOptimize(StrEnum):
+    HEADLINE = "HEADLINE"
+
+
 class CustomImageCrop(BaseModel):
     """The crop to apply to the selected Custom image. A Custom image must have a 1200x628 aspect ratio, with a .01 delta for floating point precision. If a customImageAssetId is supplied but a crop is not, """
     top: Optional[float] = None
@@ -557,34 +585,6 @@ class CustomImage(BaseModel):
     url: Optional[str] = None
 
     model_config = {'populate_by_name': True}
-
-
-class CreativeStatus(StrEnum):
-    SUBMITTED_FOR_MODERATION = "SUBMITTED_FOR_MODERATION"
-    PENDING_TRANSLATION = "PENDING_TRANSLATION"
-    PENDING_MODERATION_REVIEW = "PENDING_MODERATION_REVIEW"
-    APPROVED_BY_MODERATION = "APPROVED_BY_MODERATION"
-    REJECTED_BY_MODERATION = "REJECTED_BY_MODERATION"
-    PUBLISHED = "PUBLISHED"
-
-
-class Subpage(BaseModel):
-    page_title: Optional[str] = Field(None, alias="pageTitle")
-    asin: Optional[str] = None
-    url: Optional[str] = None
-
-    model_config = {'populate_by_name': True}
-
-
-class CreativePropertyToOptimize(StrEnum):
-    HEADLINE = "HEADLINE"
-
-
-class CreativeType(StrEnum):
-    PRODUCT_COLLECTION = "PRODUCT_COLLECTION"
-    STORE_SPOTLIGHT = "STORE_SPOTLIGHT"
-    VIDEO = "VIDEO"
-    BRAND_VIDEO = "BRAND_VIDEO"
 
 
 class Creative(BaseModel):
@@ -727,65 +727,9 @@ class ThrottledErrorCode(StrEnum):
     THROTTLED = "THROTTLED"
 
 
-class DayOfWeek(StrEnum):
-    MONDAY = "MONDAY"
-    TUESDAY = "TUESDAY"
-    WEDNESDAY = "WEDNESDAY"
-    THURSDAY = "THURSDAY"
-    FRIDAY = "FRIDAY"
-    SATURDAY = "SATURDAY"
-    SUNDAY = "SUNDAY"
-
-
-class RecurrenceType(StrEnum):
-    DAILY = "DAILY"
-    WEEKLY = "WEEKLY"
-
-
-class Recurrence(BaseModel):
-    type_: Optional["RecurrenceType"] = Field(None, alias="type")
-    days_of_week: Optional[list["DayOfWeek"]] = Field(None, alias="daysOfWeek", description="Object representing days of the week for weekly type rule. It is not required for daily recurrence type")
-    intra_day_schedule: Optional[list["timeOfDay"]] = Field(None, alias="intraDaySchedule", description="List of objects representing start and end time of desired intra-day budget rule window")
-
-    model_config = {'populate_by_name': True}
-
-
-class ComparisonOperator(StrEnum):
-    GREATER_THAN = "GREATER_THAN"
-    LESS_THAN = "LESS_THAN"
-    LESS_THAN_OR_EQUAL_TO = "LESS_THAN_OR_EQUAL_TO"
-    GREATER_THAN_OR_EQUAL_TO = "GREATER_THAN_OR_EQUAL_TO"
-
-
-class PerformanceMetric(StrEnum):
-    ACOS = "ACOS"
-    CTR = "CTR"
-    CVR = "CVR"
-    ROAS = "ROAS"
-
-
-class PerformanceMeasureCondition(BaseModel):
-    metric_name: "PerformanceMetric" = Field(..., alias="metricName")
-    comparison_operator: "ComparisonOperator" = Field(..., alias="comparisonOperator")
-    threshold: float = Field(..., description="The performance threshold value.")
-
-    model_config = {'populate_by_name': True}
-
-
-class SDRuleType(StrEnum):
-    SCHEDULE = "SCHEDULE"
-    PERFORMANCE = "PERFORMANCE"
-
-
-class BudgetChangeType(StrEnum):
-    PERCENT = "PERCENT"
-
-
-class budgetIncreaseBy(BaseModel):
-    type_: "BudgetChangeType" = Field(..., alias="type")
-    value: float = Field(..., description="The budget value.")
-
-    model_config = {'populate_by_name': True}
+class state(StrEnum):
+    ACTIVE = "ACTIVE"
+    PAUSED = "PAUSED"
 
 
 class EventTypeRuleDuration(BaseModel):
@@ -813,6 +757,67 @@ class RuleDuration(BaseModel):
     model_config = {'populate_by_name': True}
 
 
+class PerformanceMetric(StrEnum):
+    ACOS = "ACOS"
+    CTR = "CTR"
+    CVR = "CVR"
+    ROAS = "ROAS"
+
+
+class ComparisonOperator(StrEnum):
+    GREATER_THAN = "GREATER_THAN"
+    LESS_THAN = "LESS_THAN"
+    LESS_THAN_OR_EQUAL_TO = "LESS_THAN_OR_EQUAL_TO"
+    GREATER_THAN_OR_EQUAL_TO = "GREATER_THAN_OR_EQUAL_TO"
+
+
+class PerformanceMeasureCondition(BaseModel):
+    metric_name: "PerformanceMetric" = Field(..., alias="metricName")
+    comparison_operator: "ComparisonOperator" = Field(..., alias="comparisonOperator")
+    threshold: float = Field(..., description="The performance threshold value.")
+
+    model_config = {'populate_by_name': True}
+
+
+class DayOfWeek(StrEnum):
+    MONDAY = "MONDAY"
+    TUESDAY = "TUESDAY"
+    WEDNESDAY = "WEDNESDAY"
+    THURSDAY = "THURSDAY"
+    FRIDAY = "FRIDAY"
+    SATURDAY = "SATURDAY"
+    SUNDAY = "SUNDAY"
+
+
+class RecurrenceType(StrEnum):
+    DAILY = "DAILY"
+    WEEKLY = "WEEKLY"
+
+
+class Recurrence(BaseModel):
+    type_: Optional["RecurrenceType"] = Field(None, alias="type")
+    days_of_week: Optional[list["DayOfWeek"]] = Field(None, alias="daysOfWeek", description="Object representing days of the week for weekly type rule. It is not required for daily recurrence type")
+    intra_day_schedule: Optional[list["timeOfDay"]] = Field(None, alias="intraDaySchedule", description="List of objects representing start and end time of desired intra-day budget rule window")
+
+    model_config = {'populate_by_name': True}
+
+
+class BudgetChangeType(StrEnum):
+    PERCENT = "PERCENT"
+
+
+class budgetIncreaseBy(BaseModel):
+    type_: "BudgetChangeType" = Field(..., alias="type")
+    value: float = Field(..., description="The budget value.")
+
+    model_config = {'populate_by_name': True}
+
+
+class SDRuleType(StrEnum):
+    SCHEDULE = "SCHEDULE"
+    PERFORMANCE = "PERFORMANCE"
+
+
 class SDBudgetRuleDetails(BaseModel):
     """Object representing details of a budget rule for SD campaign"""
     duration: Optional["RuleDuration"] = None
@@ -823,11 +828,6 @@ class SDBudgetRuleDetails(BaseModel):
     performance_measure_condition: Optional["PerformanceMeasureCondition"] = Field(None, alias="performanceMeasureCondition")
 
     model_config = {'populate_by_name': True}
-
-
-class state(StrEnum):
-    ACTIVE = "ACTIVE"
-    PAUSED = "PAUSED"
 
 
 class SDBudgetRule(BaseModel):
@@ -1201,13 +1201,6 @@ class UpdateAd(BaseModel):
     model_config = {'populate_by_name': True}
 
 
-class SBInsightsAdFormat(StrEnum):
-    PRODUCT_COLLECTION = "PRODUCT_COLLECTION"
-    STORE_SPOTLIGHT = "STORE_SPOTLIGHT"
-    VIDEO = "VIDEO"
-    BRAND_VIDEO = "BRAND_VIDEO"
-
-
 class SBInsightsKeyword(BaseModel):
     """Keyword associated with the campaign."""
     match_type: "SBInsightsMatchType" = Field(..., alias="matchType")
@@ -1215,6 +1208,13 @@ class SBInsightsKeyword(BaseModel):
     keyword_text: str = Field(..., alias="keywordText", description="The keyword text. Maximum of 10 words.")
 
     model_config = {'populate_by_name': True}
+
+
+class SBInsightsAdFormat(StrEnum):
+    PRODUCT_COLLECTION = "PRODUCT_COLLECTION"
+    STORE_SPOTLIGHT = "STORE_SPOTLIGHT"
+    VIDEO = "VIDEO"
+    BRAND_VIDEO = "BRAND_VIDEO"
 
 
 class SBInsightsAdGroup(BaseModel):
@@ -2668,6 +2668,20 @@ class CreateStoreSpotlightCreativeRequestContent(BaseModel):
     model_config = {'populate_by_name': True}
 
 
+class ViolatingImageEvidence(BaseModel):
+    violating_image_crop: Optional["ImageCrop"] = Field(None, alias="violatingImageCrop")
+
+    model_config = {'populate_by_name': True}
+
+
+class ViolatingImageContent(BaseModel):
+    violating_image_evidences: Optional[list["ViolatingImageEvidence"]] = Field(None, alias="violatingImageEvidences")
+    moderated_component: Optional[str] = Field(None, alias="moderatedComponent", description="Moderation component which marked the policy violation.")
+    reviewed_image_url: Optional[str] = Field(None, alias="reviewedImageUrl", description="URL of the image which has the ad policy violation.")
+
+    model_config = {'populate_by_name': True}
+
+
 class VideoPosition(BaseModel):
     start: Optional[int] = Field(None, description="Start time of the video having the policy violation.")
     end: Optional[int] = Field(None, description="End time of the video having the policy violation.")
@@ -2685,20 +2699,6 @@ class ViolatingVideoContent(BaseModel):
     violating_video_evidences: Optional[list["ViolatingVideoEvidence"]] = Field(None, alias="violatingVideoEvidences")
     moderated_component: Optional[str] = Field(None, alias="moderatedComponent", description="Moderation component which marked the policy violation.")
     reviewed_video_url: Optional[str] = Field(None, alias="reviewedVideoUrl", description="URL of the video which has the ad policy violation.")
-
-    model_config = {'populate_by_name': True}
-
-
-class ViolatingImageEvidence(BaseModel):
-    violating_image_crop: Optional["ImageCrop"] = Field(None, alias="violatingImageCrop")
-
-    model_config = {'populate_by_name': True}
-
-
-class ViolatingImageContent(BaseModel):
-    violating_image_evidences: Optional[list["ViolatingImageEvidence"]] = Field(None, alias="violatingImageEvidences")
-    moderated_component: Optional[str] = Field(None, alias="moderatedComponent", description="Moderation component which marked the policy violation.")
-    reviewed_image_url: Optional[str] = Field(None, alias="reviewedImageUrl", description="URL of the image which has the ad policy violation.")
 
     model_config = {'populate_by_name': True}
 
@@ -3813,18 +3813,25 @@ class SDHeadlineRecommendationInternalServerException(BaseModel):
     model_config = {'populate_by_name': True}
 
 
-class SBForecastingProductExpression(BaseModel):
-    """Expression settings for the target."""
-    type_: Optional[str] = Field(None, alias="type", description="The expression type associated with the target. Valid value: ASIN_CATEGORY_SAME_AS, ASIN_BRAND_SAME_AS, ASIN_PRICE_LESS_")
-    value: Optional[str] = Field(None, description="The expression value associated with targets.")
+class SBForecastingTheme(BaseModel):
+    """The theme."""
+    theme_type: Optional[str] = Field(None, alias="themeType", description="The theme target type. Valid value: KEYWORDS_RELATED_TO_YOUR_BRAND, KEYWORDS_RELATED_TO_YOUR_LANDING_PAGES.   KEYWORDS_R")
+    bid: Optional[float] = Field(None, description="The associated bid. Note that this value must be less than the budget associated with the Advertiser account.")
 
     model_config = {'populate_by_name': True}
 
 
-class SBForecastingProductTarget(BaseModel):
-    """The target associated with the ad group."""
-    expressions: Optional[list["SBForecastingProductExpression"]] = None
+class SBForecastingKeyword(BaseModel):
+    """Keyword associated with the campaign."""
+    keyword_text: Optional[str] = Field(None, alias="keywordText", description="The keyword text. Maximum of 10 words.")
+    match_type: Optional[str] = Field(None, alias="matchType", description="The match type. Valid value: EXACT, PHRASE, BROAD. For more information, see [match types](https://advertising.amazon.co")
     bid: Optional[float] = Field(None, description="The associated bid. Note that this value must be less than the budget associated with the Advertiser account.")
+
+    model_config = {'populate_by_name': True}
+
+
+class SBForecastingLandingPageObject(BaseModel):
+    landing_page_url: Optional[str] = Field(None, alias="landingPageUrl", description="Landing page information.")
 
     model_config = {'populate_by_name': True}
 
@@ -3844,33 +3851,26 @@ class SBForecastingNegativeProductTarget(BaseModel):
     model_config = {'populate_by_name': True}
 
 
+class SBForecastingProductExpression(BaseModel):
+    """Expression settings for the target."""
+    type_: Optional[str] = Field(None, alias="type", description="The expression type associated with the target. Valid value: ASIN_CATEGORY_SAME_AS, ASIN_BRAND_SAME_AS, ASIN_PRICE_LESS_")
+    value: Optional[str] = Field(None, description="The expression value associated with targets.")
+
+    model_config = {'populate_by_name': True}
+
+
+class SBForecastingProductTarget(BaseModel):
+    """The target associated with the ad group."""
+    expressions: Optional[list["SBForecastingProductExpression"]] = None
+    bid: Optional[float] = Field(None, description="The associated bid. Note that this value must be less than the budget associated with the Advertiser account.")
+
+    model_config = {'populate_by_name': True}
+
+
 class SBForecastingNegativeKeyword(BaseModel):
     """Negative keyword associated with the campaign."""
     keyword_text: Optional[str] = Field(None, alias="keywordText", description="The keyword text. Maximum of 10 words.")
     match_type: Optional[str] = Field(None, alias="matchType", description="The negative match type. Valid value: NEGATIVE_EXACT, NEGATIVE_PHRASE. For more information, see [negative keyword match")
-
-    model_config = {'populate_by_name': True}
-
-
-class SBForecastingKeyword(BaseModel):
-    """Keyword associated with the campaign."""
-    keyword_text: Optional[str] = Field(None, alias="keywordText", description="The keyword text. Maximum of 10 words.")
-    match_type: Optional[str] = Field(None, alias="matchType", description="The match type. Valid value: EXACT, PHRASE, BROAD. For more information, see [match types](https://advertising.amazon.co")
-    bid: Optional[float] = Field(None, description="The associated bid. Note that this value must be less than the budget associated with the Advertiser account.")
-
-    model_config = {'populate_by_name': True}
-
-
-class SBForecastingTheme(BaseModel):
-    """The theme."""
-    theme_type: Optional[str] = Field(None, alias="themeType", description="The theme target type. Valid value: KEYWORDS_RELATED_TO_YOUR_BRAND, KEYWORDS_RELATED_TO_YOUR_LANDING_PAGES.   KEYWORDS_R")
-    bid: Optional[float] = Field(None, description="The associated bid. Note that this value must be less than the budget associated with the Advertiser account.")
-
-    model_config = {'populate_by_name': True}
-
-
-class SBForecastingLandingPageObject(BaseModel):
-    landing_page_url: Optional[str] = Field(None, alias="landingPageUrl", description="Landing page information.")
 
     model_config = {'populate_by_name': True}
 
@@ -3907,6 +3907,14 @@ class SBCampaignPerformanceForecastsRequestContent(BaseModel):
     model_config = {'populate_by_name': True}
 
 
+class SBForecastingErrorObject(BaseModel):
+    index: Optional[int] = Field(None, description="Correlates the campaign to the campaign list index specified in the request. Zero-based.")
+    code: Optional[str] = Field(None, description="The forecast error code.")
+    description: Optional[str] = Field(None, description="The forecast error description.")
+
+    model_config = {'populate_by_name': True}
+
+
 class SBForecastingMetricValue(BaseModel):
     """The forecast min and max value."""
     min: Optional[float] = Field(None, description="The forecast min value.")
@@ -3933,14 +3941,6 @@ class SBForecastingSuccessCampaign(BaseModel):
 class SBForecastingSuccessObject(BaseModel):
     index: Optional[int] = Field(None, description="Correlates the campaign to the campaign list index specified in the request. Zero-based.")
     campaign: Optional["SBForecastingSuccessCampaign"] = None
-
-    model_config = {'populate_by_name': True}
-
-
-class SBForecastingErrorObject(BaseModel):
-    index: Optional[int] = Field(None, description="Correlates the campaign to the campaign list index specified in the request. Zero-based.")
-    code: Optional[str] = Field(None, description="The forecast error code.")
-    description: Optional[str] = Field(None, description="The forecast error description.")
 
     model_config = {'populate_by_name': True}
 

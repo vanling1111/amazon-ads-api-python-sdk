@@ -6,9 +6,9 @@ Title:  Advertising Billing
 
 from __future__ import annotations
 
-from typing import Any
+from typing import Any  # noqa: F401
 
-from amazon_ads_api.base import BaseAdsClient, JSONData, JSONList
+from amazon_ads_api.base import BaseAdsClient, JSONData, JSONList  # noqa: F401
 
 try:
     from .models_billing import *  # noqa: F403
@@ -341,7 +341,7 @@ class BillingClient(BaseAdsClient):
     async def get_billing_invoice_summaries(self, body: BillingInvoiceSummariesRequest | dict[str, Any] | None = None, amazon_advertising_api_client_id: str | None = None, amazon_ads_account_id: str | None = None, amazon_advertising_api_manager_account: str | None = None) -> JSONData | JSONList:
         """POST /invoiceSummaries/list
 
-        Lists the billing invoice summary(s) in a global ads account as per the search and aggregation parameters passed in the 
+        Lists the billing invoice summary(s) in a global ads account as per the search and aggregation parameters passed in the
         """
         endpoint = "/invoiceSummaries/list"
         params: dict[str, Any] = {}

@@ -6,10 +6,10 @@ Title:  PreModeration
 
 from __future__ import annotations
 
-from enum import StrEnum
-from typing import Optional
+from enum import StrEnum  # noqa: F401
+from typing import Any, Optional, Union  # noqa: F401
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field  # noqa: F401
 
 
 
@@ -163,39 +163,6 @@ class ImageEvidence(BaseModel):
     model_config = {'populate_by_name': True}
 
 
-class TextEvidencePosition(BaseModel):
-    """Position in the textComponent where the policy violation is detected."""
-    end: Optional[int] = Field(None, description="Zero-based index into the text in textComponent where the text specified in violatingText ends.")
-    start: Optional[int] = Field(None, description="Zero-based index into the text in textComponent where the text specified in violatingText starts.")
-
-    model_config = {'populate_by_name': True}
-
-
-class TextEvidence(BaseModel):
-    """Structure of a text evidence"""
-    position: Optional["TextEvidencePosition"] = Field(None, description="Position in the textComponent where the policy violation is detected.")
-    violating_text: Optional[str] = Field(None, alias="violatingText", description="The specific text determined to violate the specified policy in reviewedText.")
-
-    model_config = {'populate_by_name': True}
-
-
-class ImagePolicyViolationType(StrEnum):
-    REJECTED = "REJECTED"
-    WARNING = "WARNING"
-
-
-class ImagePolicyViolation(BaseModel):
-    """Structure of policy violation for a image component"""
-    image_evidences: Optional[list["ImageEvidence"]] = Field(None, alias="imageEvidences", description="List of evidences for the policy violations detected on the image component.")
-    name: Optional[str] = Field(None, description="A policy violation code.")
-    policy_description: Optional[str] = Field(None, alias="policyDescription", description="A human-readable description of the policy.")
-    policy_link_url: Optional[str] = Field(None, alias="policyLinkUrl", description="Address of the policy documentation. Follow the link to learn more about the specified policy.")
-    text_evidences: Optional[list["TextEvidence"]] = Field(None, alias="textEvidences", description="Policy violation on an image can be detected on the ocr detected text on the image as well. This list of text evidences ")
-    type_: Optional[ImagePolicyViolationType] = Field(None, alias="type", description="Type of policy violation.")
-
-    model_config = {'populate_by_name': True}
-
-
 class ImageSpecComputed(BaseModel):
     """Structure of actual specification of an image component, computed by moderation system."""
     image_evidences: Optional[list["ImageEvidence"]] = Field(None, alias="imageEvidences", description="List of evidences for the computed specification value on the image component.")
@@ -231,6 +198,39 @@ class ImageSpecViolation(BaseModel):
     spec_description: Optional[str] = Field(None, alias="specDescription", description="A human-readable description of the spec requirement.")
     spec_link_url: Optional[str] = Field(None, alias="specLinkUrl", description="Address of the ad specification documentation. Follow the link to learn more about the required ad specification.")
     type_: Optional[ImageSpecViolationType] = Field(None, alias="type", description="Type of spec violation.")
+
+    model_config = {'populate_by_name': True}
+
+
+class TextEvidencePosition(BaseModel):
+    """Position in the textComponent where the policy violation is detected."""
+    end: Optional[int] = Field(None, description="Zero-based index into the text in textComponent where the text specified in violatingText ends.")
+    start: Optional[int] = Field(None, description="Zero-based index into the text in textComponent where the text specified in violatingText starts.")
+
+    model_config = {'populate_by_name': True}
+
+
+class TextEvidence(BaseModel):
+    """Structure of a text evidence"""
+    position: Optional["TextEvidencePosition"] = Field(None, description="Position in the textComponent where the policy violation is detected.")
+    violating_text: Optional[str] = Field(None, alias="violatingText", description="The specific text determined to violate the specified policy in reviewedText.")
+
+    model_config = {'populate_by_name': True}
+
+
+class ImagePolicyViolationType(StrEnum):
+    REJECTED = "REJECTED"
+    WARNING = "WARNING"
+
+
+class ImagePolicyViolation(BaseModel):
+    """Structure of policy violation for a image component"""
+    image_evidences: Optional[list["ImageEvidence"]] = Field(None, alias="imageEvidences", description="List of evidences for the policy violations detected on the image component.")
+    name: Optional[str] = Field(None, description="A policy violation code.")
+    policy_description: Optional[str] = Field(None, alias="policyDescription", description="A human-readable description of the policy.")
+    policy_link_url: Optional[str] = Field(None, alias="policyLinkUrl", description="Address of the policy documentation. Follow the link to learn more about the specified policy.")
+    text_evidences: Optional[list["TextEvidence"]] = Field(None, alias="textEvidences", description="Policy violation on an image can be detected on the ocr detected text on the image as well. This list of text evidences ")
+    type_: Optional[ImagePolicyViolationType] = Field(None, alias="type", description="Type of policy violation.")
 
     model_config = {'populate_by_name': True}
 
@@ -271,6 +271,35 @@ class ModerationError(BaseModel):
     model_config = {'populate_by_name': True}
 
 
+class UrlComponentComponenttype(StrEnum):
+    CLICK_THROUGH_URL = "CLICK_THROUGH_URL"
+
+
+class UrlComponent(BaseModel):
+    """URL component which needs to be pre moderated"""
+    component_type: UrlComponentComponenttype = Field(..., alias="componentType", description="Type of the URL component")
+    id_: str = Field(..., alias="id", description="Id of the component. The same will be returned as part of the response as well.")
+    url: str = Field(..., description="URL that needs to be validated")
+
+    model_config = {'populate_by_name': True}
+
+
+class ThirdPartyComponentComponenttype(StrEnum):
+    ADSP_3P_DISPLAY = "ADSP_3P_DISPLAY"
+    ADSP_3P_VIDEO = "ADSP_3P_VIDEO"
+
+
+class ThirdPartyComponent(BaseModel):
+    """Third party component which needs to be pre-moderated"""
+    click_through_type: Optional["ClickThroughType"] = Field(None, alias="clickThroughType")
+    component_type: ThirdPartyComponentComponenttype = Field(..., alias="componentType", description="Type of the third party component")
+    creative_size: Optional["CreativeSize"] = Field(None, alias="creativeSize")
+    id_: str = Field(..., alias="id", description="Id of the component. The same will be returned as part of the response as well.")
+    tag: str = Field(..., description="The tag content for validation")
+
+    model_config = {'populate_by_name': True}
+
+
 class TextComponentComponenttype(StrEnum):
     BRAND_NAME = "BRAND_NAME"
     HEADLINE = "HEADLINE"
@@ -282,19 +311,6 @@ class TextComponent(BaseModel):
     component_type: TextComponentComponenttype = Field(..., alias="componentType", description="Type of text component.")
     id_: str = Field(..., alias="id", description="Id of the component. The same will be returned as part of the response as well. This can be used to uniquely identify th")
     text: str = Field(..., description="Text which needs to be moderated.")
-
-    model_config = {'populate_by_name': True}
-
-
-class UrlComponentComponenttype(StrEnum):
-    CLICK_THROUGH_URL = "CLICK_THROUGH_URL"
-
-
-class UrlComponent(BaseModel):
-    """URL component which needs to be pre moderated"""
-    component_type: UrlComponentComponenttype = Field(..., alias="componentType", description="Type of the URL component")
-    id_: str = Field(..., alias="id", description="Id of the component. The same will be returned as part of the response as well.")
-    url: str = Field(..., description="URL that needs to be validated")
 
     model_config = {'populate_by_name': True}
 
@@ -313,22 +329,6 @@ class VideoComponent(BaseModel):
     id_: str = Field(..., alias="id", description="Id of the component. The same will be returned as part of the response as well. This can be used to uniquely identify th")
     landing_page: Optional["LandingPage"] = Field(None, alias="landingPage")
     url: str = Field(..., description="Url of the video to be pre moderated. The url must be publicly accessible.")
-
-    model_config = {'populate_by_name': True}
-
-
-class ThirdPartyComponentComponenttype(StrEnum):
-    ADSP_3P_DISPLAY = "ADSP_3P_DISPLAY"
-    ADSP_3P_VIDEO = "ADSP_3P_VIDEO"
-
-
-class ThirdPartyComponent(BaseModel):
-    """Third party component which needs to be pre-moderated"""
-    click_through_type: Optional["ClickThroughType"] = Field(None, alias="clickThroughType")
-    component_type: ThirdPartyComponentComponenttype = Field(..., alias="componentType", description="Type of the third party component")
-    creative_size: Optional["CreativeSize"] = Field(None, alias="creativeSize")
-    id_: str = Field(..., alias="id", description="Id of the component. The same will be returned as part of the response as well.")
-    tag: str = Field(..., description="The tag content for validation")
 
     model_config = {'populate_by_name': True}
 
@@ -405,6 +405,133 @@ class PreModerationRequest(BaseModel):
     third_party_components: Optional[list["ThirdPartyComponent"]] = Field(None, alias="thirdPartyComponents", description="Third party components which need to be pre-moderated")
     url_components: Optional[list["UrlComponent"]] = Field(None, alias="urlComponents", description="URL components which need to be pre-moderated")
     video_components: Optional[list["VideoComponent"]] = Field(None, alias="videoComponents", description="Video components which needs to be pre moderated.")
+
+    model_config = {'populate_by_name': True}
+
+
+class UrlSpecViolationName(StrEnum):
+    CLICK_THROUGH_URL_CONTAINS_BROWSE_NODES = "CLICK_THROUGH_URL_CONTAINS_BROWSE_NODES"
+
+
+class UrlSpecViolationType(StrEnum):
+    REJECTED = "REJECTED"
+    WARNING = "WARNING"
+
+
+class UrlSpecViolation(BaseModel):
+    """Structure of spec violation for a URL component."""
+    name: Optional[UrlSpecViolationName] = Field(None, description="A spec violation code.")
+    spec_description: Optional[str] = Field(None, alias="specDescription", description="A human-readable description of the spec requirement.")
+    spec_link_url: Optional[str] = Field(None, alias="specLinkUrl", description="Address of the ad specification documentation. Follow the link to learn more about the required ad specification.")
+    type_: Optional[UrlSpecViolationType] = Field(None, alias="type", description="Type of spec violation.")
+
+    model_config = {'populate_by_name': True}
+
+
+class UrlComponentResponseComponenttype(StrEnum):
+    CLICK_THROUGH_URL = "CLICK_THROUGH_URL"
+
+
+class UrlComponentResponsePremoderationstatus(StrEnum):
+    APPROVED = "APPROVED"
+    FAILED = "FAILED"
+    REJECTED = "REJECTED"
+    RETRYABLE_FAILURE = "RETRYABLE_FAILURE"
+
+
+class UrlComponentResponse(BaseModel):
+    """Pre moderation result for a URL component"""
+    component_type: Optional[UrlComponentResponseComponenttype] = Field(None, alias="componentType", description="Type of the URL component.")
+    id_: Optional[str] = Field(None, alias="id", description="Id of the component. This is the same id sent as part of the request. This can be used to uniquely identify the componen")
+    pre_moderation_status: Optional[UrlComponentResponsePremoderationstatus] = Field(None, alias="preModerationStatus", description="The pre moderation status of the component.")
+    spec_violations: Optional[list["UrlSpecViolation"]] = Field(None, alias="specViolations", description="A list of specification violations for the component that were detected during pre moderation. Note that this field is p")
+    url: Optional[str] = Field(None, description="URL that got pre moderated.")
+
+    model_config = {'populate_by_name': True}
+
+
+class TextPolicyViolationType(StrEnum):
+    REJECTED = "REJECTED"
+    WARNING = "WARNING"
+
+
+class TextPolicyViolation(BaseModel):
+    """Structure of policy violation for a text component"""
+    name: Optional[str] = Field(None, description="A policy violation code.")
+    policy_description: Optional[str] = Field(None, alias="policyDescription", description="A human-readable description of the policy.")
+    policy_link_url: Optional[str] = Field(None, alias="policyLinkUrl", description="Address of the policy documentation. Follow the link to learn more about the specified policy.")
+    text_evidences: Optional[list["TextEvidence"]] = Field(None, alias="textEvidences", description="List of text evidences")
+    type_: Optional[TextPolicyViolationType] = Field(None, alias="type", description="Type of policy violation.")
+
+    model_config = {'populate_by_name': True}
+
+
+class TextComponentResponseComponenttype(StrEnum):
+    BRAND_NAME = "BRAND_NAME"
+    HEADLINE = "HEADLINE"
+    OTHER_TEXT = "OTHER_TEXT"
+
+
+class TextComponentResponsePremoderationstatus(StrEnum):
+    APPROVED = "APPROVED"
+    FAILED = "FAILED"
+    REJECTED = "REJECTED"
+    RETRYABLE_FAILURE = "RETRYABLE_FAILURE"
+
+
+class TextComponentResponse(BaseModel):
+    """Pre moderation result for a text component"""
+    component_type: Optional[TextComponentResponseComponenttype] = Field(None, alias="componentType", description="Type of the text component.")
+    corrections: Optional[list[str]] = Field(None, description="A list of corrected text without any policy violation. You could consider replacing the component with one of the correc")
+    id_: Optional[str] = Field(None, alias="id", description="Id of the component. This is the same id sent as part of the request. This can be used to uniquely identify the componen")
+    policy_violations: Optional[list["TextPolicyViolation"]] = Field(None, alias="policyViolations", description="A list of policy violations for the component that were detected during pre moderation. Note that this field is present ")
+    pre_moderation_status: Optional[TextComponentResponsePremoderationstatus] = Field(None, alias="preModerationStatus", description="The pre moderation status of the component.")
+    text: Optional[str] = Field(None, description="Text which got pre moderated.")
+
+    model_config = {'populate_by_name': True}
+
+
+class ThirdPartySpecViolationName(StrEnum):
+    CREATIVE_SIZE_IS_INCORRECTLY_SET = "CREATIVE_SIZE_IS_INCORRECTLY_SET"
+    TAG_INCORRECTLY_UPLOADED = "TAG_INCORRECTLY_UPLOADED"
+
+
+class ThirdPartySpecViolationType(StrEnum):
+    REJECTED = "REJECTED"
+    WARNING = "WARNING"
+
+
+class ThirdPartySpecViolation(BaseModel):
+    """Structure of spec violation for a third party component."""
+    name: Optional[ThirdPartySpecViolationName] = Field(None, description="A spec violation code.")
+    spec_description: Optional[str] = Field(None, alias="specDescription", description="A human-readable description of the spec requirement.")
+    spec_link_url: Optional[str] = Field(None, alias="specLinkUrl", description="Address of the ad specification documentation. Follow the link to learn more about the required ad specification.")
+    type_: Optional[ThirdPartySpecViolationType] = Field(None, alias="type", description="Type of spec violation.")
+
+    model_config = {'populate_by_name': True}
+
+
+class ThirdPartyComponentResponseComponenttype(StrEnum):
+    ADSP_3P_DISPLAY = "ADSP_3P_DISPLAY"
+    ADSP_3P_VIDEO = "ADSP_3P_VIDEO"
+
+
+class ThirdPartyComponentResponsePremoderationstatus(StrEnum):
+    APPROVED = "APPROVED"
+    FAILED = "FAILED"
+    REJECTED = "REJECTED"
+    RETRYABLE_FAILURE = "RETRYABLE_FAILURE"
+
+
+class ThirdPartyComponentResponse(BaseModel):
+    """Pre moderation result for a third party component"""
+    click_through_type: Optional["ClickThroughType"] = Field(None, alias="clickThroughType")
+    component_type: Optional[ThirdPartyComponentResponseComponenttype] = Field(None, alias="componentType", description="Type of the tag component.")
+    creative_size: Optional["CreativeSize"] = Field(None, alias="creativeSize")
+    id_: Optional[str] = Field(None, alias="id", description="Id of the component. This is the same id sent as part of the request. This can be used to uniquely identify the componen")
+    pre_moderation_status: Optional[ThirdPartyComponentResponsePremoderationstatus] = Field(None, alias="preModerationStatus", description="The pre moderation status of the component.")
+    spec_violations: Optional[list["ThirdPartySpecViolation"]] = Field(None, alias="specViolations", description="A list of specification violations for the component that were detected during pre moderation. Note that this field is p")
+    tag: Optional[str] = Field(None, description="Tag content that got pre moderated.")
 
     model_config = {'populate_by_name': True}
 
@@ -506,133 +633,6 @@ class VideoComponentResponse(BaseModel):
     pre_moderation_status: Optional[VideoComponentResponsePremoderationstatus] = Field(None, alias="preModerationStatus", description="The pre moderation status of the component.")
     spec_violations: Optional[list["VideoSpecViolation"]] = Field(None, alias="specViolations", description="A list of specification violations for the component that were detected during pre moderation. Note that this field is p")
     url: Optional[str] = Field(None, description="Publicly accessible url of the video that got pre moderated.")
-
-    model_config = {'populate_by_name': True}
-
-
-class TextPolicyViolationType(StrEnum):
-    REJECTED = "REJECTED"
-    WARNING = "WARNING"
-
-
-class TextPolicyViolation(BaseModel):
-    """Structure of policy violation for a text component"""
-    name: Optional[str] = Field(None, description="A policy violation code.")
-    policy_description: Optional[str] = Field(None, alias="policyDescription", description="A human-readable description of the policy.")
-    policy_link_url: Optional[str] = Field(None, alias="policyLinkUrl", description="Address of the policy documentation. Follow the link to learn more about the specified policy.")
-    text_evidences: Optional[list["TextEvidence"]] = Field(None, alias="textEvidences", description="List of text evidences")
-    type_: Optional[TextPolicyViolationType] = Field(None, alias="type", description="Type of policy violation.")
-
-    model_config = {'populate_by_name': True}
-
-
-class TextComponentResponseComponenttype(StrEnum):
-    BRAND_NAME = "BRAND_NAME"
-    HEADLINE = "HEADLINE"
-    OTHER_TEXT = "OTHER_TEXT"
-
-
-class TextComponentResponsePremoderationstatus(StrEnum):
-    APPROVED = "APPROVED"
-    FAILED = "FAILED"
-    REJECTED = "REJECTED"
-    RETRYABLE_FAILURE = "RETRYABLE_FAILURE"
-
-
-class TextComponentResponse(BaseModel):
-    """Pre moderation result for a text component"""
-    component_type: Optional[TextComponentResponseComponenttype] = Field(None, alias="componentType", description="Type of the text component.")
-    corrections: Optional[list[str]] = Field(None, description="A list of corrected text without any policy violation. You could consider replacing the component with one of the correc")
-    id_: Optional[str] = Field(None, alias="id", description="Id of the component. This is the same id sent as part of the request. This can be used to uniquely identify the componen")
-    policy_violations: Optional[list["TextPolicyViolation"]] = Field(None, alias="policyViolations", description="A list of policy violations for the component that were detected during pre moderation. Note that this field is present ")
-    pre_moderation_status: Optional[TextComponentResponsePremoderationstatus] = Field(None, alias="preModerationStatus", description="The pre moderation status of the component.")
-    text: Optional[str] = Field(None, description="Text which got pre moderated.")
-
-    model_config = {'populate_by_name': True}
-
-
-class UrlSpecViolationName(StrEnum):
-    CLICK_THROUGH_URL_CONTAINS_BROWSE_NODES = "CLICK_THROUGH_URL_CONTAINS_BROWSE_NODES"
-
-
-class UrlSpecViolationType(StrEnum):
-    REJECTED = "REJECTED"
-    WARNING = "WARNING"
-
-
-class UrlSpecViolation(BaseModel):
-    """Structure of spec violation for a URL component."""
-    name: Optional[UrlSpecViolationName] = Field(None, description="A spec violation code.")
-    spec_description: Optional[str] = Field(None, alias="specDescription", description="A human-readable description of the spec requirement.")
-    spec_link_url: Optional[str] = Field(None, alias="specLinkUrl", description="Address of the ad specification documentation. Follow the link to learn more about the required ad specification.")
-    type_: Optional[UrlSpecViolationType] = Field(None, alias="type", description="Type of spec violation.")
-
-    model_config = {'populate_by_name': True}
-
-
-class UrlComponentResponseComponenttype(StrEnum):
-    CLICK_THROUGH_URL = "CLICK_THROUGH_URL"
-
-
-class UrlComponentResponsePremoderationstatus(StrEnum):
-    APPROVED = "APPROVED"
-    FAILED = "FAILED"
-    REJECTED = "REJECTED"
-    RETRYABLE_FAILURE = "RETRYABLE_FAILURE"
-
-
-class UrlComponentResponse(BaseModel):
-    """Pre moderation result for a URL component"""
-    component_type: Optional[UrlComponentResponseComponenttype] = Field(None, alias="componentType", description="Type of the URL component.")
-    id_: Optional[str] = Field(None, alias="id", description="Id of the component. This is the same id sent as part of the request. This can be used to uniquely identify the componen")
-    pre_moderation_status: Optional[UrlComponentResponsePremoderationstatus] = Field(None, alias="preModerationStatus", description="The pre moderation status of the component.")
-    spec_violations: Optional[list["UrlSpecViolation"]] = Field(None, alias="specViolations", description="A list of specification violations for the component that were detected during pre moderation. Note that this field is p")
-    url: Optional[str] = Field(None, description="URL that got pre moderated.")
-
-    model_config = {'populate_by_name': True}
-
-
-class ThirdPartySpecViolationName(StrEnum):
-    CREATIVE_SIZE_IS_INCORRECTLY_SET = "CREATIVE_SIZE_IS_INCORRECTLY_SET"
-    TAG_INCORRECTLY_UPLOADED = "TAG_INCORRECTLY_UPLOADED"
-
-
-class ThirdPartySpecViolationType(StrEnum):
-    REJECTED = "REJECTED"
-    WARNING = "WARNING"
-
-
-class ThirdPartySpecViolation(BaseModel):
-    """Structure of spec violation for a third party component."""
-    name: Optional[ThirdPartySpecViolationName] = Field(None, description="A spec violation code.")
-    spec_description: Optional[str] = Field(None, alias="specDescription", description="A human-readable description of the spec requirement.")
-    spec_link_url: Optional[str] = Field(None, alias="specLinkUrl", description="Address of the ad specification documentation. Follow the link to learn more about the required ad specification.")
-    type_: Optional[ThirdPartySpecViolationType] = Field(None, alias="type", description="Type of spec violation.")
-
-    model_config = {'populate_by_name': True}
-
-
-class ThirdPartyComponentResponseComponenttype(StrEnum):
-    ADSP_3P_DISPLAY = "ADSP_3P_DISPLAY"
-    ADSP_3P_VIDEO = "ADSP_3P_VIDEO"
-
-
-class ThirdPartyComponentResponsePremoderationstatus(StrEnum):
-    APPROVED = "APPROVED"
-    FAILED = "FAILED"
-    REJECTED = "REJECTED"
-    RETRYABLE_FAILURE = "RETRYABLE_FAILURE"
-
-
-class ThirdPartyComponentResponse(BaseModel):
-    """Pre moderation result for a third party component"""
-    click_through_type: Optional["ClickThroughType"] = Field(None, alias="clickThroughType")
-    component_type: Optional[ThirdPartyComponentResponseComponenttype] = Field(None, alias="componentType", description="Type of the tag component.")
-    creative_size: Optional["CreativeSize"] = Field(None, alias="creativeSize")
-    id_: Optional[str] = Field(None, alias="id", description="Id of the component. This is the same id sent as part of the request. This can be used to uniquely identify the componen")
-    pre_moderation_status: Optional[ThirdPartyComponentResponsePremoderationstatus] = Field(None, alias="preModerationStatus", description="The pre moderation status of the component.")
-    spec_violations: Optional[list["ThirdPartySpecViolation"]] = Field(None, alias="specViolations", description="A list of specification violations for the component that were detected during pre moderation. Note that this field is p")
-    tag: Optional[str] = Field(None, description="Tag content that got pre moderated.")
 
     model_config = {'populate_by_name': True}
 

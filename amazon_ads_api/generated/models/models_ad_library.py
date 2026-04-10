@@ -6,10 +6,10 @@ Title:  Ad Library API
 
 from __future__ import annotations
 
-from enum import StrEnum
-from typing import Optional
+from enum import StrEnum  # noqa: F401
+from typing import Any, Optional, Union  # noqa: F401
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field  # noqa: F401
 
 
 
@@ -20,18 +20,18 @@ class AccessDeniedExceptionResponseContent(BaseModel):
     model_config = {'populate_by_name': True}
 
 
-class TargetMethodRecipientGroup(StrEnum):
-    ADS_PREFERENCES = "ADS_PREFERENCES"
-    LOCATION = "LOCATION"
-    PAST_ACTIVITY = "PAST_ACTIVITY"
-    SEARCH_TERMS = "SEARCH_TERMS"
-
-
 class TotalRecipientsRange(BaseModel):
     max: float
     min: float
 
     model_config = {'populate_by_name': True}
+
+
+class TargetMethodRecipientGroup(StrEnum):
+    ADS_PREFERENCES = "ADS_PREFERENCES"
+    LOCATION = "LOCATION"
+    PAST_ACTIVITY = "PAST_ACTIVITY"
+    SEARCH_TERMS = "SEARCH_TERMS"
 
 
 class RecipientsBySite(BaseModel):

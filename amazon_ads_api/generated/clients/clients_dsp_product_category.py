@@ -6,9 +6,9 @@ Title:  Ad Group Targeting - Product Category
 
 from __future__ import annotations
 
-from typing import Any
+from typing import Any  # noqa: F401
 
-from amazon_ads_api.base import BaseAdsClient, JSONData, JSONList
+from amazon_ads_api.base import BaseAdsClient, JSONData, JSONList  # noqa: F401
 
 try:
     from .models_dsp_product_category import *  # noqa: F403

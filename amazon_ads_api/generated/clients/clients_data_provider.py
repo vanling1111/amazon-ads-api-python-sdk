@@ -6,9 +6,9 @@ Title:  DataProvider
 
 from __future__ import annotations
 
-from typing import Any
+from typing import Any  # noqa: F401
 
-from amazon_ads_api.base import BaseAdsClient, JSONData, JSONList
+from amazon_ads_api.base import BaseAdsClient, JSONData, JSONList  # noqa: F401
 
 try:
     from .models_data_provider import *  # noqa: F403
@@ -22,7 +22,7 @@ class DataProviderClient(BaseAdsClient):
     async def get_campaigns_validation_configs(self, body: getCampaignsValidationConfigsRequestContent | dict[str, Any] | None = None, amazon_advertising_api_client_id: str | None = None, amazon_advertising_api_scope: str | None = None) -> JSONData | JSONList:
         """POST /validationConfigurations/campaigns
 
-        Retrieves the campaign configuration values used for campaign validation for the requested marketplace,     entityType, 
+        Retrieves the campaign configuration values used for campaign validation for the requested marketplace,     entityType,
         """
         endpoint = "/validationConfigurations/campaigns"
         params: dict[str, Any] = {}

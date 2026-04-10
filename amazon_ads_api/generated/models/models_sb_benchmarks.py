@@ -6,10 +6,10 @@ Title:  Sponsored Brands Category Benchmark
 
 from __future__ import annotations
 
-from enum import StrEnum
-from typing import Optional
+from enum import StrEnum  # noqa: F401
+from typing import Any, Optional, Union  # noqa: F401
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field  # noqa: F401
 
 
 
@@ -37,6 +37,16 @@ class brandListResponse(BaseModel):
     model_config = {'populate_by_name': True}
 
 
+class impressionMetric(BaseModel):
+    """An impression occurs whenever an ad is displayed. The impressions metric is a count of how many times your ad has been served to a user. A higher impression value infers more users are seeing your ads"""
+    bottom_25pct: Optional[float] = Field(None, alias="bottom-25pct", description="The value at which 25% of the lower-performing values lie below. For impressions, 25% of peer values will be below the b")
+    median: Optional[float] = Field(None, description="The middle value of the data set. Half of the values lie below the median and half lie above the median. It is also know")
+    top_25pct: Optional[float] = Field(None, alias="top-25pct", description="The value at which 25% of the top performing values lie above. For impressions, 25% of values will be above the top 25% ")
+    value: Optional[float] = Field(None, description="Number of impressions of your ad")
+
+    model_config = {'populate_by_name': True}
+
+
 class roasMetric(BaseModel):
     """Return on advertising spend (ROAS) divides the total sales by the total ad spend (total ad sales / total ad spend). A higher ROAS infers higher efficiency of your advertising investment relative to yo"""
     bottom_25pct: Optional[float] = Field(None, alias="bottom-25pct", description="The value at which 25% of the lower-performing values lie below. For ROAS, 25% of peer values will be below the bottom 2")
@@ -53,16 +63,6 @@ class ctrMetric(BaseModel):
     median: Optional[float] = Field(None, description="The middle value of the data set. Half of the values lie below the median and half lie above the median. It is also know")
     top_25pct: Optional[float] = Field(None, alias="top-25pct", description="The value at which 25% of the top performing values lie above. For CTR, 25% of values will be above the top 25% value. I")
     value: Optional[float] = Field(None, description="CTR of your ad")
-
-    model_config = {'populate_by_name': True}
-
-
-class impressionMetric(BaseModel):
-    """An impression occurs whenever an ad is displayed. The impressions metric is a count of how many times your ad has been served to a user. A higher impression value infers more users are seeing your ads"""
-    bottom_25pct: Optional[float] = Field(None, alias="bottom-25pct", description="The value at which 25% of the lower-performing values lie below. For impressions, 25% of peer values will be below the b")
-    median: Optional[float] = Field(None, description="The middle value of the data set. Half of the values lie below the median and half lie above the median. It is also know")
-    top_25pct: Optional[float] = Field(None, alias="top-25pct", description="The value at which 25% of the top performing values lie above. For impressions, 25% of values will be above the top 25% ")
-    value: Optional[float] = Field(None, description="Number of impressions of your ad")
 
     model_config = {'populate_by_name': True}
 

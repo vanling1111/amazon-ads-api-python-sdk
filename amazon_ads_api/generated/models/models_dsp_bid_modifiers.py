@@ -6,10 +6,10 @@ Title:  Bid Modifiers
 
 from __future__ import annotations
 
-from enum import StrEnum
-from typing import Optional
+from enum import StrEnum  # noqa: F401
+from typing import Any, Optional, Union  # noqa: F401
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field  # noqa: F401
 
 
 
@@ -35,6 +35,10 @@ class BidModifiersServiceAllBidModifierRuleAssociations(BaseModel):
     model_config = {'populate_by_name': True}
 
 
+class BidModifiersServiceOnMultipleMatches(StrEnum):
+    APPLY_PRODUCT = "APPLY_PRODUCT"
+
+
 class BidModifiersServiceBidModifierTerm(BaseModel):
     """A bid adjustment term is composed of 1 or more of the below dimensions, and a bid adjustment.  A minimum of 1 dimension must be set, and there is no maximum on the number of dimensions. The same  dime"""
     ad_format: Optional[list[str]] = Field(None, alias="adFormat", description="Valid values: 'DISPLAY', 'AUDIO', 'VIDEO'. Values are case insensitive.")
@@ -58,10 +62,6 @@ class BidModifiersServiceBidModifierTerm(BaseModel):
     term_id: Optional[float] = Field(None, alias="termId", description="A system generated identifier for the term starting from 1.")
 
     model_config = {'populate_by_name': True}
-
-
-class BidModifiersServiceOnMultipleMatches(StrEnum):
-    APPLY_PRODUCT = "APPLY_PRODUCT"
 
 
 class BidModifiersServiceBidModifierRuleExpression(BaseModel):

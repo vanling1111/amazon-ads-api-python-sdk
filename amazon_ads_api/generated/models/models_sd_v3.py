@@ -6,10 +6,10 @@ Title:  Amazon Ads API for Sponsored Display
 
 from __future__ import annotations
 
-from enum import StrEnum
-from typing import Any, Optional, Union
+from enum import StrEnum  # noqa: F401
+from typing import Any, Optional, Union  # noqa: F401
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field  # noqa: F401
 
 
 
@@ -60,6 +60,11 @@ class BaseCampaign(BaseModel):
     model_config = {'populate_by_name': True}
 
 
+class CampaignId(BaseModel):
+    """The identifier of the campaign."""
+    pass
+
+
 class RuleBasedBudget(BaseModel):
     is_processing: Optional[bool] = Field(None, alias="isProcessing")
     applicable_rule_name: Optional[str] = Field(None, alias="applicableRuleName")
@@ -67,11 +72,6 @@ class RuleBasedBudget(BaseModel):
     applicable_rule_id: Optional[str] = Field(None, alias="applicableRuleId")
 
     model_config = {'populate_by_name': True}
-
-
-class CampaignId(BaseModel):
-    """The identifier of the campaign."""
-    pass
 
 
 class Campaign(BaseModel):
@@ -270,8 +270,8 @@ class BaseProductAd(BaseModel):
     model_config = {'populate_by_name': True}
 
 
-class AdId(BaseModel):
-    """The identifier of the product ad."""
+class LandingPageURL(BaseModel):
+    """The URL where customers will land after clicking on its link. Must be provided if a LandingPageType is set. Please note that if a single product ad sets the landing page url, only one product ad can b"""
     pass
 
 
@@ -281,13 +281,13 @@ class LandingPageType(StrEnum):
     OFF_AMAZON_LINK = "OFF_AMAZON_LINK"
 
 
-class AdName(BaseModel):
-    """The name of the ad. Note that this field is not supported when using ASIN or SKU fields."""
+class AdId(BaseModel):
+    """The identifier of the product ad."""
     pass
 
 
-class LandingPageURL(BaseModel):
-    """The URL where customers will land after clicking on its link. Must be provided if a LandingPageType is set. Please note that if a single product ad sets the landing page url, only one product ad can b"""
+class AdName(BaseModel):
+    """The name of the ad. Note that this field is not supported when using ASIN or SKU fields."""
     pass
 
 
@@ -787,26 +787,6 @@ class PatchRequest(BaseModel):
     model_config = {'populate_by_name': True}
 
 
-class Video(BaseModel):
-    """This field denotes video which is displayed on the ad. This field is optional and mutable. A video asset must be provided for a VIDEO creative. Specific restrictions based on the video are listed in t"""
-    asset_id: str = Field(..., alias="assetId", description="The unique identifier of the video asset. This assetId comes from the Creative Asset Library.")
-    asset_version: str = Field(..., alias="assetVersion", description="The identifier of the particular video assetversion.")
-    original_asset_id: Optional[str] = Field(None, alias="originalAssetId", description="The assetId of the original video submitted by the advertiser. If 'consentToTranslate' is set to true and translation is")
-    original_asset_version: Optional[str] = Field(None, alias="originalAssetVersion", description="The asset version of the original video submitted by the advertiser. If 'consentToTranslate' is set to true and translat")
-
-    model_config = {'populate_by_name': True}
-
-
-class VideoCreativeProperties(BaseModel):
-    """User-customizable properties of a video creative. Use either the 'video' property for a single video, OR one or more of the aspect-ratio-specific collections (squareVideos, horizontalVideos, verticalV"""
-    video: Optional["Video"] = None
-    square_videos: Optional[list["Video"]] = Field(None, alias="squareVideos", description="An optional collection of 1:1 square videos which are displayed on the ad. Currently, only one asset is supported in the")
-    horizontal_videos: Optional[list["Video"]] = Field(None, alias="horizontalVideos", description="An optional collection of 16:9 horizontal videos which are displayed on the ad. Currently, only one asset is supported i")
-    vertical_videos: Optional[list["Video"]] = Field(None, alias="verticalVideos", description="An optional collection of 9:16 vertical videos which are displayed on the ad. Currently, only one asset is supported in ")
-
-    model_config = {'populate_by_name': True}
-
-
 class Background(BaseModel):
     """This field denotes background which are displayed on the ad. This field is optional and mutable."""
     color: Optional[str] = Field(None, description="The standard HTML hex color codes of the background (e.g. '#3cb371').")
@@ -817,15 +797,6 @@ class Background(BaseModel):
 class BackgroundCreativeProperties(BaseModel):
     """User-customizable properties of a creative with background. Only supported for productAds with landingPageType of OFF_AMAZON_LINK."""
     backgrounds: Optional[list["Background"]] = Field(None, description="An optional collection of backgrounds which are displayed on the ad.")
-
-    model_config = {'populate_by_name': True}
-
-
-class HeadlineCreativeProperties(BaseModel):
-    """User-customizable properties of a creative with headline."""
-    headline: Optional[str] = Field(None, description="A marketing phrase to display on the ad. This field is optional and mutable. Maximum number of characters allowed is 50.")
-    has_terms_and_conditions: Optional[bool] = Field(None, alias="hasTermsAndConditions", description="Indicates that the ad promotes a free product or service (e.g., 'buy one get one free' or 'free one-month trial') and ha")
-    original_headline: Optional[str] = Field(None, alias="originalHeadline", description="The original headline submitted by the advertiser. If 'consentToTranslate' is set to true and translation is SUCCESSFUL ")
 
     model_config = {'populate_by_name': True}
 
@@ -852,6 +823,35 @@ class Image(BaseModel):
 class LogoCreativeProperties(BaseModel):
     """User-customizable properties of a creative with a logo."""
     brand_logo: Optional["Image"] = Field(None, alias="brandLogo")
+
+    model_config = {'populate_by_name': True}
+
+
+class HeadlineCreativeProperties(BaseModel):
+    """User-customizable properties of a creative with headline."""
+    headline: Optional[str] = Field(None, description="A marketing phrase to display on the ad. This field is optional and mutable. Maximum number of characters allowed is 50.")
+    has_terms_and_conditions: Optional[bool] = Field(None, alias="hasTermsAndConditions", description="Indicates that the ad promotes a free product or service (e.g., 'buy one get one free' or 'free one-month trial') and ha")
+    original_headline: Optional[str] = Field(None, alias="originalHeadline", description="The original headline submitted by the advertiser. If 'consentToTranslate' is set to true and translation is SUCCESSFUL ")
+
+    model_config = {'populate_by_name': True}
+
+
+class Video(BaseModel):
+    """This field denotes video which is displayed on the ad. This field is optional and mutable. A video asset must be provided for a VIDEO creative. Specific restrictions based on the video are listed in t"""
+    asset_id: str = Field(..., alias="assetId", description="The unique identifier of the video asset. This assetId comes from the Creative Asset Library.")
+    asset_version: str = Field(..., alias="assetVersion", description="The identifier of the particular video assetversion.")
+    original_asset_id: Optional[str] = Field(None, alias="originalAssetId", description="The assetId of the original video submitted by the advertiser. If 'consentToTranslate' is set to true and translation is")
+    original_asset_version: Optional[str] = Field(None, alias="originalAssetVersion", description="The asset version of the original video submitted by the advertiser. If 'consentToTranslate' is set to true and translat")
+
+    model_config = {'populate_by_name': True}
+
+
+class VideoCreativeProperties(BaseModel):
+    """User-customizable properties of a video creative. Use either the 'video' property for a single video, OR one or more of the aspect-ratio-specific collections (squareVideos, horizontalVideos, verticalV"""
+    video: Optional["Video"] = None
+    square_videos: Optional[list["Video"]] = Field(None, alias="squareVideos", description="An optional collection of 1:1 square videos which are displayed on the ad. Currently, only one asset is supported in the")
+    horizontal_videos: Optional[list["Video"]] = Field(None, alias="horizontalVideos", description="An optional collection of 16:9 horizontal videos which are displayed on the ad. Currently, only one asset is supported i")
+    vertical_videos: Optional[list["Video"]] = Field(None, alias="verticalVideos", description="An optional collection of 9:16 vertical videos which are displayed on the ad. Currently, only one asset is supported in ")
 
     model_config = {'populate_by_name': True}
 
@@ -1193,8 +1193,8 @@ class SDTargetingRecommendationsLocale(StrEnum):
     ZH_CN = "zh_CN"
 
 
-class SDRecommendationType(StrEnum):
-    PRODUCT = "PRODUCT"
+class SDTactic(StrEnum):
+    T00020 = "T00020"
 
 
 class SDASIN(BaseModel):
@@ -1209,8 +1209,8 @@ class SDGoalProduct(BaseModel):
     model_config = {'populate_by_name': True}
 
 
-class SDTactic(StrEnum):
-    T00020 = "T00020"
+class SDRecommendationType(StrEnum):
+    PRODUCT = "PRODUCT"
 
 
 class SDTargetingRecommendationsRequest(BaseModel):
@@ -1222,14 +1222,14 @@ class SDTargetingRecommendationsRequest(BaseModel):
     model_config = {'populate_by_name': True}
 
 
-class SDTargetingRecommendationsProducts(BaseModel):
-    """A list of products for which to get targeting recommendations"""
-    pass
-
-
 class SDTacticV31(StrEnum):
     T00020 = "T00020"
     T00030 = "T00030"
+
+
+class SDTargetingRecommendationsProducts(BaseModel):
+    """A list of products for which to get targeting recommendations"""
+    pass
 
 
 class SDRecommendationTypeV31(StrEnum):
@@ -1321,18 +1321,6 @@ class SDTargetingRecommendationsRequestV34(BaseModel):
     model_config = {'populate_by_name': True}
 
 
-class SDRecommendationTypeV33(StrEnum):
-    PRODUCT = "PRODUCT"
-    CATEGORY = "CATEGORY"
-    AUDIENCE = "AUDIENCE"
-    CONTENT_CATEGORY = "CONTENT_CATEGORY"
-
-
-class SDTargetingRecommendationsTypeFilterV33(BaseModel):
-    """A filter to indicate which types of recommendations to request."""
-    pass
-
-
 class SDLandingPageType(StrEnum):
     OFF_AMAZON_LINK = "OFF_AMAZON_LINK"
 
@@ -1353,6 +1341,18 @@ class SDAdvertisedProduct(BaseModel):
 
 class SDTargetingRecommendationsProductsV31(BaseModel):
     """A list of products for which to get targeting recommendations. This array can only contain either asins or landing pages. If landingPageUrl is used, there can only be one item in the array for each re"""
+    pass
+
+
+class SDRecommendationTypeV33(StrEnum):
+    PRODUCT = "PRODUCT"
+    CATEGORY = "CATEGORY"
+    AUDIENCE = "AUDIENCE"
+    CONTENT_CATEGORY = "CONTENT_CATEGORY"
+
+
+class SDTargetingRecommendationsTypeFilterV33(BaseModel):
+    """A filter to indicate which types of recommendations to request."""
     pass
 
 
@@ -1502,41 +1502,6 @@ class SDTargetingRecommendationsResponseV32(BaseModel):
     model_config = {'populate_by_name': True}
 
 
-class SDAudience(BaseModel):
-    """The audience identifier"""
-    pass
-
-
-class SDAudienceRecommendation(BaseModel):
-    """A recommended standard Amazon audience to target ads on"""
-    audience: Optional["SDAudience"] = None
-    name: Optional[str] = Field(None, description="The Amazon audience name")
-    rank: Optional[int] = Field(None, description="A rank to signify which recommendations are weighed more heavily, with a lower rank signifying a stronger recommendation")
-
-    model_config = {'populate_by_name': True}
-
-
-class SDAudienceCategory(StrEnum):
-    IN_MARKET = "In-market"
-    LIFESTYLE = "Lifestyle"
-    INTEREST = "Interest"
-    LIFE_EVENT = "Life event"
-
-
-class SDAudienceCategoryRecommendations(BaseModel):
-    """List of recommended standard Amazon audience targets of a specific audience category"""
-    category: Optional["SDAudienceCategory"] = None
-    audiences: Optional[list["SDAudienceRecommendation"]] = Field(None, description="List of recommended standard Amazon audience targets")
-
-    model_config = {'populate_by_name': True}
-
-
-class SDAudienceRecommendations(BaseModel):
-    audiences: Optional[list["SDAudienceCategoryRecommendations"]] = Field(None, description="List of recommended audience targets, broken down by audience category")
-
-    model_config = {'populate_by_name': True}
-
-
 class SDCategoryRecommendationV33Targetableasincountrange(BaseModel):
     """The range of ASINs available within the category catalogue."""
     range_lower: Optional[int] = Field(None, alias="rangeLower")
@@ -1560,6 +1525,41 @@ class SDCategoryRecommendationV33(BaseModel):
 
 class SDCategoryRecommendationsV33(BaseModel):
     categories: Optional[list["SDCategoryRecommendationV33"]] = Field(None, description="List of recommended category targets.")
+
+    model_config = {'populate_by_name': True}
+
+
+class SDAudienceCategory(StrEnum):
+    IN_MARKET = "In-market"
+    LIFESTYLE = "Lifestyle"
+    INTEREST = "Interest"
+    LIFE_EVENT = "Life event"
+
+
+class SDAudience(BaseModel):
+    """The audience identifier"""
+    pass
+
+
+class SDAudienceRecommendation(BaseModel):
+    """A recommended standard Amazon audience to target ads on"""
+    audience: Optional["SDAudience"] = None
+    name: Optional[str] = Field(None, description="The Amazon audience name")
+    rank: Optional[int] = Field(None, description="A rank to signify which recommendations are weighed more heavily, with a lower rank signifying a stronger recommendation")
+
+    model_config = {'populate_by_name': True}
+
+
+class SDAudienceCategoryRecommendations(BaseModel):
+    """List of recommended standard Amazon audience targets of a specific audience category"""
+    category: Optional["SDAudienceCategory"] = None
+    audiences: Optional[list["SDAudienceRecommendation"]] = Field(None, description="List of recommended standard Amazon audience targets")
+
+    model_config = {'populate_by_name': True}
+
+
+class SDAudienceRecommendations(BaseModel):
+    audiences: Optional[list["SDAudienceCategoryRecommendations"]] = Field(None, description="List of recommended audience targets, broken down by audience category")
 
     model_config = {'populate_by_name': True}
 
@@ -1816,6 +1816,29 @@ class BrandSafetyRequestResultsResponse(BaseModel):
     model_config = {'populate_by_name': True}
 
 
+class SDTargetingPredicateV31Type(StrEnum):
+    ASINSAMEAS = "asinSameAs"
+    ASINCATEGORYSAMEAS = "asinCategorySameAs"
+    ASINBRANDSAMEAS = "asinBrandSameAs"
+    ASINPRICEBETWEEN = "asinPriceBetween"
+    ASINPRICEGREATERTHAN = "asinPriceGreaterThan"
+    ASINPRICELESSTHAN = "asinPriceLessThan"
+    ASINREVIEWRATINGLESSTHAN = "asinReviewRatingLessThan"
+    ASINREVIEWRATINGGREATERTHAN = "asinReviewRatingGreaterThan"
+    ASINREVIEWRATINGBETWEEN = "asinReviewRatingBetween"
+    ASINISPRIMESHIPPINGELIGIBLE = "asinIsPrimeShippingEligible"
+    ASINAGERANGESAMEAS = "asinAgeRangeSameAs"
+    ASINGENRESAMEAS = "asinGenreSameAs"
+
+
+class SDTargetingPredicateV31(BaseModel):
+    """A predicate to match against in the Targeting Expression (only applicable to contextual targeting - T00020).  * All IDs passed for category and brand-targeting predicates must be valid IDs in the Amaz"""
+    type_: SDTargetingPredicateV31Type = Field(..., alias="type")
+    value: Optional[str] = Field(None, description="The value to be targeted.")
+
+    model_config = {'populate_by_name': True}
+
+
 class SDTargetingPredicateBaseV31Type(StrEnum):
     ASINCATEGORYSAMEAS = "asinCategorySameAs"
     ASINBRANDSAMEAS = "asinBrandSameAs"
@@ -1853,29 +1876,6 @@ class SDTargetingPredicateNestedV31(BaseModel):
     """A behavioral event and list of targeting predicates that represents an audience to target (only applicable to audience targeting - T00030).  * For manual ASIN-grain targeting, the value array must con"""
     type_: SDTargetingPredicateNestedV31Type = Field(..., alias="type")
     value: list["SDTargetingPredicateBaseV31"]
-
-    model_config = {'populate_by_name': True}
-
-
-class SDTargetingPredicateV31Type(StrEnum):
-    ASINSAMEAS = "asinSameAs"
-    ASINCATEGORYSAMEAS = "asinCategorySameAs"
-    ASINBRANDSAMEAS = "asinBrandSameAs"
-    ASINPRICEBETWEEN = "asinPriceBetween"
-    ASINPRICEGREATERTHAN = "asinPriceGreaterThan"
-    ASINPRICELESSTHAN = "asinPriceLessThan"
-    ASINREVIEWRATINGLESSTHAN = "asinReviewRatingLessThan"
-    ASINREVIEWRATINGGREATERTHAN = "asinReviewRatingGreaterThan"
-    ASINREVIEWRATINGBETWEEN = "asinReviewRatingBetween"
-    ASINISPRIMESHIPPINGELIGIBLE = "asinIsPrimeShippingEligible"
-    ASINAGERANGESAMEAS = "asinAgeRangeSameAs"
-    ASINGENRESAMEAS = "asinGenreSameAs"
-
-
-class SDTargetingPredicateV31(BaseModel):
-    """A predicate to match against in the Targeting Expression (only applicable to contextual targeting - T00020).  * All IDs passed for category and brand-targeting predicates must be valid IDs in the Amaz"""
-    type_: SDTargetingPredicateV31Type = Field(..., alias="type")
-    value: Optional[str] = Field(None, description="The value to be targeted.")
 
     model_config = {'populate_by_name': True}
 
@@ -2157,8 +2157,31 @@ class SDForecastRequest(BaseModel):
     model_config = {'populate_by_name': True}
 
 
-class CurvePointFixedValue(BaseModel):
-    value: Optional[Any] = None
+class ForecastStatus(StrEnum):
+    IMPRESSION_TARGETING_TOO_NARROW = "IMPRESSION_TARGETING_TOO_NARROW"
+    IMPRESSION_TARGETING_TOO_BROAD = "IMPRESSION_TARGETING_TOO_BROAD"
+    COMPLETE = "COMPLETE"
+
+
+class ForecastRange(BaseModel):
+    """Forecast range values."""
+    min: Optional[int] = None
+    max: Optional[int] = None
+
+    model_config = {'populate_by_name': True}
+
+
+class ForecastMetric(StrEnum):
+    IMPRESSIONS = "IMPRESSIONS"
+    REACH = "REACH"
+    CLICKS = "CLICKS"
+    CONVERSIONS = "CONVERSIONS"
+
+
+class Forecast(BaseModel):
+    """Forecast impressions, clicks, reach, or conversions."""
+    metric: Optional[ForecastMetric] = Field(None, description="Describes which metric is forecasted. |Name|Description| |-----------|------------------------| |IMPRESSIONS| Available ")
+    value: Optional["ForecastRange"] = None
 
     model_config = {'populate_by_name': True}
 
@@ -2185,6 +2208,12 @@ class CurvePointRangedValue(BaseModel):
     model_config = {'populate_by_name': True}
 
 
+class CurvePointFixedValue(BaseModel):
+    value: Optional[Any] = None
+
+    model_config = {'populate_by_name': True}
+
+
 class CurvePoint(BaseModel):
     """A single point on a curve."""
     is_focus: Optional[bool] = Field(None, alias="isFocus", description="If this point is the point with the focus circle.")
@@ -2207,35 +2236,6 @@ class Curve(BaseModel):
     model_config = {'populate_by_name': True}
 
 
-class ForecastRange(BaseModel):
-    """Forecast range values."""
-    min: Optional[int] = None
-    max: Optional[int] = None
-
-    model_config = {'populate_by_name': True}
-
-
-class ForecastMetric(StrEnum):
-    IMPRESSIONS = "IMPRESSIONS"
-    REACH = "REACH"
-    CLICKS = "CLICKS"
-    CONVERSIONS = "CONVERSIONS"
-
-
-class Forecast(BaseModel):
-    """Forecast impressions, clicks, reach, or conversions."""
-    metric: Optional[ForecastMetric] = Field(None, description="Describes which metric is forecasted. |Name|Description| |-----------|------------------------| |IMPRESSIONS| Available ")
-    value: Optional["ForecastRange"] = None
-
-    model_config = {'populate_by_name': True}
-
-
-class ForecastStatus(StrEnum):
-    IMPRESSION_TARGETING_TOO_NARROW = "IMPRESSION_TARGETING_TOO_NARROW"
-    IMPRESSION_TARGETING_TOO_BROAD = "IMPRESSION_TARGETING_TOO_BROAD"
-    COMPLETE = "COMPLETE"
-
-
 class SDForecastResponse(BaseModel):
     """Response to a request for SD forecasting."""
     bid_optimization: Optional[str] = Field(None, alias="bidOptimization")
@@ -2251,6 +2251,53 @@ class SDForecastResponse(BaseModel):
 class SDForecastErrorResponse(BaseModel):
     code: Optional[str] = Field(None, description="The HTTP status code of the response.")
     details: Optional[str] = Field(None, description="A human-readable description of the response.")
+
+    model_config = {'populate_by_name': True}
+
+
+class EventTypeRuleDuration(BaseModel):
+    """Object representing event type rule duration."""
+    event_id: str = Field(..., alias="eventId", description="The event identifier. This value is available from the budget rules recommendation API.")
+    end_date: Optional[str] = Field(None, alias="endDate", description="The event end date in YYYYMMDD format. Read-only.")
+    event_name: Optional[str] = Field(None, alias="eventName", description="The event name. Read-only.")
+    start_date: Optional[str] = Field(None, alias="startDate", description="The event start date in YYYYMMDD format. Read-only. Note that this field is present only for announced events.")
+
+    model_config = {'populate_by_name': True}
+
+
+class DateRangeTypeRuleDuration(BaseModel):
+    """Object representing date range type rule duration."""
+    end_date: Optional[str] = Field(None, alias="endDate", description="The end date of the budget rule in YYYYMMDD format. The end date is inclusive. Required to be equal or greater than `sta")
+    start_date: str = Field(..., alias="startDate", description="The start date of the budget rule in YYYYMMDD format. The start date is inclusive. Required to be greater than or equal ")
+
+    model_config = {'populate_by_name': True}
+
+
+class RuleDuration(BaseModel):
+    event_type_rule_duration: Optional["EventTypeRuleDuration"] = Field(None, alias="eventTypeRuleDuration")
+    date_range_type_rule_duration: Optional["DateRangeTypeRuleDuration"] = Field(None, alias="dateRangeTypeRuleDuration")
+
+    model_config = {'populate_by_name': True}
+
+
+class PerformanceMetric(StrEnum):
+    ACOS = "ACOS"
+    CTR = "CTR"
+    CVR = "CVR"
+    ROAS = "ROAS"
+
+
+class ComparisonOperator(StrEnum):
+    GREATER_THAN = "GREATER_THAN"
+    LESS_THAN = "LESS_THAN"
+    LESS_THAN_OR_EQUAL_TO = "LESS_THAN_OR_EQUAL_TO"
+    GREATER_THAN_OR_EQUAL_TO = "GREATER_THAN_OR_EQUAL_TO"
+
+
+class PerformanceMeasureCondition(BaseModel):
+    metric_name: "PerformanceMetric" = Field(..., alias="metricName")
+    comparison_operator: "ComparisonOperator" = Field(..., alias="comparisonOperator")
+    threshold: float = Field(..., description="The performance threshold value.")
 
     model_config = {'populate_by_name': True}
 
@@ -2285,33 +2332,6 @@ class Recurrence(BaseModel):
     model_config = {'populate_by_name': True}
 
 
-class ComparisonOperator(StrEnum):
-    GREATER_THAN = "GREATER_THAN"
-    LESS_THAN = "LESS_THAN"
-    LESS_THAN_OR_EQUAL_TO = "LESS_THAN_OR_EQUAL_TO"
-    GREATER_THAN_OR_EQUAL_TO = "GREATER_THAN_OR_EQUAL_TO"
-
-
-class PerformanceMetric(StrEnum):
-    ACOS = "ACOS"
-    CTR = "CTR"
-    CVR = "CVR"
-    ROAS = "ROAS"
-
-
-class PerformanceMeasureCondition(BaseModel):
-    metric_name: "PerformanceMetric" = Field(..., alias="metricName")
-    comparison_operator: "ComparisonOperator" = Field(..., alias="comparisonOperator")
-    threshold: float = Field(..., description="The performance threshold value.")
-
-    model_config = {'populate_by_name': True}
-
-
-class SDRuleType(StrEnum):
-    SCHEDULE = "SCHEDULE"
-    PERFORMANCE = "PERFORMANCE"
-
-
 class BudgetChangeType(StrEnum):
     PERCENT = "PERCENT"
 
@@ -2323,29 +2343,9 @@ class budgetIncreaseBy(BaseModel):
     model_config = {'populate_by_name': True}
 
 
-class EventTypeRuleDuration(BaseModel):
-    """Object representing event type rule duration."""
-    event_id: str = Field(..., alias="eventId", description="The event identifier. This value is available from the budget rules recommendation API.")
-    end_date: Optional[str] = Field(None, alias="endDate", description="The event end date in YYYYMMDD format. Read-only.")
-    event_name: Optional[str] = Field(None, alias="eventName", description="The event name. Read-only.")
-    start_date: Optional[str] = Field(None, alias="startDate", description="The event start date in YYYYMMDD format. Read-only. Note that this field is present only for announced events.")
-
-    model_config = {'populate_by_name': True}
-
-
-class DateRangeTypeRuleDuration(BaseModel):
-    """Object representing date range type rule duration."""
-    end_date: Optional[str] = Field(None, alias="endDate", description="The end date of the budget rule in YYYYMMDD format. The end date is inclusive. Required to be equal or greater than `sta")
-    start_date: str = Field(..., alias="startDate", description="The start date of the budget rule in YYYYMMDD format. The start date is inclusive. Required to be greater than or equal ")
-
-    model_config = {'populate_by_name': True}
-
-
-class RuleDuration(BaseModel):
-    event_type_rule_duration: Optional["EventTypeRuleDuration"] = Field(None, alias="eventTypeRuleDuration")
-    date_range_type_rule_duration: Optional["DateRangeTypeRuleDuration"] = Field(None, alias="dateRangeTypeRuleDuration")
-
-    model_config = {'populate_by_name': True}
+class SDRuleType(StrEnum):
+    SCHEDULE = "SCHEDULE"
+    PERFORMANCE = "PERFORMANCE"
 
 
 class SDBudgetRuleDetails(BaseModel):
@@ -2389,14 +2389,6 @@ class BudgetRuleError(BaseModel):
     model_config = {'populate_by_name': True}
 
 
-class PerformanceMetricValue(BaseModel):
-    """An object giving the name of the performance metric and its value when the rule was evaluated"""
-    name: Optional[str] = Field(None, description="Name of the performance metric")
-    value: Optional[float] = Field(None, description="Value of the performance metric")
-
-    model_config = {'populate_by_name': True}
-
-
 class state(StrEnum):
     ACTIVE = "ACTIVE"
     PAUSED = "PAUSED"
@@ -2409,6 +2401,14 @@ class SDBudgetRule(BaseModel):
     rule_details: Optional["SDBudgetRuleDetails"] = Field(None, alias="ruleDetails")
     rule_id: str = Field(..., alias="ruleId", description="The budget rule identifier.")
     rule_status: Optional[str] = Field(None, alias="ruleStatus", description="The budget rule status. Read-only.")
+
+    model_config = {'populate_by_name': True}
+
+
+class PerformanceMetricValue(BaseModel):
+    """An object giving the name of the performance metric and its value when the rule was evaluated"""
+    name: Optional[str] = Field(None, description="Name of the performance metric")
+    value: Optional[float] = Field(None, description="Value of the performance metric")
 
     model_config = {'populate_by_name': True}
 

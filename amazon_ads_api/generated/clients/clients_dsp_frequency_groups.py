@@ -6,9 +6,9 @@ Title:  D16GFMApiFrequencyGroupV1
 
 from __future__ import annotations
 
-from typing import Any
+from typing import Any  # noqa: F401
 
-from amazon_ads_api.base import BaseAdsClient, JSONData, JSONList
+from amazon_ads_api.base import BaseAdsClient, JSONData, JSONList  # noqa: F401
 
 try:
     from .models_dsp_frequency_groups import *  # noqa: F403
@@ -22,7 +22,7 @@ class DspFrequencyGroupsClient(BaseAdsClient):
     async def create_frequency_group_v1(self, body: CreateFrequencyGroupsV1 | dict[str, Any] | None = None, amazon_ads_account_id: str | None = None, amazon_advertising_api_client_id: str | None = None, amazon_advertising_api_scope: str | None = None) -> JSONData | JSONList:
         """POST /frequencyGroups/v1
 
-        Creates a frequency group with basic details and generates a frequency group identifier.  **Authorized resource type**: 
+        Creates a frequency group with basic details and generates a frequency group identifier.  **Authorized resource type**:
         """
         endpoint = "/frequencyGroups/v1"
         params: dict[str, Any] = {}

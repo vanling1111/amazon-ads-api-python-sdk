@@ -6,10 +6,10 @@ Title:  Ads Data Manager
 
 from __future__ import annotations
 
-from enum import StrEnum
-from typing import Optional
+from enum import StrEnum  # noqa: F401
+from typing import Any, Optional, Union  # noqa: F401
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field  # noqa: F401
 
 
 
@@ -332,6 +332,11 @@ class AdsCdxSolCreateAudienceRequestContent(BaseModel):
     model_config = {'populate_by_name': True}
 
 
+class ColumnType(StrEnum):
+    DIMENSION = "DIMENSION"
+    METRIC = "METRIC"
+
+
 class DataTypeEnum(StrEnum):
     ACTION = "ACTION"
     AMZN_AD_STORAGE = "AMZN_AD_STORAGE"
@@ -379,11 +384,6 @@ class DataTypeEnum(StrEnum):
     UNITS_SOLD = "UNITS_SOLD"
 
 
-class ColumnType(StrEnum):
-    DIMENSION = "DIMENSION"
-    METRIC = "METRIC"
-
-
 class DataSetColumn(BaseModel):
     column_type: Optional["ColumnType"] = Field(None, alias="columnType")
     data_type: "DataTypeEnum" = Field(..., alias="dataType")
@@ -395,6 +395,13 @@ class DataSetColumn(BaseModel):
     model_config = {'populate_by_name': True}
 
 
+class MmpPlatform(StrEnum):
+    ANDROID = "ANDROID"
+    FIRE_TABLET = "FIRE_TABLET"
+    FIRE_TV = "FIRE_TV"
+    IOS = "IOS"
+
+
 class MmpName(StrEnum):
     ADJUST = "ADJUST"
     AIRBRIDGE = "AIRBRIDGE"
@@ -403,13 +410,6 @@ class MmpName(StrEnum):
     KOCHAVA = "KOCHAVA"
     SINGULAR = "SINGULAR"
     TENJIN = "TENJIN"
-
-
-class MmpPlatform(StrEnum):
-    ANDROID = "ANDROID"
-    FIRE_TABLET = "FIRE_TABLET"
-    FIRE_TV = "FIRE_TV"
-    IOS = "IOS"
 
 
 class MmpMetadata(BaseModel):
@@ -583,42 +583,6 @@ class ApplicationId(StrEnum):
     GEO_LOCATIONS = "GEO_LOCATIONS"
 
 
-class HashedPii(BaseModel):
-    """Structure representing hashed personally identifiable information (PII)."""
-    ad: Optional[str] = Field(None, description="Address")
-    cty: Optional[str] = Field(None, description="City")
-    em: Optional[str] = Field(None, description="Email")
-    fn: Optional[str] = Field(None, description="First Name")
-    ln: Optional[str] = Field(None, description="Last Name")
-    ph: Optional[str] = Field(None, description="Phone")
-    st: Optional[str] = Field(None, description="State")
-    zip: Optional[str] = Field(None, description="Zip")
-
-    model_config = {'populate_by_name': True}
-
-
-class ExternalIdentity(BaseModel):
-    """Support for externalIdentity is planned for the future."""
-    experian_id: Optional[str] = Field(None, alias="experianId")
-    kantar_id: Optional[str] = Field(None, alias="kantarId")
-    live_ramp_id: Optional[str] = Field(None, alias="liveRampId")
-    ma_id: Optional[str] = Field(None, alias="maId")
-    merkle_id: Optional[str] = Field(None, alias="merkleId")
-    neustar_id: Optional[str] = Field(None, alias="neustarId")
-    real_id: Optional[str] = Field(None, alias="realId")
-    samba_tv_id: Optional[str] = Field(None, alias="sambaTvId")
-
-    model_config = {'populate_by_name': True}
-
-
-class Identity(BaseModel):
-    """Either one hashedPII object or external identity object is required"""
-    external_identities: Optional[list["ExternalIdentity"]] = Field(None, alias="externalIdentities")
-    hashed_piis: Optional[list["HashedPii"]] = Field(None, alias="hashedPiis", description="List of hashed personally-identifiable information records to be matched with Amazon identities for future use. All inpu")
-
-    model_config = {'populate_by_name': True}
-
-
 class Consent(BaseModel):
     amzn: Optional["AmznConsent"] = None
     gpp: Optional[str] = Field(None, description="A field to hold a 'Global Privacy Platform (GPP)' string. Optional.")
@@ -637,6 +601,42 @@ class Geo(BaseModel):
 class UserConsent(BaseModel):
     consent: Optional["Consent"] = None
     geo: Optional["Geo"] = None
+
+    model_config = {'populate_by_name': True}
+
+
+class ExternalIdentity(BaseModel):
+    """Support for externalIdentity is planned for the future."""
+    experian_id: Optional[str] = Field(None, alias="experianId")
+    kantar_id: Optional[str] = Field(None, alias="kantarId")
+    live_ramp_id: Optional[str] = Field(None, alias="liveRampId")
+    ma_id: Optional[str] = Field(None, alias="maId")
+    merkle_id: Optional[str] = Field(None, alias="merkleId")
+    neustar_id: Optional[str] = Field(None, alias="neustarId")
+    real_id: Optional[str] = Field(None, alias="realId")
+    samba_tv_id: Optional[str] = Field(None, alias="sambaTvId")
+
+    model_config = {'populate_by_name': True}
+
+
+class HashedPii(BaseModel):
+    """Structure representing hashed personally identifiable information (PII)."""
+    ad: Optional[str] = Field(None, description="Address")
+    cty: Optional[str] = Field(None, description="City")
+    em: Optional[str] = Field(None, description="Email")
+    fn: Optional[str] = Field(None, description="First Name")
+    ln: Optional[str] = Field(None, description="Last Name")
+    ph: Optional[str] = Field(None, description="Phone")
+    st: Optional[str] = Field(None, description="State")
+    zip: Optional[str] = Field(None, description="Zip")
+
+    model_config = {'populate_by_name': True}
+
+
+class Identity(BaseModel):
+    """Either one hashedPII object or external identity object is required"""
+    external_identities: Optional[list["ExternalIdentity"]] = Field(None, alias="externalIdentities")
+    hashed_piis: Optional[list["HashedPii"]] = Field(None, alias="hashedPiis", description="List of hashed personally-identifiable information records to be matched with Amazon identities for future use. All inpu")
 
     model_config = {'populate_by_name': True}
 
@@ -679,12 +679,6 @@ class ConversionDefinitionCountingMethodV1(StrEnum):
     FIRST = "FIRST"
 
 
-class ConversionDefinitionSourceV1(StrEnum):
-    AMAZON_AD_TAG = "AMAZON_AD_TAG"
-    MMP = "MMP"
-    SERVER_TO_SERVER = "SERVER_TO_SERVER"
-
-
 class ConversionDefinitionSourceTypeV1(StrEnum):
     ANDROID = "ANDROID"
     FIRE_TABLET = "FIRE_TABLET"
@@ -692,6 +686,12 @@ class ConversionDefinitionSourceTypeV1(StrEnum):
     IOS = "IOS"
     OFFLINE = "OFFLINE"
     WEBSITE = "WEBSITE"
+
+
+class ConversionDefinitionSourceV1(StrEnum):
+    AMAZON_AD_TAG = "AMAZON_AD_TAG"
+    MMP = "MMP"
+    SERVER_TO_SERVER = "SERVER_TO_SERVER"
 
 
 class ConversionDefinitionTypeV1(StrEnum):
@@ -770,15 +770,6 @@ class CreateSharingRuleRequestContent(BaseModel):
     model_config = {'populate_by_name': True}
 
 
-class SharingRuleStatus(StrEnum):
-    ACTIVE = "ACTIVE"
-    PENDING = "PENDING"
-    REVOKED_BY_DATASET = "REVOKED_BY_DATASET"
-    REVOKED_BY_SHARING_GRANT = "REVOKED_BY_SHARING_GRANT"
-    REVOKED_BY_USER = "REVOKED_BY_USER"
-    SHADOW = "SHADOW"
-
-
 class Unit(BaseModel):
     pass
 
@@ -786,6 +777,15 @@ class Unit(BaseModel):
 class SharingRuleResponseMetadata(BaseModel):
     """A union to capture application specific metadata that is exposed to API consumers. Eventually, this will involve other applications' metadata."""
     pass
+
+
+class SharingRuleStatus(StrEnum):
+    ACTIVE = "ACTIVE"
+    PENDING = "PENDING"
+    REVOKED_BY_DATASET = "REVOKED_BY_DATASET"
+    REVOKED_BY_SHARING_GRANT = "REVOKED_BY_SHARING_GRANT"
+    REVOKED_BY_USER = "REVOKED_BY_USER"
+    SHADOW = "SHADOW"
 
 
 class CreateSharingRuleResponseContent(BaseModel):

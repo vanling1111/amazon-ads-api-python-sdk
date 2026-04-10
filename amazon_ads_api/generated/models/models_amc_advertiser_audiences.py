@@ -6,10 +6,10 @@ Title:  Advertiser audiences
 
 from __future__ import annotations
 
-from enum import StrEnum
-from typing import Optional
+from enum import StrEnum  # noqa: F401
+from typing import Any, Optional, Union  # noqa: F401
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field  # noqa: F401
 
 
 
@@ -580,9 +580,8 @@ class ManageAudienceStatusV2ResponseContent(BaseModel):
     model_config = {'populate_by_name': True}
 
 
-class action(StrEnum):
-    CREATE = "CREATE"
-    DELETE = "DELETE"
+class MeasurementObj(BaseModel):
+    pass
 
 
 class UserConsent(BaseModel):
@@ -592,8 +591,9 @@ class UserConsent(BaseModel):
     model_config = {'populate_by_name': True}
 
 
-class MeasurementObj(BaseModel):
-    pass
+class action(StrEnum):
+    CREATE = "CREATE"
+    DELETE = "DELETE"
 
 
 class PayloadObj(BaseModel):

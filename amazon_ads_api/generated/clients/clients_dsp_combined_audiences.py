@@ -6,9 +6,9 @@ Title:  Combined Audience API
 
 from __future__ import annotations
 
-from typing import Any
+from typing import Any  # noqa: F401
 
-from amazon_ads_api.base import BaseAdsClient, JSONData, JSONList
+from amazon_ads_api.base import BaseAdsClient, JSONData, JSONList  # noqa: F401
 
 try:
     from .models_dsp_combined_audiences import *  # noqa: F403
@@ -22,7 +22,7 @@ class DspCombinedAudiencesClient(BaseAdsClient):
     async def create_combined_audience(self, body: CreateCombinedAudienceRequestBody | dict[str, Any] | None = None, advertiser_id: str | None = None, amazon_advertising_api_client_id: str | None = None, amazon_advertising_api_scope: str | None = None) -> JSONData | JSONList:
         """POST /dsp/audiences/combinedAudiences
 
-        Creates a new combined audience based on the input audience expression.  **Authorized resource type**: DSP Rodeo Entity 
+        Creates a new combined audience based on the input audience expression.  **Authorized resource type**: DSP Rodeo Entity
         """
         endpoint = "/dsp/audiences/combinedAudiences"
         params: dict[str, Any] = {}

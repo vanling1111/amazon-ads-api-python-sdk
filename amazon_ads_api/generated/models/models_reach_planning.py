@@ -6,10 +6,10 @@ Title:  Reach Planning Service
 
 from __future__ import annotations
 
-from enum import StrEnum
-from typing import Optional
+from enum import StrEnum  # noqa: F401
+from typing import Any, Optional, Union  # noqa: F401
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field  # noqa: F401
 
 
 
@@ -168,20 +168,6 @@ class CreateDeduplicatedReachForecastsV1RequestContent(BaseModel):
     model_config = {'populate_by_name': True}
 
 
-class CreateDeduplicatedReachForecastsV1ResponseElement(BaseModel):
-    deduplicated_reach: int = Field(..., alias="deduplicatedReach", description="Forecasted deduplicated reach.")
-    deduplicated_reach_forecast_id: str = Field(..., alias="deduplicatedReachForecastId", description="This is the unique identifier of the Deduplicated Reach Forecast resource.")
-
-    model_config = {'populate_by_name': True}
-
-
-class CreateDeduplicatedReachForecastsV1ResponseSuccess(BaseModel):
-    deduplicated_reach_forecast: "CreateDeduplicatedReachForecastsV1ResponseElement" = Field(..., alias="deduplicatedReachForecast")
-    index: int = Field(..., description="This is the index of the corresponding request element in the request payload.")
-
-    model_config = {'populate_by_name': True}
-
-
 class ReachPlanningServiceError(BaseModel):
     code: Optional["ErrorCode"] = None
     message: Optional[str] = Field(None, description="Human readable response message.")
@@ -196,6 +182,20 @@ class CreateDeduplicatedReachForecastsV1ResponseError(BaseModel):
     model_config = {'populate_by_name': True}
 
 
+class CreateDeduplicatedReachForecastsV1ResponseElement(BaseModel):
+    deduplicated_reach: int = Field(..., alias="deduplicatedReach", description="Forecasted deduplicated reach.")
+    deduplicated_reach_forecast_id: str = Field(..., alias="deduplicatedReachForecastId", description="This is the unique identifier of the Deduplicated Reach Forecast resource.")
+
+    model_config = {'populate_by_name': True}
+
+
+class CreateDeduplicatedReachForecastsV1ResponseSuccess(BaseModel):
+    deduplicated_reach_forecast: "CreateDeduplicatedReachForecastsV1ResponseElement" = Field(..., alias="deduplicatedReachForecast")
+    index: int = Field(..., description="This is the index of the corresponding request element in the request payload.")
+
+    model_config = {'populate_by_name': True}
+
+
 class CreateDeduplicatedReachForecastsV1ResponseContent(BaseModel):
     error: list["CreateDeduplicatedReachForecastsV1ResponseError"]
     success: list["CreateDeduplicatedReachForecastsV1ResponseSuccess"]
@@ -203,24 +203,79 @@ class CreateDeduplicatedReachForecastsV1ResponseContent(BaseModel):
     model_config = {'populate_by_name': True}
 
 
-class IABCategoryTargetTypeV1(StrEnum):
-    IAB_CATEGORY = "IAB_CATEGORY"
+class FrequencyCapTimeUnitV1(StrEnum):
+    DAYS = "DAYS"
+    MONTHS = "MONTHS"
+    WEEKS = "WEEKS"
 
 
-class IABCategoryTargetV1(BaseModel):
-    iab_content_category: str = Field(..., alias="iabContentCategory", description="The IAB content category to target. To get the list of valid values, see https://advertising.amazon.com/API/docs/en-us/d")
-    target_type: "IABCategoryTargetTypeV1" = Field(..., alias="targetType")
+class FrequencyCapTypeV1(StrEnum):
+    CUSTOM = "CUSTOM"
+    UNCAPPED = "UNCAPPED"
+
+
+class FrequencyCapV1(BaseModel):
+    """The limit of how many times ads appear to the same viewer."""
+    max_impressions: Optional[int] = Field(None, alias="maxImpressions", description="The maximum number of times an ad is displayed.")
+    time_unit: Optional["FrequencyCapTimeUnitV1"] = Field(None, alias="timeUnit")
+    time_unit_count: Optional[int] = Field(None, alias="timeUnitCount", description="The count of time units.")
+    type_: Optional["FrequencyCapTypeV1"] = Field(None, alias="type")
 
     model_config = {'populate_by_name': True}
 
 
-class ProductCategoryTargetTypeV1(StrEnum):
-    PRODUCT_CATEGORY = "PRODUCT_CATEGORY"
+class SupplyV1(StrEnum):
+    DSP_ALEXA_DISPLAY = "DSP_ALEXA_DISPLAY"
+    DSP_AUDIO = "DSP_AUDIO"
+    DSP_DISPLAY = "DSP_DISPLAY"
+    DSP_FIRE_TABLET = "DSP_FIRE_TABLET"
+    DSP_FIRE_TV = "DSP_FIRE_TV"
+    DSP_FIRE_TV_FIRE_TABLET_ALEXA_DISPLAY = "DSP_FIRE_TV_FIRE_TABLET_ALEXA_DISPLAY"
+    DSP_OLV = "DSP_OLV"
+    DSP_PRIME_VIDEO = "DSP_PRIME_VIDEO"
+    DSP_STREAMING_TV = "DSP_STREAMING_TV"
+    DSP_TWITCH_DISPLAY = "DSP_TWITCH_DISPLAY"
+    DSP_TWITCH_VIDEO = "DSP_TWITCH_VIDEO"
+    SPONSORED_BRANDS = "SPONSORED_BRANDS"
+    SPONSORED_BRANDS_VIDEO = "SPONSORED_BRANDS_VIDEO"
+    SPONSORED_DISPLAY = "SPONSORED_DISPLAY"
+    SPONSORED_PRODUCTS = "SPONSORED_PRODUCTS"
 
 
-class ProductCategoryTargetV1(BaseModel):
-    asin_category: str = Field(..., alias="asinCategory", description="The product category to target.")
-    target_type: "ProductCategoryTargetTypeV1" = Field(..., alias="targetType")
+class DeliveryTypeV1(StrEnum):
+    GUARANTEED = "GUARANTEED"
+    NON_GUARANTEED = "NON_GUARANTEED"
+
+
+class ReachTypeV1(StrEnum):
+    HOUSEHOLDS = "HOUSEHOLDS"
+
+
+class KeywordTargetTypeV1(StrEnum):
+    KEYWORD = "KEYWORD"
+
+
+class KeywordTargetMatchTypeV1(StrEnum):
+    BROAD = "BROAD"
+    EXACT = "EXACT"
+    PHRASE = "PHRASE"
+
+
+class KeywordTargetV1(BaseModel):
+    keyword: str
+    match_type: "KeywordTargetMatchTypeV1" = Field(..., alias="matchType")
+    target_type: "KeywordTargetTypeV1" = Field(..., alias="targetType")
+
+    model_config = {'populate_by_name': True}
+
+
+class ProductTargetTypeV1(StrEnum):
+    PRODUCT = "PRODUCT"
+
+
+class ProductTargetV1(BaseModel):
+    asin: str = Field(..., description="The product asin to target.")
+    target_type: "ProductTargetTypeV1" = Field(..., alias="targetType")
 
     model_config = {'populate_by_name': True}
 
@@ -237,35 +292,6 @@ class ThemeTargetTypeV1(StrEnum):
 class ThemeTargetV1(BaseModel):
     match_type: "ThemeTargetMatchTypeV1" = Field(..., alias="matchType")
     target_type: "ThemeTargetTypeV1" = Field(..., alias="targetType")
-
-    model_config = {'populate_by_name': True}
-
-
-class ProductTargetTypeV1(StrEnum):
-    PRODUCT = "PRODUCT"
-
-
-class ProductTargetV1(BaseModel):
-    asin: str = Field(..., description="The product asin to target.")
-    target_type: "ProductTargetTypeV1" = Field(..., alias="targetType")
-
-    model_config = {'populate_by_name': True}
-
-
-class DeviceTargetTypeV1(StrEnum):
-    DEVICE = "DEVICE"
-
-
-class DeviceTypeV1(StrEnum):
-    CONNECTED_DEVICE = "CONNECTED_DEVICE"
-    CONNECTED_TV = "CONNECTED_TV"
-    DESKTOP = "DESKTOP"
-    MOBILE = "MOBILE"
-
-
-class DeviceTargetV1(BaseModel):
-    device_type: "DeviceTypeV1" = Field(..., alias="deviceType")
-    target_type: "DeviceTargetTypeV1" = Field(..., alias="targetType")
 
     model_config = {'populate_by_name': True}
 
@@ -288,13 +314,42 @@ class LocationTargetV1(BaseModel):
     model_config = {'populate_by_name': True}
 
 
-class InventorySourceTypeV1(StrEnum):
-    DEAL = "DEAL"
-    PUBLISHER = "PUBLISHER"
+class ProductCategoryTargetTypeV1(StrEnum):
+    PRODUCT_CATEGORY = "PRODUCT_CATEGORY"
+
+
+class ProductCategoryTargetV1(BaseModel):
+    asin_category: str = Field(..., alias="asinCategory", description="The product category to target.")
+    target_type: "ProductCategoryTargetTypeV1" = Field(..., alias="targetType")
+
+    model_config = {'populate_by_name': True}
+
+
+class DeviceTargetTypeV1(StrEnum):
+    DEVICE = "DEVICE"
+
+
+class DeviceTypeV1(StrEnum):
+    CONNECTED_DEVICE = "CONNECTED_DEVICE"
+    CONNECTED_TV = "CONNECTED_TV"
+    DESKTOP = "DESKTOP"
+    MOBILE = "MOBILE"
+
+
+class DeviceTargetV1(BaseModel):
+    device_type: "DeviceTypeV1" = Field(..., alias="deviceType")
+    target_type: "DeviceTargetTypeV1" = Field(..., alias="targetType")
+
+    model_config = {'populate_by_name': True}
 
 
 class InventorySourceTargetTypeV1(StrEnum):
     INVENTORY_SOURCE = "INVENTORY_SOURCE"
+
+
+class InventorySourceTypeV1(StrEnum):
+    DEAL = "DEAL"
+    PUBLISHER = "PUBLISHER"
 
 
 class InventorySourceTargetV1(BaseModel):
@@ -305,20 +360,13 @@ class InventorySourceTargetV1(BaseModel):
     model_config = {'populate_by_name': True}
 
 
-class KeywordTargetTypeV1(StrEnum):
-    KEYWORD = "KEYWORD"
+class IABCategoryTargetTypeV1(StrEnum):
+    IAB_CATEGORY = "IAB_CATEGORY"
 
 
-class KeywordTargetMatchTypeV1(StrEnum):
-    BROAD = "BROAD"
-    EXACT = "EXACT"
-    PHRASE = "PHRASE"
-
-
-class KeywordTargetV1(BaseModel):
-    keyword: str
-    match_type: "KeywordTargetMatchTypeV1" = Field(..., alias="matchType")
-    target_type: "KeywordTargetTypeV1" = Field(..., alias="targetType")
+class IABCategoryTargetV1(BaseModel):
+    iab_content_category: str = Field(..., alias="iabContentCategory", description="The IAB content category to target. To get the list of valid values, see https://advertising.amazon.com/API/docs/en-us/d")
+    target_type: "IABCategoryTargetTypeV1" = Field(..., alias="targetType")
 
     model_config = {'populate_by_name': True}
 
@@ -332,54 +380,6 @@ class PlanningTargetV1(BaseModel):
     target_details: "PlanningTargetDetailsV1" = Field(..., alias="targetDetails")
 
     model_config = {'populate_by_name': True}
-
-
-class FrequencyCapTypeV1(StrEnum):
-    CUSTOM = "CUSTOM"
-    UNCAPPED = "UNCAPPED"
-
-
-class FrequencyCapTimeUnitV1(StrEnum):
-    DAYS = "DAYS"
-    MONTHS = "MONTHS"
-    WEEKS = "WEEKS"
-
-
-class FrequencyCapV1(BaseModel):
-    """The limit of how many times ads appear to the same viewer."""
-    max_impressions: Optional[int] = Field(None, alias="maxImpressions", description="The maximum number of times an ad is displayed.")
-    time_unit: Optional["FrequencyCapTimeUnitV1"] = Field(None, alias="timeUnit")
-    time_unit_count: Optional[int] = Field(None, alias="timeUnitCount", description="The count of time units.")
-    type_: Optional["FrequencyCapTypeV1"] = Field(None, alias="type")
-
-    model_config = {'populate_by_name': True}
-
-
-class DeliveryTypeV1(StrEnum):
-    GUARANTEED = "GUARANTEED"
-    NON_GUARANTEED = "NON_GUARANTEED"
-
-
-class SupplyV1(StrEnum):
-    DSP_ALEXA_DISPLAY = "DSP_ALEXA_DISPLAY"
-    DSP_AUDIO = "DSP_AUDIO"
-    DSP_DISPLAY = "DSP_DISPLAY"
-    DSP_FIRE_TABLET = "DSP_FIRE_TABLET"
-    DSP_FIRE_TV = "DSP_FIRE_TV"
-    DSP_FIRE_TV_FIRE_TABLET_ALEXA_DISPLAY = "DSP_FIRE_TV_FIRE_TABLET_ALEXA_DISPLAY"
-    DSP_OLV = "DSP_OLV"
-    DSP_PRIME_VIDEO = "DSP_PRIME_VIDEO"
-    DSP_STREAMING_TV = "DSP_STREAMING_TV"
-    DSP_TWITCH_DISPLAY = "DSP_TWITCH_DISPLAY"
-    DSP_TWITCH_VIDEO = "DSP_TWITCH_VIDEO"
-    SPONSORED_BRANDS = "SPONSORED_BRANDS"
-    SPONSORED_BRANDS_VIDEO = "SPONSORED_BRANDS_VIDEO"
-    SPONSORED_DISPLAY = "SPONSORED_DISPLAY"
-    SPONSORED_PRODUCTS = "SPONSORED_PRODUCTS"
-
-
-class ReachTypeV1(StrEnum):
-    HOUSEHOLDS = "HOUSEHOLDS"
 
 
 class CreateReachForecastsV1RequestElement(BaseModel):
@@ -403,14 +403,6 @@ class CreateReachForecastsV1RequestContent(BaseModel):
     model_config = {'populate_by_name': True}
 
 
-class ReachCurveDataPointV1(BaseModel):
-    impressions: int = Field(..., description="The number of on-target impressions.")
-    reach: int = Field(..., description="The forecasted on-target reached.")
-    spend: float = Field(..., description="The forecasted spend in requested currency based on the estimated average CPM.")
-
-    model_config = {'populate_by_name': True}
-
-
 class CurrencyCodeV1(StrEnum):
     AED = "AED"
     AUD = "AUD"
@@ -430,6 +422,14 @@ class CurrencyCodeV1(StrEnum):
 class ReachForecastStatusV1(StrEnum):
     EXPIRED = "EXPIRED"
     SUCCESS = "SUCCESS"
+
+
+class ReachCurveDataPointV1(BaseModel):
+    impressions: int = Field(..., description="The number of on-target impressions.")
+    reach: int = Field(..., description="The forecasted on-target reached.")
+    spend: float = Field(..., description="The forecasted spend in requested currency based on the estimated average CPM.")
+
+    model_config = {'populate_by_name': True}
 
 
 class CreateReachForecastsV1ResponseElement(BaseModel):
@@ -529,16 +529,16 @@ class GeneratePerformanceForecastsV1RequestContent(BaseModel):
     model_config = {'populate_by_name': True}
 
 
-class GeneratePerformanceForecastsV1ResponseError(BaseModel):
-    error: "ReachPlanningServiceError"
+class GeneratePerformanceForecastsV1ResponseSuccess(BaseModel):
     index: int = Field(..., description="This is the index of the corresponding request element in the request payload.")
+    performance_forecast: "GeneratePerformanceForecastV1ResponseElement" = Field(..., alias="performanceForecast")
 
     model_config = {'populate_by_name': True}
 
 
-class GeneratePerformanceForecastsV1ResponseSuccess(BaseModel):
+class GeneratePerformanceForecastsV1ResponseError(BaseModel):
+    error: "ReachPlanningServiceError"
     index: int = Field(..., description="This is the index of the corresponding request element in the request payload.")
-    performance_forecast: "GeneratePerformanceForecastV1ResponseElement" = Field(..., alias="performanceForecast")
 
     model_config = {'populate_by_name': True}
 

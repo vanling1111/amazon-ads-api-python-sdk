@@ -6,16 +6,28 @@ Title:  Amazon Ads API for DSP
 
 from __future__ import annotations
 
-from enum import StrEnum
-from typing import Optional
+from enum import StrEnum  # noqa: F401
+from typing import Any, Optional, Union  # noqa: F401
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field  # noqa: F401
 
 
 
-class DspTimezoneV1(BaseModel):
-    """The advertiser timezone. - America/Anchorage - America/Caracas - America/Chicago - America/Denver - America/Halifax - America/Los_Angeles - America/New_York - America/Sao_Paulo - America/St_Johns - As"""
-    pass
+class DspSupportedCurrencyV1(StrEnum):
+    USD = "USD"
+    CAD = "CAD"
+    JPY = "JPY"
+    GBP = "GBP"
+    EUR = "EUR"
+    INR = "INR"
+    MXN = "MXN"
+    AED = "AED"
+    SAR = "SAR"
+    BRL = "BRL"
+    AUD = "AUD"
+    SEK = "SEK"
+    SGD = "SGD"
+    TRY = "TRY"
 
 
 class DspCountryV1(StrEnum):
@@ -41,21 +53,9 @@ class DspCountryV1(StrEnum):
     TR = "TR"
 
 
-class DspSupportedCurrencyV1(StrEnum):
-    USD = "USD"
-    CAD = "CAD"
-    JPY = "JPY"
-    GBP = "GBP"
-    EUR = "EUR"
-    INR = "INR"
-    MXN = "MXN"
-    AED = "AED"
-    SAR = "SAR"
-    BRL = "BRL"
-    AUD = "AUD"
-    SEK = "SEK"
-    SGD = "SGD"
-    TRY = "TRY"
+class DspTimezoneV1(BaseModel):
+    """The advertiser timezone. - America/Anchorage - America/Caracas - America/Chicago - America/Denver - America/Halifax - America/Los_Angeles - America/New_York - America/Sao_Paulo - America/St_Johns - As"""
+    pass
 
 
 class DspAdvertiserV1(BaseModel):

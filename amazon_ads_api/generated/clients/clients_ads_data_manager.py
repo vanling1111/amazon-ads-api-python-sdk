@@ -6,9 +6,9 @@ Title:  Ads Data Manager
 
 from __future__ import annotations
 
-from typing import Any
+from typing import Any  # noqa: F401
 
-from amazon_ads_api.base import BaseAdsClient, JSONData, JSONList
+from amazon_ads_api.base import BaseAdsClient, JSONData, JSONList  # noqa: F401
 
 try:
     from .models_ads_data_manager import *  # noqa: F403
@@ -213,7 +213,7 @@ class AdsDataManagerClient(BaseAdsClient):
     async def delete_identity(self, body: DeleteIdentityRequestContent | dict[str, Any] | None = None, amazon_ads_manager_account_id: str | None = None, amazon_advertising_api_client_id: str | None = None) -> JSONData | JSONList:
         """POST /adm/identities/delete
 
-        Deletes matched list of users from your data room within 30 days.  **Authorized resource type**: Global Manager Account 
+        Deletes matched list of users from your data room within 30 days.  **Authorized resource type**: Global Manager Account
         """
         endpoint = "/adm/identities/delete"
         params: dict[str, Any] = {}

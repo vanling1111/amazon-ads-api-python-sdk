@@ -6,10 +6,10 @@ Title:  D16GDspApiActionableInsights
 
 from __future__ import annotations
 
-from enum import StrEnum
-from typing import Optional
+from enum import StrEnum  # noqa: F401
+from typing import Any, Optional, Union  # noqa: F401
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field  # noqa: F401
 
 
 
@@ -130,20 +130,10 @@ class FrequencyCapTypeFilterUnion(BaseModel):
     pass
 
 
-class Level(StrEnum):
-    AD_GROUP = "AD_GROUP"
-    CAMPAIGN = "CAMPAIGN"
-
-
 class TimeGrain(StrEnum):
     DAILY = "DAILY"
     MONTHLY = "MONTHLY"
     WEEKLY = "WEEKLY"
-
-
-class FrequencyDistributionNoDataReasonCode(StrEnum):
-    INSUFFICIENT_DATA = "INSUFFICIENT_DATA"
-    METRIC_NOT_APPLICABLE = "METRIC_NOT_APPLICABLE"
 
 
 class FrequencyDistributionMetricName(StrEnum):
@@ -175,6 +165,11 @@ class FrequencyDistributionMetricName(StrEnum):
     TOTAL_ROAS = "TOTAL_ROAS"
 
 
+class FrequencyDistributionNoDataReasonCode(StrEnum):
+    INSUFFICIENT_DATA = "INSUFFICIENT_DATA"
+    METRIC_NOT_APPLICABLE = "METRIC_NOT_APPLICABLE"
+
+
 class FrequencyDistributionMetric(BaseModel):
     """Performance metric data."""
     metric_name: Optional["FrequencyDistributionMetricName"] = Field(None, alias="metricName")
@@ -182,6 +177,11 @@ class FrequencyDistributionMetric(BaseModel):
     no_data_reason_code: Optional["FrequencyDistributionNoDataReasonCode"] = Field(None, alias="noDataReasonCode")
 
     model_config = {'populate_by_name': True}
+
+
+class Level(StrEnum):
+    AD_GROUP = "AD_GROUP"
+    CAMPAIGN = "CAMPAIGN"
 
 
 class FrequencyDistributionItem(BaseModel):

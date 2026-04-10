@@ -6,10 +6,10 @@ Title:  BrandAidV2
 
 from __future__ import annotations
 
-from enum import StrEnum
-from typing import Optional
+from enum import StrEnum  # noqa: F401
+from typing import Any, Optional, Union  # noqa: F401
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field  # noqa: F401
 
 
 
@@ -37,19 +37,19 @@ class BadRequestResponseContent(BaseModel):
     model_config = {'populate_by_name': True}
 
 
+class BrandLogo(BaseModel):
+    """<p>Metadata for a brand logo.</p>"""
+    brand_logo_asset_id: Optional[str] = Field(None, alias="brandLogoAssetId", description="<p>Advertising Asset Library Id for a brand logo.</p>")
+
+    model_config = {'populate_by_name': True}
+
+
 class BrandStatus(StrEnum):
     MERGED = "MERGED"
     NOT_APPROVED = "NOT_APPROVED"
     PENDING_REVIEW = "PENDING_REVIEW"
     REGISTERED = "REGISTERED"
     SUSPENDED = "SUSPENDED"
-
-
-class BrandLogo(BaseModel):
-    """<p>Metadata for a brand logo.</p>"""
-    brand_logo_asset_id: Optional[str] = Field(None, alias="brandLogoAssetId", description="<p>Advertising Asset Library Id for a brand logo.</p>")
-
-    model_config = {'populate_by_name': True}
 
 
 class Brand(BaseModel):

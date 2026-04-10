@@ -6,18 +6,11 @@ Title:  Marketing Mix Modeling
 
 from __future__ import annotations
 
-from enum import StrEnum
-from typing import Optional
+from enum import StrEnum  # noqa: F401
+from typing import Any, Optional, Union  # noqa: F401
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field  # noqa: F401
 
-
-
-class MmmError(BaseModel):
-    code: Optional[str] = Field(None, description="Error code.")
-    message: Optional[str] = Field(None, description="Human-readable error message.")
-
-    model_config = {'populate_by_name': True}
 
 
 class MmmBrandGroupOverrideIdentifiertype(StrEnum):
@@ -43,6 +36,13 @@ class MmmBrandGroupOverride(BaseModel):
     override_id: Optional[str] = Field(None, alias="overrideId", description="The unique identifier of the override.")
     override_type: Optional[MmmBrandGroupOverrideOverridetype] = Field(None, alias="overrideType", description="The type of override.")
     status: Optional[MmmBrandGroupOverrideStatus] = Field(None, description="The override status. |Value|Description| |---|---| |PENDING_REVIEW|Override must be reviewed by Amazon. New reports for ")
+
+    model_config = {'populate_by_name': True}
+
+
+class MmmError(BaseModel):
+    code: Optional[str] = Field(None, description="Error code.")
+    message: Optional[str] = Field(None, description="Human-readable error message.")
 
     model_config = {'populate_by_name': True}
 

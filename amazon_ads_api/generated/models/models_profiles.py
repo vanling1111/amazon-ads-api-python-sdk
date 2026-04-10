@@ -6,11 +6,24 @@ Title:  Profiles
 
 from __future__ import annotations
 
-from enum import StrEnum
-from typing import Optional
+from enum import StrEnum  # noqa: F401
+from typing import Any, Optional, Union  # noqa: F401
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field  # noqa: F401
 
+
+
+class ProfileCountryCode(StrEnum):
+    AE = "AE"
+    AU = "AU"
+    CA = "CA"
+    DE = "DE"
+    ES = "ES"
+    FR = "FR"
+    IT = "IT"
+    JP = "JP"
+    UK = "UK"
+    US = "US"
 
 
 class ProfileAccountType(StrEnum):
@@ -33,19 +46,6 @@ class ProfileAccountInfo(BaseModel):
     valid_payment_method: Optional[bool] = Field(None, alias="validPaymentMethod", description="Only present for Vendors, this returns whether the Advertiser has set up a valid payment method or not.")
 
     model_config = {'populate_by_name': True}
-
-
-class ProfileCountryCode(StrEnum):
-    AE = "AE"
-    AU = "AU"
-    CA = "CA"
-    DE = "DE"
-    ES = "ES"
-    FR = "FR"
-    IT = "IT"
-    JP = "JP"
-    UK = "UK"
-    US = "US"
 
 
 class ProfileCurrencycode(StrEnum):

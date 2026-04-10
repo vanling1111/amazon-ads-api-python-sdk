@@ -6,10 +6,10 @@ Title:  Measurement
 
 from __future__ import annotations
 
-from enum import StrEnum
-from typing import Optional
+from enum import StrEnum  # noqa: F401
+from typing import Any, Optional, Union  # noqa: F401
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field  # noqa: F401
 
 
 
@@ -31,16 +31,16 @@ class AssetV1M2(BaseModel):
     model_config = {'populate_by_name': True}
 
 
+class AudienceSelectionOperatorV1M2(StrEnum):
+    AND = "AND"
+    OR = "OR"
+
+
 class AudienceSegmentV1M2(BaseModel):
     """The model for holding an Audience Segment."""
     segment_id: Optional[str] = Field(None, alias="segmentId", description="ID for the audience segment. This ID can be fetched from these APIs- https://advertising.amazon.com/API/docs/en-us/audie")
 
     model_config = {'populate_by_name': True}
-
-
-class AudienceSelectionOperatorV1M2(StrEnum):
-    AND = "AND"
-    OR = "OR"
 
 
 class AudienceGroupV1M2(BaseModel):
@@ -109,12 +109,12 @@ class AudienceTargetingGroupV1M2(BaseModel):
     model_config = {'populate_by_name': True}
 
 
-class VendorTypeV1(StrEnum):
-    AMAZON = "AMAZON"
-
-
 class FundingTypeV1(StrEnum):
     COMPLIMENTARY = "COMPLIMENTARY"
+
+
+class VendorTypeV1(StrEnum):
+    AMAZON = "AMAZON"
 
 
 class BaseEligibilityRequestV1(BaseModel):
@@ -380,19 +380,6 @@ class SurveyQuestionObjectiveTypeV1M1(StrEnum):
     UNAIDED_AWARENESS = "UNAIDED_AWARENESS"
 
 
-class BrandLiftSummaryV1M1(BaseModel):
-    """Summary of Brand Lift achieved for an objective."""
-    ad_exposed_group_rate: Optional[float] = Field(None, alias="adExposedGroupRate", description="Ad exposed group response rate.")
-    benchmark_lift_rate: Optional[float] = Field(None, alias="benchmarkLiftRate", description="The benchmark lift rate for the selected product category in the Survey.")
-    control_group_rate: Optional[float] = Field(None, alias="controlGroupRate", description="Control group response rate.")
-    qualifying_responses: Optional[list[str]] = Field(None, alias="qualifyingResponses", description="Qualifying responses aggregated to measure the Brand Lift.")
-    question_objective: Optional["SurveyQuestionObjectiveTypeV1M1"] = Field(None, alias="questionObjective")
-    question_text: Optional[str] = Field(None, alias="questionText", description="Text of the Survey question.")
-    statistical_significance: Optional[float] = Field(None, alias="statisticalSignificance", description="The significance percentage of achieved Brand Lift.")
-
-    model_config = {'populate_by_name': True}
-
-
 class SurveyResponseResultV1M1Segmenttype(StrEnum):
     AGE = "AGE"
     AUDIENCES = "AUDIENCES"
@@ -420,6 +407,19 @@ class SurveyResponseResultV1M1(BaseModel):
     model_config = {'populate_by_name': True}
 
 
+class BrandLiftSummaryV1M1(BaseModel):
+    """Summary of Brand Lift achieved for an objective."""
+    ad_exposed_group_rate: Optional[float] = Field(None, alias="adExposedGroupRate", description="Ad exposed group response rate.")
+    benchmark_lift_rate: Optional[float] = Field(None, alias="benchmarkLiftRate", description="The benchmark lift rate for the selected product category in the Survey.")
+    control_group_rate: Optional[float] = Field(None, alias="controlGroupRate", description="Control group response rate.")
+    qualifying_responses: Optional[list[str]] = Field(None, alias="qualifyingResponses", description="Qualifying responses aggregated to measure the Brand Lift.")
+    question_objective: Optional["SurveyQuestionObjectiveTypeV1M1"] = Field(None, alias="questionObjective")
+    question_text: Optional[str] = Field(None, alias="questionText", description="Text of the Survey question.")
+    statistical_significance: Optional[float] = Field(None, alias="statisticalSignificance", description="The significance percentage of achieved Brand Lift.")
+
+    model_config = {'populate_by_name': True}
+
+
 class BrandLiftStudyResultV1M1(BaseModel):
     """The result of Brand Lift study."""
     brand_lift_summary: Optional[list["BrandLiftSummaryV1M1"]] = Field(None, alias="brandLiftSummary", description="Summary of Brand Lift achieved for each objective.")
@@ -430,19 +430,19 @@ class BrandLiftStudyResultV1M1(BaseModel):
     model_config = {'populate_by_name': True}
 
 
-class DSPCampaignPlanningMetadataV1M2(BaseModel):
-    """The basic model for all DSP CAMPAIGN_PLANNING objective studies."""
-    advertiser_id: Optional[str] = Field(None, alias="advertiserId", description="The associated advertiser identifier. Immutable field.")
-
-    model_config = {'populate_by_name': True}
-
-
 class DSPAudienceResearchMetadataV1M2(BaseModel):
     """The basic model for all DSP AUDIENCE_RESEARCH objective studies."""
     audience_targeting_group: Optional["AudienceTargetingGroupV1M2"] = Field(None, alias="audienceTargetingGroup")
     brand_name: Optional[str] = Field(None, alias="brandName", description="The study brand name.")
     peer_names: Optional[list[str]] = Field(None, alias="peerNames", description="A list of peer names for the study brand.")
     product_category: Optional[str] = Field(None, alias="productCategory", description="The study product category.")
+
+    model_config = {'populate_by_name': True}
+
+
+class DSPCampaignPlanningMetadataV1M2(BaseModel):
+    """The basic model for all DSP CAMPAIGN_PLANNING objective studies."""
+    advertiser_id: Optional[str] = Field(None, alias="advertiserId", description="The associated advertiser identifier. Immutable field.")
 
     model_config = {'populate_by_name': True}
 
@@ -951,6 +951,16 @@ class PaginatedOmnichannelMetricsBrandsV1M2(BaseModel):
     model_config = {'populate_by_name': True}
 
 
+class SurveyQuestionPlaceholderAllowedRangeV1(BaseModel):
+    """Allowed value range for placeholder."""
+    maximum_value: Optional[int] = Field(None, alias="maximumValue", description="The maximum allowed value.")
+    minimum_value: Optional[int] = Field(None, alias="minimumValue", description="The minimum allowed value.")
+    parent_field: Optional[str] = Field(None, alias="parentField", description="The field name that this range depends on. Will be empty if this range is the default range.")
+    parent_value: Optional[str] = Field(None, alias="parentValue", description="The field value that this range depends on. Will be empty if this range is the default range.")
+
+    model_config = {'populate_by_name': True}
+
+
 class SurveyQuestionPlaceholderAllowedValueV1(BaseModel):
     """Allowed values for placeholder."""
     parent_field: Optional[str] = Field(None, alias="parentField", description="The field name that this value list depends on. Will be empty if this is the default list.")
@@ -963,16 +973,6 @@ class SurveyQuestionPlaceholderAllowedValueV1(BaseModel):
 class PlaceholderValueTypeV1(StrEnum):
     INTEGER = "INTEGER"
     STRING = "STRING"
-
-
-class SurveyQuestionPlaceholderAllowedRangeV1(BaseModel):
-    """Allowed value range for placeholder."""
-    maximum_value: Optional[int] = Field(None, alias="maximumValue", description="The maximum allowed value.")
-    minimum_value: Optional[int] = Field(None, alias="minimumValue", description="The minimum allowed value.")
-    parent_field: Optional[str] = Field(None, alias="parentField", description="The field name that this range depends on. Will be empty if this range is the default range.")
-    parent_value: Optional[str] = Field(None, alias="parentValue", description="The field value that this range depends on. Will be empty if this range is the default range.")
-
-    model_config = {'populate_by_name': True}
 
 
 class SurveyQuestionPlaceholderCandidateV1(BaseModel):
@@ -1017,18 +1017,16 @@ class PaginatedSurveyQuestionTemplatesV1(BaseModel):
     model_config = {'populate_by_name': True}
 
 
+class SurveyQuestionCategoryV1M1(StrEnum):
+    BRAND_KPI = "BRAND_KPI"
+    CUSTOM = "CUSTOM"
+    WEIGHTING = "WEIGHTING"
+
+
 class SurveyQuestionSubCategoryV1M1(StrEnum):
     BEHAVIOR = "BEHAVIOR"
     DEMOGRAPHIC = "DEMOGRAPHIC"
     PURCHASE_HISTORY = "PURCHASE_HISTORY"
-
-
-class SurveyQuestionTypeV1M1(StrEnum):
-    FREE_TEXT = "FREE_TEXT"
-    MULTI_SELECT = "MULTI_SELECT"
-    RATING = "RATING"
-    SINGLE_SELECT = "SINGLE_SELECT"
-    SINGLE_SELECT_GRID = "SINGLE_SELECT_GRID"
 
 
 class SurveyQuestionGridQuestionResponseV1M1(BaseModel):
@@ -1039,10 +1037,12 @@ class SurveyQuestionGridQuestionResponseV1M1(BaseModel):
     model_config = {'populate_by_name': True}
 
 
-class SurveyQuestionCategoryV1M1(StrEnum):
-    BRAND_KPI = "BRAND_KPI"
-    CUSTOM = "CUSTOM"
-    WEIGHTING = "WEIGHTING"
+class SurveyQuestionTypeV1M1(StrEnum):
+    FREE_TEXT = "FREE_TEXT"
+    MULTI_SELECT = "MULTI_SELECT"
+    RATING = "RATING"
+    SINGLE_SELECT = "SINGLE_SELECT"
+    SINGLE_SELECT_GRID = "SINGLE_SELECT_GRID"
 
 
 class SurveyQuestionTemplateV1M1(BaseModel):
@@ -1076,12 +1076,6 @@ class PaginatedSurveyQuestionTemplatesV1M1(BaseModel):
     model_config = {'populate_by_name': True}
 
 
-class SurveyStatusV1(StrEnum):
-    AVAILABLE = "AVAILABLE"
-    DRAFT = "DRAFT"
-    IN_USE = "IN_USE"
-
-
 class SurveyQuestionPlaceholderV1(BaseModel):
     """The object specifying a placeholder in Survey question."""
     field_name: Optional[str] = Field(None, alias="fieldName", description="The survey question placeholder field name.")
@@ -1096,6 +1090,12 @@ class TemplatedSurveyQuestionV1(BaseModel):
     placeholders: Optional[list["SurveyQuestionPlaceholderV1"]] = Field(None, description="List of question placeholders")
 
     model_config = {'populate_by_name': True}
+
+
+class SurveyStatusV1(StrEnum):
+    AVAILABLE = "AVAILABLE"
+    DRAFT = "DRAFT"
+    IN_USE = "IN_USE"
 
 
 class SurveyV1(BaseModel):

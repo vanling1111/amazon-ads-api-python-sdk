@@ -6,10 +6,10 @@ Title:  Persona Builder API
 
 from __future__ import annotations
 
-from enum import StrEnum
-from typing import Optional
+from enum import StrEnum  # noqa: F401
+from typing import Any, Optional, Union  # noqa: F401
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field  # noqa: F401
 
 
 
@@ -158,26 +158,14 @@ class RangedDemographicInsight(BaseModel):
     model_config = {'populate_by_name': True}
 
 
-class Education(StrEnum):
-    BACHELORS_DEGREE = "BACHELORS_DEGREE"
-    BACHELOR_DEGREE_OR_MORE = "BACHELOR_DEGREE_OR_MORE"
-    GRADUATE_DEGREE = "GRADUATE_DEGREE"
-    HIGH_SCHOOL = "HIGH_SCHOOL"
-    SOME_COLLEGE = "SOME_COLLEGE"
+class PropertyOwnership(StrEnum):
+    OWNING = "OWNING"
+    RENTING = "RENTING"
 
 
-class EducationInsight(BaseModel):
-    attribute: "Education"
+class PropertyOwnershipInsight(BaseModel):
+    attribute: "PropertyOwnership"
     insight_metrics: "InsightMetric" = Field(..., alias="insightMetrics")
-    segment_id: str = Field(..., alias="segmentId", description="Canonical ID of the segment the demographic insight attribute maps to.")
-
-    model_config = {'populate_by_name': True}
-
-
-class IncomeDemographicInsight(BaseModel):
-    currency: "Currency"
-    insight_metrics: "InsightMetric" = Field(..., alias="insightMetrics")
-    range: "Range"
     segment_id: str = Field(..., alias="segmentId", description="Canonical ID of the segment the demographic insight attribute maps to.")
 
     model_config = {'populate_by_name': True}
@@ -198,14 +186,26 @@ class GenderInsight(BaseModel):
     model_config = {'populate_by_name': True}
 
 
-class PropertyOwnership(StrEnum):
-    OWNING = "OWNING"
-    RENTING = "RENTING"
+class Education(StrEnum):
+    BACHELORS_DEGREE = "BACHELORS_DEGREE"
+    BACHELOR_DEGREE_OR_MORE = "BACHELOR_DEGREE_OR_MORE"
+    GRADUATE_DEGREE = "GRADUATE_DEGREE"
+    HIGH_SCHOOL = "HIGH_SCHOOL"
+    SOME_COLLEGE = "SOME_COLLEGE"
 
 
-class PropertyOwnershipInsight(BaseModel):
-    attribute: "PropertyOwnership"
+class EducationInsight(BaseModel):
+    attribute: "Education"
     insight_metrics: "InsightMetric" = Field(..., alias="insightMetrics")
+    segment_id: str = Field(..., alias="segmentId", description="Canonical ID of the segment the demographic insight attribute maps to.")
+
+    model_config = {'populate_by_name': True}
+
+
+class IncomeDemographicInsight(BaseModel):
+    currency: "Currency"
+    insight_metrics: "InsightMetric" = Field(..., alias="insightMetrics")
+    range: "Range"
     segment_id: str = Field(..., alias="segmentId", description="Canonical ID of the segment the demographic insight attribute maps to.")
 
     model_config = {'populate_by_name': True}

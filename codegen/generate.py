@@ -25,8 +25,14 @@ CONFIG_PATH = PROJECT_ROOT / "codegen" / "spec_config.yaml"
 OUTPUT_DIR = PROJECT_ROOT / "amazon_ads_api" / "generated"
 
 
+def _strip_trailing_ws(content: str) -> str:
+    """Strip trailing whitespace from each line (keeps ruff W293 clean)."""
+    return "\n".join(line.rstrip() for line in content.split("\n"))
+
+
 def _write_if_changed(path: Path, content: str) -> bool:
     """Write file only if content changed. Returns True if written."""
+    content = _strip_trailing_ws(content)
     if path.exists() and path.read_text(encoding="utf-8") == content:
         return False
     path.parent.mkdir(parents=True, exist_ok=True)

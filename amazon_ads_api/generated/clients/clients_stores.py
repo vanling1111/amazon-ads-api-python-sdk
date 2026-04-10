@@ -6,9 +6,9 @@ Title:  Stores
 
 from __future__ import annotations
 
-from typing import Any
+from typing import Any  # noqa: F401
 
-from amazon_ads_api.base import BaseAdsClient, JSONData, JSONList
+from amazon_ads_api.base import BaseAdsClient, JSONData, JSONList  # noqa: F401
 
 try:
     from .models_stores import *  # noqa: F403
@@ -36,7 +36,7 @@ class StoresClient(BaseAdsClient):
     async def get_insights_for_store_api(self, brand_entity_id: str, body: GetInsightsForStoreRequest | dict[str, Any] | None = None) -> JSONData | JSONList:
         """POST /stores/{brandEntityId}/insights
 
-        Stores insights provides information about your store's performance, including traffic and sales. You can access Stores 
+        Stores insights provides information about your store's performance, including traffic and sales. You can access Stores
         """
         endpoint = f"/stores/{brand_entity_id}/insights"
         json_data = None

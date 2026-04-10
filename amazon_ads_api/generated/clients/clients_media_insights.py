@@ -6,9 +6,9 @@ Title:  Media Insights Hub
 
 from __future__ import annotations
 
-from typing import Any
+from typing import Any  # noqa: F401
 
-from amazon_ads_api.base import BaseAdsClient, JSONData, JSONList
+from amazon_ads_api.base import BaseAdsClient, JSONData, JSONList  # noqa: F401
 
 try:
     from .models_media_insights import *  # noqa: F403
@@ -43,7 +43,7 @@ class MediaInsightsClient(BaseAdsClient):
     async def list_historical_reach_curves_metadata(self, body: ListHistoricalReachCurvesMetadataRequestContent | dict[str, Any] | None = None, amazon_ads_account_id: str | None = None, amazon_advertising_api_client_id: str | None = None, amazon_advertising_api_scope: str | None = None) -> JSONData | JSONList:
         """POST /mediaPlan/historicalReachCurvesMetadata/list
 
-        **Authorized resource type**: DSP Rodeo Entity ID, DSP Advertiser Account ID  **Parameter name**: Amazon-Ads-AccountId  
+        **Authorized resource type**: DSP Rodeo Entity ID, DSP Advertiser Account ID  **Parameter name**: Amazon-Ads-AccountId
         """
         endpoint = "/mediaPlan/historicalReachCurvesMetadata/list"
         params: dict[str, Any] = {}

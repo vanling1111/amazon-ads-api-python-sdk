@@ -6,11 +6,25 @@ Title:  D16GDspApiCampaignInsightsV1
 
 from __future__ import annotations
 
-from enum import StrEnum
-from typing import Optional
+from enum import StrEnum  # noqa: F401
+from typing import Any, Optional, Union  # noqa: F401
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field  # noqa: F401
 
+
+
+class PerformancePlusShopperTrait(BaseModel):
+    cost: Optional[float] = None
+    impression_share: float = Field(..., alias="impressionShare")
+    impressions: Optional[int] = None
+    median_time_to_convert_in_hours_per_trait: Optional[float] = Field(None, alias="medianTimeToConvertInHoursPerTrait")
+    off_amazon_conversions: Optional[int] = Field(None, alias="offAmazonConversions")
+    shopper_trait_description: str = Field(..., alias="shopperTraitDescription")
+    shopper_trait_index: int = Field(..., alias="shopperTraitIndex")
+    shopper_trait_name: str = Field(..., alias="shopperTraitName")
+    total_purchases: Optional[int] = Field(None, alias="totalPurchases")
+
+    model_config = {'populate_by_name': True}
 
 
 class PerformancePlusTargetingTactic(StrEnum):
@@ -25,20 +39,6 @@ class PerformancePlusTargetingTactic(StrEnum):
 class TimeToConvertBucket(BaseModel):
     conversion_share: float = Field(..., alias="conversionShare")
     range: str
-
-    model_config = {'populate_by_name': True}
-
-
-class PerformancePlusShopperTrait(BaseModel):
-    cost: Optional[float] = None
-    impression_share: float = Field(..., alias="impressionShare")
-    impressions: Optional[int] = None
-    median_time_to_convert_in_hours_per_trait: Optional[float] = Field(None, alias="medianTimeToConvertInHoursPerTrait")
-    off_amazon_conversions: Optional[int] = Field(None, alias="offAmazonConversions")
-    shopper_trait_description: str = Field(..., alias="shopperTraitDescription")
-    shopper_trait_index: int = Field(..., alias="shopperTraitIndex")
-    shopper_trait_name: str = Field(..., alias="shopperTraitName")
-    total_purchases: Optional[int] = Field(None, alias="totalPurchases")
 
     model_config = {'populate_by_name': True}
 

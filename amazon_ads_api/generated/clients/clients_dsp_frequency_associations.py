@@ -6,9 +6,9 @@ Title:  D16GFMApiFrequencyGroupAssociationV1
 
 from __future__ import annotations
 
-from typing import Any
+from typing import Any  # noqa: F401
 
-from amazon_ads_api.base import BaseAdsClient, JSONData, JSONList
+from amazon_ads_api.base import BaseAdsClient, JSONData, JSONList  # noqa: F401
 
 try:
     from .models_dsp_frequency_associations import *  # noqa: F403
@@ -85,7 +85,7 @@ class DspFrequencyAssociationsClient(BaseAdsClient):
     async def update_frequency_group_campaign_associations_v1(self, body: UpdateFrequencyGroupAssociationsRequestContentV1 | dict[str, Any] | None = None, amazon_ads_account_id: str | None = None, amazon_advertising_api_client_id: str | None = None, amazon_advertising_api_scope: str | None = None) -> JSONData | JSONList:
         """PUT /frequencyGroups/v1/campaignAssociations
 
-        Updates the list of frequency group and campaign associations for a given advertiser. Accepts a maximum of 100 entries. 
+        Updates the list of frequency group and campaign associations for a given advertiser. Accepts a maximum of 100 entries.
         """
         endpoint = "/frequencyGroups/v1/campaignAssociations"
         params: dict[str, Any] = {}
@@ -106,7 +106,7 @@ class DspFrequencyAssociationsClient(BaseAdsClient):
     async def list_frequency_group_campaign_associations_v1(self, body: ListFrequencyGroupAssociationRequestContentV1 | dict[str, Any] | None = None, amazon_ads_account_id: str | None = None, amazon_advertising_api_client_id: str | None = None, amazon_advertising_api_scope: str | None = None) -> JSONData | JSONList:
         """POST /frequencyGroups/v1/campaignAssociations/list
 
-        Lists all associations between specified frequency groups or campaigns. Either a list of frequencyGroupIds or a list of 
+        Lists all associations between specified frequency groups or campaigns. Either a list of frequencyGroupIds or a list of
         """
         endpoint = "/frequencyGroups/v1/campaignAssociations/list"
         params: dict[str, Any] = {}

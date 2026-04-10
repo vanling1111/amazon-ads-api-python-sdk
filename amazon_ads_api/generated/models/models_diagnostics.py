@@ -6,9 +6,10 @@ Title:  Diagnostics
 
 from __future__ import annotations
 
-from typing import Optional
+from enum import StrEnum  # noqa: F401
+from typing import Any, Optional, Union  # noqa: F401
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field  # noqa: F401
 
 
 
@@ -28,13 +29,13 @@ class CampaignDiagnosticsInternalException(BaseModel):
     model_config = {'populate_by_name': True}
 
 
-class IssueType(BaseModel):
-    """Describes the type of the issue, for example FEATURED OFFER, PRODUCT_ELIGIBILITY, MODERATION."""
+class Severity(BaseModel):
+    """Describes the severity of the issue whether it is CRITICAL or WARNING."""
     pass
 
 
-class Severity(BaseModel):
-    """Describes the severity of the issue whether it is CRITICAL or WARNING."""
+class IssueType(BaseModel):
+    """Describes the type of the issue, for example FEATURED OFFER, PRODUCT_ELIGIBILITY, MODERATION."""
     pass
 
 
@@ -47,14 +48,6 @@ class CampaignDiagnosticsRequest(BaseModel):
     max_issues_per_campaign: Optional[int] = Field(None, alias="maxIssuesPerCampaign", description="Sets a limit on the number of issues returned for a campaign. Default value is set to 100 and maximum value supported is")
     next_token: Optional[str] = Field(None, alias="nextToken", description="Operations that return paginated results include a pagination token in this field. To retrieve the next page of results,")
     severity_filter: Optional[list["Severity"]] = Field(None, alias="severityFilter", description="Specifies the issue severities to be included. By default the response will include all issue severities.")
-
-    model_config = {'populate_by_name': True}
-
-
-class Error(BaseModel):
-    error_code: str = Field(..., alias="errorCode", description="Enum indicating the category of error. Example `NOT_FOUND`.")
-    error_message: str = Field(..., alias="errorMessage", description="Error message provided.")
-    item_request_id: str = Field(..., alias="itemRequestId", description="Campaign identifier.")
 
     model_config = {'populate_by_name': True}
 
@@ -91,6 +84,14 @@ class campaignDiagnosticsList(BaseModel):
     """A list of diagnosed campaigns with information on identified issues."""
     campaign_id: str = Field(..., alias="campaignId", description="Campaign identifier.")
     issues_list: list["Issue"] = Field(..., alias="issuesList", description="A list of issues impacting the campaign.")
+
+    model_config = {'populate_by_name': True}
+
+
+class Error(BaseModel):
+    error_code: str = Field(..., alias="errorCode", description="Enum indicating the category of error. Example `NOT_FOUND`.")
+    error_message: str = Field(..., alias="errorMessage", description="Error message provided.")
+    item_request_id: str = Field(..., alias="itemRequestId", description="Campaign identifier.")
 
     model_config = {'populate_by_name': True}
 

@@ -6,10 +6,10 @@ Title:  Advertising Billing
 
 from __future__ import annotations
 
-from enum import StrEnum
-from typing import Optional
+from enum import StrEnum  # noqa: F401
+from typing import Any, Optional, Union  # noqa: F401
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field  # noqa: F401
 
 
 
@@ -74,6 +74,11 @@ class AdPaymentsCountryCodeList(BaseModel):
     pass
 
 
+class AdPaymentsPaymentAgreementType(StrEnum):
+    AUTO_PAY = "AUTO_PAY"
+    PAY_NOW = "PAY_NOW"
+
+
 class AdPaymentsEntityType(StrEnum):
     AGENCY = "AGENCY"
     DSP_ADVERTISING_ACCOUNT = "DSP_ADVERTISING_ACCOUNT"
@@ -81,6 +86,15 @@ class AdPaymentsEntityType(StrEnum):
     MANAGER_ACCOUNT = "MANAGER_ACCOUNT"
     SELLER = "SELLER"
     VENDOR = "VENDOR"
+
+
+class AdPaymentsTarget(BaseModel):
+    agreement_type: "AdPaymentsPaymentAgreementType" = Field(..., alias="agreementType")
+    country_code: "AdPaymentsCountryCode" = Field(..., alias="countryCode")
+    entity_id: Optional[str] = Field(None, alias="entityId", description="The ID associated to the entity in this target.")
+    entity_type: Optional["AdPaymentsEntityType"] = Field(None, alias="entityType")
+
+    model_config = {'populate_by_name': True}
 
 
 class AdPaymentsEntityMarketplace(BaseModel):
@@ -196,20 +210,6 @@ class AdPaymentsPaymentProfile(BaseModel):
     model_config = {'populate_by_name': True}
 
 
-class AdPaymentsPaymentAgreementType(StrEnum):
-    AUTO_PAY = "AUTO_PAY"
-    PAY_NOW = "PAY_NOW"
-
-
-class AdPaymentsTarget(BaseModel):
-    agreement_type: "AdPaymentsPaymentAgreementType" = Field(..., alias="agreementType")
-    country_code: "AdPaymentsCountryCode" = Field(..., alias="countryCode")
-    entity_id: Optional[str] = Field(None, alias="entityId", description="The ID associated to the entity in this target.")
-    entity_type: Optional["AdPaymentsEntityType"] = Field(None, alias="entityType")
-
-    model_config = {'populate_by_name': True}
-
-
 class AdPaymentsPaymentAgreement(BaseModel):
     """Represents an agreement between two parties indicating what profile to use during payment execution."""
     payment_agreement_id: Optional[str] = Field(None, alias="paymentAgreementId", description="The ID associated to this payment agreement.")
@@ -315,8 +315,16 @@ class AdPaymentsError(BaseModel):
     model_config = {'populate_by_name': True}
 
 
-class AdPaymentsNextToken(BaseModel):
-    """To retrieve the next page of results, call the same operation and specify this token in the request. If the nextToken field is empty, there are no further results."""
+class AdPaymentsPayByInvoicePaymentMethod(BaseModel):
+    """Represents Pay By Invoice payment method structure. Pay By Invoice is a type of payment method where the customer receives a physical invoice which they can pay via bank transfer."""
+    eligible_countries: "AdPaymentsCountryCodeList" = Field(..., alias="eligibleCountries")
+    type_: "AdPaymentsPaymentMethodType" = Field(..., alias="type")
+
+    model_config = {'populate_by_name': True}
+
+
+class AdPaymentsPayByInvoicePaymentMethodList(BaseModel):
+    """A list of pay by invoice payment methods."""
     pass
 
 
@@ -348,16 +356,8 @@ class AdPaymentsSellerPayablePaymentMethodList(BaseModel):
     pass
 
 
-class AdPaymentsPayByInvoicePaymentMethod(BaseModel):
-    """Represents Pay By Invoice payment method structure. Pay By Invoice is a type of payment method where the customer receives a physical invoice which they can pay via bank transfer."""
-    eligible_countries: "AdPaymentsCountryCodeList" = Field(..., alias="eligibleCountries")
-    type_: "AdPaymentsPaymentMethodType" = Field(..., alias="type")
-
-    model_config = {'populate_by_name': True}
-
-
-class AdPaymentsPayByInvoicePaymentMethodList(BaseModel):
-    """A list of pay by invoice payment methods."""
+class AdPaymentsNextToken(BaseModel):
+    """To retrieve the next page of results, call the same operation and specify this token in the request. If the nextToken field is empty, there are no further results."""
     pass
 
 
@@ -1150,6 +1150,11 @@ class billingAggregation(BaseModel):
     model_config = {'populate_by_name': True}
 
 
+class billingNotificationImpact(StrEnum):
+    CAMPAIGNS_SUSPENDED = "CAMPAIGNS_SUSPENDED"
+    NO_IMPACT = "NO_IMPACT"
+
+
 class billingNotificationNames(StrEnum):
     ACCOUNT_ERROR = "ACCOUNT_ERROR"
     ACCOUNT_ERROR_IN_SELLER = "ACCOUNT_ERROR_IN_SELLER"
@@ -1223,11 +1228,6 @@ class billingNotificationNames(StrEnum):
     SUSPICIOUS_ACTIVITY = "SUSPICIOUS_ACTIVITY"
     TAX_ID_VALIDATION_IN_PROGRESS = "TAX_ID_VALIDATION_IN_PROGRESS"
     TAX_ID_VALIDATION_REJECTED = "TAX_ID_VALIDATION_REJECTED"
-
-
-class billingNotificationImpact(StrEnum):
-    CAMPAIGNS_SUSPENDED = "CAMPAIGNS_SUSPENDED"
-    NO_IMPACT = "NO_IMPACT"
 
 
 class billingNotificationSeverity(StrEnum):
@@ -1439,6 +1439,59 @@ class governmentInvoiceInformation(BaseModel):
     model_config = {'populate_by_name': True}
 
 
+class invoiceLineCosteventtype(StrEnum):
+    CLICKS = "CLICKS"
+    IMPRESSIONS = "IMPRESSIONS"
+
+
+class invoiceLinePricetype(StrEnum):
+    CPC = "CPC"
+    CPM = "CPM"
+    FIXED_PRICE = "FIXED_PRICE"
+
+
+class invoiceLine(BaseModel):
+    campaign_id: Optional[int] = Field(None, alias="campaignId")
+    campaign_name: Optional[str] = Field(None, alias="campaignName")
+    campaign_tags: Optional[dict[str, str]] = Field(None, alias="campaignTags", description="Campaign tags in the form of string key-value pairs.")
+    commission_amount: Optional["currencyAmount"] = Field(None, alias="commissionAmount")
+    commission_rate: Optional[float] = Field(None, alias="commissionRate")
+    cost: "currencyAmount"
+    cost_event_count: int = Field(..., alias="costEventCount", description="Number of clicks/impressions charged")
+    cost_event_type: invoiceLineCosteventtype = Field(..., alias="costEventType", description="Type of event charged (clicks or impressions)")
+    cost_per_event_type: Optional[float] = Field(None, alias="costPerEventType", description="Ad spends cost (Cost exclusive of adjustments/promotions/fees/etc) per unit (thousand impressions/clicks).")
+    cost_per_unit: float = Field(..., alias="costPerUnit")
+    fees: Optional[list["fee"]] = Field(None, description="Charges can include different fees (see feeType below).")
+    name: str
+    portfolio_id: Optional[int] = Field(None, alias="portfolioId", description="Sponsored Ads only. This identifier maps to one of the portfolios listed in the portfolios section.")
+    price_type: invoiceLinePricetype = Field(..., alias="priceType", description="Metric used for performance measurement.")
+    program_name: Optional["adProgram"] = Field(None, alias="programName")
+    promotion_amount: Optional["currencyAmount"] = Field(None, alias="promotionAmount")
+    purchase_order_number: Optional[str] = Field(None, alias="purchaseOrderNumber")
+    supply_cost: Optional["currencyAmount"] = Field(None, alias="supplyCost")
+
+    model_config = {'populate_by_name': True}
+
+
+class invoiceLines(BaseModel):
+    """Line items for this invoice. For Sponsored Ads, this will be a per-campaign breakdown of charges. For DSP, this will be the line items for the campaign getting invoiced."""
+    pass
+
+
+class portfolio(BaseModel):
+    fee_amount: Optional["currencyAmount"] = Field(None, alias="feeAmount")
+    id_: int = Field(..., alias="id")
+    name: str
+    total_amount: "currencyAmount" = Field(..., alias="totalAmount")
+
+    model_config = {'populate_by_name': True}
+
+
+class portfolios(BaseModel):
+    """Sponsored Ads only. This is a list of portfolios with their name, ID and the total cost of the campaign(s) they contain. This totalAmount corresponds to the sum of the invoice lines tagged with the ID"""
+    pass
+
+
 class taxBreakupIssuertaxinformation(BaseModel):
     tax_id: str = Field(..., alias="taxId", description="Tax registration with government (Ex: VAT ID, GST ID)")
 
@@ -1479,45 +1532,6 @@ class taxDetail(BaseModel):
     model_config = {'populate_by_name': True}
 
 
-class invoiceLineCosteventtype(StrEnum):
-    CLICKS = "CLICKS"
-    IMPRESSIONS = "IMPRESSIONS"
-
-
-class invoiceLinePricetype(StrEnum):
-    CPC = "CPC"
-    CPM = "CPM"
-    FIXED_PRICE = "FIXED_PRICE"
-
-
-class invoiceLine(BaseModel):
-    campaign_id: Optional[int] = Field(None, alias="campaignId")
-    campaign_name: Optional[str] = Field(None, alias="campaignName")
-    campaign_tags: Optional[dict[str, str]] = Field(None, alias="campaignTags", description="Campaign tags in the form of string key-value pairs.")
-    commission_amount: Optional["currencyAmount"] = Field(None, alias="commissionAmount")
-    commission_rate: Optional[float] = Field(None, alias="commissionRate")
-    cost: "currencyAmount"
-    cost_event_count: int = Field(..., alias="costEventCount", description="Number of clicks/impressions charged")
-    cost_event_type: invoiceLineCosteventtype = Field(..., alias="costEventType", description="Type of event charged (clicks or impressions)")
-    cost_per_event_type: Optional[float] = Field(None, alias="costPerEventType", description="Ad spends cost (Cost exclusive of adjustments/promotions/fees/etc) per unit (thousand impressions/clicks).")
-    cost_per_unit: float = Field(..., alias="costPerUnit")
-    fees: Optional[list["fee"]] = Field(None, description="Charges can include different fees (see feeType below).")
-    name: str
-    portfolio_id: Optional[int] = Field(None, alias="portfolioId", description="Sponsored Ads only. This identifier maps to one of the portfolios listed in the portfolios section.")
-    price_type: invoiceLinePricetype = Field(..., alias="priceType", description="Metric used for performance measurement.")
-    program_name: Optional["adProgram"] = Field(None, alias="programName")
-    promotion_amount: Optional["currencyAmount"] = Field(None, alias="promotionAmount")
-    purchase_order_number: Optional[str] = Field(None, alias="purchaseOrderNumber")
-    supply_cost: Optional["currencyAmount"] = Field(None, alias="supplyCost")
-
-    model_config = {'populate_by_name': True}
-
-
-class invoiceLines(BaseModel):
-    """Line items for this invoice. For Sponsored Ads, this will be a per-campaign breakdown of charges. For DSP, this will be the line items for the campaign getting invoiced."""
-    pass
-
-
 class paymentMethod(StrEnum):
     CREDIT_CARD = "CREDIT_CARD"
     DEDUCT_FROM_PAYMENT = "DEDUCT_FROM_PAYMENT"
@@ -1552,38 +1566,6 @@ class payment(BaseModel):
 
 class payments(BaseModel):
     """List of payments made against the invoice."""
-    pass
-
-
-class thirdPartyContactInformation(BaseModel):
-    """Additional contacts. This field is used in cases such as Loi Sapin in France where both advertiser and agency addresses need to be provided."""
-    pass
-
-
-class promotion(BaseModel):
-    amount: "currencyAmount"
-    description: str
-    last_consumed_date: "date" = Field(..., alias="lastConsumedDate")
-
-    model_config = {'populate_by_name': True}
-
-
-class promotions(BaseModel):
-    """List of promotions applied to the charges in this invoice."""
-    pass
-
-
-class portfolio(BaseModel):
-    fee_amount: Optional["currencyAmount"] = Field(None, alias="feeAmount")
-    id_: int = Field(..., alias="id")
-    name: str
-    total_amount: "currencyAmount" = Field(..., alias="totalAmount")
-
-    model_config = {'populate_by_name': True}
-
-
-class portfolios(BaseModel):
-    """Sponsored Ads only. This is a list of portfolios with their name, ID and the total cost of the campaign(s) they contain. This totalAmount corresponds to the sum of the invoice lines tagged with the ID"""
     pass
 
 
@@ -1623,6 +1605,24 @@ class invoiceSummary(BaseModel):
     to_date: "date" = Field(..., alias="toDate")
 
     model_config = {'populate_by_name': True}
+
+
+class thirdPartyContactInformation(BaseModel):
+    """Additional contacts. This field is used in cases such as Loi Sapin in France where both advertiser and agency addresses need to be provided."""
+    pass
+
+
+class promotion(BaseModel):
+    amount: "currencyAmount"
+    description: str
+    last_consumed_date: "date" = Field(..., alias="lastConsumedDate")
+
+    model_config = {'populate_by_name': True}
+
+
+class promotions(BaseModel):
+    """List of promotions applied to the charges in this invoice."""
+    pass
 
 
 class invoice(BaseModel):

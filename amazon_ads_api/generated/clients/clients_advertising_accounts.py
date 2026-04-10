@@ -6,9 +6,9 @@ Title:  Advertising Accounts
 
 from __future__ import annotations
 
-from typing import Any
+from typing import Any  # noqa: F401
 
-from amazon_ads_api.base import BaseAdsClient, JSONData, JSONList
+from amazon_ads_api.base import BaseAdsClient, JSONData, JSONList  # noqa: F401
 
 try:
     from .models_advertising_accounts import *  # noqa: F403
@@ -22,7 +22,7 @@ class AdvertisingAccountsClient(BaseAdsClient):
     async def register_ads_account(self, body: RegisterAdsAccountRequestContent | dict[str, Any] | None = None, amazon_advertising_api_client_id: str | None = None) -> JSONData | JSONList:
         """POST /adsAccounts
 
-        Create a new advertising account tied to a specific Amazon vendor, seller or author, or to a business who does not sell 
+        Create a new advertising account tied to a specific Amazon vendor, seller or author, or to a business who does not sell
         """
         endpoint = "/adsAccounts"
         params: dict[str, Any] = {}

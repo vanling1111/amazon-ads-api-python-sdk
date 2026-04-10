@@ -6,9 +6,9 @@ Title:  Campaign Management
 
 from __future__ import annotations
 
-from typing import Any
+from typing import Any  # noqa: F401
 
-from amazon_ads_api.base import BaseAdsClient, JSONData, JSONList
+from amazon_ads_api.base import BaseAdsClient, JSONData, JSONList  # noqa: F401
 
 try:
     from .models_campaign_management import *  # noqa: F403
@@ -22,7 +22,7 @@ class CampaignManagementClient(BaseAdsClient):
     async def copy_campaigns(self, body: copyCampaignsRequest | dict[str, Any] | None = None, amazon_advertising_api_client_id: str | None = None, amazon_advertising_api_scope: str | None = None, amazon_ads_account_id: str | None = None) -> JSONData | JSONList:
         """POST /campaigns/copy
 
-        This API copies a campaign within a country or from one country to other country(s) within a region. When campaigns are 
+        This API copies a campaign within a country or from one country to other country(s) within a region. When campaigns are
         """
         endpoint = "/campaigns/copy"
         params: dict[str, Any] = {}

@@ -6,10 +6,10 @@ Title:  Amazon Marketing Stream
 
 from __future__ import annotations
 
-from enum import StrEnum
-from typing import Optional
+from enum import StrEnum  # noqa: F401
+from typing import Any, Optional, Union  # noqa: F401
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field  # noqa: F401
 
 
 
@@ -20,16 +20,16 @@ class AccessForbiddenErrorResponseContent(BaseModel):
     model_config = {'populate_by_name': True}
 
 
-class FirehoseDestination(BaseModel):
-    delivery_stream_arn: str = Field(..., alias="deliveryStreamArn")
-    subscriber_role_arn: str = Field(..., alias="subscriberRoleArn")
-    subscription_role_arn: str = Field(..., alias="subscriptionRoleArn")
+class SqsDestination(BaseModel):
+    queue_arn: str = Field(..., alias="queueArn")
 
     model_config = {'populate_by_name': True}
 
 
-class SqsDestination(BaseModel):
-    queue_arn: str = Field(..., alias="queueArn")
+class FirehoseDestination(BaseModel):
+    delivery_stream_arn: str = Field(..., alias="deliveryStreamArn")
+    subscriber_role_arn: str = Field(..., alias="subscriberRoleArn")
+    subscription_role_arn: str = Field(..., alias="subscriptionRoleArn")
 
     model_config = {'populate_by_name': True}
 

@@ -6,10 +6,10 @@ Title:  Advertising User Permissions Management
 
 from __future__ import annotations
 
-from enum import StrEnum
-from typing import Optional
+from enum import StrEnum  # noqa: F401
+from typing import Any, Optional, Union  # noqa: F401
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field  # noqa: F401
 
 
 
@@ -155,15 +155,15 @@ class PermissionId(BaseModel):
     model_config = {'populate_by_name': True}
 
 
+class Type(StrEnum):
+    CUSTOM_PERMISSION_SET = "CUSTOM_PERMISSION_SET"
+    ROLE = "ROLE"
+
+
 class Role(StrEnum):
     ADMIN = "ADMIN"
     EDITOR = "EDITOR"
     VIEWER = "VIEWER"
-
-
-class Type(StrEnum):
-    CUSTOM_PERMISSION_SET = "CUSTOM_PERMISSION_SET"
-    ROLE = "ROLE"
 
 
 class PermissionSet(BaseModel):

@@ -6,10 +6,10 @@ Title:  DSP Guidance
 
 from __future__ import annotations
 
-from enum import StrEnum
-from typing import Optional, Union
+from enum import StrEnum  # noqa: F401
+from typing import Any, Optional, Union  # noqa: F401
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field  # noqa: F401
 
 
 
@@ -113,6 +113,40 @@ class execution(BaseModel):
     model_config = {'populate_by_name': True}
 
 
+class guidanceCallToAction(BaseModel):
+    label: Optional[str] = Field(None, description="Button or link label for call-to-action.")
+    link: Optional[str] = Field(None, description="Optional link for call-to-action.")
+
+    model_config = {'populate_by_name': True}
+
+
+class guidanceTag(BaseModel):
+    """A structured type used to store additional metadata."""
+    pass
+
+
+class guidanceTarget(BaseModel):
+    """An object targeted by guidance."""
+    name: Optional[str] = Field(None, description="Optional display name of the guidance target.")
+
+    model_config = {'populate_by_name': True}
+
+
+class guidanceEntityTarget(BaseModel):
+    """An entity targeted by guidance."""
+    pass
+
+
+class guidanceAdvertiserTarget(BaseModel):
+    """An advertiser targeted by guidance."""
+    pass
+
+
+class guidanceOrderFlightTarget(BaseModel):
+    """An order flight targeted by guidance."""
+    pass
+
+
 class recommendationText(BaseModel):
     """Description text for the recommendation."""
     pass
@@ -123,14 +157,12 @@ class type(BaseModel):
     pass
 
 
-class marketplaceId(BaseModel):
-    """The identifier of the marketplace to which the recommendation is associated with."""
-    pass
+class tableColumn(BaseModel):
+    """A single column to be rendered in the front-end."""
+    header: str = Field(..., description="Column header")
+    width: int = Field(..., description="Column width ratio expressed as whole integer - does not necessarily add up to 100. Ratio must be positive.  E.g. four c")
 
-
-class guidanceType(StrEnum):
-    ALERT = "ALERT"
-    OPPORTUNITY = "OPPORTUNITY"
+    model_config = {'populate_by_name': True}
 
 
 class recommendationId(BaseModel):
@@ -138,17 +170,9 @@ class recommendationId(BaseModel):
     pass
 
 
-class userStatus(StrEnum):
-    DEFERRED = "DEFERRED"
-    DISMISSED = "DISMISSED"
-
-
-class tableColumn(BaseModel):
-    """A single column to be rendered in the front-end."""
-    header: str = Field(..., description="Column header")
-    width: int = Field(..., description="Column width ratio expressed as whole integer - does not necessarily add up to 100. Ratio must be positive.  E.g. four c")
-
-    model_config = {'populate_by_name': True}
+class marketplaceId(BaseModel):
+    """The identifier of the marketplace to which the recommendation is associated with."""
+    pass
 
 
 class quickActionActiontype(StrEnum):
@@ -183,6 +207,11 @@ class quickactionsData(BaseModel):
     execution_history: Optional[list["execution"]] = Field(None, alias="executionHistory", description="The history of existing QuickAction executions on this recommendation.")
 
     model_config = {'populate_by_name': True}
+
+
+class userStatus(StrEnum):
+    DEFERRED = "DEFERRED"
+    DISMISSED = "DISMISSED"
 
 
 class targetType(StrEnum):
@@ -233,6 +262,11 @@ class target(BaseModel):
     type_: Optional[targetType] = Field(None, alias="type", description="Type of the target, e.g. RODEO_ORDER.")
 
     model_config = {'populate_by_name': True}
+
+
+class guidanceType(StrEnum):
+    ALERT = "ALERT"
+    OPPORTUNITY = "OPPORTUNITY"
 
 
 class recommendation(BaseModel):
@@ -298,25 +332,8 @@ class guidanceName(StrEnum):
     ZERO_KPI_GUIDANCE = "ZERO_KPI_GUIDANCE"
 
 
-class guidanceTarget(BaseModel):
-    """An object targeted by guidance."""
-    name: Optional[str] = Field(None, description="Optional display name of the guidance target.")
-
-    model_config = {'populate_by_name': True}
-
-
-class guidanceOrderFlightTarget(BaseModel):
-    """An order flight targeted by guidance."""
-    pass
-
-
-class guidanceEntityTarget(BaseModel):
-    """An entity targeted by guidance."""
-    pass
-
-
-class guidanceLineItemTarget(BaseModel):
-    """A line item targeted by guidance."""
+class guidanceOrderTarget(BaseModel):
+    """An order targeted by guidance."""
     pass
 
 
@@ -325,25 +342,8 @@ class guidanceMarketplaceTarget(BaseModel):
     pass
 
 
-class guidanceAdvertiserTarget(BaseModel):
-    """An advertiser targeted by guidance."""
-    pass
-
-
-class guidanceCallToAction(BaseModel):
-    label: Optional[str] = Field(None, description="Button or link label for call-to-action.")
-    link: Optional[str] = Field(None, description="Optional link for call-to-action.")
-
-    model_config = {'populate_by_name': True}
-
-
-class guidanceOrderTarget(BaseModel):
-    """An order targeted by guidance."""
-    pass
-
-
-class guidanceTag(BaseModel):
-    """A structured type used to store additional metadata."""
+class guidanceLineItemTarget(BaseModel):
+    """A line item targeted by guidance."""
     pass
 
 
@@ -419,17 +419,17 @@ class language(StrEnum):
     ZH_TW = "zh-TW"
 
 
+class nextToken(BaseModel):
+    """Opaque pagination token returned in the query response to be provided in subsequent calls to retrieve paginated recommendations."""
+    pass
+
+
 class listGuidanceRequestFilters(BaseModel):
     """Optional filters to apply to generated guidance."""
     guidance_names: Optional[list["guidanceName"]] = Field(None, alias="guidanceNames", description="Limit guidance to the specified guidance names. If unset, defaults to returning all guidance.")
     include_recommendations: Optional[bool] = Field(None, alias="includeRecommendations", description="Specify if individual recommendations should be included in the guidance response. Useful to reduce response payload siz")
 
     model_config = {'populate_by_name': True}
-
-
-class nextToken(BaseModel):
-    """Opaque pagination token returned in the query response to be provided in subsequent calls to retrieve paginated recommendations."""
-    pass
 
 
 class listGuidanceV1RequestBase(BaseModel):

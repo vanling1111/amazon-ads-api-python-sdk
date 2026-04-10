@@ -6,9 +6,10 @@ Title:  Advertising Invitations
 
 from __future__ import annotations
 
-from typing import Optional
+from enum import StrEnum  # noqa: F401
+from typing import Any, Optional, Union  # noqa: F401
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field  # noqa: F401
 
 
 
@@ -31,13 +32,13 @@ class User(BaseModel):
     model_config = {'populate_by_name': True}
 
 
-class Role(BaseModel):
+class Permission(BaseModel):
     name: Optional[str] = None
 
     model_config = {'populate_by_name': True}
 
 
-class Permission(BaseModel):
+class Role(BaseModel):
     name: Optional[str] = None
 
     model_config = {'populate_by_name': True}

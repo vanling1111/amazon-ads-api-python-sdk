@@ -6,9 +6,9 @@ Title:  Amazon Ads API for Data Providers.
 
 from __future__ import annotations
 
-from typing import Any
+from typing import Any  # noqa: F401
 
-from amazon_ads_api.base import BaseAdsClient, JSONData, JSONList
+from amazon_ads_api.base import BaseAdsClient, JSONData, JSONList  # noqa: F401
 
 try:
     from .models_data_provider_v2 import *  # noqa: F403

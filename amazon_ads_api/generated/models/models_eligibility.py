@@ -6,10 +6,10 @@ Title:  Eligibility
 
 from __future__ import annotations
 
-from enum import StrEnum
-from typing import Optional
+from enum import StrEnum  # noqa: F401
+from typing import Any, Optional, Union  # noqa: F401
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field  # noqa: F401
 
 
 
@@ -86,6 +86,11 @@ class EligibilityStatus(BaseModel):
     model_config = {'populate_by_name': True}
 
 
+class IneligibleLevel(StrEnum):
+    INELIGIBLE = "INELIGIBLE"
+    INELIGIBLE_WITH_RESOLUTION = "INELIGIBLE_WITH_RESOLUTION"
+
+
 class ReasonCode(StrEnum):
     ACCOUNT_SUSPENDED = "ACCOUNT_SUSPENDED"
     ADS_TERMS_NOT_ACCEPTED = "ADS_TERMS_NOT_ACCEPTED"
@@ -127,11 +132,6 @@ class ReasonCode(StrEnum):
     TAX_INFO_NOT_COMPLETE = "TAX_INFO_NOT_COMPLETE"
     UNKNOWN = "UNKNOWN"
     VETTING_FAILURE = "VETTING_FAILURE"
-
-
-class IneligibleLevel(StrEnum):
-    INELIGIBLE = "INELIGIBLE"
-    INELIGIBLE_WITH_RESOLUTION = "INELIGIBLE_WITH_RESOLUTION"
 
 
 class ReasonItem(BaseModel):

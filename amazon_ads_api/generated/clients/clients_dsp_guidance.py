@@ -6,9 +6,9 @@ Title:  DSP Guidance
 
 from __future__ import annotations
 
-from typing import Any
+from typing import Any  # noqa: F401
 
-from amazon_ads_api.base import BaseAdsClient, JSONData, JSONList
+from amazon_ads_api.base import BaseAdsClient, JSONData, JSONList  # noqa: F401
 
 try:
     from .models_dsp_guidance import *  # noqa: F403
@@ -45,7 +45,7 @@ class DspGuidanceClient(BaseAdsClient):
     async def list_advertiser_guidance_v1(self, body: listAdvertiserGuidanceV1Request | dict[str, Any] | None = None, accept_language: str | None = None, amazon_advertising_api_client_id: str | None = None, amazon_ads_account_id: str | None = None, amazon_advertising_api_scope: str | None = None) -> JSONData | JSONList:
         """POST /dsp/v1/guidance/advertisers/list
 
-        Retrieves a list of dynamically generated guidance based on recommendations present for a list of advertisers specified 
+        Retrieves a list of dynamically generated guidance based on recommendations present for a list of advertisers specified
         """
         endpoint = "/dsp/v1/guidance/advertisers/list"
         params: dict[str, Any] = {}

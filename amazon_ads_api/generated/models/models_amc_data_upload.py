@@ -6,39 +6,16 @@ Title:  Advertiser Data Upload
 
 from __future__ import annotations
 
-from enum import StrEnum
-from typing import Optional
+from enum import StrEnum  # noqa: F401
+from typing import Any, Optional, Union  # noqa: F401
 
-from pydantic import BaseModel, Field
-
-
-
-class DataType(StrEnum):
-    DATE = "DATE"
-    DECIMAL = "DECIMAL"
-    INTEGER = "INTEGER"
-    LONG = "LONG"
-    STRING = "STRING"
-    TIMESTAMP = "TIMESTAMP"
+from pydantic import BaseModel, Field  # noqa: F401
 
 
-class ConsentType(StrEnum):
-    AMZN_AD_STORAGE = "AMZN_AD_STORAGE"
-    AMZN_USER_DATA = "AMZN_USER_DATA"
-    GPP = "GPP"
-    TCF = "TCF"
 
-
-class ExternalIdentityType(StrEnum):
-    EXPERIAN = "EXPERIAN"
-    IDFA = "IDFA"
-    KANTAR = "KANTAR"
-    LIVERAMP = "LIVERAMP"
-    MAID = "MAID"
-    MERKLE = "MERKLE"
-    NEUSTAR = "NEUSTAR"
-    REALID = "REALID"
-    SAMBATV = "SAMBATV"
+class ColumnType(StrEnum):
+    DIMENSION = "DIMENSION"
+    METRIC = "METRIC"
 
 
 class HashedPiiType(StrEnum):
@@ -53,14 +30,37 @@ class HashedPiiType(StrEnum):
     ZIP = "ZIP"
 
 
+class ExternalIdentityType(StrEnum):
+    EXPERIAN = "EXPERIAN"
+    IDFA = "IDFA"
+    KANTAR = "KANTAR"
+    LIVERAMP = "LIVERAMP"
+    MAID = "MAID"
+    MERKLE = "MERKLE"
+    NEUSTAR = "NEUSTAR"
+    REALID = "REALID"
+    SAMBATV = "SAMBATV"
+
+
 class UserIdType(BaseModel):
     """Specifies the type of an identity. An identity column may represent either a single hashed PII attribute, or an external identity in one of the supported identity spaces."""
     pass
 
 
-class ColumnType(StrEnum):
-    DIMENSION = "DIMENSION"
-    METRIC = "METRIC"
+class ConsentType(StrEnum):
+    AMZN_AD_STORAGE = "AMZN_AD_STORAGE"
+    AMZN_USER_DATA = "AMZN_USER_DATA"
+    GPP = "GPP"
+    TCF = "TCF"
+
+
+class DataType(StrEnum):
+    DATE = "DATE"
+    DECIMAL = "DECIMAL"
+    INTEGER = "INTEGER"
+    LONG = "LONG"
+    STRING = "STRING"
+    TIMESTAMP = "TIMESTAMP"
 
 
 class Column(BaseModel):
@@ -175,13 +175,13 @@ class CsvDataFormat(BaseModel):
     model_config = {'populate_by_name': True}
 
 
+class ParquetDataFormat(StrEnum):
+    PARQUET_DATA_FORMAT = "PARQUET_DATA_FORMAT"
+
+
 class JsonDataFormat(StrEnum):
     DOCUMENT = "DOCUMENT"
     LINES = "LINES"
-
-
-class ParquetDataFormat(StrEnum):
-    PARQUET_DATA_FORMAT = "PARQUET_DATA_FORMAT"
 
 
 class FileFormat(BaseModel):
@@ -222,17 +222,17 @@ class CreateUploadResponseContent(BaseModel):
     model_config = {'populate_by_name': True}
 
 
-class HashedIdentity(BaseModel):
-    """One or more pairs of a Hashed PII type and corresponding hashed value, representing a single individual to be deleted."""
-    __root__: dict[str, str] = {}
-
-
 class ExternalIdentity(BaseModel):
     """Representation of an External Identity to be removed. Contains the type of the ID, and the String value of the ID."""
     type_: "ExternalIdentityType" = Field(..., alias="type")
     value: str
 
     model_config = {'populate_by_name': True}
+
+
+class HashedIdentity(BaseModel):
+    """One or more pairs of a Hashed PII type and corresponding hashed value, representing a single individual to be deleted."""
+    __root__: dict[str, str] = {}
 
 
 class Identity(BaseModel):

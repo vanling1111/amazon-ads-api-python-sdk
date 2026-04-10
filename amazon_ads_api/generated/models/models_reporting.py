@@ -6,18 +6,11 @@ Title:  Offline Report
 
 from __future__ import annotations
 
-from enum import StrEnum
-from typing import Optional
+from enum import StrEnum  # noqa: F401
+from typing import Any, Optional, Union  # noqa: F401
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field  # noqa: F401
 
-
-
-class AsyncReportFilter(BaseModel):
-    field: Optional[str] = Field(None, description="The field name of the filter")
-    values: Optional[list[str]] = Field(None, description="The values to be filtered by")
-
-    model_config = {'populate_by_name': True}
 
 
 class AsyncReportAdProduct(StrEnum):
@@ -27,6 +20,13 @@ class AsyncReportAdProduct(StrEnum):
     SPONSORED_DISPLAY = "SPONSORED_DISPLAY"
     SPONSORED_PRODUCTS = "SPONSORED_PRODUCTS"
     SPONSORED_TELEVISION = "SPONSORED_TELEVISION"
+
+
+class AsyncReportFilter(BaseModel):
+    field: Optional[str] = Field(None, description="The field name of the filter")
+    values: Optional[list[str]] = Field(None, description="The values to be filtered by")
+
+    model_config = {'populate_by_name': True}
 
 
 class AsyncReportConfigurationFormat(StrEnum):

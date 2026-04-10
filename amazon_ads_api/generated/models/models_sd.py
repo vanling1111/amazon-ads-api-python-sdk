@@ -6,10 +6,10 @@ Title:  Sponsored Display
 
 from __future__ import annotations
 
-from enum import StrEnum
-from typing import Any, Optional
+from enum import StrEnum  # noqa: F401
+from typing import Any, Optional, Union  # noqa: F401
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field  # noqa: F401
 
 
 
@@ -115,6 +115,46 @@ class CreateBudgetRulesResponse(BaseModel):
     model_config = {'populate_by_name': True}
 
 
+class EventTypeRuleDuration(BaseModel):
+    """Object representing event type rule duration."""
+    end_date: Optional[str] = Field(None, alias="endDate", description="The event end date in YYYYMMDD format. Read-only.")
+    event_id: str = Field(..., alias="eventId", description="The event identifier. This value is available from the budget rules recommendation API.")
+    event_name: Optional[str] = Field(None, alias="eventName", description="The event name. Read-only.")
+    start_date: Optional[str] = Field(None, alias="startDate", description="The event start date in YYYYMMDD format. Read-only. Note that this field is present only for announced events.")
+
+    model_config = {'populate_by_name': True}
+
+
+class DateRangeTypeRuleDuration(BaseModel):
+    """Object representing date range type rule duration."""
+    end_date: Optional[str] = Field(None, alias="endDate", description="The end date of the budget rule in YYYYMMDD format. The end date is inclusive. Required to be equal or greater than `sta")
+    start_date: str = Field(..., alias="startDate", description="The start date of the budget rule in YYYYMMDD format. The start date is inclusive. Required to be greater than or equal ")
+
+    model_config = {'populate_by_name': True}
+
+
+class RuleDuration(BaseModel):
+    date_range_type_rule_duration: Optional["DateRangeTypeRuleDuration"] = Field(None, alias="dateRangeTypeRuleDuration")
+    event_type_rule_duration: Optional["EventTypeRuleDuration"] = Field(None, alias="eventTypeRuleDuration")
+
+    model_config = {'populate_by_name': True}
+
+
+class PerformanceMetric(StrEnum):
+    ACOS = "ACOS"
+    CTR = "CTR"
+    CVR = "CVR"
+    ROAS = "ROAS"
+
+
+class PerformanceMeasureCondition(BaseModel):
+    comparison_operator: "ComparisonOperator" = Field(..., alias="comparisonOperator")
+    metric_name: "PerformanceMetric" = Field(..., alias="metricName")
+    threshold: float = Field(..., description="The performance threshold value.")
+
+    model_config = {'populate_by_name': True}
+
+
 class timeOfDay(BaseModel):
     end_time: Optional[str] = Field(None, alias="endTime", description="The end time of intra-day budget rule window in the format 'hh:mm:ss'. Required to be greater than start-time.")
     start_time: Optional[str] = Field(None, alias="startTime", description="The start time of intra-day budget rule window in the format 'hh:mm:ss'")
@@ -145,26 +185,6 @@ class Recurrence(BaseModel):
     model_config = {'populate_by_name': True}
 
 
-class PerformanceMetric(StrEnum):
-    ACOS = "ACOS"
-    CTR = "CTR"
-    CVR = "CVR"
-    ROAS = "ROAS"
-
-
-class PerformanceMeasureCondition(BaseModel):
-    comparison_operator: "ComparisonOperator" = Field(..., alias="comparisonOperator")
-    metric_name: "PerformanceMetric" = Field(..., alias="metricName")
-    threshold: float = Field(..., description="The performance threshold value.")
-
-    model_config = {'populate_by_name': True}
-
-
-class SDRuleType(StrEnum):
-    PERFORMANCE = "PERFORMANCE"
-    SCHEDULE = "SCHEDULE"
-
-
 class budgetIncreaseBy(BaseModel):
     type_: "BudgetChangeType" = Field(..., alias="type")
     value: float = Field(..., description="The budget value.")
@@ -172,29 +192,9 @@ class budgetIncreaseBy(BaseModel):
     model_config = {'populate_by_name': True}
 
 
-class EventTypeRuleDuration(BaseModel):
-    """Object representing event type rule duration."""
-    end_date: Optional[str] = Field(None, alias="endDate", description="The event end date in YYYYMMDD format. Read-only.")
-    event_id: str = Field(..., alias="eventId", description="The event identifier. This value is available from the budget rules recommendation API.")
-    event_name: Optional[str] = Field(None, alias="eventName", description="The event name. Read-only.")
-    start_date: Optional[str] = Field(None, alias="startDate", description="The event start date in YYYYMMDD format. Read-only. Note that this field is present only for announced events.")
-
-    model_config = {'populate_by_name': True}
-
-
-class DateRangeTypeRuleDuration(BaseModel):
-    """Object representing date range type rule duration."""
-    end_date: Optional[str] = Field(None, alias="endDate", description="The end date of the budget rule in YYYYMMDD format. The end date is inclusive. Required to be equal or greater than `sta")
-    start_date: str = Field(..., alias="startDate", description="The start date of the budget rule in YYYYMMDD format. The start date is inclusive. Required to be greater than or equal ")
-
-    model_config = {'populate_by_name': True}
-
-
-class RuleDuration(BaseModel):
-    date_range_type_rule_duration: Optional["DateRangeTypeRuleDuration"] = Field(None, alias="dateRangeTypeRuleDuration")
-    event_type_rule_duration: Optional["EventTypeRuleDuration"] = Field(None, alias="eventTypeRuleDuration")
-
-    model_config = {'populate_by_name': True}
+class SDRuleType(StrEnum):
+    PERFORMANCE = "PERFORMANCE"
+    SCHEDULE = "SCHEDULE"
 
 
 class SDBudgetRuleDetails(BaseModel):
@@ -866,6 +866,30 @@ class SDTacticV31(StrEnum):
     REMARKETING = "remarketing"
 
 
+class SDTargetingPredicateV31Type(StrEnum):
+    ASINAGERANGESAMEAS = "asinAgeRangeSameAs"
+    ASINBRANDSAMEAS = "asinBrandSameAs"
+    ASINCATEGORYSAMEAS = "asinCategorySameAs"
+    ASINGENRESAMEAS = "asinGenreSameAs"
+    ASINISPRIMESHIPPINGELIGIBLE = "asinIsPrimeShippingEligible"
+    ASINPRICEBETWEEN = "asinPriceBetween"
+    ASINPRICEGREATERTHAN = "asinPriceGreaterThan"
+    ASINPRICELESSTHAN = "asinPriceLessThan"
+    ASINREVIEWRATINGBETWEEN = "asinReviewRatingBetween"
+    ASINREVIEWRATINGGREATERTHAN = "asinReviewRatingGreaterThan"
+    ASINREVIEWRATINGLESSTHAN = "asinReviewRatingLessThan"
+    ASINSAMEAS = "asinSameAs"
+    SIMILARPRODUCT = "similarProduct"
+
+
+class SDTargetingPredicateV31(BaseModel):
+    """A predicate to match against in the Targeting Expression (only applicable to Product targeting - T00020).  * All IDs passed for category and brand-targeting predicates must be valid IDs in the Amazon """
+    type_: SDTargetingPredicateV31Type = Field(..., alias="type")
+    value: Optional[str] = Field(None, description="The value to be targeted.")
+
+    model_config = {'populate_by_name': True}
+
+
 class SDTargetingPredicateBaseV31Type(StrEnum):
     ASINAGERANGESAMEAS = "asinAgeRangeSameAs"
     ASINBRANDSAMEAS = "asinBrandSameAs"
@@ -904,30 +928,6 @@ class SDTargetingPredicateNestedV31(BaseModel):
     """A behavioral event and list of targeting predicates that represents an Audience to target (only applicable to Audience targeting - T00030).  * For auto ASIN-grain targeting, the value array must conta"""
     type_: SDTargetingPredicateNestedV31Type = Field(..., alias="type")
     value: list["SDTargetingPredicateBaseV31"]
-
-    model_config = {'populate_by_name': True}
-
-
-class SDTargetingPredicateV31Type(StrEnum):
-    ASINAGERANGESAMEAS = "asinAgeRangeSameAs"
-    ASINBRANDSAMEAS = "asinBrandSameAs"
-    ASINCATEGORYSAMEAS = "asinCategorySameAs"
-    ASINGENRESAMEAS = "asinGenreSameAs"
-    ASINISPRIMESHIPPINGELIGIBLE = "asinIsPrimeShippingEligible"
-    ASINPRICEBETWEEN = "asinPriceBetween"
-    ASINPRICEGREATERTHAN = "asinPriceGreaterThan"
-    ASINPRICELESSTHAN = "asinPriceLessThan"
-    ASINREVIEWRATINGBETWEEN = "asinReviewRatingBetween"
-    ASINREVIEWRATINGGREATERTHAN = "asinReviewRatingGreaterThan"
-    ASINREVIEWRATINGLESSTHAN = "asinReviewRatingLessThan"
-    ASINSAMEAS = "asinSameAs"
-    SIMILARPRODUCT = "similarProduct"
-
-
-class SDTargetingPredicateV31(BaseModel):
-    """A predicate to match against in the Targeting Expression (only applicable to Product targeting - T00020).  * All IDs passed for category and brand-targeting predicates must be valid IDs in the Amazon """
-    type_: SDTargetingPredicateV31Type = Field(..., alias="type")
-    value: Optional[str] = Field(None, description="The value to be targeted.")
 
     model_config = {'populate_by_name': True}
 

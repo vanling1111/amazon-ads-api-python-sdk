@@ -6,10 +6,10 @@ Title:  Recommendations
 
 from __future__ import annotations
 
-from enum import StrEnum
-from typing import Optional
+from enum import StrEnum  # noqa: F401
+from typing import Any, Optional, Union  # noqa: F401
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field  # noqa: F401
 
 
 
@@ -44,156 +44,14 @@ class ApplyRecommendationFailure(BaseModel):
     model_config = {'populate_by_name': True}
 
 
-class PublishedBy(StrEnum):
-    AMAZON_ADS_ACCOUNT_TEAM = "AMAZON_ADS_ACCOUNT_TEAM"
-
-
-class PublishMetadata(BaseModel):
-    """Metadata for publishing the recommendation."""
-    published_by: "PublishedBy" = Field(..., alias="publishedBy")
-    published_to_amazon_ad_console: bool = Field(..., alias="publishedToAmazonAdConsole", description="Indicates if recommendation was published to Amazon Ad Console.")
+class BudgetRuleIncreaseBy(BaseModel):
+    value: float = Field(..., description="Budget of the rule.")
 
     model_config = {'populate_by_name': True}
 
 
-class EstimatedImpactImpressions(BaseModel):
-    """Estimated impact of the recommendation on impressions."""
-    forecasted_current_lower_bound: Optional[float] = Field(None, alias="forecastedCurrentLowerBound", description="Lower bound of the forecasted number of impressions for the campaign, based on the current campaign settings and data fr")
-    forecasted_current_upper_bound: Optional[float] = Field(None, alias="forecastedCurrentUpperBound", description="Upper bound of the forecasted number of impressions for the campaign, based on the current campaign settings and data fr")
-    forecasted_recommended_lower_bound: Optional[float] = Field(None, alias="forecastedRecommendedLowerBound", description="Lower bound of the forecasted number of impressions for the campaign, if the recommendation is adopted, based on data fr")
-    forecasted_recommended_upper_bound: Optional[float] = Field(None, alias="forecastedRecommendedUpperBound", description="Upper bound of the forecasted number of impressions for the campaign, if the recommendation is adopted, based on data fr")
-    incremental_lower_bound: Optional[float] = Field(None, alias="incrementalLowerBound", description="Lower bound of the estimated change in impressions seen for similar advertisers within the time period indicated when th")
-    incremental_upper_bound: Optional[float] = Field(None, alias="incrementalUpperBound", description="Upper bound of the estimated change in impressions seen for similar advertisers within the time period indicated when th")
-
-    model_config = {'populate_by_name': True}
-
-
-class EstimatedImpactCost(BaseModel):
-    """Estimated impact of the recommendation on cost."""
-    forecasted_current_lower_bound: Optional[float] = Field(None, alias="forecastedCurrentLowerBound", description="Lower bound of the forecasted cost for the campaign, based on the current campaign settings and data from similar advert")
-    forecasted_current_upper_bound: Optional[float] = Field(None, alias="forecastedCurrentUpperBound", description="Upper bound of the forecasted cost for the campaign, based on the current campaign settings and data from similar advert")
-    forecasted_recommended_lower_bound: Optional[float] = Field(None, alias="forecastedRecommendedLowerBound", description="Lower bound of the forecasted cost for the campaign, if the recommendation is adopted, based on data from similar advert")
-    forecasted_recommended_upper_bound: Optional[float] = Field(None, alias="forecastedRecommendedUpperBound", description="Upper bound of the forecasted cost for the campaign, if the recommendation is adopted, based on data from similar advert")
-    incremental_lower_bound: Optional[float] = Field(None, alias="incrementalLowerBound", description="Lower bound of the estimated change in cost seen for similar advertisers within the time period indicated when the recom")
-    incremental_upper_bound: Optional[float] = Field(None, alias="incrementalUpperBound", description="Upper bound of the estimated change in cost seen for similar advertisers within the time period indicated when the recom")
-
-    model_config = {'populate_by_name': True}
-
-
-class EstimatedImpactOpportunityLostToCompetitorsPercentage(BaseModel):
-    """Estimated impact of the recommendation on percentage of opportunity lost to competitors."""
-    incremental_lower_bound: float = Field(..., alias="incrementalLowerBound", description="Lower bound of the estimated change in percentage of customers who purchased from another category brand when the create")
-    incremental_upper_bound: float = Field(..., alias="incrementalUpperBound", description="Upper bound of the estimated change in percentage of customers who purchased from another category brand when the create")
-
-    model_config = {'populate_by_name': True}
-
-
-class EstimatedImpactOpportunityLostPurchaseJourney(BaseModel):
-    """Estimated impact of the recommendation on lost purchase journey opportunities."""
-    incremental_lower_bound: float = Field(..., alias="incrementalLowerBound", description="Lower bound of the estimated change in customers with no further engagement with brand when the create grow brand impres")
-    incremental_upper_bound: float = Field(..., alias="incrementalUpperBound", description="Upper bound of the estimated change in customers with no further engagement with brand when the create grow brand impres")
-
-    model_config = {'populate_by_name': True}
-
-
-class EstimatedImpactRoas(BaseModel):
-    """Estimated impact of the recommendation on ROAS."""
-    forecasted_current_lower_bound: Optional[float] = Field(None, alias="forecastedCurrentLowerBound", description="Lower bound of the forecasted ROAS for the campaign, based on the current campaign settings and data from similar advert")
-    forecasted_current_upper_bound: Optional[float] = Field(None, alias="forecastedCurrentUpperBound", description="Upper bound of the forecasted ROAS for the campaign, based on the current campaign settings and data from similar advert")
-    forecasted_recommended_lower_bound: Optional[float] = Field(None, alias="forecastedRecommendedLowerBound", description="Lower bound of the forecasted ROAS for the campaign, if the recommendation is adopted, based on data from similar advert")
-    forecasted_recommended_upper_bound: Optional[float] = Field(None, alias="forecastedRecommendedUpperBound", description="Upper bound of the forecasted ROAS for the campaign, if the recommendation is adopted, based on data from similar advert")
-    incremental_lower_bound: Optional[float] = Field(None, alias="incrementalLowerBound", description="Lower bound of the estimated change in ROAS seen for similar advertisers within the time period indicated when the recom")
-    incremental_upper_bound: Optional[float] = Field(None, alias="incrementalUpperBound", description="Upper bound of the estimated change in ROAS seen for similar advertisers within the time period indicated when the recom")
-
-    model_config = {'populate_by_name': True}
-
-
-class EstimatedImpactOpportunityLostToCompetitors(BaseModel):
-    """Estimated impact of the recommendation on opportunity lost to competitors."""
-    incremental_lower_bound: float = Field(..., alias="incrementalLowerBound", description="Lower bound of the estimated change in customers who purchased from another category brand when the create grow brand im")
-    incremental_upper_bound: float = Field(..., alias="incrementalUpperBound", description="Upper bound of the estimated change in customers who purchased from another category brand when the create grow brand im")
-
-    model_config = {'populate_by_name': True}
-
-
-class EstimatedImpactSales(BaseModel):
-    """Estimated impact of the recommendation on sales."""
-    forecasted_current_lower_bound: Optional[float] = Field(None, alias="forecastedCurrentLowerBound", description="Lower bound of the forecasted sales for the campaign, based on the current campaign settings and data from similar adver")
-    forecasted_current_upper_bound: Optional[float] = Field(None, alias="forecastedCurrentUpperBound", description="Upper bound of the forecasted sales for the campaign, based on the current campaign settings and data from similar adver")
-    forecasted_recommended_lower_bound: Optional[float] = Field(None, alias="forecastedRecommendedLowerBound", description="Lower bound of the forecasted sales for the campaign, if the recommendation is adopted, based on data from similar adver")
-    forecasted_recommended_upper_bound: Optional[float] = Field(None, alias="forecastedRecommendedUpperBound", description="Upper bound of the forecasted sales for the campaign, if the recommendation is adopted, based on data from similar adver")
-    incremental_lower_bound: Optional[float] = Field(None, alias="incrementalLowerBound", description="Lower bound of the estimated change in sales seen for similar advertisers within the time period indicated when the reco")
-    incremental_upper_bound: Optional[float] = Field(None, alias="incrementalUpperBound", description="Upper bound of the estimated change in sales seen for similar advertisers within the time period indicated when the reco")
-
-    model_config = {'populate_by_name': True}
-
-
-class EstimatedImpactOpportunityLostToCompetitorsSales(BaseModel):
-    """Estimated impact of the recommendation on opportunity of sales lost to competitors."""
-    incremental_lower_bound: float = Field(..., alias="incrementalLowerBound", description="Lower bound of the estimated change in competitor revenue generated from customers purchasing from competing brand when ")
-    incremental_upper_bound: float = Field(..., alias="incrementalUpperBound", description="Upper bound of the estimated change in competitor revenue generated from customers purchasing from competing brand when ")
-
-    model_config = {'populate_by_name': True}
-
-
-class EstimatedImpactClicks(BaseModel):
-    """Estimated impact of the recommendation on clicks."""
-    forecasted_current_lower_bound: Optional[float] = Field(None, alias="forecastedCurrentLowerBound", description="Lower bound of the forecasted number of clicks for the campaign, based on the current campaign settings and data from si")
-    forecasted_current_upper_bound: Optional[float] = Field(None, alias="forecastedCurrentUpperBound", description="Upper bound of the forecasted number of clicks for the campaign, based on the current campaign settings and data from si")
-    forecasted_recommended_lower_bound: Optional[float] = Field(None, alias="forecastedRecommendedLowerBound", description="Lower bound of the forecasted number of clicks for the campaign, if the recommendation is adopted, based on data from si")
-    forecasted_recommended_upper_bound: Optional[float] = Field(None, alias="forecastedRecommendedUpperBound", description="Upper bound of the forecasted number of clicks for the campaign, if the recommendation is adopted, based on data from si")
-    incremental_lower_bound: Optional[float] = Field(None, alias="incrementalLowerBound", description="Lower bound of the estimated change in clicks seen for similar advertisers within the time period indicated when the rec")
-    incremental_upper_bound: Optional[float] = Field(None, alias="incrementalUpperBound", description="Upper bound of the estimated change in clicks seen for similar advertisers within the time period indicated when the rec")
-
-    model_config = {'populate_by_name': True}
-
-
-class EstimatedImpactTopOfSearchImpressionShare(BaseModel):
-    """Estimated impact of the recommendation on top of search impression share."""
-    incremental_lower_bound: float = Field(..., alias="incrementalLowerBound", description="Lower bound of the estimated change in top of search impression share when the create grow brand impression share campai")
-    incremental_upper_bound: float = Field(..., alias="incrementalUpperBound", description="Upper bound of the estimated change in top of search impression share when the create grow brand impression share campai")
-
-    model_config = {'populate_by_name': True}
-
-
-class EstimatedImpactCohortTopOfSearchImpressionShare(BaseModel):
-    """Estimated impact of the recommendation on brand cohort top of search impression share."""
-    incremental_lower_bound: float = Field(..., alias="incrementalLowerBound", description="Upper bound of the estimated change in cohort top of search impression share when the create grow brand impression share")
-    incremental_upper_bound: float = Field(..., alias="incrementalUpperBound", description="Upper bound of the estimated change in cohort top of search impression share when the create grow brand impression share")
-
-    model_config = {'populate_by_name': True}
-
-
-class EstimatedImpactIncrementalSalesIncrementalCostRatio(BaseModel):
-    """Estimated impact of the recommendation on incremental sales and incremental cost ratio."""
-    incremental_lower_bound: float = Field(..., alias="incrementalLowerBound", description="Lower bound of the estimated change in incremental sales to incremental cost ratio seen for similar advertisers within t")
-    incremental_upper_bound: float = Field(..., alias="incrementalUpperBound", description="Upper bound of the estimated change in incremental sales to incremental cost ratio seen for similar advertisers within t")
-
-    model_config = {'populate_by_name': True}
-
-
-class CampaignEstimatedImpact(BaseModel):
-    """Estimated impact at the campaign level."""
-    clicks: Optional["EstimatedImpactClicks"] = None
-    cohort_top_of_search_impression_share: Optional["EstimatedImpactCohortTopOfSearchImpressionShare"] = Field(None, alias="cohortTopOfSearchImpressionShare")
-    cost: Optional["EstimatedImpactCost"] = None
-    impressions: Optional["EstimatedImpactImpressions"] = None
-    incremental_sales_incremental_cost_ratio: Optional["EstimatedImpactIncrementalSalesIncrementalCostRatio"] = Field(None, alias="incrementalSalesIncrementalCostRatio")
-    opportunity_lost_purchase_journey: Optional["EstimatedImpactOpportunityLostPurchaseJourney"] = Field(None, alias="opportunityLostPurchaseJourney")
-    opportunity_lost_to_competitors: Optional["EstimatedImpactOpportunityLostToCompetitors"] = Field(None, alias="opportunityLostToCompetitors")
-    opportunity_lost_to_competitors_percentage: Optional["EstimatedImpactOpportunityLostToCompetitorsPercentage"] = Field(None, alias="opportunityLostToCompetitorsPercentage")
-    opportunity_lost_to_competitors_sales: Optional["EstimatedImpactOpportunityLostToCompetitorsSales"] = Field(None, alias="opportunityLostToCompetitorsSales")
-    roas: Optional["EstimatedImpactRoas"] = None
-    sales: Optional["EstimatedImpactSales"] = None
-    time_period_in_days: int = Field(..., alias="timePeriodInDays", description="Time period of the estimated impact in days.")
-    top_of_search_impression_share: Optional["EstimatedImpactTopOfSearchImpressionShare"] = Field(None, alias="topOfSearchImpressionShare")
-
-    model_config = {'populate_by_name': True}
-
-
-class EstimatedImpact(BaseModel):
-    """Estimated impact of the recommendation."""
-    campaign: Optional["CampaignEstimatedImpact"] = None
+class BudgetRulePerformanceMeasureCondition(BaseModel):
+    threshold: float = Field(..., description="Threshold of the performance metric.")
 
     model_config = {'populate_by_name': True}
 
@@ -220,18 +78,6 @@ class BudgetRuleDuration(BaseModel):
     model_config = {'populate_by_name': True}
 
 
-class BudgetRulePerformanceMeasureCondition(BaseModel):
-    threshold: float = Field(..., description="Threshold of the performance metric.")
-
-    model_config = {'populate_by_name': True}
-
-
-class BudgetRuleIncreaseBy(BaseModel):
-    value: float = Field(..., description="Budget of the rule.")
-
-    model_config = {'populate_by_name': True}
-
-
 class BudgetRuleDetails(BaseModel):
     budget_increase_by: Optional["BudgetRuleIncreaseBy"] = Field(None, alias="budgetIncreaseBy")
     duration: Optional["BudgetRuleDuration"] = None
@@ -250,17 +96,99 @@ class BudgetRule(BaseModel):
     model_config = {'populate_by_name': True}
 
 
-class TargetingMatchType(StrEnum):
-    BROAD = "BROAD"
-    EXACT = "EXACT"
-    GROUP = "GROUP"
-    NEGATIVE_BROAD = "NEGATIVE_BROAD"
-    NEGATIVE_EXACT = "NEGATIVE_EXACT"
-    NEGATIVE_PHRASE = "NEGATIVE_PHRASE"
-    PHRASE = "PHRASE"
-    TARGETING_EXPRESSION = "TARGETING_EXPRESSION"
-    TARGETING_EXPRESSION_PREDEFINED = "TARGETING_EXPRESSION_PREDEFINED"
-    THEME = "THEME"
+class KeywordSortingDimension(StrEnum):
+    CLICK = "CLICK"
+    CONVERSION = "CONVERSION"
+
+
+class SevenDaysMissedOpportunities(BaseModel):
+    """Seven days of missed opportunities."""
+    end_date: Optional[str] = Field(None, alias="endDate", description="End date of the date range in local time and YYYY-MM-DD format for which missed opportunity metrics are provided.")
+    estimated_missed_clicks_lower: Optional[int] = Field(None, alias="estimatedMissedClicksLower", description="Lower bound of estimated missed clicks.")
+    estimated_missed_clicks_upper: Optional[int] = Field(None, alias="estimatedMissedClicksUpper", description="Upper bound of estimated missed clicks.")
+    estimated_missed_impressions_lower: Optional[int] = Field(None, alias="estimatedMissedImpressionsLower", description="Lower bound of estimated missed impressions.")
+    estimated_missed_impressions_upper: Optional[int] = Field(None, alias="estimatedMissedImpressionsUpper", description="Upper bound of estimated missed impressions.")
+    estimated_missed_sales_lower: Optional[float] = Field(None, alias="estimatedMissedSalesLower", description="Lower bound of estimated missed sales. Provided in local currency.")
+    estimated_missed_sales_upper: Optional[float] = Field(None, alias="estimatedMissedSalesUpper", description="Upper bound of estimated missed sales. Provided in local currency.")
+    percent_time_in_budget: Optional[float] = Field(None, alias="percentTimeInBudget", description="Percentage of time the campaign is active with a budget.")
+    start_date: Optional[str] = Field(None, alias="startDate", description="Start date of the date range in local time and YYYY-MM-DD format for which missed opportunity metrics are provided.")
+
+    model_config = {'populate_by_name': True}
+
+
+class BudgetRecommendation(BaseModel):
+    """Budget recommendation of the campaign to which this recommendation is associated."""
+    seven_days_missed_opportunities: "SevenDaysMissedOpportunities" = Field(..., alias="sevenDaysMissedOpportunities")
+
+    model_config = {'populate_by_name': True}
+
+
+class Benchmark(BaseModel):
+    """The value of a campaign performance metric relative to peer campaigns, where peer campaigns are identified using an unsupervised learning model that groups campaigns into mutually exclusive clusters o"""
+    benchmark_value: Optional[float] = Field(None, alias="benchmarkValue", description="The benchmark for the campaign for a given metric. This value is based on the performance of similar campaigns for the g")
+    percent_difference: Optional[float] = Field(None, alias="percentDifference", description="The percent difference relative to the benchmark value.")
+    period: Optional[float] = Field(None, description="The time period in days over which the metric value was determined.")
+
+    model_config = {'populate_by_name': True}
+
+
+class BenchmarkContext(BaseModel):
+    """Benchmark Context for the recommendation.   | Benchmark | Description | |---|---| | Impressions | Impressions received by the campaign over the specified time period | | Roas | Return on ad spend (RoA"""
+    ad_spend: Optional["Benchmark"] = Field(None, alias="adSpend")
+    attributed_orders: Optional["Benchmark"] = Field(None, alias="attributedOrders")
+    branded_searches: Optional["Benchmark"] = Field(None, alias="brandedSearches")
+    budget_utilization: Optional["Benchmark"] = Field(None, alias="budgetUtilization")
+    clickthrough_rate: Optional["Benchmark"] = Field(None, alias="clickthroughRate")
+    cost_per_branded_search: Optional["Benchmark"] = Field(None, alias="costPerBrandedSearch")
+    cost_per_detail_page_view: Optional["Benchmark"] = Field(None, alias="costPerDetailPageView")
+    detail_page_views: Optional["Benchmark"] = Field(None, alias="detailPageViews")
+    impressions: Optional["Benchmark"] = None
+    roas: Optional["Benchmark"] = None
+
+    model_config = {'populate_by_name': True}
+
+
+class SummaryCode(StrEnum):
+    ADD_TARGETS_CONTEXTUAL_SUMMARY = "ADD_TARGETS_CONTEXTUAL_SUMMARY"
+    DECREASE_BID_CONTEXTUAL_SUMMARY = "DECREASE_BID_CONTEXTUAL_SUMMARY"
+    INCREASE_BID_CONTEXTUAL_SUMMARY = "INCREASE_BID_CONTEXTUAL_SUMMARY"
+    INCREASE_BUDGET_CONTEXTUAL_SUMMARY = "INCREASE_BUDGET_CONTEXTUAL_SUMMARY"
+
+
+class Summary(BaseModel):
+    """An explanation of the campaign performance vis-a-vis relevant benchmarks, and why the recommendation was generated."""
+    code: Optional[SummaryCode] = Field(None, description="Summary Codes.   | Code | Message | |---|---| | DECREASE_BID_CONTEXTUAL_SUMMARY | You have Sponsored Products campaigns ")
+    message: Optional[str] = Field(None, description="A localized description of the summary.")
+
+    model_config = {'populate_by_name': True}
+
+
+class DiagnosticContext(BaseModel):
+    """Underlying diagnostic context behind generating the recommendation."""
+    asin_age: Optional[float] = Field(None, alias="asinAge", description="The number of days since the ASIN was added to the advertiser’s catalog.")
+    benchmark_context: Optional["BenchmarkContext"] = Field(None, alias="benchmarkContext")
+    diagnostic_date: Optional[str] = Field(None, alias="diagnosticDate", description="The date on which the campaign was diagnosed.")
+    summary: Optional["Summary"] = None
+
+    model_config = {'populate_by_name': True}
+
+
+class AsinContext(BaseModel):
+    """Underlying asin context behind generating the recommendation."""
+    season_end_date: Optional[str] = Field(None, alias="seasonEndDate", description="Date in which the products in the advertiser's category historically traffic-increase has cooled off.")
+    season_start_date: Optional[str] = Field(None, alias="seasonStartDate", description="Date in which the products in the advertiser's category have historically started to see an increase in traffic.")
+    trailing4_weeks_clickthrough_rate: Optional[float] = Field(None, alias="trailing4WeeksClickthroughRate", description="Past 4 weeks clickthrough rate of target product type.")
+    trailing4_weeks_conversion_rate: Optional[float] = Field(None, alias="trailing4WeeksConversionRate", description="Past 4 weeks conversion rate of target product type.")
+
+    model_config = {'populate_by_name': True}
+
+
+class RecommendationContext(BaseModel):
+    """Context of the recommendation."""
+    asin_context: Optional["AsinContext"] = Field(None, alias="asinContext")
+    diagnostic_context: Optional["DiagnosticContext"] = Field(None, alias="diagnosticContext")
+
+    model_config = {'populate_by_name': True}
 
 
 class GroupingType(StrEnum):
@@ -294,103 +222,32 @@ class GroupingType(StrEnum):
     UNDERPERFORMING_CAMPAIGN_INCREASE_CLICKS = "UNDERPERFORMING_CAMPAIGN_INCREASE_CLICKS"
 
 
-class RecommendationReason(StrEnum):
-    AT_BID_FALLBACK = "AT_BID_FALLBACK"
-    AT_NOT_ALL_MATCH_TYPE_ENABLED = "AT_NOT_ALL_MATCH_TYPE_ENABLED"
-    MT_BID_FALLBACK = "MT_BID_FALLBACK"
-    MT_IRRELEVANT_KEYWORD_IMPRESSIONS = "MT_IRRELEVANT_KEYWORD_IMPRESSIONS"
-    MT_KEYWORDS_HAVE_LOW_IMPRESSIONS = "MT_KEYWORDS_HAVE_LOW_IMPRESSIONS"
-    MT_KEYWORD_FALLBACK = "MT_KEYWORD_FALLBACK"
-    MT_NOT_ENOUGH_TOP_IMPRESSIONS = "MT_NOT_ENOUGH_TOP_IMPRESSIONS"
+class PublishedBy(StrEnum):
+    AMAZON_ADS_ACCOUNT_TEAM = "AMAZON_ADS_ACCOUNT_TEAM"
 
 
-class RecommendationReasons(BaseModel):
-    """List of reasons why the recommendation was created"""
-    pass
-
-
-class SevenDaysEstimatedOpportunities(BaseModel):
-    """Seven days of estimated opportunities."""
-    end_date: str = Field(..., alias="endDate", description="End date of the opportunities date range in YYYY-MM-DDTHH:mm:ssZ format.")
-    estimated_incremental_clicks_lower: Optional[int] = Field(None, alias="estimatedIncrementalClicksLower", description="Lower bound of estimated incremental clicks that could be gained if all recommendations are applied.")
-    estimated_incremental_clicks_upper: Optional[int] = Field(None, alias="estimatedIncrementalClicksUpper", description="Upper bound of estimated incremental clicks that could be gained if all recommendations are applied.")
-    start_date: str = Field(..., alias="startDate", description="Start date of the opportunities date range in YYYY-MM-DDTHH:mm:ssZ format.")
+class PublishMetadata(BaseModel):
+    """Metadata for publishing the recommendation."""
+    published_by: "PublishedBy" = Field(..., alias="publishedBy")
+    published_to_amazon_ad_console: bool = Field(..., alias="publishedToAmazonAdConsole", description="Indicates if recommendation was published to Amazon Ad Console.")
 
     model_config = {'populate_by_name': True}
 
 
-class ConsolidatedRecommendation(BaseModel):
-    """Data for a group of recommendations."""
-    recommendation_reasons: Optional["RecommendationReasons"] = Field(None, alias="recommendationReasons")
-    seven_days_estimated_opportunities: Optional["SevenDaysEstimatedOpportunities"] = Field(None, alias="sevenDaysEstimatedOpportunities")
-
-    model_config = {'populate_by_name': True}
-
-
-class AsinContext(BaseModel):
-    """Underlying asin context behind generating the recommendation."""
-    season_end_date: Optional[str] = Field(None, alias="seasonEndDate", description="Date in which the products in the advertiser's category historically traffic-increase has cooled off.")
-    season_start_date: Optional[str] = Field(None, alias="seasonStartDate", description="Date in which the products in the advertiser's category have historically started to see an increase in traffic.")
-    trailing4_weeks_clickthrough_rate: Optional[float] = Field(None, alias="trailing4WeeksClickthroughRate", description="Past 4 weeks clickthrough rate of target product type.")
-    trailing4_weeks_conversion_rate: Optional[float] = Field(None, alias="trailing4WeeksConversionRate", description="Past 4 weeks conversion rate of target product type.")
-
-    model_config = {'populate_by_name': True}
+class BiddingStrategy(StrEnum):
+    AUTO_FOR_SALES = "AUTO_FOR_SALES"
+    LEGACY_FOR_SALES = "LEGACY_FOR_SALES"
+    MANUAL = "MANUAL"
+    RULE_BASED = "RULE_BASED"
 
 
-class SummaryCode(StrEnum):
-    ADD_TARGETS_CONTEXTUAL_SUMMARY = "ADD_TARGETS_CONTEXTUAL_SUMMARY"
-    DECREASE_BID_CONTEXTUAL_SUMMARY = "DECREASE_BID_CONTEXTUAL_SUMMARY"
-    INCREASE_BID_CONTEXTUAL_SUMMARY = "INCREASE_BID_CONTEXTUAL_SUMMARY"
-    INCREASE_BUDGET_CONTEXTUAL_SUMMARY = "INCREASE_BUDGET_CONTEXTUAL_SUMMARY"
-
-
-class Summary(BaseModel):
-    """An explanation of the campaign performance vis-a-vis relevant benchmarks, and why the recommendation was generated."""
-    code: Optional[SummaryCode] = Field(None, description="Summary Codes.   | Code | Message | |---|---| | DECREASE_BID_CONTEXTUAL_SUMMARY | You have Sponsored Products campaigns ")
-    message: Optional[str] = Field(None, description="A localized description of the summary.")
-
-    model_config = {'populate_by_name': True}
-
-
-class Benchmark(BaseModel):
-    """The value of a campaign performance metric relative to peer campaigns, where peer campaigns are identified using an unsupervised learning model that groups campaigns into mutually exclusive clusters o"""
-    benchmark_value: Optional[float] = Field(None, alias="benchmarkValue", description="The benchmark for the campaign for a given metric. This value is based on the performance of similar campaigns for the g")
-    percent_difference: Optional[float] = Field(None, alias="percentDifference", description="The percent difference relative to the benchmark value.")
-    period: Optional[float] = Field(None, description="The time period in days over which the metric value was determined.")
-
-    model_config = {'populate_by_name': True}
-
-
-class BenchmarkContext(BaseModel):
-    """Benchmark Context for the recommendation.   | Benchmark | Description | |---|---| | Impressions | Impressions received by the campaign over the specified time period | | Roas | Return on ad spend (RoA"""
-    ad_spend: Optional["Benchmark"] = Field(None, alias="adSpend")
-    attributed_orders: Optional["Benchmark"] = Field(None, alias="attributedOrders")
-    branded_searches: Optional["Benchmark"] = Field(None, alias="brandedSearches")
-    budget_utilization: Optional["Benchmark"] = Field(None, alias="budgetUtilization")
-    clickthrough_rate: Optional["Benchmark"] = Field(None, alias="clickthroughRate")
-    cost_per_branded_search: Optional["Benchmark"] = Field(None, alias="costPerBrandedSearch")
-    cost_per_detail_page_view: Optional["Benchmark"] = Field(None, alias="costPerDetailPageView")
-    detail_page_views: Optional["Benchmark"] = Field(None, alias="detailPageViews")
-    impressions: Optional["Benchmark"] = None
-    roas: Optional["Benchmark"] = None
-
-    model_config = {'populate_by_name': True}
-
-
-class DiagnosticContext(BaseModel):
-    """Underlying diagnostic context behind generating the recommendation."""
-    asin_age: Optional[float] = Field(None, alias="asinAge", description="The number of days since the ASIN was added to the advertiser’s catalog.")
-    benchmark_context: Optional["BenchmarkContext"] = Field(None, alias="benchmarkContext")
-    diagnostic_date: Optional[str] = Field(None, alias="diagnosticDate", description="The date on which the campaign was diagnosed.")
-    summary: Optional["Summary"] = None
-
-    model_config = {'populate_by_name': True}
-
-
-class RecommendationContext(BaseModel):
-    """Context of the recommendation."""
-    asin_context: Optional["AsinContext"] = Field(None, alias="asinContext")
-    diagnostic_context: Optional["DiagnosticContext"] = Field(None, alias="diagnosticContext")
+class RuleBasedBidding(BaseModel):
+    """Rule based bidding for the campaign to which this recommendation is associated."""
+    campaign_optimization_id: Optional[str] = Field(None, alias="campaignOptimizationId", description="Identifier of the campaign optimization.")
+    current_bidding_strategy: Optional["BiddingStrategy"] = Field(None, alias="currentBiddingStrategy")
+    current_rule_roas: Optional[float] = Field(None, alias="currentRuleRoas", description="Current threshold of the RoAS performance metric.")
+    recommended_bidding_strategy: "BiddingStrategy" = Field(..., alias="recommendedBiddingStrategy")
+    recommended_rule_roas: float = Field(..., alias="recommendedRuleRoas", description="Recommended threshold of the RoAS performance metric.")
 
     model_config = {'populate_by_name': True}
 
@@ -433,42 +290,35 @@ class RecommendationType(StrEnum):
     PRODUCT_TARGETING_STATE = "PRODUCT_TARGETING_STATE"
 
 
-class BiddingStrategy(StrEnum):
-    AUTO_FOR_SALES = "AUTO_FOR_SALES"
-    LEGACY_FOR_SALES = "LEGACY_FOR_SALES"
-    MANUAL = "MANUAL"
-    RULE_BASED = "RULE_BASED"
-
-
-class RuleBasedBidding(BaseModel):
-    """Rule based bidding for the campaign to which this recommendation is associated."""
-    campaign_optimization_id: Optional[str] = Field(None, alias="campaignOptimizationId", description="Identifier of the campaign optimization.")
-    current_bidding_strategy: Optional["BiddingStrategy"] = Field(None, alias="currentBiddingStrategy")
-    current_rule_roas: Optional[float] = Field(None, alias="currentRuleRoas", description="Current threshold of the RoAS performance metric.")
-    recommended_bidding_strategy: "BiddingStrategy" = Field(..., alias="recommendedBiddingStrategy")
-    recommended_rule_roas: float = Field(..., alias="recommendedRuleRoas", description="Recommended threshold of the RoAS performance metric.")
+class SevenDaysEstimatedOpportunities(BaseModel):
+    """Seven days of estimated opportunities."""
+    end_date: str = Field(..., alias="endDate", description="End date of the opportunities date range in YYYY-MM-DDTHH:mm:ssZ format.")
+    estimated_incremental_clicks_lower: Optional[int] = Field(None, alias="estimatedIncrementalClicksLower", description="Lower bound of estimated incremental clicks that could be gained if all recommendations are applied.")
+    estimated_incremental_clicks_upper: Optional[int] = Field(None, alias="estimatedIncrementalClicksUpper", description="Upper bound of estimated incremental clicks that could be gained if all recommendations are applied.")
+    start_date: str = Field(..., alias="startDate", description="Start date of the opportunities date range in YYYY-MM-DDTHH:mm:ssZ format.")
 
     model_config = {'populate_by_name': True}
 
 
-class SevenDaysMissedOpportunities(BaseModel):
-    """Seven days of missed opportunities."""
-    end_date: Optional[str] = Field(None, alias="endDate", description="End date of the date range in local time and YYYY-MM-DD format for which missed opportunity metrics are provided.")
-    estimated_missed_clicks_lower: Optional[int] = Field(None, alias="estimatedMissedClicksLower", description="Lower bound of estimated missed clicks.")
-    estimated_missed_clicks_upper: Optional[int] = Field(None, alias="estimatedMissedClicksUpper", description="Upper bound of estimated missed clicks.")
-    estimated_missed_impressions_lower: Optional[int] = Field(None, alias="estimatedMissedImpressionsLower", description="Lower bound of estimated missed impressions.")
-    estimated_missed_impressions_upper: Optional[int] = Field(None, alias="estimatedMissedImpressionsUpper", description="Upper bound of estimated missed impressions.")
-    estimated_missed_sales_lower: Optional[float] = Field(None, alias="estimatedMissedSalesLower", description="Lower bound of estimated missed sales. Provided in local currency.")
-    estimated_missed_sales_upper: Optional[float] = Field(None, alias="estimatedMissedSalesUpper", description="Upper bound of estimated missed sales. Provided in local currency.")
-    percent_time_in_budget: Optional[float] = Field(None, alias="percentTimeInBudget", description="Percentage of time the campaign is active with a budget.")
-    start_date: Optional[str] = Field(None, alias="startDate", description="Start date of the date range in local time and YYYY-MM-DD format for which missed opportunity metrics are provided.")
-
-    model_config = {'populate_by_name': True}
+class RecommendationReason(StrEnum):
+    AT_BID_FALLBACK = "AT_BID_FALLBACK"
+    AT_NOT_ALL_MATCH_TYPE_ENABLED = "AT_NOT_ALL_MATCH_TYPE_ENABLED"
+    MT_BID_FALLBACK = "MT_BID_FALLBACK"
+    MT_IRRELEVANT_KEYWORD_IMPRESSIONS = "MT_IRRELEVANT_KEYWORD_IMPRESSIONS"
+    MT_KEYWORDS_HAVE_LOW_IMPRESSIONS = "MT_KEYWORDS_HAVE_LOW_IMPRESSIONS"
+    MT_KEYWORD_FALLBACK = "MT_KEYWORD_FALLBACK"
+    MT_NOT_ENOUGH_TOP_IMPRESSIONS = "MT_NOT_ENOUGH_TOP_IMPRESSIONS"
 
 
-class BudgetRecommendation(BaseModel):
-    """Budget recommendation of the campaign to which this recommendation is associated."""
-    seven_days_missed_opportunities: "SevenDaysMissedOpportunities" = Field(..., alias="sevenDaysMissedOpportunities")
+class RecommendationReasons(BaseModel):
+    """List of reasons why the recommendation was created"""
+    pass
+
+
+class ConsolidatedRecommendation(BaseModel):
+    """Data for a group of recommendations."""
+    recommendation_reasons: Optional["RecommendationReasons"] = Field(None, alias="recommendationReasons")
+    seven_days_estimated_opportunities: Optional["SevenDaysEstimatedOpportunities"] = Field(None, alias="sevenDaysEstimatedOpportunities")
 
     model_config = {'populate_by_name': True}
 
@@ -481,9 +331,159 @@ class RecommendationStatus(StrEnum):
     REJECTED = "REJECTED"
 
 
-class KeywordSortingDimension(StrEnum):
-    CLICK = "CLICK"
-    CONVERSION = "CONVERSION"
+class EstimatedImpactCost(BaseModel):
+    """Estimated impact of the recommendation on cost."""
+    forecasted_current_lower_bound: Optional[float] = Field(None, alias="forecastedCurrentLowerBound", description="Lower bound of the forecasted cost for the campaign, based on the current campaign settings and data from similar advert")
+    forecasted_current_upper_bound: Optional[float] = Field(None, alias="forecastedCurrentUpperBound", description="Upper bound of the forecasted cost for the campaign, based on the current campaign settings and data from similar advert")
+    forecasted_recommended_lower_bound: Optional[float] = Field(None, alias="forecastedRecommendedLowerBound", description="Lower bound of the forecasted cost for the campaign, if the recommendation is adopted, based on data from similar advert")
+    forecasted_recommended_upper_bound: Optional[float] = Field(None, alias="forecastedRecommendedUpperBound", description="Upper bound of the forecasted cost for the campaign, if the recommendation is adopted, based on data from similar advert")
+    incremental_lower_bound: Optional[float] = Field(None, alias="incrementalLowerBound", description="Lower bound of the estimated change in cost seen for similar advertisers within the time period indicated when the recom")
+    incremental_upper_bound: Optional[float] = Field(None, alias="incrementalUpperBound", description="Upper bound of the estimated change in cost seen for similar advertisers within the time period indicated when the recom")
+
+    model_config = {'populate_by_name': True}
+
+
+class EstimatedImpactClicks(BaseModel):
+    """Estimated impact of the recommendation on clicks."""
+    forecasted_current_lower_bound: Optional[float] = Field(None, alias="forecastedCurrentLowerBound", description="Lower bound of the forecasted number of clicks for the campaign, based on the current campaign settings and data from si")
+    forecasted_current_upper_bound: Optional[float] = Field(None, alias="forecastedCurrentUpperBound", description="Upper bound of the forecasted number of clicks for the campaign, based on the current campaign settings and data from si")
+    forecasted_recommended_lower_bound: Optional[float] = Field(None, alias="forecastedRecommendedLowerBound", description="Lower bound of the forecasted number of clicks for the campaign, if the recommendation is adopted, based on data from si")
+    forecasted_recommended_upper_bound: Optional[float] = Field(None, alias="forecastedRecommendedUpperBound", description="Upper bound of the forecasted number of clicks for the campaign, if the recommendation is adopted, based on data from si")
+    incremental_lower_bound: Optional[float] = Field(None, alias="incrementalLowerBound", description="Lower bound of the estimated change in clicks seen for similar advertisers within the time period indicated when the rec")
+    incremental_upper_bound: Optional[float] = Field(None, alias="incrementalUpperBound", description="Upper bound of the estimated change in clicks seen for similar advertisers within the time period indicated when the rec")
+
+    model_config = {'populate_by_name': True}
+
+
+class EstimatedImpactOpportunityLostPurchaseJourney(BaseModel):
+    """Estimated impact of the recommendation on lost purchase journey opportunities."""
+    incremental_lower_bound: float = Field(..., alias="incrementalLowerBound", description="Lower bound of the estimated change in customers with no further engagement with brand when the create grow brand impres")
+    incremental_upper_bound: float = Field(..., alias="incrementalUpperBound", description="Upper bound of the estimated change in customers with no further engagement with brand when the create grow brand impres")
+
+    model_config = {'populate_by_name': True}
+
+
+class EstimatedImpactTopOfSearchImpressionShare(BaseModel):
+    """Estimated impact of the recommendation on top of search impression share."""
+    incremental_lower_bound: float = Field(..., alias="incrementalLowerBound", description="Lower bound of the estimated change in top of search impression share when the create grow brand impression share campai")
+    incremental_upper_bound: float = Field(..., alias="incrementalUpperBound", description="Upper bound of the estimated change in top of search impression share when the create grow brand impression share campai")
+
+    model_config = {'populate_by_name': True}
+
+
+class EstimatedImpactOpportunityLostToCompetitors(BaseModel):
+    """Estimated impact of the recommendation on opportunity lost to competitors."""
+    incremental_lower_bound: float = Field(..., alias="incrementalLowerBound", description="Lower bound of the estimated change in customers who purchased from another category brand when the create grow brand im")
+    incremental_upper_bound: float = Field(..., alias="incrementalUpperBound", description="Upper bound of the estimated change in customers who purchased from another category brand when the create grow brand im")
+
+    model_config = {'populate_by_name': True}
+
+
+class EstimatedImpactCohortTopOfSearchImpressionShare(BaseModel):
+    """Estimated impact of the recommendation on brand cohort top of search impression share."""
+    incremental_lower_bound: float = Field(..., alias="incrementalLowerBound", description="Upper bound of the estimated change in cohort top of search impression share when the create grow brand impression share")
+    incremental_upper_bound: float = Field(..., alias="incrementalUpperBound", description="Upper bound of the estimated change in cohort top of search impression share when the create grow brand impression share")
+
+    model_config = {'populate_by_name': True}
+
+
+class EstimatedImpactOpportunityLostToCompetitorsPercentage(BaseModel):
+    """Estimated impact of the recommendation on percentage of opportunity lost to competitors."""
+    incremental_lower_bound: float = Field(..., alias="incrementalLowerBound", description="Lower bound of the estimated change in percentage of customers who purchased from another category brand when the create")
+    incremental_upper_bound: float = Field(..., alias="incrementalUpperBound", description="Upper bound of the estimated change in percentage of customers who purchased from another category brand when the create")
+
+    model_config = {'populate_by_name': True}
+
+
+class EstimatedImpactOpportunityLostToCompetitorsSales(BaseModel):
+    """Estimated impact of the recommendation on opportunity of sales lost to competitors."""
+    incremental_lower_bound: float = Field(..., alias="incrementalLowerBound", description="Lower bound of the estimated change in competitor revenue generated from customers purchasing from competing brand when ")
+    incremental_upper_bound: float = Field(..., alias="incrementalUpperBound", description="Upper bound of the estimated change in competitor revenue generated from customers purchasing from competing brand when ")
+
+    model_config = {'populate_by_name': True}
+
+
+class EstimatedImpactSales(BaseModel):
+    """Estimated impact of the recommendation on sales."""
+    forecasted_current_lower_bound: Optional[float] = Field(None, alias="forecastedCurrentLowerBound", description="Lower bound of the forecasted sales for the campaign, based on the current campaign settings and data from similar adver")
+    forecasted_current_upper_bound: Optional[float] = Field(None, alias="forecastedCurrentUpperBound", description="Upper bound of the forecasted sales for the campaign, based on the current campaign settings and data from similar adver")
+    forecasted_recommended_lower_bound: Optional[float] = Field(None, alias="forecastedRecommendedLowerBound", description="Lower bound of the forecasted sales for the campaign, if the recommendation is adopted, based on data from similar adver")
+    forecasted_recommended_upper_bound: Optional[float] = Field(None, alias="forecastedRecommendedUpperBound", description="Upper bound of the forecasted sales for the campaign, if the recommendation is adopted, based on data from similar adver")
+    incremental_lower_bound: Optional[float] = Field(None, alias="incrementalLowerBound", description="Lower bound of the estimated change in sales seen for similar advertisers within the time period indicated when the reco")
+    incremental_upper_bound: Optional[float] = Field(None, alias="incrementalUpperBound", description="Upper bound of the estimated change in sales seen for similar advertisers within the time period indicated when the reco")
+
+    model_config = {'populate_by_name': True}
+
+
+class EstimatedImpactRoas(BaseModel):
+    """Estimated impact of the recommendation on ROAS."""
+    forecasted_current_lower_bound: Optional[float] = Field(None, alias="forecastedCurrentLowerBound", description="Lower bound of the forecasted ROAS for the campaign, based on the current campaign settings and data from similar advert")
+    forecasted_current_upper_bound: Optional[float] = Field(None, alias="forecastedCurrentUpperBound", description="Upper bound of the forecasted ROAS for the campaign, based on the current campaign settings and data from similar advert")
+    forecasted_recommended_lower_bound: Optional[float] = Field(None, alias="forecastedRecommendedLowerBound", description="Lower bound of the forecasted ROAS for the campaign, if the recommendation is adopted, based on data from similar advert")
+    forecasted_recommended_upper_bound: Optional[float] = Field(None, alias="forecastedRecommendedUpperBound", description="Upper bound of the forecasted ROAS for the campaign, if the recommendation is adopted, based on data from similar advert")
+    incremental_lower_bound: Optional[float] = Field(None, alias="incrementalLowerBound", description="Lower bound of the estimated change in ROAS seen for similar advertisers within the time period indicated when the recom")
+    incremental_upper_bound: Optional[float] = Field(None, alias="incrementalUpperBound", description="Upper bound of the estimated change in ROAS seen for similar advertisers within the time period indicated when the recom")
+
+    model_config = {'populate_by_name': True}
+
+
+class EstimatedImpactImpressions(BaseModel):
+    """Estimated impact of the recommendation on impressions."""
+    forecasted_current_lower_bound: Optional[float] = Field(None, alias="forecastedCurrentLowerBound", description="Lower bound of the forecasted number of impressions for the campaign, based on the current campaign settings and data fr")
+    forecasted_current_upper_bound: Optional[float] = Field(None, alias="forecastedCurrentUpperBound", description="Upper bound of the forecasted number of impressions for the campaign, based on the current campaign settings and data fr")
+    forecasted_recommended_lower_bound: Optional[float] = Field(None, alias="forecastedRecommendedLowerBound", description="Lower bound of the forecasted number of impressions for the campaign, if the recommendation is adopted, based on data fr")
+    forecasted_recommended_upper_bound: Optional[float] = Field(None, alias="forecastedRecommendedUpperBound", description="Upper bound of the forecasted number of impressions for the campaign, if the recommendation is adopted, based on data fr")
+    incremental_lower_bound: Optional[float] = Field(None, alias="incrementalLowerBound", description="Lower bound of the estimated change in impressions seen for similar advertisers within the time period indicated when th")
+    incremental_upper_bound: Optional[float] = Field(None, alias="incrementalUpperBound", description="Upper bound of the estimated change in impressions seen for similar advertisers within the time period indicated when th")
+
+    model_config = {'populate_by_name': True}
+
+
+class EstimatedImpactIncrementalSalesIncrementalCostRatio(BaseModel):
+    """Estimated impact of the recommendation on incremental sales and incremental cost ratio."""
+    incremental_lower_bound: float = Field(..., alias="incrementalLowerBound", description="Lower bound of the estimated change in incremental sales to incremental cost ratio seen for similar advertisers within t")
+    incremental_upper_bound: float = Field(..., alias="incrementalUpperBound", description="Upper bound of the estimated change in incremental sales to incremental cost ratio seen for similar advertisers within t")
+
+    model_config = {'populate_by_name': True}
+
+
+class CampaignEstimatedImpact(BaseModel):
+    """Estimated impact at the campaign level."""
+    clicks: Optional["EstimatedImpactClicks"] = None
+    cohort_top_of_search_impression_share: Optional["EstimatedImpactCohortTopOfSearchImpressionShare"] = Field(None, alias="cohortTopOfSearchImpressionShare")
+    cost: Optional["EstimatedImpactCost"] = None
+    impressions: Optional["EstimatedImpactImpressions"] = None
+    incremental_sales_incremental_cost_ratio: Optional["EstimatedImpactIncrementalSalesIncrementalCostRatio"] = Field(None, alias="incrementalSalesIncrementalCostRatio")
+    opportunity_lost_purchase_journey: Optional["EstimatedImpactOpportunityLostPurchaseJourney"] = Field(None, alias="opportunityLostPurchaseJourney")
+    opportunity_lost_to_competitors: Optional["EstimatedImpactOpportunityLostToCompetitors"] = Field(None, alias="opportunityLostToCompetitors")
+    opportunity_lost_to_competitors_percentage: Optional["EstimatedImpactOpportunityLostToCompetitorsPercentage"] = Field(None, alias="opportunityLostToCompetitorsPercentage")
+    opportunity_lost_to_competitors_sales: Optional["EstimatedImpactOpportunityLostToCompetitorsSales"] = Field(None, alias="opportunityLostToCompetitorsSales")
+    roas: Optional["EstimatedImpactRoas"] = None
+    sales: Optional["EstimatedImpactSales"] = None
+    time_period_in_days: int = Field(..., alias="timePeriodInDays", description="Time period of the estimated impact in days.")
+    top_of_search_impression_share: Optional["EstimatedImpactTopOfSearchImpressionShare"] = Field(None, alias="topOfSearchImpressionShare")
+
+    model_config = {'populate_by_name': True}
+
+
+class EstimatedImpact(BaseModel):
+    """Estimated impact of the recommendation."""
+    campaign: Optional["CampaignEstimatedImpact"] = None
+
+    model_config = {'populate_by_name': True}
+
+
+class TargetingMatchType(StrEnum):
+    BROAD = "BROAD"
+    EXACT = "EXACT"
+    GROUP = "GROUP"
+    NEGATIVE_BROAD = "NEGATIVE_BROAD"
+    NEGATIVE_EXACT = "NEGATIVE_EXACT"
+    NEGATIVE_PHRASE = "NEGATIVE_PHRASE"
+    PHRASE = "PHRASE"
+    TARGETING_EXPRESSION = "TARGETING_EXPRESSION"
+    TARGETING_EXPRESSION_PREDEFINED = "TARGETING_EXPRESSION_PREDEFINED"
+    THEME = "THEME"
 
 
 class Recommendation(BaseModel):

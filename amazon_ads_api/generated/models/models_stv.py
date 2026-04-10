@@ -6,10 +6,10 @@ Title:  Sponsored TV
 
 from __future__ import annotations
 
-from enum import StrEnum
-from typing import Optional
+from enum import StrEnum  # noqa: F401
+from typing import Any, Optional, Union  # noqa: F401
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field  # noqa: F401
 
 
 
@@ -22,6 +22,12 @@ class AccessDeniedExceptionResponseContent(BaseModel):
     message: str = Field(..., description="Human readable error message.")
 
     model_config = {'populate_by_name': True}
+
+
+class EntityState(StrEnum):
+    ARCHIVED = "ARCHIVED"
+    ENABLED = "ENABLED"
+    PAUSED = "PAUSED"
 
 
 class AdServingStatus(StrEnum):
@@ -70,12 +76,6 @@ class AdExtendedData(BaseModel):
     model_config = {'populate_by_name': True}
 
 
-class EntityState(StrEnum):
-    ARCHIVED = "ARCHIVED"
-    ENABLED = "ENABLED"
-    PAUSED = "PAUSED"
-
-
 class Ad(BaseModel):
     ad_group_id: str = Field(..., alias="adGroupId", description="The identifier of the Ad Group associated with the Ad.")
     ad_id: str = Field(..., alias="adId", description="The identifier of the Ad.")
@@ -96,8 +96,12 @@ class AdErrorType(StrEnum):
     RANGE_ERROR = "RANGE_ERROR"
 
 
-class OtherErrorReason(StrEnum):
-    OTHER_ERROR = "OTHER_ERROR"
+class RangeErrorReason(StrEnum):
+    INVALID_ENUM_VALUE = "INVALID_ENUM_VALUE"
+    NOT_IN_LIST = "NOT_IN_LIST"
+    OTHER = "OTHER"
+    TOO_HIGH = "TOO_HIGH"
+    TOO_LOW = "TOO_LOW"
 
 
 class ErrorCause(BaseModel):
@@ -108,23 +112,6 @@ class ErrorCause(BaseModel):
     model_config = {'populate_by_name': True}
 
 
-class OtherError(BaseModel):
-    """Errors not related to any of the other error types"""
-    cause: "ErrorCause"
-    message: str = Field(..., description="Human readable error message.")
-    reason: "OtherErrorReason"
-
-    model_config = {'populate_by_name': True}
-
-
-class RangeErrorReason(StrEnum):
-    INVALID_ENUM_VALUE = "INVALID_ENUM_VALUE"
-    NOT_IN_LIST = "NOT_IN_LIST"
-    OTHER = "OTHER"
-    TOO_HIGH = "TOO_HIGH"
-    TOO_LOW = "TOO_LOW"
-
-
 class RangeError(BaseModel):
     """Errors related to range constraints and violations"""
     allowed: Optional[list[str]] = Field(None, description="Allowed values")
@@ -133,6 +120,19 @@ class RangeError(BaseModel):
     message: str = Field(..., description="Human readable error message.")
     reason: "RangeErrorReason"
     upper_limit: Optional[str] = Field(None, alias="upperLimit", description="Optional upper limit.")
+
+    model_config = {'populate_by_name': True}
+
+
+class OtherErrorReason(StrEnum):
+    OTHER_ERROR = "OTHER_ERROR"
+
+
+class OtherError(BaseModel):
+    """Errors not related to any of the other error types"""
+    cause: "ErrorCause"
+    message: str = Field(..., description="Human readable error message.")
+    reason: "OtherErrorReason"
 
     model_config = {'populate_by_name': True}
 
@@ -219,6 +219,23 @@ class AdGroupErrorType(StrEnum):
     RANGE_ERROR = "RANGE_ERROR"
 
 
+class BiddingErrorReason(StrEnum):
+    BID_GT_BUDGET = "BID_GT_BUDGET"
+    BID_OUT_OF_MARKET_PLACE_RANGE = "BID_OUT_OF_MARKET_PLACE_RANGE"
+    OTHER = "OTHER"
+
+
+class BiddingError(BaseModel):
+    """Errors related to bids."""
+    cause: "ErrorCause"
+    lower_limit: Optional[str] = Field(None, alias="lowerLimit")
+    message: str = Field(..., description="Human readable error message.")
+    reason: "BiddingErrorReason"
+    upper_limit: Optional[str] = Field(None, alias="upperLimit")
+
+    model_config = {'populate_by_name': True}
+
+
 class DateErrorReason(StrEnum):
     END_DATE_EARLIER_THAN_TODAY = "END_DATE_EARLIER_THAN_TODAY"
     END_DATE_LATER_THAN_MAXIMUM = "END_DATE_LATER_THAN_MAXIMUM"
@@ -236,23 +253,6 @@ class DateError(BaseModel):
     cause: "ErrorCause"
     message: str = Field(..., description="Human readable error message.")
     reason: "DateErrorReason"
-
-    model_config = {'populate_by_name': True}
-
-
-class BiddingErrorReason(StrEnum):
-    BID_GT_BUDGET = "BID_GT_BUDGET"
-    BID_OUT_OF_MARKET_PLACE_RANGE = "BID_OUT_OF_MARKET_PLACE_RANGE"
-    OTHER = "OTHER"
-
-
-class BiddingError(BaseModel):
-    """Errors related to bids."""
-    cause: "ErrorCause"
-    lower_limit: Optional[str] = Field(None, alias="lowerLimit")
-    message: str = Field(..., description="Human readable error message.")
-    reason: "BiddingErrorReason"
-    upper_limit: Optional[str] = Field(None, alias="upperLimit")
 
     model_config = {'populate_by_name': True}
 
@@ -345,6 +345,10 @@ class BillingError(BaseModel):
     model_config = {'populate_by_name': True}
 
 
+class RecurrenceType(StrEnum):
+    DAILY = "DAILY"
+
+
 class BudgetCurrencyCode(StrEnum):
     AED = "AED"
     AUD = "AUD"
@@ -370,10 +374,6 @@ class BudgetValue(BaseModel):
     budget_currency_code: Optional["BudgetCurrencyCode"] = Field(None, alias="budgetCurrencyCode")
 
     model_config = {'populate_by_name': True}
-
-
-class RecurrenceType(StrEnum):
-    DAILY = "DAILY"
 
 
 class Budget(BaseModel):
@@ -427,6 +427,44 @@ class BulkAdsOperationResponse(BaseModel):
     model_config = {'populate_by_name': True}
 
 
+class CampaignErrorType(StrEnum):
+    BIDDING_ERROR = "BIDDING_ERROR"
+    BILLING_ERROR = "BILLING_ERROR"
+    BUDGET_ERROR = "BUDGET_ERROR"
+    DATE_ERROR = "DATE_ERROR"
+    OTHER_ERROR = "OTHER_ERROR"
+    RANGE_ERROR = "RANGE_ERROR"
+
+
+class CampaignMutationErrorSelector(BaseModel):
+    bidding_error: Optional["BiddingError"] = Field(None, alias="biddingError")
+    budget_error: Optional["BudgetError"] = Field(None, alias="budgetError")
+    date_error: Optional["DateError"] = Field(None, alias="dateError")
+    other_error: Optional["OtherError"] = Field(None, alias="otherError")
+    range_error: Optional["RangeError"] = Field(None, alias="rangeError")
+
+    model_config = {'populate_by_name': True}
+
+
+class CampaignMutationError(BaseModel):
+    error_type: "CampaignErrorType" = Field(..., alias="errorType")
+    error_value: "CampaignMutationErrorSelector" = Field(..., alias="errorValue")
+
+    model_config = {'populate_by_name': True}
+
+
+class CampaignFailureResponseItem(BaseModel):
+    errors: Optional[list["CampaignMutationError"]] = Field(None, description="A list of validation errors.")
+    index: int = Field(..., description="the index of the campaign in the array from the request body.")
+
+    model_config = {'populate_by_name': True}
+
+
+class TargetingType(StrEnum):
+    AUTO_RELEVANT_TO_MY_BUSINESS = "AUTO_RELEVANT_TO_MY_BUSINESS"
+    MANUAL = "MANUAL"
+
+
 class CampaignServingStatus(StrEnum):
     ADVERTISER_ACCOUNT_OUT_OF_BUDGET = "ADVERTISER_ACCOUNT_OUT_OF_BUDGET"
     ADVERTISER_ARCHIVED = "ADVERTISER_ARCHIVED"
@@ -472,11 +510,6 @@ class Tags(BaseModel):
     __root__: dict[str, str] = {}
 
 
-class TargetingType(StrEnum):
-    AUTO_RELEVANT_TO_MY_BUSINESS = "AUTO_RELEVANT_TO_MY_BUSINESS"
-    MANUAL = "MANUAL"
-
-
 class Campaign(BaseModel):
     budget_settings: "BudgetSettings" = Field(..., alias="budgetSettings")
     campaign_id: str = Field(..., alias="campaignId", description="The identifier of the Campaign.")
@@ -501,39 +534,6 @@ class CampaignSuccessResponseItem(BaseModel):
     model_config = {'populate_by_name': True}
 
 
-class CampaignMutationErrorSelector(BaseModel):
-    bidding_error: Optional["BiddingError"] = Field(None, alias="biddingError")
-    budget_error: Optional["BudgetError"] = Field(None, alias="budgetError")
-    date_error: Optional["DateError"] = Field(None, alias="dateError")
-    other_error: Optional["OtherError"] = Field(None, alias="otherError")
-    range_error: Optional["RangeError"] = Field(None, alias="rangeError")
-
-    model_config = {'populate_by_name': True}
-
-
-class CampaignErrorType(StrEnum):
-    BIDDING_ERROR = "BIDDING_ERROR"
-    BILLING_ERROR = "BILLING_ERROR"
-    BUDGET_ERROR = "BUDGET_ERROR"
-    DATE_ERROR = "DATE_ERROR"
-    OTHER_ERROR = "OTHER_ERROR"
-    RANGE_ERROR = "RANGE_ERROR"
-
-
-class CampaignMutationError(BaseModel):
-    error_type: "CampaignErrorType" = Field(..., alias="errorType")
-    error_value: "CampaignMutationErrorSelector" = Field(..., alias="errorValue")
-
-    model_config = {'populate_by_name': True}
-
-
-class CampaignFailureResponseItem(BaseModel):
-    errors: Optional[list["CampaignMutationError"]] = Field(None, description="A list of validation errors.")
-    index: int = Field(..., description="the index of the campaign in the array from the request body.")
-
-    model_config = {'populate_by_name': True}
-
-
 class BulkCampaignOperationResponse(BaseModel):
     error: Optional[list["CampaignFailureResponseItem"]] = None
     success: Optional[list["CampaignSuccessResponseItem"]] = None
@@ -541,16 +541,16 @@ class BulkCampaignOperationResponse(BaseModel):
     model_config = {'populate_by_name': True}
 
 
-class CreativeErrorType(StrEnum):
-    OTHER_ERROR = "OTHER_ERROR"
-    RANGE_ERROR = "RANGE_ERROR"
-
-
 class CreativeMutationErrorSelector(BaseModel):
     other_error: Optional["OtherError"] = Field(None, alias="otherError")
     range_error: Optional["RangeError"] = Field(None, alias="rangeError")
 
     model_config = {'populate_by_name': True}
+
+
+class CreativeErrorType(StrEnum):
+    OTHER_ERROR = "OTHER_ERROR"
+    RANGE_ERROR = "RANGE_ERROR"
 
 
 class CreativeMutationError(BaseModel):
@@ -599,6 +599,23 @@ class BulkCreativeOperationResponse(BaseModel):
     model_config = {'populate_by_name': True}
 
 
+class Location(BaseModel):
+    ad_group_id: str = Field(..., alias="adGroupId", description="The identifier of the Ad Group to which this Location is associated.")
+    campaign_id: str = Field(..., alias="campaignId", description="The identifier of the Campaign associated with the Ad Group.")
+    location_expression_id: str = Field(..., alias="locationExpressionId", description="The Location identifier.")
+    location_id: str = Field(..., alias="locationId", description="The Location Geo ACI (Amazon Common Identifier).")
+    location_id_resolved: Optional[str] = Field(None, alias="locationIdResolved", description="A human-readable location text.")
+
+    model_config = {'populate_by_name': True}
+
+
+class LocationSuccessResponseItem(BaseModel):
+    index: int = Field(..., description="The index of the location in the array from the request body.")
+    location: Optional["Location"] = None
+
+    model_config = {'populate_by_name': True}
+
+
 class LocationErrorType(StrEnum):
     LOCATION_ERROR = "LOCATION_ERROR"
     OTHER_ERROR = "OTHER_ERROR"
@@ -630,23 +647,6 @@ class LocationMutationError(BaseModel):
 class LocationFailureResponseItem(BaseModel):
     errors: Optional[list["LocationMutationError"]] = Field(None, description="A list of validation errors.")
     index: int = Field(..., description="The index of the location in the array from the request body.")
-
-    model_config = {'populate_by_name': True}
-
-
-class Location(BaseModel):
-    ad_group_id: str = Field(..., alias="adGroupId", description="The identifier of the Ad Group to which this Location is associated.")
-    campaign_id: str = Field(..., alias="campaignId", description="The identifier of the Campaign associated with the Ad Group.")
-    location_expression_id: str = Field(..., alias="locationExpressionId", description="The Location identifier.")
-    location_id: str = Field(..., alias="locationId", description="The Location Geo ACI (Amazon Common Identifier).")
-    location_id_resolved: Optional[str] = Field(None, alias="locationIdResolved", description="A human-readable location text.")
-
-    model_config = {'populate_by_name': True}
-
-
-class LocationSuccessResponseItem(BaseModel):
-    index: int = Field(..., description="The index of the location in the array from the request body.")
-    location: Optional["Location"] = None
 
     model_config = {'populate_by_name': True}
 
@@ -688,9 +688,9 @@ class TargetingClauseFailureResponseItem(BaseModel):
     model_config = {'populate_by_name': True}
 
 
-class TargetingResolvedExpressionPredicate(BaseModel):
+class TargetingExpressionPredicate(BaseModel):
     type_: Optional[str] = Field(None, alias="type")
-    value: Optional[str] = Field(None, description="'The human-readable value of the targeting predicate. Example for retail category '2617941011': `Arts, Crafts & Sewing` ")
+    value: Optional[str] = Field(None, description="'The value of the targeting predicate. Example for retail category `Arts, Crafts & Sewing`: '2617941011' Example for con")
 
     model_config = {'populate_by_name': True}
 
@@ -734,9 +734,9 @@ class TargetingClauseExtendedData(BaseModel):
     model_config = {'populate_by_name': True}
 
 
-class TargetingExpressionPredicate(BaseModel):
+class TargetingResolvedExpressionPredicate(BaseModel):
     type_: Optional[str] = Field(None, alias="type")
-    value: Optional[str] = Field(None, description="'The value of the targeting predicate. Example for retail category `Arts, Crafts & Sewing`: '2617941011' Example for con")
+    value: Optional[str] = Field(None, description="'The human-readable value of the targeting predicate. Example for retail category '2617941011': `Arts, Crafts & Sewing` ")
 
     model_config = {'populate_by_name': True}
 
@@ -1101,11 +1101,18 @@ class ForecastCreative(BaseModel):
     model_config = {'populate_by_name': True}
 
 
-class ForecastRulesError(BaseModel):
-    """Forecast Errors related to forecast rules as too broad or too narrow"""
+class ForecastErrorType(StrEnum):
+    FORECAST_MODEL_ERROR = "FORECAST_MODEL_ERROR"
+    FORECAST_OTHER_ERROR = "FORECAST_OTHER_ERROR"
+    FORECAST_RULES_ERROR = "FORECAST_RULES_ERROR"
+    FORECAST_VALIDATION_ERROR = "FORECAST_VALIDATION_ERROR"
+
+
+class ForecastOtherError(BaseModel):
+    """Forecast Errors just targeting on the general forecast error type"""
     cause: "ErrorCause"
     message: str = Field(..., description="Human readable error message.")
-    reason: str = Field(..., description="Reason for forecast rules error")
+    reason: str = Field(..., description="Reason for forecast other error")
 
     model_config = {'populate_by_name': True}
 
@@ -1119,11 +1126,11 @@ class ForecastValidationError(BaseModel):
     model_config = {'populate_by_name': True}
 
 
-class ForecastOtherError(BaseModel):
-    """Forecast Errors just targeting on the general forecast error type"""
+class ForecastRulesError(BaseModel):
+    """Forecast Errors related to forecast rules as too broad or too narrow"""
     cause: "ErrorCause"
     message: str = Field(..., description="Human readable error message.")
-    reason: str = Field(..., description="Reason for forecast other error")
+    reason: str = Field(..., description="Reason for forecast rules error")
 
     model_config = {'populate_by_name': True}
 
@@ -1144,13 +1151,6 @@ class ForecastErrorSelector(BaseModel):
     forecast_validation_error: Optional["ForecastValidationError"] = Field(None, alias="forecastValidationError")
 
     model_config = {'populate_by_name': True}
-
-
-class ForecastErrorType(StrEnum):
-    FORECAST_MODEL_ERROR = "FORECAST_MODEL_ERROR"
-    FORECAST_OTHER_ERROR = "FORECAST_OTHER_ERROR"
-    FORECAST_RULES_ERROR = "FORECAST_RULES_ERROR"
-    FORECAST_VALIDATION_ERROR = "FORECAST_VALIDATION_ERROR"
 
 
 class ForecastErrorItem(BaseModel):

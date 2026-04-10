@@ -6,10 +6,10 @@ Title:  Billing
 
 from __future__ import annotations
 
-from enum import StrEnum
-from typing import Optional
+from enum import StrEnum  # noqa: F401
+from typing import Any, Optional, Union  # noqa: F401
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field  # noqa: F401
 
 
 
@@ -93,13 +93,6 @@ class adjustments(BaseModel):
     pass
 
 
-class email(BaseModel):
-    email_address: str = Field(..., alias="emailAddress")
-    display_name: str = Field(..., alias="displayName", description="Customer name used in email communication.")
-
-    model_config = {'populate_by_name': True}
-
-
 class address(BaseModel):
     state_or_region: str = Field(..., alias="stateOrRegion")
     attention_name: Optional[str] = Field(None, alias="attentionName")
@@ -114,20 +107,18 @@ class address(BaseModel):
     model_config = {'populate_by_name': True}
 
 
+class email(BaseModel):
+    email_address: str = Field(..., alias="emailAddress")
+    display_name: str = Field(..., alias="displayName", description="Customer name used in email communication.")
+
+    model_config = {'populate_by_name': True}
+
+
 class contactInfo(BaseModel):
     address: "address"
     email: "email"
 
     model_config = {'populate_by_name': True}
-
-
-class paymentMethod(StrEnum):
-    CREDIT_CARD = "CREDIT_CARD"
-    ELECTRONIC_FUNDS_TRANSFER = "ELECTRONIC_FUNDS_TRANSFER"
-    DEDUCT_FROM_PAYMENT = "DEDUCT_FROM_PAYMENT"
-    UNIFIED_BILLING = "UNIFIED_BILLING"
-    DIRECT_DEBIT = "DIRECT_DEBIT"
-    PREPAY = "PREPAY"
 
 
 class invoiceStatus(StrEnum):
@@ -137,6 +128,15 @@ class invoiceStatus(StrEnum):
     PAID_IN_PART = "PAID_IN_PART"
     PAID_IN_FULL = "PAID_IN_FULL"
     WRITTEN_OFF = "WRITTEN_OFF"
+
+
+class paymentMethod(StrEnum):
+    CREDIT_CARD = "CREDIT_CARD"
+    ELECTRONIC_FUNDS_TRANSFER = "ELECTRONIC_FUNDS_TRANSFER"
+    DEDUCT_FROM_PAYMENT = "DEDUCT_FROM_PAYMENT"
+    UNIFIED_BILLING = "UNIFIED_BILLING"
+    DIRECT_DEBIT = "DIRECT_DEBIT"
+    PREPAY = "PREPAY"
 
 
 class documentType(StrEnum):

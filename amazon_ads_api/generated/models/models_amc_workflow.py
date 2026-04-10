@@ -6,10 +6,10 @@ Title:  Workflow Management Service
 
 from __future__ import annotations
 
-from enum import StrEnum
-from typing import Optional
+from enum import StrEnum  # noqa: F401
+from typing import Any, Optional, Union  # noqa: F401
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field  # noqa: F401
 
 
 
@@ -188,13 +188,6 @@ class CreateWorkflowExecutionRequest(BaseModel):
     model_config = {'populate_by_name': True}
 
 
-class WorkflowExecutionOutputChannelStatus(StrEnum):
-    AVAILABLE = "AVAILABLE"
-    FAILED = "FAILED"
-    PENDING = "PENDING"
-    UNAVAILABLE = "UNAVAILABLE"
-
-
 class OutputChannelType(StrEnum):
     ACR = "ACR"
     DOWNLOAD = "DOWNLOAD"
@@ -208,6 +201,13 @@ class OutputChannel(BaseModel):
     type_: "OutputChannelType" = Field(..., alias="type", description="The mechanism for retrieving output.")
 
     model_config = {'populate_by_name': True}
+
+
+class WorkflowExecutionOutputChannelStatus(StrEnum):
+    AVAILABLE = "AVAILABLE"
+    FAILED = "FAILED"
+    PENDING = "PENDING"
+    UNAVAILABLE = "UNAVAILABLE"
 
 
 class WorkflowExecutionOutputChannel(BaseModel):

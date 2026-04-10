@@ -6,10 +6,10 @@ Title:  AMC Custom Models
 
 from __future__ import annotations
 
-from enum import StrEnum
-from typing import Any, Optional
+from enum import StrEnum  # noqa: F401
+from typing import Any, Optional, Union  # noqa: F401
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field  # noqa: F401
 
 
 
@@ -44,11 +44,16 @@ class AMCModelBasedAudienceCreateMlDataExportOutput(BaseModel):
     model_config = {'populate_by_name': True}
 
 
-class ComplexDataType(BaseModel):
+class AMCModelBasedAudienceIdempotencyKey(BaseModel):
+    """Idempotency key to prevent duplicate records."""
     pass
 
 
 class SimpleDataType(BaseModel):
+    pass
+
+
+class ComplexDataType(BaseModel):
     pass
 
 
@@ -70,11 +75,6 @@ class AMCModelBasedAudienceQueryParameters(BaseModel):
     time_window_start: str = Field(..., alias="timeWindowStart", description="Starting date of data to query. This field is in UTC and is formatted as yyyy-MM-dd'T'HH:mm:ss'Z'.")
 
     model_config = {'populate_by_name': True}
-
-
-class AMCModelBasedAudienceIdempotencyKey(BaseModel):
-    """Idempotency key to prevent duplicate records."""
-    pass
 
 
 class AMCModelBasedAudienceCreateMlInputChannelInput(BaseModel):
@@ -144,16 +144,6 @@ class AMCModelBasedAudienceModeledDatasetUploadJobUpdateStrategy(StrEnum):
     FULL_REPLACE = "FULL_REPLACE"
 
 
-class AMCModelBasedAudienceTrainedModelId(BaseModel):
-    """Identifier that uniquely represents an AMC model based audience trained model."""
-    pass
-
-
-class AMCModelBasedAudienceTrainedModelIds(BaseModel):
-    """A list of trainedModelIds"""
-    pass
-
-
 class AMCModelBasedAudienceTrainedModelInferenceJobId(BaseModel):
     """A unique ID that represents a trained model inference job"""
     pass
@@ -161,6 +151,16 @@ class AMCModelBasedAudienceTrainedModelInferenceJobId(BaseModel):
 
 class AMCModelBasedAudienceTrainedModelInferenceJobIds(BaseModel):
     """A list of trainedModelInferenceJobIds"""
+    pass
+
+
+class AMCModelBasedAudienceTrainedModelId(BaseModel):
+    """Identifier that uniquely represents an AMC model based audience trained model."""
+    pass
+
+
+class AMCModelBasedAudienceTrainedModelIds(BaseModel):
+    """A list of trainedModelIds"""
     pass
 
 
@@ -186,6 +186,19 @@ class AMCModelBasedAudienceCreateModeledDatasetUploadJobOutput(BaseModel):
     model_config = {'populate_by_name': True}
 
 
+class AMCModelBasedAudienceMlInputChannel(BaseModel):
+    """A named input source that the container will consume. This is the location of the output of the query."""
+    channel_name: str = Field(..., alias="channelName")
+    ml_input_channel_id: str = Field(..., alias="mlInputChannelId")
+
+    model_config = {'populate_by_name': True}
+
+
+class AMCModelBasedAudienceMlInputChannels(BaseModel):
+    """a list of mlInputChannels"""
+    pass
+
+
 class AMCModelBasedAudienceHyperParameters(BaseModel):
     """Algorithm-specific parameters that influence the quality of the model."""
     __root__: dict[str, str] = {}
@@ -200,6 +213,18 @@ class AMCModelBasedAudienceResourceConfig(BaseModel):
     model_config = {'populate_by_name': True}
 
 
+class AMCModelBasedAudienceStoppingCondition(BaseModel):
+    """Specifies a limit to how long a model training job can run."""
+    max_runtime_in_seconds: Optional[int] = Field(None, alias="maxRuntimeInSeconds", description="The maximum length of time, in seconds, that a model can train before it is stopped. Minimum value of 1")
+
+    model_config = {'populate_by_name': True}
+
+
+class AMCModelBasedAudienceEnvironment(BaseModel):
+    """The environment variables to set in the Docker container."""
+    __root__: dict[str, str] = {}
+
+
 class AMCModelBasedAudienceIncrementalTrainingDataChannel(BaseModel):
     """A named input source that the container will consume. This is the location of a model which will be used for incremental training."""
     channel_name: str = Field(..., alias="channelName")
@@ -211,31 +236,6 @@ class AMCModelBasedAudienceIncrementalTrainingDataChannel(BaseModel):
 class AMCModelBasedAudienceIncrementalTrainingDataChannels(BaseModel):
     """A list of trained models to perform incremental training against."""
     pass
-
-
-class AMCModelBasedAudienceMlInputChannel(BaseModel):
-    """A named input source that the container will consume. This is the location of the output of the query."""
-    channel_name: str = Field(..., alias="channelName")
-    ml_input_channel_id: str = Field(..., alias="mlInputChannelId")
-
-    model_config = {'populate_by_name': True}
-
-
-class AMCModelBasedAudienceMlInputChannels(BaseModel):
-    """a list of mlInputChannels"""
-    pass
-
-
-class AMCModelBasedAudienceEnvironment(BaseModel):
-    """The environment variables to set in the Docker container."""
-    __root__: dict[str, str] = {}
-
-
-class AMCModelBasedAudienceStoppingCondition(BaseModel):
-    """Specifies a limit to how long a model training job can run."""
-    max_runtime_in_seconds: Optional[int] = Field(None, alias="maxRuntimeInSeconds", description="The maximum length of time, in seconds, that a model can train before it is stopped. Minimum value of 1")
-
-    model_config = {'populate_by_name': True}
 
 
 class AMCModelBasedAudienceCreateTrainedModelInput(BaseModel):
@@ -263,14 +263,14 @@ class AMCModelBasedAudienceCreateTrainedModelOutput(BaseModel):
     model_config = {'populate_by_name': True}
 
 
+class AMCModelBasedAudienceMlDataExportPresignedUrls(BaseModel):
+    pass
+
+
 class MlDataExportStatus(StrEnum):
     CREATE_FAILED = "CREATE_FAILED"
     CREATE_IN_PROGRESS = "CREATE_IN_PROGRESS"
     CREATE_SUCCEEDED = "CREATE_SUCCEEDED"
-
-
-class AMCModelBasedAudienceMlDataExportPresignedUrls(BaseModel):
-    pass
 
 
 class AMCModelBasedAudienceGetMlDataExportOutput(BaseModel):
@@ -329,10 +329,9 @@ class AMCModelBasedAudienceGetModeledDatasetUploadJobOutput(BaseModel):
     model_config = {'populate_by_name': True}
 
 
-class InferenceJobResourceConfig(BaseModel):
-    """Configuration options for an inference resource."""
-    instance_count: Optional[int] = Field(None, alias="instanceCount")
-    instance_type: Optional[str] = Field(None, alias="instanceType")
+class InferenceJobContainerExecutionParameters(BaseModel):
+    """Container execution parameters for an inference job."""
+    max_payload_in_mb: Optional[int] = Field(None, alias="maxPayloadInMb")
 
     model_config = {'populate_by_name': True}
 
@@ -352,9 +351,10 @@ class PublishStatus(StrEnum):
     PUBLISH_SUCCEEDED = "PUBLISH_SUCCEEDED"
 
 
-class InferenceJobContainerExecutionParameters(BaseModel):
-    """Container execution parameters for an inference job."""
-    max_payload_in_mb: Optional[int] = Field(None, alias="maxPayloadInMb")
+class InferenceJobResourceConfig(BaseModel):
+    """Configuration options for an inference resource."""
+    instance_count: Optional[int] = Field(None, alias="instanceCount")
+    instance_type: Optional[str] = Field(None, alias="instanceType")
 
     model_config = {'populate_by_name': True}
 

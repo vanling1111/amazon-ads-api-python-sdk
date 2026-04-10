@@ -6,10 +6,10 @@ Title:  Rule-Based Audiences
 
 from __future__ import annotations
 
-from enum import StrEnum
-from typing import Any, Optional
+from enum import StrEnum  # noqa: F401
+from typing import Any, Optional, Union  # noqa: F401
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field  # noqa: F401
 
 
 
@@ -33,11 +33,11 @@ class CountryCodeEnum(StrEnum):
     US = "US"
 
 
-class ComplexDataType(BaseModel):
+class SimpleDataType(BaseModel):
     pass
 
 
-class SimpleDataType(BaseModel):
+class ComplexDataType(BaseModel):
     pass
 
 

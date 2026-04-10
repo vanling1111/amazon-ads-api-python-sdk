@@ -6,9 +6,9 @@ Title:  Bid Modifiers
 
 from __future__ import annotations
 
-from typing import Any
+from typing import Any  # noqa: F401
 
-from amazon_ads_api.base import BaseAdsClient, JSONData, JSONList
+from amazon_ads_api.base import BaseAdsClient, JSONData, JSONList  # noqa: F401
 
 try:
     from .models_dsp_bid_modifiers import *  # noqa: F403
@@ -98,7 +98,7 @@ class DspBidModifiersClient(BaseAdsClient):
     async def delete_bid_modifier_rule_association(self, bid_modifier_rule_id: str, ad_group_id: str | None = None, amazon_ads_account_id: str | None = None, amazon_advertising_api_client_id: str | None = None, amazon_advertising_api_scope: str | None = None) -> JSONData | JSONList:
         """DELETE /dsp/rules/bidmodifier/{bidModifierRuleId}/associations
 
-        Removes the association between bid adjustment rule and an adgroup, but does not delete the bid modifier rule. The rule 
+        Removes the association between bid adjustment rule and an adgroup, but does not delete the bid modifier rule. The rule
         """
         endpoint = f"/dsp/rules/bidmodifier/{bid_modifier_rule_id}/associations"
         params: dict[str, Any] = {}

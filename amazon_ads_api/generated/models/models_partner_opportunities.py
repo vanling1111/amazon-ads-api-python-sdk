@@ -6,10 +6,10 @@ Title:  Partner Opportunities
 
 from __future__ import annotations
 
-from enum import StrEnum
-from typing import Optional
+from enum import StrEnum  # noqa: F401
+from typing import Any, Optional, Union  # noqa: F401
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field  # noqa: F401
 
 
 
@@ -119,15 +119,15 @@ class PartnerOpportunitiesApplicationStatusResponseDtoV1(BaseModel):
     model_config = {'populate_by_name': True}
 
 
-class PartnerOpportunitiesApplyErrorSuccesses(BaseModel):
+class PartnerOpportunitiesApplyErrorFailures(BaseModel):
+    code: str
+    message: str
     recommendation_id: str = Field(..., alias="recommendationId")
 
     model_config = {'populate_by_name': True}
 
 
-class PartnerOpportunitiesApplyErrorFailures(BaseModel):
-    code: str
-    message: str
+class PartnerOpportunitiesApplyErrorSuccesses(BaseModel):
     recommendation_id: str = Field(..., alias="recommendationId")
 
     model_config = {'populate_by_name': True}
@@ -247,15 +247,28 @@ class PartnerOpportunitiesOpportunitiesPageV1(BaseModel):
     model_config = {'populate_by_name': True}
 
 
-class PartnerOpportunitiesOpportunityAudienceFilterSummaryV1Value(StrEnum):
-    PARTNER = "PARTNER"
-    PARTNER_MANAGED_ADVERTISERS = "PARTNER_MANAGED_ADVERTISERS"
-    PARTNER_MANAGED_AD_BUSINESS = "PARTNER_MANAGED_AD_BUSINESS"
+class PartnerOpportunitiesOpportunityObjectiveTypeFilterSummaryV1Value(StrEnum):
+    ADVERTISER_INSIGHTS = "ADVERTISER_INSIGHTS"
+    AD_API_ENDPOINT_ADOPTION = "AD_API_ENDPOINT_ADOPTION"
+    AMAZON_ACCOUNT_TEAM_RECOMMENDATIONS = "AMAZON_ACCOUNT_TEAM_RECOMMENDATIONS"
+    BENCHMARKING_INSIGHTS = "BENCHMARKING_INSIGHTS"
+    CAMPAIGN_OPTIMIZATION = "CAMPAIGN_OPTIMIZATION"
+    CATEGORY_INSIGHTS = "CATEGORY_INSIGHTS"
+    CLICK_CREDITS = "CLICK_CREDITS"
+    DEALS = "DEALS"
+    MARKETPLACE_EXPANSION = "MARKETPLACE_EXPANSION"
+    NEW_TO_BRAND_INSIGHTS = "NEW_TO_BRAND_INSIGHTS"
+    PARTNER_GROWTH = "PARTNER_GROWTH"
+    PATH_TO_PURCHASE_INSIGHTS = "PATH_TO_PURCHASE_INSIGHTS"
+    READY_TO_LAUNCH_CAMPAIGNS = "READY_TO_LAUNCH_CAMPAIGNS"
+    RETAIL_INSIGHTS = "RETAIL_INSIGHTS"
+    SHARE_OF_VOICE_INSIGHTS = "SHARE_OF_VOICE_INSIGHTS"
+    UNLAUNCHED_ASINS = "UNLAUNCHED_ASINS"
 
 
-class PartnerOpportunitiesOpportunityAudienceFilterSummaryV1(BaseModel):
+class PartnerOpportunitiesOpportunityObjectiveTypeFilterSummaryV1(BaseModel):
     count: float
-    value: PartnerOpportunitiesOpportunityAudienceFilterSummaryV1Value
+    value: PartnerOpportunitiesOpportunityObjectiveTypeFilterSummaryV1Value
 
     model_config = {'populate_by_name': True}
 
@@ -282,28 +295,15 @@ class PartnerOpportunitiesOpportunityProductFilterSummaryV1(BaseModel):
     model_config = {'populate_by_name': True}
 
 
-class PartnerOpportunitiesOpportunityObjectiveTypeFilterSummaryV1Value(StrEnum):
-    ADVERTISER_INSIGHTS = "ADVERTISER_INSIGHTS"
-    AD_API_ENDPOINT_ADOPTION = "AD_API_ENDPOINT_ADOPTION"
-    AMAZON_ACCOUNT_TEAM_RECOMMENDATIONS = "AMAZON_ACCOUNT_TEAM_RECOMMENDATIONS"
-    BENCHMARKING_INSIGHTS = "BENCHMARKING_INSIGHTS"
-    CAMPAIGN_OPTIMIZATION = "CAMPAIGN_OPTIMIZATION"
-    CATEGORY_INSIGHTS = "CATEGORY_INSIGHTS"
-    CLICK_CREDITS = "CLICK_CREDITS"
-    DEALS = "DEALS"
-    MARKETPLACE_EXPANSION = "MARKETPLACE_EXPANSION"
-    NEW_TO_BRAND_INSIGHTS = "NEW_TO_BRAND_INSIGHTS"
-    PARTNER_GROWTH = "PARTNER_GROWTH"
-    PATH_TO_PURCHASE_INSIGHTS = "PATH_TO_PURCHASE_INSIGHTS"
-    READY_TO_LAUNCH_CAMPAIGNS = "READY_TO_LAUNCH_CAMPAIGNS"
-    RETAIL_INSIGHTS = "RETAIL_INSIGHTS"
-    SHARE_OF_VOICE_INSIGHTS = "SHARE_OF_VOICE_INSIGHTS"
-    UNLAUNCHED_ASINS = "UNLAUNCHED_ASINS"
+class PartnerOpportunitiesOpportunityAudienceFilterSummaryV1Value(StrEnum):
+    PARTNER = "PARTNER"
+    PARTNER_MANAGED_ADVERTISERS = "PARTNER_MANAGED_ADVERTISERS"
+    PARTNER_MANAGED_AD_BUSINESS = "PARTNER_MANAGED_AD_BUSINESS"
 
 
-class PartnerOpportunitiesOpportunityObjectiveTypeFilterSummaryV1(BaseModel):
+class PartnerOpportunitiesOpportunityAudienceFilterSummaryV1(BaseModel):
     count: float
-    value: PartnerOpportunitiesOpportunityObjectiveTypeFilterSummaryV1Value
+    value: PartnerOpportunitiesOpportunityAudienceFilterSummaryV1Value
 
     model_config = {'populate_by_name': True}
 

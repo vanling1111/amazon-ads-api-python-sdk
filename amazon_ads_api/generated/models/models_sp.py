@@ -6,10 +6,10 @@ Title:  Sponsored Products
 
 from __future__ import annotations
 
-from enum import StrEnum
-from typing import Any, Optional
+from enum import StrEnum  # noqa: F401
+from typing import Any, Optional, Union  # noqa: F401
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field  # noqa: F401
 
 
 
@@ -411,16 +411,16 @@ class Clicks(BaseModel):
     model_config = {'populate_by_name': True}
 
 
-class Impressions(BaseModel):
-    """Impressions benchmark."""
+class Conversions(BaseModel):
+    """Conversions benchmark."""
     lower: Optional[int] = Field(None, description="lower bound.")
     upper: Optional[int] = Field(None, description="upper bound.")
 
     model_config = {'populate_by_name': True}
 
 
-class Conversions(BaseModel):
-    """Conversions benchmark."""
+class Impressions(BaseModel):
+    """Impressions benchmark."""
     lower: Optional[int] = Field(None, description="lower bound.")
     upper: Optional[int] = Field(None, description="upper bound.")
 
@@ -644,14 +644,6 @@ class BudgetRecommendationError(BaseModel):
     model_config = {'populate_by_name': True}
 
 
-class BudgetRuleRecommendation(BaseModel):
-    rule_id: Optional[str] = Field(None, alias="ruleId", description="rule id for the recomemendation")
-    rule_name: Optional[str] = Field(None, alias="ruleName", description="rule name for the recomemendation")
-    suggested_budget_increase_percent: Optional[float] = Field(None, alias="suggestedBudgetIncreasePercent", description="suggested increase percent")
-
-    model_config = {'populate_by_name': True}
-
-
 class SevenDaysMissedOpportunities(BaseModel):
     end_date: Optional[str] = Field(None, alias="endDate", description="End date of the date range for which missed opportunity metrics are provided (YYYYMMDD). Local time")
     estimated_missed_clicks_lower: Optional[int] = Field(None, alias="estimatedMissedClicksLower", description="Lower bound estimate of the additional clicks the campaign might have generated if it had not run out of budget during t")
@@ -662,6 +654,14 @@ class SevenDaysMissedOpportunities(BaseModel):
     estimated_missed_sales_upper: Optional[float] = Field(None, alias="estimatedMissedSalesUpper", description="Upper bound estimate of the additional sales the campaign might have generated if it had not run out of budget during th")
     percent_time_in_budget: Optional[float] = Field(None, alias="percentTimeInBudget", description="percentage of time the campaign is active with a budget. Provided as a decimal ranging from 0 to 1 (e.g. 0.76 means the ")
     start_date: Optional[str] = Field(None, alias="startDate", description="Starting date of the date range for which missed opportunity metrics are provided (YYYYMMDD). Local time")
+
+    model_config = {'populate_by_name': True}
+
+
+class BudgetRuleRecommendation(BaseModel):
+    rule_id: Optional[str] = Field(None, alias="ruleId", description="rule id for the recomemendation")
+    rule_name: Optional[str] = Field(None, alias="ruleName", description="rule name for the recomemendation")
+    suggested_budget_increase_percent: Optional[float] = Field(None, alias="suggestedBudgetIncreasePercent", description="suggested increase percent")
 
     model_config = {'populate_by_name': True}
 
@@ -827,9 +827,19 @@ class Campaign(BaseModel):
     model_config = {'populate_by_name': True}
 
 
-class RuleName(BaseModel):
-    """The campaign optimization rule name."""
+class RuleType(StrEnum):
+    BID = "BID"
+    KEYWORD = "KEYWORD"
+    PRODUCT = "PRODUCT"
+
+
+class RuleCreationDate(BaseModel):
+    """Time of campaign optimization rule creation in ISO 8061. Read-only."""
     pass
+
+
+class RuleAction(StrEnum):
+    ADOPT = "ADOPT"
 
 
 class RecurrenceType(StrEnum):
@@ -841,17 +851,32 @@ class RuleStatus(StrEnum):
     ARCHIVED = "ARCHIVED"
 
 
+class RuleCampaignId(BaseModel):
+    """campaignId"""
+    pass
+
+
+class RuleName(BaseModel):
+    """The campaign optimization rule name."""
+    pass
+
+
+class campaignOptimizationId(BaseModel):
+    """The persistent rule identifier."""
+    pass
+
+
+class RuleConditionMetric(StrEnum):
+    AVERAGE_BID = "AVERAGE_BID"
+    ROAS = "ROAS"
+
+
 class ComparisonOperator(StrEnum):
     EQUAL_TO = "EQUAL_TO"
     GREATER_THAN = "GREATER_THAN"
     GREATER_THAN_OR_EQUAL_TO = "GREATER_THAN_OR_EQUAL_TO"
     LESS_THAN = "LESS_THAN"
     LESS_THAN_OR_EQUAL_TO = "LESS_THAN_OR_EQUAL_TO"
-
-
-class RuleConditionMetric(StrEnum):
-    AVERAGE_BID = "AVERAGE_BID"
-    ROAS = "ROAS"
 
 
 class RuleCondition(BaseModel):
@@ -864,31 +889,6 @@ class RuleCondition(BaseModel):
 
 class RuleConditionList(BaseModel):
     pass
-
-
-class RuleCampaignId(BaseModel):
-    """campaignId"""
-    pass
-
-
-class RuleCreationDate(BaseModel):
-    """Time of campaign optimization rule creation in ISO 8061. Read-only."""
-    pass
-
-
-class campaignOptimizationId(BaseModel):
-    """The persistent rule identifier."""
-    pass
-
-
-class RuleAction(StrEnum):
-    ADOPT = "ADOPT"
-
-
-class RuleType(StrEnum):
-    BID = "BID"
-    KEYWORD = "KEYWORD"
-    PRODUCT = "PRODUCT"
 
 
 class CampaignOptimizationRule(BaseModel):
@@ -909,30 +909,6 @@ class CampaignOptimizationRuleError(BaseModel):
     """The Error Response Object."""
     code: Optional[str] = Field(None, description="An enumerated error code for machine use.")
     details: Optional[str] = Field(None, description="A human-readable description of the response.")
-
-    model_config = {'populate_by_name': True}
-
-
-class PlacementBiddingRecommendationAction(StrEnum):
-    ADD = "ADD"
-    DECREASE = "DECREASE"
-    INCREASE = "INCREASE"
-    REMOVE = "REMOVE"
-
-
-class PlacementBiddingRecommendationPlacementtype(StrEnum):
-    PLACEMENT_PRODUCT_PAGE = "PLACEMENT_PRODUCT_PAGE"
-    PLACEMENT_REST_OF_SEARCH = "PLACEMENT_REST_OF_SEARCH"
-    PLACEMENT_TOP = "PLACEMENT_TOP"
-
-
-class PlacementBiddingRecommendation(BaseModel):
-    """Contains suggested recommendation for a placement bid adjustment."""
-    action: Optional[PlacementBiddingRecommendationAction] = Field(None, description="Type of suggested action.")
-    incremental_impressions_lower_percent: Optional[int] = Field(None, alias="incrementalImpressionsLowerPercent", description="Lower bound of the estimated incremental impressions that could be gained if this optimization used")
-    incremental_impressions_upper_percent: Optional[int] = Field(None, alias="incrementalImpressionsUpperPercent", description="Upper bound of the estimated incremental impressions that could be gained if this optimization used")
-    placement_type: Optional[PlacementBiddingRecommendationPlacementtype] = Field(None, alias="placementType", description="The placement type.")
-    suggested_bid_adjustment: Optional[int] = Field(None, alias="suggestedBidAdjustment", description="The suggested bid adjustment percent value for this placement type.")
 
     model_config = {'populate_by_name': True}
 
@@ -962,11 +938,26 @@ class TargetingGroupBidRecommendation(BaseModel):
     model_config = {'populate_by_name': True}
 
 
-class SevenDaysEstimatedOpportunities(BaseModel):
-    end_date: Optional[str] = Field(None, alias="endDate", description="End date of the opportunities date range in YYYY-MM-DDTHH:mm:ssZ format.")
-    estimated_incremental_clicks_lower: Optional[int] = Field(None, alias="estimatedIncrementalClicksLower", description="Lower bound of the estimated incremental clicks that could be gained if all optimizations are made.")
-    estimated_incremental_clicks_upper: Optional[int] = Field(None, alias="estimatedIncrementalClicksUpper", description="Upper bound of the estimated incremental clicks that could be gained if all optimizations are made.")
-    start_date: Optional[str] = Field(None, alias="startDate", description="Start date of the opportunities date range in YYYY-MM-DDTHH:mm:ssZ format.")
+class PlacementBiddingRecommendationAction(StrEnum):
+    ADD = "ADD"
+    DECREASE = "DECREASE"
+    INCREASE = "INCREASE"
+    REMOVE = "REMOVE"
+
+
+class PlacementBiddingRecommendationPlacementtype(StrEnum):
+    PLACEMENT_PRODUCT_PAGE = "PLACEMENT_PRODUCT_PAGE"
+    PLACEMENT_REST_OF_SEARCH = "PLACEMENT_REST_OF_SEARCH"
+    PLACEMENT_TOP = "PLACEMENT_TOP"
+
+
+class PlacementBiddingRecommendation(BaseModel):
+    """Contains suggested recommendation for a placement bid adjustment."""
+    action: Optional[PlacementBiddingRecommendationAction] = Field(None, description="Type of suggested action.")
+    incremental_impressions_lower_percent: Optional[int] = Field(None, alias="incrementalImpressionsLowerPercent", description="Lower bound of the estimated incremental impressions that could be gained if this optimization used")
+    incremental_impressions_upper_percent: Optional[int] = Field(None, alias="incrementalImpressionsUpperPercent", description="Upper bound of the estimated incremental impressions that could be gained if this optimization used")
+    placement_type: Optional[PlacementBiddingRecommendationPlacementtype] = Field(None, alias="placementType", description="The placement type.")
+    suggested_bid_adjustment: Optional[int] = Field(None, alias="suggestedBidAdjustment", description="The suggested bid adjustment percent value for this placement type.")
 
     model_config = {'populate_by_name': True}
 
@@ -994,6 +985,15 @@ class KeywordTargetingRecommendation(BaseModel):
     keyword_text: Optional[str] = Field(None, alias="keywordText", description="The keyword text.")
     match_type: Optional[KeywordTargetingRecommendationMatchtype] = Field(None, alias="matchType", description="Keyword match type. | Value | Description | | --- | --- | | `BROAD` | Use BROAD to broadly match your keyword targeting ")
     suggested_bid: Optional[float] = Field(None, alias="suggestedBid", description="The suggested bid value associated with this keyword targeting clause.")
+
+    model_config = {'populate_by_name': True}
+
+
+class SevenDaysEstimatedOpportunities(BaseModel):
+    end_date: Optional[str] = Field(None, alias="endDate", description="End date of the opportunities date range in YYYY-MM-DDTHH:mm:ssZ format.")
+    estimated_incremental_clicks_lower: Optional[int] = Field(None, alias="estimatedIncrementalClicksLower", description="Lower bound of the estimated incremental clicks that could be gained if all optimizations are made.")
+    estimated_incremental_clicks_upper: Optional[int] = Field(None, alias="estimatedIncrementalClicksUpper", description="Upper bound of the estimated incremental clicks that could be gained if all optimizations are made.")
+    start_date: Optional[str] = Field(None, alias="startDate", description="Start date of the opportunities date range in YYYY-MM-DDTHH:mm:ssZ format.")
 
     model_config = {'populate_by_name': True}
 
@@ -1115,6 +1115,46 @@ class CreateBudgetRulesResponse(BaseModel):
     model_config = {'populate_by_name': True}
 
 
+class EventTypeRuleDuration(BaseModel):
+    """Object representing event type rule duration."""
+    end_date: Optional[str] = Field(None, alias="endDate", description="The event end date in YYYYMMDD format. Read-only.")
+    event_id: str = Field(..., alias="eventId", description="The event identifier. This value is available from the budget rules recommendation API.")
+    event_name: Optional[str] = Field(None, alias="eventName", description="The event name. Read-only.")
+    start_date: Optional[str] = Field(None, alias="startDate", description="The event start date in YYYYMMDD format. Read-only. Note that this field is present only for announced events.")
+
+    model_config = {'populate_by_name': True}
+
+
+class DateRangeTypeRuleDuration(BaseModel):
+    """Object representing date range type rule duration."""
+    end_date: Optional[str] = Field(None, alias="endDate", description="The end date of the budget rule in YYYYMMDD format. The end date is inclusive. Required to be equal or greater than `sta")
+    start_date: str = Field(..., alias="startDate", description="The start date of the budget rule in YYYYMMDD format. The start date is inclusive. Required to be greater than or equal ")
+
+    model_config = {'populate_by_name': True}
+
+
+class RuleDuration(BaseModel):
+    date_range_type_rule_duration: Optional["DateRangeTypeRuleDuration"] = Field(None, alias="dateRangeTypeRuleDuration")
+    event_type_rule_duration: Optional["EventTypeRuleDuration"] = Field(None, alias="eventTypeRuleDuration")
+
+    model_config = {'populate_by_name': True}
+
+
+class PerformanceMetric(StrEnum):
+    ACOS = "ACOS"
+    CTR = "CTR"
+    CVR = "CVR"
+    ROAS = "ROAS"
+
+
+class PerformanceMeasureCondition(BaseModel):
+    comparison_operator: "ComparisonOperator" = Field(..., alias="comparisonOperator")
+    metric_name: "PerformanceMetric" = Field(..., alias="metricName")
+    threshold: float = Field(..., description="The performance threshold value.")
+
+    model_config = {'populate_by_name': True}
+
+
 class timeOfDay(BaseModel):
     end_time: Optional[str] = Field(None, alias="endTime", description="The end time of intra-day budget rule window in the format 'hh:mm:ss'. Required to be greater than start-time.")
     start_time: Optional[str] = Field(None, alias="startTime", description="The start time of intra-day budget rule window in the format 'hh:mm:ss'")
@@ -1140,26 +1180,6 @@ class Recurrence(BaseModel):
     model_config = {'populate_by_name': True}
 
 
-class PerformanceMetric(StrEnum):
-    ACOS = "ACOS"
-    CTR = "CTR"
-    CVR = "CVR"
-    ROAS = "ROAS"
-
-
-class PerformanceMeasureCondition(BaseModel):
-    comparison_operator: "ComparisonOperator" = Field(..., alias="comparisonOperator")
-    metric_name: "PerformanceMetric" = Field(..., alias="metricName")
-    threshold: float = Field(..., description="The performance threshold value.")
-
-    model_config = {'populate_by_name': True}
-
-
-class SPRuleType(StrEnum):
-    PERFORMANCE = "PERFORMANCE"
-    SCHEDULE = "SCHEDULE"
-
-
 class budgetIncreaseBy(BaseModel):
     type_: "BudgetChangeType" = Field(..., alias="type")
     value: float = Field(..., description="The budget value.")
@@ -1167,29 +1187,9 @@ class budgetIncreaseBy(BaseModel):
     model_config = {'populate_by_name': True}
 
 
-class EventTypeRuleDuration(BaseModel):
-    """Object representing event type rule duration."""
-    end_date: Optional[str] = Field(None, alias="endDate", description="The event end date in YYYYMMDD format. Read-only.")
-    event_id: str = Field(..., alias="eventId", description="The event identifier. This value is available from the budget rules recommendation API.")
-    event_name: Optional[str] = Field(None, alias="eventName", description="The event name. Read-only.")
-    start_date: Optional[str] = Field(None, alias="startDate", description="The event start date in YYYYMMDD format. Read-only. Note that this field is present only for announced events.")
-
-    model_config = {'populate_by_name': True}
-
-
-class DateRangeTypeRuleDuration(BaseModel):
-    """Object representing date range type rule duration."""
-    end_date: Optional[str] = Field(None, alias="endDate", description="The end date of the budget rule in YYYYMMDD format. The end date is inclusive. Required to be equal or greater than `sta")
-    start_date: str = Field(..., alias="startDate", description="The start date of the budget rule in YYYYMMDD format. The start date is inclusive. Required to be greater than or equal ")
-
-    model_config = {'populate_by_name': True}
-
-
-class RuleDuration(BaseModel):
-    date_range_type_rule_duration: Optional["DateRangeTypeRuleDuration"] = Field(None, alias="dateRangeTypeRuleDuration")
-    event_type_rule_duration: Optional["EventTypeRuleDuration"] = Field(None, alias="eventTypeRuleDuration")
-
-    model_config = {'populate_by_name': True}
+class SPRuleType(StrEnum):
+    PERFORMANCE = "PERFORMANCE"
+    SCHEDULE = "SCHEDULE"
 
 
 class SPBudgetRuleDetails(BaseModel):
@@ -1398,18 +1398,18 @@ class GetSPCampaignOptimizationRuleResponse(BaseModel):
     model_config = {'populate_by_name': True}
 
 
-class PriceRange(BaseModel):
-    """A range of prices. We use this to retrieve the number of targetable ASINs that falls within this price range."""
-    max: Optional[float] = None
-    min: Optional[float] = None
-
-    model_config = {'populate_by_name': True}
-
-
 class RatingRange(BaseModel):
     """Rating range is restricted to integers between 0 and 5, inclusive. Min must be less than or equal to max. We use this to retrieve the number of targetable ASINs that falls within this rating range."""
     max: Optional[int] = None
     min: Optional[int] = None
+
+    model_config = {'populate_by_name': True}
+
+
+class PriceRange(BaseModel):
+    """A range of prices. We use this to retrieve the number of targetable ASINs that falls within this price range."""
+    max: Optional[float] = None
+    min: Optional[float] = None
 
     model_config = {'populate_by_name': True}
 
@@ -1437,6 +1437,29 @@ class GlobalRankedKeywordTargetsForAsinsRequest(BaseModel):
     """This request type is used to retrieve recommended keyword targets for ASINs. Set the recommendationType to KEYWORDS_FOR_ASINS to use this request type."""
     products: Optional[list[dict[str, "ProductDetails"]]] = Field(None, description="It represents an array list of countryProducts. CountryProducts is a map representing same product in a different market")
     targets: Optional[list["CountryTarget"]] = Field(None, description="An array list of countryTargets. CountryTarget is an object with CountryKeywords map representing same keyword in a diff")
+
+    model_config = {'populate_by_name': True}
+
+
+class RangeMetricValue(BaseModel):
+    """Describes lower and upper bounds of the range. <br> Note: This object is nullable"""
+    lower: Optional[int] = None
+    upper: Optional[int] = None
+
+    model_config = {'populate_by_name': True}
+
+
+class ImpactMetric(BaseModel):
+    """The impact metrics are given in the same order of suggested bids. <br> Note: This object is nullable"""
+    values: Optional[list["RangeMetricValue"]] = None
+
+    model_config = {'populate_by_name': True}
+
+
+class ImpactMetrics(BaseModel):
+    """For the CONVERSION_OPPORTUNITIES theme, the impact metrics are weekly clicks and orders received for similar products. For other event-based themes, the impact metrics are clicks and orders received f"""
+    clicks: Optional["ImpactMetric"] = None
+    orders: Optional["ImpactMetric"] = None
 
     model_config = {'populate_by_name': True}
 
@@ -1471,29 +1494,6 @@ class RankedTargetWithThemedBids(BaseModel):
 
 class RankedTargetWithThemedBidsList(BaseModel):
     pass
-
-
-class RangeMetricValue(BaseModel):
-    """Describes lower and upper bounds of the range. <br> Note: This object is nullable"""
-    lower: Optional[int] = None
-    upper: Optional[int] = None
-
-    model_config = {'populate_by_name': True}
-
-
-class ImpactMetric(BaseModel):
-    """The impact metrics are given in the same order of suggested bids. <br> Note: This object is nullable"""
-    values: Optional[list["RangeMetricValue"]] = None
-
-    model_config = {'populate_by_name': True}
-
-
-class ImpactMetrics(BaseModel):
-    """For the CONVERSION_OPPORTUNITIES theme, the impact metrics are weekly clicks and orders received for similar products. For other event-based themes, the impact metrics are clicks and orders received f"""
-    clicks: Optional["ImpactMetric"] = None
-    orders: Optional["ImpactMetric"] = None
-
-    model_config = {'populate_by_name': True}
 
 
 class RankedTargetWithThemedBidsResponse(BaseModel):
@@ -1803,60 +1803,14 @@ class OptimizationRulesAPISwaggerComparisonOperator(StrEnum):
     LESS_THAN_OR_EQUAL_TO = "LESS_THAN_OR_EQUAL_TO"
 
 
-class OptimizationRulesAPISwaggerRuleSubCategory(StrEnum):
-    SCHEDULE = "SCHEDULE"
-
-
-class OptimizationRulesAPISwaggerRuleStatus(StrEnum):
-    ENABLED = "ENABLED"
-    ENDED = "ENDED"
-    PAUSED = "PAUSED"
-    SCHEDULED = "SCHEDULED"
-
-
 class OptimizationRulesAPISwaggerRuleCategory(StrEnum):
     BID = "BID"
 
 
-class OptimizationRulesAPISwaggerDayOfTheWeek(StrEnum):
-    FRIDAY = "FRIDAY"
-    MONDAY = "MONDAY"
-    SATURDAY = "SATURDAY"
-    SUNDAY = "SUNDAY"
-    THURSDAY = "THURSDAY"
-    TUESDAY = "TUESDAY"
-    WEDNESDAY = "WEDNESDAY"
-
-
-class OptimizationRulesAPISwaggerRuleRecurrenceType(StrEnum):
-    DAILY = "DAILY"
-    WEEKLY = "WEEKLY"
-
-
-class OptimizationRulesAPISwaggerDuration(BaseModel):
-    """The duration of an optimization rule based on special events (example: Prime Day) or custom date ranges."""
-    end_time: Optional[str] = Field(None, alias="endTime", description="Time of optimization rule completion in ISO 8061.")
-    event_id: Optional[str] = Field(None, alias="eventId", description="Identifier for the event during which the rule is applied.")
-    event_name: Optional[str] = Field(None, alias="eventName", description="Name of the event during which the rule is applied.")
-    start_time: Optional[str] = Field(None, alias="startTime", description="Time of optimization rule creation in ISO 8061. Not Required only when eventId present.")
-
-    model_config = {'populate_by_name': True}
-
-
-class OptimizationRulesAPISwaggerRuleRecurrenceTimesofday(BaseModel):
-    """List of times of the day."""
-    end_time: str = Field(..., alias="endTime", description="Time of the day in HH:00.")
-    start_time: str = Field(..., alias="startTime", description="Time of the day in HH:00.")
-
-    model_config = {'populate_by_name': True}
-
-
-class OptimizationRulesAPISwaggerRuleRecurrence(BaseModel):
-    """The recurrence of the optimization rule application."""
-    days_of_week: Optional[list["OptimizationRulesAPISwaggerDayOfTheWeek"]] = Field(None, alias="daysOfWeek", description="A list of days of the week.")
-    duration: "OptimizationRulesAPISwaggerDuration"
-    times_of_day: Optional[list["OptimizationRulesAPISwaggerRuleRecurrenceTimesofday"]] = Field(None, alias="timesOfDay", description="List of times of the day.")
-    type_: "OptimizationRulesAPISwaggerRuleRecurrenceType" = Field(..., alias="type")
+class OptimizationRulesAPISwaggerRangeTypeRuleCriteria(BaseModel):
+    """Represents the range of rule attribute value. NOT SUPPORTED right now"""
+    max_value: float = Field(..., alias="maxValue")
+    min_value: float = Field(..., alias="minValue")
 
     model_config = {'populate_by_name': True}
 
@@ -1865,14 +1819,6 @@ class OptimizationRulesAPISwaggerValueTypeRuleCriteria(BaseModel):
     """Represents a criteria by comparing with the rule attribute value."""
     comparison_operator: "OptimizationRulesAPISwaggerComparisonOperator" = Field(..., alias="comparisonOperator")
     value: float
-
-    model_config = {'populate_by_name': True}
-
-
-class OptimizationRulesAPISwaggerRangeTypeRuleCriteria(BaseModel):
-    """Represents the range of rule attribute value. NOT SUPPORTED right now"""
-    max_value: float = Field(..., alias="maxValue")
-    min_value: float = Field(..., alias="minValue")
 
     model_config = {'populate_by_name': True}
 
@@ -1898,6 +1844,60 @@ class OptimizationRulesAPISwaggerRuleAction(BaseModel):
     action_type: "OptimizationRulesAPISwaggerActionType" = Field(..., alias="actionType")
 
     model_config = {'populate_by_name': True}
+
+
+class OptimizationRulesAPISwaggerDuration(BaseModel):
+    """The duration of an optimization rule based on special events (example: Prime Day) or custom date ranges."""
+    end_time: Optional[str] = Field(None, alias="endTime", description="Time of optimization rule completion in ISO 8061.")
+    event_id: Optional[str] = Field(None, alias="eventId", description="Identifier for the event during which the rule is applied.")
+    event_name: Optional[str] = Field(None, alias="eventName", description="Name of the event during which the rule is applied.")
+    start_time: Optional[str] = Field(None, alias="startTime", description="Time of optimization rule creation in ISO 8061. Not Required only when eventId present.")
+
+    model_config = {'populate_by_name': True}
+
+
+class OptimizationRulesAPISwaggerRuleRecurrenceType(StrEnum):
+    DAILY = "DAILY"
+    WEEKLY = "WEEKLY"
+
+
+class OptimizationRulesAPISwaggerDayOfTheWeek(StrEnum):
+    FRIDAY = "FRIDAY"
+    MONDAY = "MONDAY"
+    SATURDAY = "SATURDAY"
+    SUNDAY = "SUNDAY"
+    THURSDAY = "THURSDAY"
+    TUESDAY = "TUESDAY"
+    WEDNESDAY = "WEDNESDAY"
+
+
+class OptimizationRulesAPISwaggerRuleRecurrenceTimesofday(BaseModel):
+    """List of times of the day."""
+    end_time: str = Field(..., alias="endTime", description="Time of the day in HH:00.")
+    start_time: str = Field(..., alias="startTime", description="Time of the day in HH:00.")
+
+    model_config = {'populate_by_name': True}
+
+
+class OptimizationRulesAPISwaggerRuleRecurrence(BaseModel):
+    """The recurrence of the optimization rule application."""
+    days_of_week: Optional[list["OptimizationRulesAPISwaggerDayOfTheWeek"]] = Field(None, alias="daysOfWeek", description="A list of days of the week.")
+    duration: "OptimizationRulesAPISwaggerDuration"
+    times_of_day: Optional[list["OptimizationRulesAPISwaggerRuleRecurrenceTimesofday"]] = Field(None, alias="timesOfDay", description="List of times of the day.")
+    type_: "OptimizationRulesAPISwaggerRuleRecurrenceType" = Field(..., alias="type")
+
+    model_config = {'populate_by_name': True}
+
+
+class OptimizationRulesAPISwaggerRuleStatus(StrEnum):
+    ENABLED = "ENABLED"
+    ENDED = "ENDED"
+    PAUSED = "PAUSED"
+    SCHEDULED = "SCHEDULED"
+
+
+class OptimizationRulesAPISwaggerRuleSubCategory(StrEnum):
+    SCHEDULE = "SCHEDULE"
 
 
 class OptimizationRulesAPISwaggerOptimizationRuleWithoutRuleId(BaseModel):
@@ -1944,12 +1944,6 @@ class OptimizationRulesAPISwaggerRuleConditionV2(BaseModel):
     model_config = {'populate_by_name': True}
 
 
-class OptimizationRulesAPISwaggerRuleCategoryV2(StrEnum):
-    BID = "BID"
-    BUDGET = "BUDGET"
-    TARGETING = "TARGETING"
-
-
 class OptimizationRulesAPISwaggerExpressionType(StrEnum):
     BROAD = "BROAD"
     EXACT = "EXACT"
@@ -1968,6 +1962,12 @@ class OptimizationRulesAPISwaggerRuleTargeting(BaseModel):
     targeting_type: "OptimizationRulesAPISwaggerTargetingType" = Field(..., alias="targetingType")
 
     model_config = {'populate_by_name': True}
+
+
+class OptimizationRulesAPISwaggerRuleCategoryV2(StrEnum):
+    BID = "BID"
+    BUDGET = "BUDGET"
+    TARGETING = "TARGETING"
 
 
 class OptimizationRulesAPISwaggerOptimizationRuleWithoutRuleIdV2(BaseModel):
@@ -2471,14 +2471,6 @@ class SponsoredProductsAccessDeniedExceptionResponseContent(BaseModel):
     model_config = {'populate_by_name': True}
 
 
-class SponsoredProductsErrorCause(BaseModel):
-    """Structure describing error cause - location in the payload and data causing error"""
-    location: str = Field(..., description="Error location, JSON Path expression specifying element of API payload causing error")
-    trigger: Optional[str] = Field(None, description="optional value causing error")
-
-    model_config = {'populate_by_name': True}
-
-
 class SponsoredProductsMarketplace(StrEnum):
     AE = "AE"
     AU = "AU"
@@ -2506,6 +2498,14 @@ class SponsoredProductsAdEligibilityErrorReason(StrEnum):
     AD_INELIGIBLE = "AD_INELIGIBLE"
 
 
+class SponsoredProductsErrorCause(BaseModel):
+    """Structure describing error cause - location in the payload and data causing error"""
+    location: str = Field(..., description="Error location, JSON Path expression specifying element of API payload causing error")
+    trigger: Optional[str] = Field(None, description="optional value causing error")
+
+    model_config = {'populate_by_name': True}
+
+
 class SponsoredProductsAdEligibilityError(BaseModel):
     """Errors related to ad eligibility"""
     cause: Optional["SponsoredProductsErrorCause"] = None
@@ -2514,6 +2514,49 @@ class SponsoredProductsAdEligibilityError(BaseModel):
     reason: "SponsoredProductsAdEligibilityErrorReason"
 
     model_config = {'populate_by_name': True}
+
+
+class SponsoredProductsEntityState(StrEnum):
+    ARCHIVED = "ARCHIVED"
+    ENABLED = "ENABLED"
+    ENABLING = "ENABLING"
+    OTHER = "OTHER"
+    PAUSED = "PAUSED"
+    PROPOSED = "PROPOSED"
+    USER_DELETED = "USER_DELETED"
+
+
+class SponsoredProductsAdGroupServingStatus(StrEnum):
+    ADVERTISER_ARCHIVED = "ADVERTISER_ARCHIVED"
+    ADVERTISER_EXCEED_SPENDS_LIMIT = "ADVERTISER_EXCEED_SPENDS_LIMIT"
+    ADVERTISER_OUT_OF_BUDGET = "ADVERTISER_OUT_OF_BUDGET"
+    ADVERTISER_PAUSED = "ADVERTISER_PAUSED"
+    ADVERTISER_PAYMENT_FAILURE = "ADVERTISER_PAYMENT_FAILURE"
+    ADVERTISER_POLICING_PENDING_REVIEW = "ADVERTISER_POLICING_PENDING_REVIEW"
+    ADVERTISER_POLICING_SUSPENDED = "ADVERTISER_POLICING_SUSPENDED"
+    AD_GROUP_ARCHIVED = "AD_GROUP_ARCHIVED"
+    AD_GROUP_INCOMPLETE = "AD_GROUP_INCOMPLETE"
+    AD_GROUP_LOW_BID = "AD_GROUP_LOW_BID"
+    AD_GROUP_PAUSED = "AD_GROUP_PAUSED"
+    AD_GROUP_POLICING_CREATIVE_REJECTED = "AD_GROUP_POLICING_CREATIVE_REJECTED"
+    AD_GROUP_POLICING_PENDING_REVIEW = "AD_GROUP_POLICING_PENDING_REVIEW"
+    AD_GROUP_STATUS_ENABLED = "AD_GROUP_STATUS_ENABLED"
+    CAMPAIGN_ARCHIVED = "CAMPAIGN_ARCHIVED"
+    CAMPAIGN_INCOMPLETE = "CAMPAIGN_INCOMPLETE"
+    CAMPAIGN_OUT_OF_BUDGET = "CAMPAIGN_OUT_OF_BUDGET"
+    CAMPAIGN_PAUSED = "CAMPAIGN_PAUSED"
+    CAMPAIGN_STATUS_ENABLED = "CAMPAIGN_STATUS_ENABLED"
+    ENDED = "ENDED"
+    OTHER = "OTHER"
+    PENDING_REVIEW = "PENDING_REVIEW"
+    PENDING_START_DATE = "PENDING_START_DATE"
+    PORTFOLIO_ARCHIVED = "PORTFOLIO_ARCHIVED"
+    PORTFOLIO_ENDED = "PORTFOLIO_ENDED"
+    PORTFOLIO_OUT_OF_BUDGET = "PORTFOLIO_OUT_OF_BUDGET"
+    PORTFOLIO_PAUSED = "PORTFOLIO_PAUSED"
+    PORTFOLIO_PENDING_START_DATE = "PORTFOLIO_PENDING_START_DATE"
+    PORTFOLIO_STATUS_ENABLED = "PORTFOLIO_STATUS_ENABLED"
+    REJECTED = "REJECTED"
 
 
 class SponsoredProductsAdGroupServingStatusReason(StrEnum):
@@ -2557,39 +2600,6 @@ class SponsoredProductsAdGroupServingStatusDetail(BaseModel):
     model_config = {'populate_by_name': True}
 
 
-class SponsoredProductsAdGroupServingStatus(StrEnum):
-    ADVERTISER_ARCHIVED = "ADVERTISER_ARCHIVED"
-    ADVERTISER_EXCEED_SPENDS_LIMIT = "ADVERTISER_EXCEED_SPENDS_LIMIT"
-    ADVERTISER_OUT_OF_BUDGET = "ADVERTISER_OUT_OF_BUDGET"
-    ADVERTISER_PAUSED = "ADVERTISER_PAUSED"
-    ADVERTISER_PAYMENT_FAILURE = "ADVERTISER_PAYMENT_FAILURE"
-    ADVERTISER_POLICING_PENDING_REVIEW = "ADVERTISER_POLICING_PENDING_REVIEW"
-    ADVERTISER_POLICING_SUSPENDED = "ADVERTISER_POLICING_SUSPENDED"
-    AD_GROUP_ARCHIVED = "AD_GROUP_ARCHIVED"
-    AD_GROUP_INCOMPLETE = "AD_GROUP_INCOMPLETE"
-    AD_GROUP_LOW_BID = "AD_GROUP_LOW_BID"
-    AD_GROUP_PAUSED = "AD_GROUP_PAUSED"
-    AD_GROUP_POLICING_CREATIVE_REJECTED = "AD_GROUP_POLICING_CREATIVE_REJECTED"
-    AD_GROUP_POLICING_PENDING_REVIEW = "AD_GROUP_POLICING_PENDING_REVIEW"
-    AD_GROUP_STATUS_ENABLED = "AD_GROUP_STATUS_ENABLED"
-    CAMPAIGN_ARCHIVED = "CAMPAIGN_ARCHIVED"
-    CAMPAIGN_INCOMPLETE = "CAMPAIGN_INCOMPLETE"
-    CAMPAIGN_OUT_OF_BUDGET = "CAMPAIGN_OUT_OF_BUDGET"
-    CAMPAIGN_PAUSED = "CAMPAIGN_PAUSED"
-    CAMPAIGN_STATUS_ENABLED = "CAMPAIGN_STATUS_ENABLED"
-    ENDED = "ENDED"
-    OTHER = "OTHER"
-    PENDING_REVIEW = "PENDING_REVIEW"
-    PENDING_START_DATE = "PENDING_START_DATE"
-    PORTFOLIO_ARCHIVED = "PORTFOLIO_ARCHIVED"
-    PORTFOLIO_ENDED = "PORTFOLIO_ENDED"
-    PORTFOLIO_OUT_OF_BUDGET = "PORTFOLIO_OUT_OF_BUDGET"
-    PORTFOLIO_PAUSED = "PORTFOLIO_PAUSED"
-    PORTFOLIO_PENDING_START_DATE = "PORTFOLIO_PENDING_START_DATE"
-    PORTFOLIO_STATUS_ENABLED = "PORTFOLIO_STATUS_ENABLED"
-    REJECTED = "REJECTED"
-
-
 class SponsoredProductsAdGroupExtendedData(BaseModel):
     creation_date_time: Optional[str] = Field(None, alias="creationDateTime", description="Creation date in ISO 8601.")
     last_update_date_time: Optional[str] = Field(None, alias="lastUpdateDateTime", description="Last updated date in ISO 8601.")
@@ -2597,16 +2607,6 @@ class SponsoredProductsAdGroupExtendedData(BaseModel):
     serving_status_details: Optional[list["SponsoredProductsAdGroupServingStatusDetail"]] = Field(None, alias="servingStatusDetails", description="The serving status reasons of the AdGroup")
 
     model_config = {'populate_by_name': True}
-
-
-class SponsoredProductsEntityState(StrEnum):
-    ARCHIVED = "ARCHIVED"
-    ENABLED = "ENABLED"
-    ENABLING = "ENABLING"
-    OTHER = "OTHER"
-    PAUSED = "PAUSED"
-    PROPOSED = "PROPOSED"
-    USER_DELETED = "USER_DELETED"
 
 
 class SponsoredProductsAdGroup(BaseModel):
@@ -2621,6 +2621,26 @@ class SponsoredProductsAdGroup(BaseModel):
     model_config = {'populate_by_name': True}
 
 
+class SponsoredProductsMalformedValueErrorReason(StrEnum):
+    BLANK = "BLANK"
+    FORBIDDEN_CHARS = "FORBIDDEN_CHARS"
+    LEADING_OR_TRAILING_WHITESPACE = "LEADING_OR_TRAILING_WHITESPACE"
+    PATTERN_NOT_MATCHED = "PATTERN_NOT_MATCHED"
+    TOO_LONG = "TOO_LONG"
+    TOO_SHORT = "TOO_SHORT"
+
+
+class SponsoredProductsMalformedValueError(BaseModel):
+    """Errors being used to represent malformed values e.g. containing not allowed characters, not following patters etc"""
+    cause: Optional["SponsoredProductsErrorCause"] = None
+    fragment: Optional[str] = Field(None, description="fragment of the value which is wrong")
+    marketplace: Optional["SponsoredProductsMarketplace"] = None
+    message: str = Field(..., description="Human readable error message")
+    reason: "SponsoredProductsMalformedValueErrorReason"
+
+    model_config = {'populate_by_name': True}
+
+
 class SponsoredProductsMissingValueErrorReason(StrEnum):
     MISSING_VALUE = "MISSING_VALUE"
 
@@ -2631,6 +2651,33 @@ class SponsoredProductsMissingValueError(BaseModel):
     marketplace: Optional["SponsoredProductsMarketplace"] = None
     message: str = Field(..., description="Human readable error message")
     reason: "SponsoredProductsMissingValueErrorReason"
+
+    model_config = {'populate_by_name': True}
+
+
+class SponsoredProductsOtherErrorReason(StrEnum):
+    OTHER_ERROR = "OTHER_ERROR"
+
+
+class SponsoredProductsOtherError(BaseModel):
+    """Errors not related to any of the other error types"""
+    cause: Optional["SponsoredProductsErrorCause"] = None
+    marketplace: Optional["SponsoredProductsMarketplace"] = None
+    message: str = Field(..., description="Human readable error message")
+    reason: "SponsoredProductsOtherErrorReason"
+
+    model_config = {'populate_by_name': True}
+
+
+class SponsoredProductsThrottledErrorReason(StrEnum):
+    THROTTLED = "THROTTLED"
+
+
+class SponsoredProductsThrottledError(BaseModel):
+    """Error that represents failure due to API caller exceeding allowed service limits."""
+    cause: Optional["SponsoredProductsErrorCause"] = None
+    message: str = Field(..., description="Human readable error message")
+    reason: "SponsoredProductsThrottledErrorReason"
 
     model_config = {'populate_by_name': True}
 
@@ -2664,53 +2711,6 @@ class SponsoredProductsInternalServerError(BaseModel):
     cause: Optional["SponsoredProductsErrorCause"] = None
     message: str = Field(..., description="Human readable error message")
     reason: "SponsoredProductsInternalServerErrorReason"
-
-    model_config = {'populate_by_name': True}
-
-
-class SponsoredProductsOtherErrorReason(StrEnum):
-    OTHER_ERROR = "OTHER_ERROR"
-
-
-class SponsoredProductsOtherError(BaseModel):
-    """Errors not related to any of the other error types"""
-    cause: Optional["SponsoredProductsErrorCause"] = None
-    marketplace: Optional["SponsoredProductsMarketplace"] = None
-    message: str = Field(..., description="Human readable error message")
-    reason: "SponsoredProductsOtherErrorReason"
-
-    model_config = {'populate_by_name': True}
-
-
-class SponsoredProductsThrottledErrorReason(StrEnum):
-    THROTTLED = "THROTTLED"
-
-
-class SponsoredProductsThrottledError(BaseModel):
-    """Error that represents failure due to API caller exceeding allowed service limits."""
-    cause: Optional["SponsoredProductsErrorCause"] = None
-    message: str = Field(..., description="Human readable error message")
-    reason: "SponsoredProductsThrottledErrorReason"
-
-    model_config = {'populate_by_name': True}
-
-
-class SponsoredProductsMalformedValueErrorReason(StrEnum):
-    BLANK = "BLANK"
-    FORBIDDEN_CHARS = "FORBIDDEN_CHARS"
-    LEADING_OR_TRAILING_WHITESPACE = "LEADING_OR_TRAILING_WHITESPACE"
-    PATTERN_NOT_MATCHED = "PATTERN_NOT_MATCHED"
-    TOO_LONG = "TOO_LONG"
-    TOO_SHORT = "TOO_SHORT"
-
-
-class SponsoredProductsMalformedValueError(BaseModel):
-    """Errors being used to represent malformed values e.g. containing not allowed characters, not following patters etc"""
-    cause: Optional["SponsoredProductsErrorCause"] = None
-    fragment: Optional[str] = Field(None, description="fragment of the value which is wrong")
-    marketplace: Optional["SponsoredProductsMarketplace"] = None
-    message: str = Field(..., description="Human readable error message")
-    reason: "SponsoredProductsMalformedValueErrorReason"
 
     model_config = {'populate_by_name': True}
 
@@ -2787,19 +2787,6 @@ class SponsoredProductsAdGroupAccessExceptionResponseContent(BaseModel):
     model_config = {'populate_by_name': True}
 
 
-class SponsoredProductsApplicableMarketplacesErrorReason(StrEnum):
-    APPLICABLE_MARKETPLACES_MISMATCH_ERROR = "APPLICABLE_MARKETPLACES_MISMATCH_ERROR"
-
-
-class SponsoredProductsApplicableMarketplacesError(BaseModel):
-    """Errors related to ad eligibility"""
-    cause: Optional["SponsoredProductsErrorCause"] = None
-    message: str = Field(..., description="Human readable error message")
-    reason: "SponsoredProductsApplicableMarketplacesErrorReason"
-
-    model_config = {'populate_by_name': True}
-
-
 class SponsoredProductsBiddingErrorReason(StrEnum):
     BID_AUDIENCES_MORE_THAN_ALLOWED = "BID_AUDIENCES_MORE_THAN_ALLOWED"
     BID_GT_BUDGET = "BID_GT_BUDGET"
@@ -2824,6 +2811,19 @@ class SponsoredProductsBiddingError(BaseModel):
     model_config = {'populate_by_name': True}
 
 
+class SponsoredProductsApplicableMarketplacesErrorReason(StrEnum):
+    APPLICABLE_MARKETPLACES_MISMATCH_ERROR = "APPLICABLE_MARKETPLACES_MISMATCH_ERROR"
+
+
+class SponsoredProductsApplicableMarketplacesError(BaseModel):
+    """Errors related to ad eligibility"""
+    cause: Optional["SponsoredProductsErrorCause"] = None
+    message: str = Field(..., description="Human readable error message")
+    reason: "SponsoredProductsApplicableMarketplacesErrorReason"
+
+    model_config = {'populate_by_name': True}
+
+
 class SponsoredProductsDuplicateValueErrorReason(StrEnum):
     DUPLICATE_VALUE = "DUPLICATE_VALUE"
     MARKETPLACE_ATTRIBUTES_REPEATED = "MARKETPLACE_ATTRIBUTES_REPEATED"
@@ -2835,6 +2835,24 @@ class SponsoredProductsDuplicateValueError(BaseModel):
     marketplace: Optional["SponsoredProductsMarketplace"] = None
     message: str = Field(..., description="Human readable error message")
     reason: "SponsoredProductsDuplicateValueErrorReason"
+
+    model_config = {'populate_by_name': True}
+
+
+class SponsoredProductsBillingErrorReason(StrEnum):
+    ADVERTISER_BILLING_SETUP_INCOMPLETE = "ADVERTISER_BILLING_SETUP_INCOMPLETE"
+    ADVERTISER_SUSPENDED = "ADVERTISER_SUSPENDED"
+    BILLING_ACCOUNT_NOT_FOUND = "BILLING_ACCOUNT_NOT_FOUND"
+    EXPIRED_PAYMENT_METHOD = "EXPIRED_PAYMENT_METHOD"
+    PAYMENT_PROFILE_NOT_FOUND = "PAYMENT_PROFILE_NOT_FOUND"
+    VETTING_FAILURE = "VETTING_FAILURE"
+
+
+class SponsoredProductsBillingError(BaseModel):
+    """Errors related to bids"""
+    cause: Optional["SponsoredProductsErrorCause"] = None
+    message: str = Field(..., description="Human readable error message")
+    reason: "SponsoredProductsBillingErrorReason"
 
     model_config = {'populate_by_name': True}
 
@@ -2894,24 +2912,6 @@ class SponsoredProductsParentEntityError(BaseModel):
     cause: Optional["SponsoredProductsErrorCause"] = None
     message: str = Field(..., description="Human readable error message")
     reason: "SponsoredProductsParentEntityErrorReason"
-
-    model_config = {'populate_by_name': True}
-
-
-class SponsoredProductsBillingErrorReason(StrEnum):
-    ADVERTISER_BILLING_SETUP_INCOMPLETE = "ADVERTISER_BILLING_SETUP_INCOMPLETE"
-    ADVERTISER_SUSPENDED = "ADVERTISER_SUSPENDED"
-    BILLING_ACCOUNT_NOT_FOUND = "BILLING_ACCOUNT_NOT_FOUND"
-    EXPIRED_PAYMENT_METHOD = "EXPIRED_PAYMENT_METHOD"
-    PAYMENT_PROFILE_NOT_FOUND = "PAYMENT_PROFILE_NOT_FOUND"
-    VETTING_FAILURE = "VETTING_FAILURE"
-
-
-class SponsoredProductsBillingError(BaseModel):
-    """Errors related to bids"""
-    cause: Optional["SponsoredProductsErrorCause"] = None
-    message: str = Field(..., description="Human readable error message")
-    reason: "SponsoredProductsBillingErrorReason"
 
     model_config = {'populate_by_name': True}
 
@@ -3264,11 +3264,43 @@ class SponsoredProductsCampaignNegativeKeywordFailureResponseItem(BaseModel):
     model_config = {'populate_by_name': True}
 
 
-class SponsoredProductsNegativeMatchType(StrEnum):
-    NEGATIVE_BROAD = "NEGATIVE_BROAD"
-    NEGATIVE_EXACT = "NEGATIVE_EXACT"
-    NEGATIVE_PHRASE = "NEGATIVE_PHRASE"
+class SponsoredProductsKeywordServingStatus(StrEnum):
+    ACCOUNT_OUT_OF_BUDGET = "ACCOUNT_OUT_OF_BUDGET"
+    ADVERTISER_ARCHIVED = "ADVERTISER_ARCHIVED"
+    ADVERTISER_EXCEED_SPENDS_LIMIT = "ADVERTISER_EXCEED_SPENDS_LIMIT"
+    ADVERTISER_OUT_OF_BUDGET = "ADVERTISER_OUT_OF_BUDGET"
+    ADVERTISER_PAUSED = "ADVERTISER_PAUSED"
+    ADVERTISER_PAYMENT_FAILURE = "ADVERTISER_PAYMENT_FAILURE"
+    ADVERTISER_POLICING_PENDING_REVIEW = "ADVERTISER_POLICING_PENDING_REVIEW"
+    ADVERTISER_POLICING_SUSPENDED = "ADVERTISER_POLICING_SUSPENDED"
+    AD_GROUP_ARCHIVED = "AD_GROUP_ARCHIVED"
+    AD_GROUP_INCOMPLETE = "AD_GROUP_INCOMPLETE"
+    AD_GROUP_LOW_BID = "AD_GROUP_LOW_BID"
+    AD_GROUP_PAUSED = "AD_GROUP_PAUSED"
+    AD_GROUP_POLICING_CREATIVE_REJECTED = "AD_GROUP_POLICING_CREATIVE_REJECTED"
+    AD_GROUP_POLICING_PENDING_REVIEW = "AD_GROUP_POLICING_PENDING_REVIEW"
+    AD_GROUP_STATUS_ENABLED = "AD_GROUP_STATUS_ENABLED"
+    CAMPAIGN_ARCHIVED = "CAMPAIGN_ARCHIVED"
+    CAMPAIGN_INCOMPLETE = "CAMPAIGN_INCOMPLETE"
+    CAMPAIGN_OUT_OF_BUDGET = "CAMPAIGN_OUT_OF_BUDGET"
+    CAMPAIGN_PAUSED = "CAMPAIGN_PAUSED"
+    CAMPAIGN_STATUS_ENABLED = "CAMPAIGN_STATUS_ENABLED"
+    ENDED = "ENDED"
     OTHER = "OTHER"
+    PENDING_REVIEW = "PENDING_REVIEW"
+    PENDING_START_DATE = "PENDING_START_DATE"
+    PORTFOLIO_ARCHIVED = "PORTFOLIO_ARCHIVED"
+    PORTFOLIO_ENDED = "PORTFOLIO_ENDED"
+    PORTFOLIO_OUT_OF_BUDGET = "PORTFOLIO_OUT_OF_BUDGET"
+    PORTFOLIO_PAUSED = "PORTFOLIO_PAUSED"
+    PORTFOLIO_PENDING_START_DATE = "PORTFOLIO_PENDING_START_DATE"
+    PORTFOLIO_STATUS_ENABLED = "PORTFOLIO_STATUS_ENABLED"
+    REJECTED = "REJECTED"
+    TARGETING_CLAUSE_ARCHIVED = "TARGETING_CLAUSE_ARCHIVED"
+    TARGETING_CLAUSE_BLOCKED = "TARGETING_CLAUSE_BLOCKED"
+    TARGETING_CLAUSE_PAUSED = "TARGETING_CLAUSE_PAUSED"
+    TARGETING_CLAUSE_POLICING_SUSPENDED = "TARGETING_CLAUSE_POLICING_SUSPENDED"
+    TARGETING_CLAUSE_STATUS_LIVE = "TARGETING_CLAUSE_STATUS_LIVE"
 
 
 class SponsoredProductsKeywordServingStatusReason(StrEnum):
@@ -3318,45 +3350,6 @@ class SponsoredProductsKeywordServingStatusDetail(BaseModel):
     model_config = {'populate_by_name': True}
 
 
-class SponsoredProductsKeywordServingStatus(StrEnum):
-    ACCOUNT_OUT_OF_BUDGET = "ACCOUNT_OUT_OF_BUDGET"
-    ADVERTISER_ARCHIVED = "ADVERTISER_ARCHIVED"
-    ADVERTISER_EXCEED_SPENDS_LIMIT = "ADVERTISER_EXCEED_SPENDS_LIMIT"
-    ADVERTISER_OUT_OF_BUDGET = "ADVERTISER_OUT_OF_BUDGET"
-    ADVERTISER_PAUSED = "ADVERTISER_PAUSED"
-    ADVERTISER_PAYMENT_FAILURE = "ADVERTISER_PAYMENT_FAILURE"
-    ADVERTISER_POLICING_PENDING_REVIEW = "ADVERTISER_POLICING_PENDING_REVIEW"
-    ADVERTISER_POLICING_SUSPENDED = "ADVERTISER_POLICING_SUSPENDED"
-    AD_GROUP_ARCHIVED = "AD_GROUP_ARCHIVED"
-    AD_GROUP_INCOMPLETE = "AD_GROUP_INCOMPLETE"
-    AD_GROUP_LOW_BID = "AD_GROUP_LOW_BID"
-    AD_GROUP_PAUSED = "AD_GROUP_PAUSED"
-    AD_GROUP_POLICING_CREATIVE_REJECTED = "AD_GROUP_POLICING_CREATIVE_REJECTED"
-    AD_GROUP_POLICING_PENDING_REVIEW = "AD_GROUP_POLICING_PENDING_REVIEW"
-    AD_GROUP_STATUS_ENABLED = "AD_GROUP_STATUS_ENABLED"
-    CAMPAIGN_ARCHIVED = "CAMPAIGN_ARCHIVED"
-    CAMPAIGN_INCOMPLETE = "CAMPAIGN_INCOMPLETE"
-    CAMPAIGN_OUT_OF_BUDGET = "CAMPAIGN_OUT_OF_BUDGET"
-    CAMPAIGN_PAUSED = "CAMPAIGN_PAUSED"
-    CAMPAIGN_STATUS_ENABLED = "CAMPAIGN_STATUS_ENABLED"
-    ENDED = "ENDED"
-    OTHER = "OTHER"
-    PENDING_REVIEW = "PENDING_REVIEW"
-    PENDING_START_DATE = "PENDING_START_DATE"
-    PORTFOLIO_ARCHIVED = "PORTFOLIO_ARCHIVED"
-    PORTFOLIO_ENDED = "PORTFOLIO_ENDED"
-    PORTFOLIO_OUT_OF_BUDGET = "PORTFOLIO_OUT_OF_BUDGET"
-    PORTFOLIO_PAUSED = "PORTFOLIO_PAUSED"
-    PORTFOLIO_PENDING_START_DATE = "PORTFOLIO_PENDING_START_DATE"
-    PORTFOLIO_STATUS_ENABLED = "PORTFOLIO_STATUS_ENABLED"
-    REJECTED = "REJECTED"
-    TARGETING_CLAUSE_ARCHIVED = "TARGETING_CLAUSE_ARCHIVED"
-    TARGETING_CLAUSE_BLOCKED = "TARGETING_CLAUSE_BLOCKED"
-    TARGETING_CLAUSE_PAUSED = "TARGETING_CLAUSE_PAUSED"
-    TARGETING_CLAUSE_POLICING_SUSPENDED = "TARGETING_CLAUSE_POLICING_SUSPENDED"
-    TARGETING_CLAUSE_STATUS_LIVE = "TARGETING_CLAUSE_STATUS_LIVE"
-
-
 class SponsoredProductsCampaignNegativeKeywordExtendedData(BaseModel):
     creation_date_time: Optional[str] = Field(None, alias="creationDateTime", description="Creation date in ISO 8601.")
     last_update_date_time: Optional[str] = Field(None, alias="lastUpdateDateTime", description="Last updated date in ISO 8601.")
@@ -3364,6 +3357,13 @@ class SponsoredProductsCampaignNegativeKeywordExtendedData(BaseModel):
     serving_status_details: Optional[list["SponsoredProductsKeywordServingStatusDetail"]] = Field(None, alias="servingStatusDetails", description="The serving status reasons of the Keyword")
 
     model_config = {'populate_by_name': True}
+
+
+class SponsoredProductsNegativeMatchType(StrEnum):
+    NEGATIVE_BROAD = "NEGATIVE_BROAD"
+    NEGATIVE_EXACT = "NEGATIVE_EXACT"
+    NEGATIVE_PHRASE = "NEGATIVE_PHRASE"
+    OTHER = "OTHER"
 
 
 class SponsoredProductsCampaignNegativeKeyword(BaseModel):
@@ -3389,6 +3389,48 @@ class SponsoredProductsCampaignNegativeKeywordSuccessResponseItem(BaseModel):
 class SponsoredProductsBulkCampaignNegativeKeywordOperationResponse(BaseModel):
     error: Optional[list["SponsoredProductsCampaignNegativeKeywordFailureResponseItem"]] = None
     success: Optional[list["SponsoredProductsCampaignNegativeKeywordSuccessResponseItem"]] = None
+
+    model_config = {'populate_by_name': True}
+
+
+class SponsoredProductsCampaignNegativeTargetingClauseExtendedData(BaseModel):
+    creation_date_time: Optional[str] = Field(None, alias="creationDateTime", description="Creation date in ISO 8601.")
+    last_update_date_time: Optional[str] = Field(None, alias="lastUpdateDateTime", description="Last updated date in ISO 8601.")
+    serving_status: Optional["SponsoredProductsKeywordServingStatus"] = Field(None, alias="servingStatus")
+    serving_status_details: Optional[list["SponsoredProductsKeywordServingStatusDetail"]] = Field(None, alias="servingStatusDetails", description="The serving status reasons of the CampaignNegativeTargetingClause")
+
+    model_config = {'populate_by_name': True}
+
+
+class SponsoredProductsNegativeTargetingExpressionPredicateType(StrEnum):
+    ASIN_BRAND_SAME_AS = "ASIN_BRAND_SAME_AS"
+    ASIN_SAME_AS = "ASIN_SAME_AS"
+    OTHER = "OTHER"
+
+
+class SponsoredProductsNegativeTargetingExpressionPredicate(BaseModel):
+    type_: Optional["SponsoredProductsNegativeTargetingExpressionPredicateType"] = Field(None, alias="type")
+    value: Optional[str] = Field(None, description="The expression value")
+
+    model_config = {'populate_by_name': True}
+
+
+class SponsoredProductsCampaignNegativeTargetingClause(BaseModel):
+    campaign_id: str = Field(..., alias="campaignId", description="The identifier of the campaign to which this target is associated.")
+    expression: list["SponsoredProductsNegativeTargetingExpressionPredicate"] = Field(..., description="The CampaignNegativeTargetingClause expression.")
+    extended_data: Optional["SponsoredProductsCampaignNegativeTargetingClauseExtendedData"] = Field(None, alias="extendedData")
+    global_target_id: Optional[str] = Field(None, alias="globalTargetId", description="The global target identifier that manages this marketplace target.")
+    resolved_expression: list["SponsoredProductsNegativeTargetingExpressionPredicate"] = Field(..., alias="resolvedExpression", description="The resolved CampaignNegativeTargetingClause expression.")
+    state: "SponsoredProductsEntityState"
+    target_id: str = Field(..., alias="targetId", description="The target identifier")
+
+    model_config = {'populate_by_name': True}
+
+
+class SponsoredProductsCampaignNegativeTargetingClauseSuccessResponseItem(BaseModel):
+    campaign_negative_targeting_clause_id: Optional[str] = Field(None, alias="campaignNegativeTargetingClauseId", description="the CampaignNegativeTargets ID")
+    campaign_negative_targeting_clauses: Optional["SponsoredProductsCampaignNegativeTargetingClause"] = Field(None, alias="campaignNegativeTargetingClauses")
+    index: int = Field(..., description="the index of the CampaignNegativeTargets in the array from the request body")
 
     model_config = {'populate_by_name': True}
 
@@ -3442,48 +3484,6 @@ class SponsoredProductsCampaignNegativeTargetingClauseFailureResponseItem(BaseMo
     model_config = {'populate_by_name': True}
 
 
-class SponsoredProductsNegativeTargetingExpressionPredicateType(StrEnum):
-    ASIN_BRAND_SAME_AS = "ASIN_BRAND_SAME_AS"
-    ASIN_SAME_AS = "ASIN_SAME_AS"
-    OTHER = "OTHER"
-
-
-class SponsoredProductsNegativeTargetingExpressionPredicate(BaseModel):
-    type_: Optional["SponsoredProductsNegativeTargetingExpressionPredicateType"] = Field(None, alias="type")
-    value: Optional[str] = Field(None, description="The expression value")
-
-    model_config = {'populate_by_name': True}
-
-
-class SponsoredProductsCampaignNegativeTargetingClauseExtendedData(BaseModel):
-    creation_date_time: Optional[str] = Field(None, alias="creationDateTime", description="Creation date in ISO 8601.")
-    last_update_date_time: Optional[str] = Field(None, alias="lastUpdateDateTime", description="Last updated date in ISO 8601.")
-    serving_status: Optional["SponsoredProductsKeywordServingStatus"] = Field(None, alias="servingStatus")
-    serving_status_details: Optional[list["SponsoredProductsKeywordServingStatusDetail"]] = Field(None, alias="servingStatusDetails", description="The serving status reasons of the CampaignNegativeTargetingClause")
-
-    model_config = {'populate_by_name': True}
-
-
-class SponsoredProductsCampaignNegativeTargetingClause(BaseModel):
-    campaign_id: str = Field(..., alias="campaignId", description="The identifier of the campaign to which this target is associated.")
-    expression: list["SponsoredProductsNegativeTargetingExpressionPredicate"] = Field(..., description="The CampaignNegativeTargetingClause expression.")
-    extended_data: Optional["SponsoredProductsCampaignNegativeTargetingClauseExtendedData"] = Field(None, alias="extendedData")
-    global_target_id: Optional[str] = Field(None, alias="globalTargetId", description="The global target identifier that manages this marketplace target.")
-    resolved_expression: list["SponsoredProductsNegativeTargetingExpressionPredicate"] = Field(..., alias="resolvedExpression", description="The resolved CampaignNegativeTargetingClause expression.")
-    state: "SponsoredProductsEntityState"
-    target_id: str = Field(..., alias="targetId", description="The target identifier")
-
-    model_config = {'populate_by_name': True}
-
-
-class SponsoredProductsCampaignNegativeTargetingClauseSuccessResponseItem(BaseModel):
-    campaign_negative_targeting_clause_id: Optional[str] = Field(None, alias="campaignNegativeTargetingClauseId", description="the CampaignNegativeTargets ID")
-    campaign_negative_targeting_clauses: Optional["SponsoredProductsCampaignNegativeTargetingClause"] = Field(None, alias="campaignNegativeTargetingClauses")
-    index: int = Field(..., description="the index of the CampaignNegativeTargets in the array from the request body")
-
-    model_config = {'populate_by_name': True}
-
-
 class SponsoredProductsBulkCampaignNegativeTargetingClauseOperationResponse(BaseModel):
     error: Optional[list["SponsoredProductsCampaignNegativeTargetingClauseFailureResponseItem"]] = None
     success: Optional[list["SponsoredProductsCampaignNegativeTargetingClauseSuccessResponseItem"]] = None
@@ -3491,80 +3491,38 @@ class SponsoredProductsBulkCampaignNegativeTargetingClauseOperationResponse(Base
     model_config = {'populate_by_name': True}
 
 
-class SponsoredProductsDateErrorReason(StrEnum):
-    END_DATE_EARLIER_THAN_TODAY = "END_DATE_EARLIER_THAN_TODAY"
-    END_DATE_LATER_THAN_MAXIMUM = "END_DATE_LATER_THAN_MAXIMUM"
-    INVALID_DATE = "INVALID_DATE"
-    START_DATE_AFTER_END_DATE = "START_DATE_AFTER_END_DATE"
-    START_DATE_EARLIER_THAN_TODAY = "START_DATE_EARLIER_THAN_TODAY"
-    START_DATE_LATER_THAN_MAXIMUM = "START_DATE_LATER_THAN_MAXIMUM"
-    UPDATING_ENDED_CAMPAIGN_WITHOUT_EXTENSION = "UPDATING_ENDED_CAMPAIGN_WITHOUT_EXTENSION"
-    UPDATING_READ_ONLY_END_DATE = "UPDATING_READ_ONLY_END_DATE"
-    UPDATING_READ_ONLY_START_DATE = "UPDATING_READ_ONLY_START_DATE"
+class SponsoredProductsShopperCohortType(StrEnum):
+    AUDIENCE_SEGMENT = "AUDIENCE_SEGMENT"
 
 
-class SponsoredProductsDateError(BaseModel):
-    cause: Optional["SponsoredProductsErrorCause"] = None
-    message: str = Field(..., description="Human readable error message")
-    reason: "SponsoredProductsDateErrorReason"
+class SponsoredProductsShopperCohortBidding(BaseModel):
+    audience_segments: Optional[list["SponsoredProductsAudienceSegment"]] = Field(None, alias="audienceSegments", description="A list of Audience Segments. Shoppers belonging to these segments will be selected for applying the bid adjustments. Thi")
+    percentage: Optional[int] = None
+    shopper_cohort_type: "SponsoredProductsShopperCohortType" = Field(..., alias="shopperCohortType")
 
     model_config = {'populate_by_name': True}
 
 
-class SponsoredProductsCurrencyErrorReason(StrEnum):
-    CANNOT_UPDATE_CURRENCY = "CANNOT_UPDATE_CURRENCY"
-    CURRENCY_NOT_MATCHING_PREFERRED_CURRENCY = "CURRENCY_NOT_MATCHING_PREFERRED_CURRENCY"
-    CURRENCY_NOT_SUPPORTED = "CURRENCY_NOT_SUPPORTED"
-    PREFERRED_CURRENCY_NOT_SET = "PREFERRED_CURRENCY_NOT_SET"
+class SponsoredProductsPlacement(StrEnum):
+    PLACEMENT_PRODUCT_PAGE = "PLACEMENT_PRODUCT_PAGE"
+    PLACEMENT_REST_OF_SEARCH = "PLACEMENT_REST_OF_SEARCH"
+    PLACEMENT_TOP = "PLACEMENT_TOP"
+    SITE_AMAZON_BUSINESS = "SITE_AMAZON_BUSINESS"
 
 
-class SponsoredProductsCurrencyError(BaseModel):
-    """Errors related to currency"""
-    cause: Optional["SponsoredProductsErrorCause"] = None
-    message: str = Field(..., description="Human readable error message")
-    reason: "SponsoredProductsCurrencyErrorReason"
+class SponsoredProductsPlacementBidding(BaseModel):
+    percentage: Optional[int] = None
+    placement: Optional["SponsoredProductsPlacement"] = None
 
     model_config = {'populate_by_name': True}
 
 
-class SponsoredProductsCampaignMutationErrorSelector(BaseModel):
-    bidding_error: Optional["SponsoredProductsBiddingError"] = Field(None, alias="biddingError")
-    billing_error: Optional["SponsoredProductsBillingError"] = Field(None, alias="billingError")
-    budget_error: Optional["SponsoredProductsBudgetError"] = Field(None, alias="budgetError")
-    currency_error: Optional["SponsoredProductsCurrencyError"] = Field(None, alias="currencyError")
-    date_error: Optional["SponsoredProductsDateError"] = Field(None, alias="dateError")
-    duplicate_value_error: Optional["SponsoredProductsDuplicateValueError"] = Field(None, alias="duplicateValueError")
-    entity_not_found_error: Optional["SponsoredProductsEntityNotFoundError"] = Field(None, alias="entityNotFoundError")
-    entity_quota_error: Optional["SponsoredProductsEntityQuotaError"] = Field(None, alias="entityQuotaError")
-    entity_state_error: Optional["SponsoredProductsEntityStateError"] = Field(None, alias="entityStateError")
-    internal_server_error: Optional["SponsoredProductsInternalServerError"] = Field(None, alias="internalServerError")
-    malformed_value_error: Optional["SponsoredProductsMalformedValueError"] = Field(None, alias="malformedValueError")
-    missing_value_error: Optional["SponsoredProductsMissingValueError"] = Field(None, alias="missingValueError")
-    other_error: Optional["SponsoredProductsOtherError"] = Field(None, alias="otherError")
-    parent_entity_error: Optional["SponsoredProductsParentEntityError"] = Field(None, alias="parentEntityError")
-    range_error: Optional["SponsoredProductsRangeError"] = Field(None, alias="rangeError")
-    throttled_error: Optional["SponsoredProductsThrottledError"] = Field(None, alias="throttledError")
+class SponsoredProductsDynamicBidding(BaseModel):
+    placement_bidding: Optional[list["SponsoredProductsPlacementBidding"]] = Field(None, alias="placementBidding")
+    shopper_cohort_bidding: Optional[list["SponsoredProductsShopperCohortBidding"]] = Field(None, alias="shopperCohortBidding", description="Specifies Shopper Cohorts based bid adjustment controls. `shopperCohortBidding` is optional for both Create and Update r")
+    strategy: "SponsoredProductsBiddingStrategy"
 
     model_config = {'populate_by_name': True}
-
-
-class SponsoredProductsCampaignMutationError(BaseModel):
-    error_type: str = Field(..., alias="errorType", description="The type of the error")
-    error_value: "SponsoredProductsCampaignMutationErrorSelector" = Field(..., alias="errorValue")
-
-    model_config = {'populate_by_name': True}
-
-
-class SponsoredProductsCampaignMutationFailureResponseItem(BaseModel):
-    errors: Optional[list["SponsoredProductsCampaignMutationError"]] = Field(None, description="A list of validation errors")
-    index: int = Field(..., description="the index of the campaign in the array from the request body")
-
-    model_config = {'populate_by_name': True}
-
-
-class SponsoredProductsTargetingType(StrEnum):
-    AUTO = "AUTO"
-    MANUAL = "MANUAL"
 
 
 class SponsoredProductsOffAmazonBudgetControlStrategy(StrEnum):
@@ -3576,6 +3534,11 @@ class SponsoredProductsOffAmazonSettings(BaseModel):
     off_amazon_budget_control_strategy: Optional["SponsoredProductsOffAmazonBudgetControlStrategy"] = Field(None, alias="offAmazonBudgetControlStrategy")
 
     model_config = {'populate_by_name': True}
+
+
+class SponsoredProductsTargetingType(StrEnum):
+    AUTO = "AUTO"
+    MANUAL = "MANUAL"
 
 
 class SponsoredProductsCampaignServingStatusReason(StrEnum):
@@ -3649,53 +3612,19 @@ class SponsoredProductsCampaignExtendedData(BaseModel):
     model_config = {'populate_by_name': True}
 
 
+class SponsoredProductsSiteRestriction(StrEnum):
+    AMAZON_BUSINESS = "AMAZON_BUSINESS"
+    AMAZON_HAUL = "AMAZON_HAUL"
+
+
 class SponsoredProductsMarketplaceBudgetAllocation(StrEnum):
     AUTO = "AUTO"
     MANUAL = "MANUAL"
 
 
-class SponsoredProductsShopperCohortType(StrEnum):
-    AUDIENCE_SEGMENT = "AUDIENCE_SEGMENT"
-
-
-class SponsoredProductsShopperCohortBidding(BaseModel):
-    audience_segments: Optional[list["SponsoredProductsAudienceSegment"]] = Field(None, alias="audienceSegments", description="A list of Audience Segments. Shoppers belonging to these segments will be selected for applying the bid adjustments. Thi")
-    percentage: Optional[int] = None
-    shopper_cohort_type: "SponsoredProductsShopperCohortType" = Field(..., alias="shopperCohortType")
-
-    model_config = {'populate_by_name': True}
-
-
-class SponsoredProductsPlacement(StrEnum):
-    PLACEMENT_PRODUCT_PAGE = "PLACEMENT_PRODUCT_PAGE"
-    PLACEMENT_REST_OF_SEARCH = "PLACEMENT_REST_OF_SEARCH"
-    PLACEMENT_TOP = "PLACEMENT_TOP"
-    SITE_AMAZON_BUSINESS = "SITE_AMAZON_BUSINESS"
-
-
-class SponsoredProductsPlacementBidding(BaseModel):
-    percentage: Optional[int] = None
-    placement: Optional["SponsoredProductsPlacement"] = None
-
-    model_config = {'populate_by_name': True}
-
-
-class SponsoredProductsDynamicBidding(BaseModel):
-    placement_bidding: Optional[list["SponsoredProductsPlacementBidding"]] = Field(None, alias="placementBidding")
-    shopper_cohort_bidding: Optional[list["SponsoredProductsShopperCohortBidding"]] = Field(None, alias="shopperCohortBidding", description="Specifies Shopper Cohorts based bid adjustment controls. `shopperCohortBidding` is optional for both Create and Update r")
-    strategy: "SponsoredProductsBiddingStrategy"
-
-    model_config = {'populate_by_name': True}
-
-
 class SponsoredProductsTags(BaseModel):
     """A list of advertiser-specified custom identifiers for the campaign. Each customer identifier is a key-value pair. You can specify a maximum of 50 identifiers."""
     __root__: dict[str, str] = {}
-
-
-class SponsoredProductsSiteRestriction(StrEnum):
-    AMAZON_BUSINESS = "AMAZON_BUSINESS"
-    AMAZON_HAUL = "AMAZON_HAUL"
 
 
 class SponsoredProductsCampaign(BaseModel):
@@ -3722,6 +3651,77 @@ class SponsoredProductsCampaign(BaseModel):
 class SponsoredProductsCampaignMutationSuccessResponseItem(BaseModel):
     campaign: Optional["SponsoredProductsCampaign"] = None
     campaign_id: Optional[str] = Field(None, alias="campaignId", description="the campaign ID")
+    index: int = Field(..., description="the index of the campaign in the array from the request body")
+
+    model_config = {'populate_by_name': True}
+
+
+class SponsoredProductsDateErrorReason(StrEnum):
+    END_DATE_EARLIER_THAN_TODAY = "END_DATE_EARLIER_THAN_TODAY"
+    END_DATE_LATER_THAN_MAXIMUM = "END_DATE_LATER_THAN_MAXIMUM"
+    INVALID_DATE = "INVALID_DATE"
+    START_DATE_AFTER_END_DATE = "START_DATE_AFTER_END_DATE"
+    START_DATE_EARLIER_THAN_TODAY = "START_DATE_EARLIER_THAN_TODAY"
+    START_DATE_LATER_THAN_MAXIMUM = "START_DATE_LATER_THAN_MAXIMUM"
+    UPDATING_ENDED_CAMPAIGN_WITHOUT_EXTENSION = "UPDATING_ENDED_CAMPAIGN_WITHOUT_EXTENSION"
+    UPDATING_READ_ONLY_END_DATE = "UPDATING_READ_ONLY_END_DATE"
+    UPDATING_READ_ONLY_START_DATE = "UPDATING_READ_ONLY_START_DATE"
+
+
+class SponsoredProductsDateError(BaseModel):
+    cause: Optional["SponsoredProductsErrorCause"] = None
+    message: str = Field(..., description="Human readable error message")
+    reason: "SponsoredProductsDateErrorReason"
+
+    model_config = {'populate_by_name': True}
+
+
+class SponsoredProductsCurrencyErrorReason(StrEnum):
+    CANNOT_UPDATE_CURRENCY = "CANNOT_UPDATE_CURRENCY"
+    CURRENCY_NOT_MATCHING_PREFERRED_CURRENCY = "CURRENCY_NOT_MATCHING_PREFERRED_CURRENCY"
+    CURRENCY_NOT_SUPPORTED = "CURRENCY_NOT_SUPPORTED"
+    PREFERRED_CURRENCY_NOT_SET = "PREFERRED_CURRENCY_NOT_SET"
+
+
+class SponsoredProductsCurrencyError(BaseModel):
+    """Errors related to currency"""
+    cause: Optional["SponsoredProductsErrorCause"] = None
+    message: str = Field(..., description="Human readable error message")
+    reason: "SponsoredProductsCurrencyErrorReason"
+
+    model_config = {'populate_by_name': True}
+
+
+class SponsoredProductsCampaignMutationErrorSelector(BaseModel):
+    bidding_error: Optional["SponsoredProductsBiddingError"] = Field(None, alias="biddingError")
+    billing_error: Optional["SponsoredProductsBillingError"] = Field(None, alias="billingError")
+    budget_error: Optional["SponsoredProductsBudgetError"] = Field(None, alias="budgetError")
+    currency_error: Optional["SponsoredProductsCurrencyError"] = Field(None, alias="currencyError")
+    date_error: Optional["SponsoredProductsDateError"] = Field(None, alias="dateError")
+    duplicate_value_error: Optional["SponsoredProductsDuplicateValueError"] = Field(None, alias="duplicateValueError")
+    entity_not_found_error: Optional["SponsoredProductsEntityNotFoundError"] = Field(None, alias="entityNotFoundError")
+    entity_quota_error: Optional["SponsoredProductsEntityQuotaError"] = Field(None, alias="entityQuotaError")
+    entity_state_error: Optional["SponsoredProductsEntityStateError"] = Field(None, alias="entityStateError")
+    internal_server_error: Optional["SponsoredProductsInternalServerError"] = Field(None, alias="internalServerError")
+    malformed_value_error: Optional["SponsoredProductsMalformedValueError"] = Field(None, alias="malformedValueError")
+    missing_value_error: Optional["SponsoredProductsMissingValueError"] = Field(None, alias="missingValueError")
+    other_error: Optional["SponsoredProductsOtherError"] = Field(None, alias="otherError")
+    parent_entity_error: Optional["SponsoredProductsParentEntityError"] = Field(None, alias="parentEntityError")
+    range_error: Optional["SponsoredProductsRangeError"] = Field(None, alias="rangeError")
+    throttled_error: Optional["SponsoredProductsThrottledError"] = Field(None, alias="throttledError")
+
+    model_config = {'populate_by_name': True}
+
+
+class SponsoredProductsCampaignMutationError(BaseModel):
+    error_type: str = Field(..., alias="errorType", description="The type of the error")
+    error_value: "SponsoredProductsCampaignMutationErrorSelector" = Field(..., alias="errorValue")
+
+    model_config = {'populate_by_name': True}
+
+
+class SponsoredProductsCampaignMutationFailureResponseItem(BaseModel):
+    errors: Optional[list["SponsoredProductsCampaignMutationError"]] = Field(None, description="A list of validation errors")
     index: int = Field(..., description="the index of the campaign in the array from the request body")
 
     model_config = {'populate_by_name': True}
@@ -3898,36 +3898,6 @@ class SponsoredProductsBulkNegativeKeywordOperationResponse(BaseModel):
     model_config = {'populate_by_name': True}
 
 
-class SponsoredProductsNegativeTargetingClauseExtendedData(BaseModel):
-    creation_date_time: Optional[str] = Field(None, alias="creationDateTime", description="Creation date in ISO 8601.")
-    last_update_date_time: Optional[str] = Field(None, alias="lastUpdateDateTime", description="Last updated date in ISO 8601.")
-    serving_status: Optional["SponsoredProductsKeywordServingStatus"] = Field(None, alias="servingStatus")
-    serving_status_details: Optional[list["SponsoredProductsKeywordServingStatusDetail"]] = Field(None, alias="servingStatusDetails", description="The serving status reasons of the NegativeTargetingClause")
-
-    model_config = {'populate_by_name': True}
-
-
-class SponsoredProductsNegativeTargetingClause(BaseModel):
-    ad_group_id: str = Field(..., alias="adGroupId", description="The identifier of the ad group to which this target is associated.")
-    campaign_id: str = Field(..., alias="campaignId", description="The identifier of the campaign to which this target is associated.")
-    expression: list["SponsoredProductsNegativeTargetingExpressionPredicate"] = Field(..., description="The NegativeTargeting expression.")
-    extended_data: Optional["SponsoredProductsNegativeTargetingClauseExtendedData"] = Field(None, alias="extendedData")
-    global_target_id: Optional[str] = Field(None, alias="globalTargetId", description="The global target identifier that manages this marketplace target.")
-    resolved_expression: list["SponsoredProductsNegativeTargetingExpressionPredicate"] = Field(..., alias="resolvedExpression", description="The resolved NegativeTargeting expression.")
-    state: "SponsoredProductsEntityState"
-    target_id: str = Field(..., alias="targetId", description="The target identifier")
-
-    model_config = {'populate_by_name': True}
-
-
-class SponsoredProductsNegativeTargetingClauseSuccessResponseItem(BaseModel):
-    index: int = Field(..., description="the index of the NegativeTargetingClause in the array from the request body")
-    negative_targeting_clause: Optional["SponsoredProductsNegativeTargetingClause"] = Field(None, alias="negativeTargetingClause")
-    target_id: Optional[str] = Field(None, alias="targetId", description="the NegativeTargetingClause ID")
-
-    model_config = {'populate_by_name': True}
-
-
 class SponsoredProductsNegativeTargetMutationErrorSelector(BaseModel):
     billing_error: Optional["SponsoredProductsBillingError"] = Field(None, alias="billingError")
     duplicate_value_error: Optional["SponsoredProductsDuplicateValueError"] = Field(None, alias="duplicateValueError")
@@ -3960,6 +3930,36 @@ class SponsoredProductsNegativeTargetingClauseFailureResponseItem(BaseModel):
     model_config = {'populate_by_name': True}
 
 
+class SponsoredProductsNegativeTargetingClauseExtendedData(BaseModel):
+    creation_date_time: Optional[str] = Field(None, alias="creationDateTime", description="Creation date in ISO 8601.")
+    last_update_date_time: Optional[str] = Field(None, alias="lastUpdateDateTime", description="Last updated date in ISO 8601.")
+    serving_status: Optional["SponsoredProductsKeywordServingStatus"] = Field(None, alias="servingStatus")
+    serving_status_details: Optional[list["SponsoredProductsKeywordServingStatusDetail"]] = Field(None, alias="servingStatusDetails", description="The serving status reasons of the NegativeTargetingClause")
+
+    model_config = {'populate_by_name': True}
+
+
+class SponsoredProductsNegativeTargetingClause(BaseModel):
+    ad_group_id: str = Field(..., alias="adGroupId", description="The identifier of the ad group to which this target is associated.")
+    campaign_id: str = Field(..., alias="campaignId", description="The identifier of the campaign to which this target is associated.")
+    expression: list["SponsoredProductsNegativeTargetingExpressionPredicate"] = Field(..., description="The NegativeTargeting expression.")
+    extended_data: Optional["SponsoredProductsNegativeTargetingClauseExtendedData"] = Field(None, alias="extendedData")
+    global_target_id: Optional[str] = Field(None, alias="globalTargetId", description="The global target identifier that manages this marketplace target.")
+    resolved_expression: list["SponsoredProductsNegativeTargetingExpressionPredicate"] = Field(..., alias="resolvedExpression", description="The resolved NegativeTargeting expression.")
+    state: "SponsoredProductsEntityState"
+    target_id: str = Field(..., alias="targetId", description="The target identifier")
+
+    model_config = {'populate_by_name': True}
+
+
+class SponsoredProductsNegativeTargetingClauseSuccessResponseItem(BaseModel):
+    index: int = Field(..., description="the index of the NegativeTargetingClause in the array from the request body")
+    negative_targeting_clause: Optional["SponsoredProductsNegativeTargetingClause"] = Field(None, alias="negativeTargetingClause")
+    target_id: Optional[str] = Field(None, alias="targetId", description="the NegativeTargetingClause ID")
+
+    model_config = {'populate_by_name': True}
+
+
 class SponsoredProductsBulkNegativeTargetingClauseOperationResponse(BaseModel):
     error: Optional[list["SponsoredProductsNegativeTargetingClauseFailureResponseItem"]] = None
     success: Optional[list["SponsoredProductsNegativeTargetingClauseSuccessResponseItem"]] = None
@@ -3967,15 +3967,40 @@ class SponsoredProductsBulkNegativeTargetingClauseOperationResponse(BaseModel):
     model_config = {'populate_by_name': True}
 
 
-class SponsoredProductsUnsupportedOperationErrorReason(StrEnum):
-    UNSUPPORTED_OPERATION = "UNSUPPORTED_OPERATION"
+class SponsoredProductsGlobalStoreSetting(BaseModel):
+    catalog_source_country_code: Optional[str] = Field(None, alias="catalogSourceCountryCode", description="Country code of source marketplace where seller has listed the product. Possible source country codes include US, UK, DE")
+
+    model_config = {'populate_by_name': True}
 
 
-class SponsoredProductsUnsupportedOperationError(BaseModel):
-    """Errors being used to represent an unsupported operation e.g. Seller are not supported to create custom text product ads."""
-    cause: Optional["SponsoredProductsErrorCause"] = None
-    message: str = Field(..., description="Human readable error message")
-    reason: "SponsoredProductsUnsupportedOperationErrorReason"
+class SponsoredProductsProductAdExtendedData(BaseModel):
+    creation_date_time: Optional[str] = Field(None, alias="creationDateTime", description="Creation date in ISO 8601.")
+    last_update_date_time: Optional[str] = Field(None, alias="lastUpdateDateTime", description="Last updated date in ISO 8601.")
+    serving_status: Optional["SponsoredProductsAdServingStatus"] = Field(None, alias="servingStatus")
+    serving_status_details: Optional[list["SponsoredProductsAdServingStatusDetail"]] = Field(None, alias="servingStatusDetails", description="The serving status reasons of the Ad")
+
+    model_config = {'populate_by_name': True}
+
+
+class SponsoredProductsProductAd(BaseModel):
+    ad_group_id: str = Field(..., alias="adGroupId", description="The ad group identifier.")
+    ad_id: str = Field(..., alias="adId", description="The product ad identifier.")
+    asin: Optional[str] = Field(None, description="The ASIN associated with the product. Defined for vendors only.")
+    campaign_id: str = Field(..., alias="campaignId", description="The campaign identifier.")
+    custom_text: Optional[str] = Field(None, alias="customText", description="The custom text that is associated with this ad. Defined for custom text ads only.")
+    extended_data: Optional["SponsoredProductsProductAdExtendedData"] = Field(None, alias="extendedData")
+    global_ad_id: Optional[str] = Field(None, alias="globalAdId", description="The global ad identifier that manages this marketplace ad.")
+    global_store_setting: Optional["SponsoredProductsGlobalStoreSetting"] = Field(None, alias="globalStoreSetting")
+    sku: Optional[str] = Field(None, description="The SKU associated with the product. Defined for seller accounts only.")
+    state: "SponsoredProductsEntityState"
+
+    model_config = {'populate_by_name': True}
+
+
+class SponsoredProductsProductAdSuccessResponseItem(BaseModel):
+    ad_id: Optional[str] = Field(None, alias="adId", description="the ProductAd ID")
+    index: int = Field(..., description="The index in the original list from the request.")
+    product_ad: Optional["SponsoredProductsProductAd"] = Field(None, alias="productAd")
 
     model_config = {'populate_by_name': True}
 
@@ -3991,6 +4016,19 @@ class SponsoredProductsProductIdentifierError(BaseModel):
     marketplace: Optional["SponsoredProductsMarketplace"] = None
     message: str = Field(..., description="Human readable error message")
     reason: "SponsoredProductsProductIdentifierErrorReason"
+
+    model_config = {'populate_by_name': True}
+
+
+class SponsoredProductsUnsupportedOperationErrorReason(StrEnum):
+    UNSUPPORTED_OPERATION = "UNSUPPORTED_OPERATION"
+
+
+class SponsoredProductsUnsupportedOperationError(BaseModel):
+    """Errors being used to represent an unsupported operation e.g. Seller are not supported to create custom text product ads."""
+    cause: Optional["SponsoredProductsErrorCause"] = None
+    message: str = Field(..., description="Human readable error message")
+    reason: "SponsoredProductsUnsupportedOperationErrorReason"
 
     model_config = {'populate_by_name': True}
 
@@ -4026,44 +4064,6 @@ class SponsoredProductsProductAdMutationError(BaseModel):
 class SponsoredProductsProductAdFailureResponseItem(BaseModel):
     errors: Optional[list["SponsoredProductsProductAdMutationError"]] = Field(None, description="A list of validation errors")
     index: int = Field(..., description="the index of the product ad in the array from the request body")
-
-    model_config = {'populate_by_name': True}
-
-
-class SponsoredProductsProductAdExtendedData(BaseModel):
-    creation_date_time: Optional[str] = Field(None, alias="creationDateTime", description="Creation date in ISO 8601.")
-    last_update_date_time: Optional[str] = Field(None, alias="lastUpdateDateTime", description="Last updated date in ISO 8601.")
-    serving_status: Optional["SponsoredProductsAdServingStatus"] = Field(None, alias="servingStatus")
-    serving_status_details: Optional[list["SponsoredProductsAdServingStatusDetail"]] = Field(None, alias="servingStatusDetails", description="The serving status reasons of the Ad")
-
-    model_config = {'populate_by_name': True}
-
-
-class SponsoredProductsGlobalStoreSetting(BaseModel):
-    catalog_source_country_code: Optional[str] = Field(None, alias="catalogSourceCountryCode", description="Country code of source marketplace where seller has listed the product. Possible source country codes include US, UK, DE")
-
-    model_config = {'populate_by_name': True}
-
-
-class SponsoredProductsProductAd(BaseModel):
-    ad_group_id: str = Field(..., alias="adGroupId", description="The ad group identifier.")
-    ad_id: str = Field(..., alias="adId", description="The product ad identifier.")
-    asin: Optional[str] = Field(None, description="The ASIN associated with the product. Defined for vendors only.")
-    campaign_id: str = Field(..., alias="campaignId", description="The campaign identifier.")
-    custom_text: Optional[str] = Field(None, alias="customText", description="The custom text that is associated with this ad. Defined for custom text ads only.")
-    extended_data: Optional["SponsoredProductsProductAdExtendedData"] = Field(None, alias="extendedData")
-    global_ad_id: Optional[str] = Field(None, alias="globalAdId", description="The global ad identifier that manages this marketplace ad.")
-    global_store_setting: Optional["SponsoredProductsGlobalStoreSetting"] = Field(None, alias="globalStoreSetting")
-    sku: Optional[str] = Field(None, description="The SKU associated with the product. Defined for seller accounts only.")
-    state: "SponsoredProductsEntityState"
-
-    model_config = {'populate_by_name': True}
-
-
-class SponsoredProductsProductAdSuccessResponseItem(BaseModel):
-    ad_id: Optional[str] = Field(None, alias="adId", description="the ProductAd ID")
-    index: int = Field(..., description="The index in the original list from the request.")
-    product_ad: Optional["SponsoredProductsProductAd"] = Field(None, alias="productAd")
 
     model_config = {'populate_by_name': True}
 
@@ -4121,12 +4121,6 @@ class SponsoredProductsTargetingClauseFailureResponseItem(BaseModel):
     model_config = {'populate_by_name': True}
 
 
-class SponsoredProductsExpressionType(StrEnum):
-    AUTO = "AUTO"
-    MANUAL = "MANUAL"
-    OTHER = "OTHER"
-
-
 class SponsoredProductsTargetingClauseExtendedData(BaseModel):
     creation_date_time: Optional[str] = Field(None, alias="creationDateTime", description="Creation date in ISO 8601.")
     last_update_date_time: Optional[str] = Field(None, alias="lastUpdateDateTime", description="Last updated date in ISO 8601.")
@@ -4134,6 +4128,12 @@ class SponsoredProductsTargetingClauseExtendedData(BaseModel):
     serving_status_details: Optional[list["SponsoredProductsKeywordServingStatusDetail"]] = Field(None, alias="servingStatusDetails", description="The serving status reasons of the TargetingClause")
 
     model_config = {'populate_by_name': True}
+
+
+class SponsoredProductsExpressionType(StrEnum):
+    AUTO = "AUTO"
+    MANUAL = "MANUAL"
+    OTHER = "OTHER"
 
 
 class SponsoredProductsTargetingExpressionPredicateType(StrEnum):
@@ -4786,14 +4786,6 @@ class SponsoredProductsExistingCampaignDetails(BaseModel):
     model_config = {'populate_by_name': True}
 
 
-class SponsoredProductsNewCampaignBudget(BaseModel):
-    """The budget for the campaigns in the target promotion group."""
-    budget: float = Field(..., description="The value of the budget.")
-    budget_type: str = Field(..., alias="budgetType", description="DAILY.")
-
-    model_config = {'populate_by_name': True}
-
-
 class SponsoredProductsNewCampaignPlacementBidding(BaseModel):
     """The product placement."""
     percentage: int = Field(..., description="The bidding placement percentage.")
@@ -4806,6 +4798,14 @@ class SponsoredProductsNewCampaignDynamicBidding(BaseModel):
     """Specifies bidding controls."""
     placement_bidding: Optional[list["SponsoredProductsNewCampaignPlacementBidding"]] = Field(None, alias="placementBidding", description="The product placement.")
     strategy: str = Field(..., description="One of LEGACY_FOR_SALES, AUTO_FOR_SALES, MANUAL, RULE_BASED.")
+
+    model_config = {'populate_by_name': True}
+
+
+class SponsoredProductsNewCampaignBudget(BaseModel):
+    """The budget for the campaigns in the target promotion group."""
+    budget: float = Field(..., description="The value of the budget.")
+    budget_type: str = Field(..., alias="budgetType", description="DAILY.")
 
     model_config = {'populate_by_name': True}
 
@@ -5061,17 +5061,17 @@ class SponsoredProductsGetTargetPromotionGroupsRecommendationsRequestContent(Bas
     model_config = {'populate_by_name': True}
 
 
-class SponsoredProductsTargetType(StrEnum):
-    ASIN = "ASIN"
-    KEYWORD = "KEYWORD"
-
-
 class SponsoredProductsRecommendationReason(BaseModel):
     """Provides a reason for why this target is being recommended for harvesting"""
     data: Optional[str] = Field(None, description="The data supporting the recommendation reason")
     reason: Optional[str] = Field(None, description="The reason for the recommendation")
 
     model_config = {'populate_by_name': True}
+
+
+class SponsoredProductsTargetType(StrEnum):
+    ASIN = "ASIN"
+    KEYWORD = "KEYWORD"
 
 
 class SponsoredProductsRecommendedTarget(BaseModel):

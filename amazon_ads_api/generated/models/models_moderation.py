@@ -6,10 +6,10 @@ Title:  Moderation
 
 from __future__ import annotations
 
-from enum import StrEnum
-from typing import Optional
+from enum import StrEnum  # noqa: F401
+from typing import Any, Optional, Union  # noqa: F401
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field  # noqa: F401
 
 
 
@@ -22,6 +22,29 @@ class ViolatingAsinEvidence(BaseModel):
 class ViolatingAsinContent(BaseModel):
     moderated_component: Optional[str] = Field(None, alias="moderatedComponent", description="Moderation component which marked the policy violation.")
     violating_asin_evidences: Optional[list["ViolatingAsinEvidence"]] = Field(None, alias="violatingAsinEvidences")
+
+    model_config = {'populate_by_name': True}
+
+
+class ImageCrop(BaseModel):
+    height: Optional[int] = Field(None, description="Policy violated region's height in pixel.")
+    top_left_x: Optional[int] = Field(None, alias="topLeftX", description="Policy violated region's top left X-axis pixel value.")
+    top_left_y: Optional[int] = Field(None, alias="topLeftY", description="Policy violated region's top left Y-axis pixel value.")
+    width: Optional[int] = Field(None, description="Policy violated region's width in pixel.")
+
+    model_config = {'populate_by_name': True}
+
+
+class ViolatingImageEvidence(BaseModel):
+    violating_image_crop: Optional["ImageCrop"] = Field(None, alias="violatingImageCrop")
+
+    model_config = {'populate_by_name': True}
+
+
+class ViolatingImageContent(BaseModel):
+    moderated_component: Optional[str] = Field(None, alias="moderatedComponent", description="Moderation component which marked the policy violation.")
+    reviewed_image_url: Optional[str] = Field(None, alias="reviewedImageUrl", description="URL of the image which has the ad policy violation.")
+    violating_image_evidences: Optional[list["ViolatingImageEvidence"]] = Field(None, alias="violatingImageEvidences")
 
     model_config = {'populate_by_name': True}
 
@@ -70,29 +93,6 @@ class ViolatingVideoContent(BaseModel):
     model_config = {'populate_by_name': True}
 
 
-class ImageCrop(BaseModel):
-    height: Optional[int] = Field(None, description="Policy violated region's height in pixel.")
-    top_left_x: Optional[int] = Field(None, alias="topLeftX", description="Policy violated region's top left X-axis pixel value.")
-    top_left_y: Optional[int] = Field(None, alias="topLeftY", description="Policy violated region's top left Y-axis pixel value.")
-    width: Optional[int] = Field(None, description="Policy violated region's width in pixel.")
-
-    model_config = {'populate_by_name': True}
-
-
-class ViolatingImageEvidence(BaseModel):
-    violating_image_crop: Optional["ImageCrop"] = Field(None, alias="violatingImageCrop")
-
-    model_config = {'populate_by_name': True}
-
-
-class ViolatingImageContent(BaseModel):
-    moderated_component: Optional[str] = Field(None, alias="moderatedComponent", description="Moderation component which marked the policy violation.")
-    reviewed_image_url: Optional[str] = Field(None, alias="reviewedImageUrl", description="URL of the image which has the ad policy violation.")
-    violating_image_evidences: Optional[list["ViolatingImageEvidence"]] = Field(None, alias="violatingImageEvidences")
-
-    model_config = {'populate_by_name': True}
-
-
 class PolicyViolation(BaseModel):
     policy_description: Optional[str] = Field(None, alias="policyDescription", description="A human-readable description of the policy.")
     policy_link_url: Optional[str] = Field(None, alias="policyLinkUrl", description="Address of the policy documentation. Follow the link to learn more about the specified policy.")
@@ -120,20 +120,20 @@ class TextComponentModerationResult(BaseModel):
     model_config = {'populate_by_name': True}
 
 
-class VideoComponentModerationResult(BaseModel):
-    id_: Optional[str] = Field(None, alias="id", description="The ID of the video component.")
-    moderation_status: Optional["ModerationStatus"] = Field(None, alias="moderationStatus", description="The moderation status of the video component.")
-    policy_violations: Optional[list["PolicyViolation"]] = Field(None, alias="policyViolations", description="A list of policy violations for a video component that has failed moderation. Note that this field is present in the res")
-    video_url: Optional[str] = Field(None, alias="videoUrl", description="The URL of the video component.")
-
-    model_config = {'populate_by_name': True}
-
-
 class ImageComponentModerationResult(BaseModel):
     id_: Optional[str] = Field(None, alias="id", description="The ID of the image component.")
     image_url: Optional[str] = Field(None, alias="imageUrl", description="The URL of the image component.")
     moderation_status: Optional["ModerationStatus"] = Field(None, alias="moderationStatus", description="The moderation status of the image component.")
     policy_violations: Optional[list["PolicyViolation"]] = Field(None, alias="policyViolations", description="A list of policy violations for an image component that has failed moderation. Note that this field is present in the re")
+
+    model_config = {'populate_by_name': True}
+
+
+class VideoComponentModerationResult(BaseModel):
+    id_: Optional[str] = Field(None, alias="id", description="The ID of the video component.")
+    moderation_status: Optional["ModerationStatus"] = Field(None, alias="moderationStatus", description="The moderation status of the video component.")
+    policy_violations: Optional[list["PolicyViolation"]] = Field(None, alias="policyViolations", description="A list of policy violations for a video component that has failed moderation. Note that this field is present in the res")
+    video_url: Optional[str] = Field(None, alias="videoUrl", description="The URL of the video component.")
 
     model_config = {'populate_by_name': True}
 
