@@ -51,6 +51,8 @@ if TYPE_CHECKING:
     from .core.sp.target_promotion_groups import SPTargetPromotionGroupsAPI
     from .core.sp.global_recommendations import SPGlobalRecommendationsAPI
     
+    from .core.eligibility.eligibility import EligibilityAPI
+    
     from .core.sb.campaigns import SBCampaignsAPI
     from .core.sb.keywords import SBKeywordsAPI
     from .core.sb.ads import SBAdsAPI
@@ -94,6 +96,7 @@ class _SPModule:
         self._campaigns: Optional["SPCampaignsAPI"] = None
         self._ad_groups: Optional["SPAdGroupsAPI"] = None
         self._keywords: Optional["SPKeywordsAPI"] = None
+        self._product_ads: Optional["SPProductAdsAPI"] = None
         self._targeting: Optional["SPTargetingAPI"] = None
         self._budget_rules: Optional["SPBudgetRulesAPI"] = None
         self._optimization: Optional["SPCampaignOptimizationAPI"] = None
@@ -126,6 +129,14 @@ class _SPModule:
             from .core.sp.keywords import SPKeywordsAPI
             self._keywords = self._client._create_client(SPKeywordsAPI)
         return self._keywords
+    
+    @property
+    def product_ads(self) -> "SPProductAdsAPI":
+        """SP Product Ads API"""
+        if self._product_ads is None:
+            from .core.sp.product_ads import SPProductAdsAPI
+            self._product_ads = self._client._create_client(SPProductAdsAPI)
+        return self._product_ads
     
     @property
     def targeting(self) -> "SPTargetingAPI":
@@ -617,7 +628,7 @@ class AmazonAdsClient:
         "_client_id", "_client_secret", "_refresh_token",
         "_region", "_profile_id", "_max_retries", "_timeout",
         # L1 Core
-        "_sp", "_sb", "_sd", "_dsp", "_accounts",
+        "_sp", "_sb", "_sd", "_dsp", "_accounts", "_eligibility",
         # L2/L3/L4 containers
         "_reference", "_services", "_experimental_instance",
     )
@@ -646,6 +657,7 @@ class AmazonAdsClient:
         self._sd: Optional[_SDModule] = None
         self._dsp: Optional[_DSPModule] = None
         self._accounts: Optional[_AccountsModule] = None
+        self._eligibility: Optional["EligibilityAPI"] = None
         
         # L2/L3/L4 containers
         self._reference: Optional[_ReferenceAPIs] = None
@@ -673,6 +685,7 @@ class AmazonAdsClient:
         self._sd = None
         self._dsp = None
         self._accounts = None
+        self._eligibility = None
         self._reference = None
         self._services = None
         self._experimental_instance = None
@@ -744,6 +757,24 @@ class AmazonAdsClient:
         if self._accounts is None:
             self._accounts = _AccountsModule(self)
         return self._accounts
+    
+    @property
+    def eligibility(self) -> "EligibilityAPI":
+        """
+        Eligibility API (L1 - OpenAPI 验证)
+        
+        跨广告类型的产品/项目资格检查。
+        
+        使用示例:
+            result = await client.eligibility.check_product_eligibility(
+                products=[{"asin": "B001ABC"}], ad_type="sb"
+            )
+            eligible = await client.eligibility.is_asin_eligible("B001ABC", "sp")
+        """
+        if self._eligibility is None:
+            from .core.eligibility.eligibility import EligibilityAPI
+            self._eligibility = self._create_client(EligibilityAPI)
+        return self._eligibility
     
     # ===== L2 Reference APIs =====
     

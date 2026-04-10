@@ -7,7 +7,12 @@ OpenAPI Spec: Exports_prod_3p.json
 数据导出
 """
 
-from amazon_ads_api.base import BaseAdsClient, JSONData, JSONList
+from amazon_ads_api.base import JSONData, JSONList
+
+try:
+    from amazon_ads_api.generated.clients.clients_exports import ExportsClient as _GenBase
+except ImportError:
+    from amazon_ads_api.base import BaseAdsClient as _GenBase  # type: ignore[assignment]
 
 
 # Content-Type 常量
@@ -17,7 +22,7 @@ CAMPAIGNS_EXPORT_CONTENT_TYPE = "application/vnd.campaignsexport.v1+json"
 TARGETS_EXPORT_CONTENT_TYPE = "application/vnd.targetsexport.v1+json"
 
 
-class ExportsAPI(BaseAdsClient):
+class ExportsAPI(_GenBase):
     """
     Exports API (全异步)
     

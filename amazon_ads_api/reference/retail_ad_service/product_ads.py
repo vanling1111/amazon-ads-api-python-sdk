@@ -3,10 +3,15 @@ Amazon Ads Retail Ad Service Product Ads API (异步版本)
 """
 
 from typing import Any
-from amazon_ads_api.base import BaseAdsClient, JSONData
+from amazon_ads_api.base import JSONData
+
+try:
+    from amazon_ads_api.generated.clients.clients_retail_ad_service import RetailAdServiceClient as _GenBase
+except ImportError:
+    from amazon_ads_api.base import BaseAdsClient as _GenBase  # type: ignore[assignment]
 
 
-class RASProductAdsAPI(BaseAdsClient):
+class RASProductAdsAPI(_GenBase):
     """Retail Ad Service Product Ads API (全异步)"""
 
     async def create_product_ads(

@@ -5,10 +5,15 @@ SB预算和效果预测
 官方文档: https://advertising.amazon.com/API/docs/en-us/sponsored-brands/4-0/openapi
 """
 
-from amazon_ads_api.base import BaseAdsClient, JSONData
+from amazon_ads_api.base import JSONData
+
+try:
+    from amazon_ads_api.generated.clients.clients_sb import SbClient as _GenBase
+except ImportError:
+    from amazon_ads_api.base import BaseAdsClient as _GenBase  # type: ignore[assignment]
 
 
-class SBForecastsAPI(BaseAdsClient):
+class SBForecastsAPI(_GenBase):
     """SB Forecasts API (全异步)"""
 
     async def get_forecasts(

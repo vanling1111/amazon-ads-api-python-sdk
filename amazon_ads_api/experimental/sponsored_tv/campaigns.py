@@ -7,14 +7,19 @@ OpenAPI: ✅ SponsoredTV_prod_3p.json
 """
 
 from typing import Any
-from amazon_ads_api.base import BaseAdsClient, JSONData
+from amazon_ads_api.base import JSONData
+
+try:
+    from amazon_ads_api.generated.clients.clients_stv import StvClient as _GenBase
+except ImportError:
+    from amazon_ads_api.base import BaseAdsClient as _GenBase  # type: ignore[assignment]
 
 # Sponsored TV 自定义 Content-Type
 ST_CAMPAIGN_CONTENT_TYPE = "application/vnd.stCampaign.v1+json"
 ST_FORECAST_CONTENT_TYPE = "application/vnd.stForecast.v1+json"
 
 
-class SponsoredTVCampaignsAPI(BaseAdsClient):
+class SponsoredTVCampaignsAPI(_GenBase):
     """Sponsored TV Campaigns API (全异步)
     
     API Tier: L4 (Experimental - Beta)

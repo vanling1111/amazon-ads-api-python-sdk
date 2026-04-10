@@ -7,14 +7,19 @@ OpenAPI Spec: Eligibility_prod_3p.json
 广告资格检查
 """
 
-from amazon_ads_api.base import BaseAdsClient, JSONData, JSONList
+from amazon_ads_api.base import JSONData, JSONList
+
+try:
+    from amazon_ads_api.generated.clients.clients_eligibility import EligibilityClient as _GenBase
+except ImportError:
+    from amazon_ads_api.base import BaseAdsClient as _GenBase  # type: ignore[assignment]
 
 
 # Content-Type 常量
 PROGRAM_ELIGIBILITY_V2 = "application/vnd.programeligibility.v2+json"
 
 
-class EligibilityAPI(BaseAdsClient):
+class EligibilityAPI(_GenBase):
     """
     Eligibility API (全异步)
     

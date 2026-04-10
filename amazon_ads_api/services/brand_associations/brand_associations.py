@@ -6,10 +6,15 @@ Brand Associations API - 品牌关联 (异步版本)
 """
 
 from typing import Any, Dict, List, Optional
-from amazon_ads_api.base import BaseAdsClient, JSONData
+from amazon_ads_api.base import JSONData
+
+try:
+    from amazon_ads_api.generated.clients.clients_brand_associations import BrandAssociationsClient as _GenBase
+except ImportError:
+    from amazon_ads_api.base import BaseAdsClient as _GenBase  # type: ignore[assignment]
 
 
-class BrandAssociationsAPI(BaseAdsClient):
+class BrandAssociationsAPI(_GenBase):
     """
     Brand Associations API (全异步)
     

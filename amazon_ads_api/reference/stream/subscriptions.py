@@ -6,10 +6,15 @@ Amazon Marketing Stream API (异步版本)
 """
 
 from typing import Any
-from amazon_ads_api.base import BaseAdsClient, JSONData, JSONList
+from amazon_ads_api.base import JSONData, JSONList
+
+try:
+    from amazon_ads_api.generated.clients.clients_marketing_stream import MarketingStreamClient as _GenBase
+except ImportError:
+    from amazon_ads_api.base import BaseAdsClient as _GenBase  # type: ignore[assignment]
 
 
-class MarketingStreamAPI(BaseAdsClient):
+class MarketingStreamAPI(_GenBase):
     """Amazon Marketing Stream API (全异步)
     
     管理营销数据流订阅，包括普通流和DSP流。

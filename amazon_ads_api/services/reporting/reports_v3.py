@@ -4,11 +4,16 @@ Reports API V3 (异步版本)
 """
 
 import asyncio
-from amazon_ads_api.base import BaseAdsClient, JSONData, JSONList
+from amazon_ads_api.base import JSONData, JSONList
+
+try:
+    from amazon_ads_api.generated.clients.clients_reporting import ReportingClient as _GenBase
+except ImportError:
+    from amazon_ads_api.base import BaseAdsClient as _GenBase  # type: ignore[assignment]
 from loguru import logger
 
 
-class ReportsV3API(BaseAdsClient):
+class ReportsV3API(_GenBase):
     """Reports V3 API (全异步)"""
 
     # ============ Report Request ============
@@ -211,7 +216,7 @@ class ReportsV3API(BaseAdsClient):
         report_type = f"{ad_product.lower()}Campaigns"
         metrics = [
             "impressions", "clicks", "cost", "purchases14d",
-            "sales14d", "unitsSold14d", "dpv14d",
+            "sales14d", "unitsSoldClicks14d",
         ]
 
         return await self.create_and_wait_report(

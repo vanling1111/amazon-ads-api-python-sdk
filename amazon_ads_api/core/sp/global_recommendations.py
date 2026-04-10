@@ -5,14 +5,19 @@ Sponsored Products - Global Recommendations API (异步版本)
 官方文档: https://advertising.amazon.com/API/docs/en-us/sponsored-products/3-0/openapi/prod
 """
 
-from amazon_ads_api.base import BaseAdsClient, JSONData, JSONList
+from amazon_ads_api.base import JSONData, JSONList
+
+try:
+    from amazon_ads_api.generated.clients.clients_sp import SpClient as _GenBase
+except ImportError:
+    from amazon_ads_api.base import BaseAdsClient as _GenBase  # type: ignore[assignment]
 
 # API Content-Type
 GLOBAL_BID_RECOMMENDATIONS_CONTENT_TYPE = "application/vnd.spglobaltargetbidrecommendation.v1+json"
 GLOBAL_KEYWORD_RECOMMENDATIONS_CONTENT_TYPE = "application/vnd.spglobalkeywordrecommendation.v1+json"
 
 
-class SPGlobalRecommendationsAPI(BaseAdsClient):
+class SPGlobalRecommendationsAPI(_GenBase):
     """
     SP Global Recommendations API (全异步)
     

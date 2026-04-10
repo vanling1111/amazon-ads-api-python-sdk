@@ -11,10 +11,15 @@ Amazon Attribution API (异步版本)
 官方规范: https://dtrnk0o2zy01c.cloudfront.net/openapi/en-us/dest/AmazonAttribution_prod_3p.json
 """
 
-from amazon_ads_api.base import BaseAdsClient, JSONData, JSONList
+from amazon_ads_api.base import JSONData, JSONList
+
+try:
+    from amazon_ads_api.generated.clients.clients_attribution import AttributionClient as _GenBase
+except ImportError:
+    from amazon_ads_api.base import BaseAdsClient as _GenBase  # type: ignore[assignment]
 
 
-class AttributionAPI(BaseAdsClient):
+class AttributionAPI(_GenBase):
     """
     Amazon Attribution API (全异步)
     

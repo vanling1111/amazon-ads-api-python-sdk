@@ -5,7 +5,12 @@ SP广告优化规则管理
 官方文档: https://advertising.amazon.com/API/docs/en-us/sponsored-products/3-0/openapi/prod#tag/Campaign-Optimization-Rules
 """
 
-from amazon_ads_api.base import BaseAdsClient, JSONData, JSONList
+from amazon_ads_api.base import JSONData, JSONList
+
+try:
+    from amazon_ads_api.generated.clients.clients_sp import SpClient as _GenBase
+except ImportError:
+    from amazon_ads_api.base import BaseAdsClient as _GenBase  # type: ignore[assignment]
 
 # API Content-Types
 OPTIMIZATION_RULES_V1_CONTENT_TYPE = "application/vnd.spoptimizationrules.v1+json"
@@ -13,7 +18,7 @@ OPTIMIZATION_RULES_V2_CONTENT_TYPE = "application/vnd.spoptimizationrules.v2+jso
 CAMPAIGN_OPTIMIZATION_CONTENT_TYPE = "application/vnd.optimizationrules.v1+json"
 
 
-class SPCampaignOptimizationAPI(BaseAdsClient):
+class SPCampaignOptimizationAPI(_GenBase):
     """
     SP Campaign Optimization Rules API (全异步)
     

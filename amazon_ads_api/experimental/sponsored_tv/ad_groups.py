@@ -6,12 +6,17 @@ Source: https://advertising.amazon.com/API/docs/en-us/sponsored-tv
 """
 
 from typing import Any
-from amazon_ads_api.base import BaseAdsClient, JSONData
+from amazon_ads_api.base import JSONData
+
+try:
+    from amazon_ads_api.generated.clients.clients_stv import StvClient as _GenBase
+except ImportError:
+    from amazon_ads_api.base import BaseAdsClient as _GenBase  # type: ignore[assignment]
 
 ST_ADGROUP_CONTENT_TYPE = "application/vnd.stAdGroup.v1+json"
 
 
-class SponsoredTVAdGroupsAPI(BaseAdsClient):
+class SponsoredTVAdGroupsAPI(_GenBase):
     """Sponsored TV Ad Groups API (全异步)"""
 
     async def create_ad_groups(

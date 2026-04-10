@@ -9,13 +9,18 @@ Amazon Ads Hashed Records API (异步版本)
 """
 
 from typing import Any
-from amazon_ads_api.base import BaseAdsClient, JSONData
+from amazon_ads_api.base import JSONData
+
+try:
+    from amazon_ads_api.generated.clients.clients_hashed_records import HashedRecordsClient as _GenBase
+except ImportError:
+    from amazon_ads_api.base import BaseAdsClient as _GenBase  # type: ignore[assignment]
 
 # 官方 Content-Type (V3)
 HASHED_RECORDS_CONTENT_TYPE = "application/vnd.dpuploadhashedrecordsrequest.v3+json"
 
 
-class HashedRecordsAPI(BaseAdsClient):
+class HashedRecordsAPI(_GenBase):
     """Hashed Records API (全异步)
     
     官方验证: 1个端点

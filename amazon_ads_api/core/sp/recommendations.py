@@ -3,10 +3,15 @@ Sponsored Products - Recommendations API (异步版本)
 SP智能建议（竞价建议、关键词建议、产品建议等）
 """
 
-from amazon_ads_api.base import BaseAdsClient, JSONData, JSONList
+from amazon_ads_api.base import JSONData, JSONList
+
+try:
+    from amazon_ads_api.generated.clients.clients_sp import SpClient as _GenBase
+except ImportError:
+    from amazon_ads_api.base import BaseAdsClient as _GenBase  # type: ignore[assignment]
 
 
-class SPRecommendationsAPI(BaseAdsClient):
+class SPRecommendationsAPI(_GenBase):
     """SP Recommendations API (全异步)"""
 
     # ============ Bid Recommendations ============

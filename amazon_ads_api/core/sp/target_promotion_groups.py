@@ -5,13 +5,18 @@ SP目标推广组管理
 官方文档: https://advertising.amazon.com/API/docs/en-us/sponsored-products/3-0/openapi/prod#tag/TargetPromotionGroups
 """
 
-from amazon_ads_api.base import BaseAdsClient, JSONData, JSONList
+from amazon_ads_api.base import JSONData, JSONList
+
+try:
+    from amazon_ads_api.generated.clients.clients_sp import SpClient as _GenBase
+except ImportError:
+    from amazon_ads_api.base import BaseAdsClient as _GenBase  # type: ignore[assignment]
 
 # API Content-Type
 TARGET_PROMOTION_GROUPS_CONTENT_TYPE = "application/vnd.sptargetpromotiongroups.v1+json"
 
 
-class SPTargetPromotionGroupsAPI(BaseAdsClient):
+class SPTargetPromotionGroupsAPI(_GenBase):
     """
     SP Target Promotion Groups API (全异步)
     

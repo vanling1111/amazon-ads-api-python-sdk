@@ -6,14 +6,19 @@ SP主题定向和品类定向
 OpenAPI Spec: SponsoredProducts_prod_3p.json
 """
 
-from amazon_ads_api.base import BaseAdsClient, JSONData, JSONList
+from amazon_ads_api.base import JSONData, JSONList
+
+try:
+    from amazon_ads_api.generated.clients.clients_sp import SpClient as _GenBase
+except ImportError:
+    from amazon_ads_api.base import BaseAdsClient as _GenBase  # type: ignore[assignment]
 
 # API Content-Types
 KEYWORD_GROUPS_CONTENT_TYPE = "application/vnd.spkeywordgroupsrecommendation.v1+json"
 PRODUCTS_COUNT_CONTENT_TYPE = "application/vnd.sptargetsproductscount.v1+json"
 
 
-class SPThemeTargetingAPI(BaseAdsClient):
+class SPThemeTargetingAPI(_GenBase):
     """
     SP Theme & Category Targeting API (全异步)
     

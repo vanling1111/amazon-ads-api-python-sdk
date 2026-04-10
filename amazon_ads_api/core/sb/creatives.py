@@ -3,10 +3,15 @@ Sponsored Brands - Creatives API (异步版本)
 SB创意管理（标题、Logo、视频等）
 """
 
-from amazon_ads_api.base import BaseAdsClient, JSONData, JSONList
+from amazon_ads_api.base import JSONData, JSONList
+
+try:
+    from amazon_ads_api.generated.clients.clients_sb import SbClient as _GenBase
+except ImportError:
+    from amazon_ads_api.base import BaseAdsClient as _GenBase  # type: ignore[assignment]
 
 
-class SBCreativesAPI(BaseAdsClient):
+class SBCreativesAPI(_GenBase):
     """SB Creatives API (全异步)"""
 
     # ============ Ad Creatives ============

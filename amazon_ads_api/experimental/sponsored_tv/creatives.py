@@ -6,14 +6,19 @@ Source: https://advertising.amazon.com/API/docs/en-us/sponsored-tv
 """
 
 from typing import Any
-from amazon_ads_api.base import BaseAdsClient, JSONData
+from amazon_ads_api.base import JSONData
+
+try:
+    from amazon_ads_api.generated.clients.clients_stv import StvClient as _GenBase
+except ImportError:
+    from amazon_ads_api.base import BaseAdsClient as _GenBase  # type: ignore[assignment]
 
 ST_CREATIVE_CONTENT_TYPE = "application/vnd.stCreative.v1+json"
 ST_MODERATION_CONTENT_TYPE = "application/vnd.stCreativeModeration.v1+json"
 ST_PREVIEW_CONTENT_TYPE = "application/vnd.stCreativePreview.v1+json"
 
 
-class SponsoredTVCreativesAPI(BaseAdsClient):
+class SponsoredTVCreativesAPI(_GenBase):
     """Sponsored TV Creatives API (全异步)"""
 
     async def create_creatives(

@@ -8,7 +8,12 @@ Profiles & Manager Accounts API (异步版本)
 广告账户 Profile 和 Manager Account 管理
 """
 
-from amazon_ads_api.base import BaseAdsClient, JSONData, JSONList
+from amazon_ads_api.base import JSONData, JSONList
+
+try:
+    from amazon_ads_api.generated.clients.clients_profiles import ProfilesClient as _GenBase
+except ImportError:
+    from amazon_ads_api.base import BaseAdsClient as _GenBase  # type: ignore[assignment]
 
 
 # Content-Type 常量
@@ -19,7 +24,7 @@ UPDATE_ACCOUNTS_REQUEST_V1 = "application/vnd.updateadvertisingaccountsinmanager
 UPDATE_ACCOUNTS_RESPONSE_V1 = "application/vnd.updateadvertisingaccountsinmanageraccountresponse.v1+json"
 
 
-class ProfilesAPI(BaseAdsClient):
+class ProfilesAPI(_GenBase):
     """
     Profiles & Manager Accounts API (全异步)
     

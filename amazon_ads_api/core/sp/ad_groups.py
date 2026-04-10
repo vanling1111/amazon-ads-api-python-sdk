@@ -3,13 +3,18 @@ Sponsored Products - Ad Groups API (异步版本)
 SP广告组管理
 """
 
-from amazon_ads_api.base import BaseAdsClient, JSONData, JSONList
+from amazon_ads_api.base import JSONData, JSONList
+
+try:
+    from amazon_ads_api.generated.clients.clients_sp import SpClient as _GenBase
+except ImportError:
+    from amazon_ads_api.base import BaseAdsClient as _GenBase  # type: ignore[assignment]
 
 # API v3 Content-Type
 CONTENT_TYPE_AD_GROUP = "application/vnd.spAdGroup.v3+json"
 
 
-class SPAdGroupsAPI(BaseAdsClient):
+class SPAdGroupsAPI(_GenBase):
     """SP Ad Groups API (全异步)"""
 
     async def list_ad_groups(

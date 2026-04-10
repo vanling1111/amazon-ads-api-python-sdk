@@ -14,10 +14,15 @@ Amazon DSP - Measurement API (异步版本)
 官方规范: https://d1y2lf8k3vrkfu.cloudfront.net/openapi/en-us/dest/Measurement_prod_3p.json
 """
 
-from amazon_ads_api.base import BaseAdsClient, JSONData, JSONList
+from amazon_ads_api.base import JSONData, JSONList
+
+try:
+    from amazon_ads_api.generated.clients.clients_dsp_measurement import DspMeasurementClient as _GenBase
+except ImportError:
+    from amazon_ads_api.base import BaseAdsClient as _GenBase  # type: ignore[assignment]
 
 
-class DSPMeasurementAPI(BaseAdsClient):
+class DSPMeasurementAPI(_GenBase):
     """
     DSP Measurement API (全异步)
     

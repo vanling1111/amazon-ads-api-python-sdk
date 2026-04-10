@@ -8,10 +8,15 @@ OpenAPI Spec: SponsoredDisplay_v3.yaml
 注意：SD v3 只有 1 个 moderation 端点
 """
 
-from amazon_ads_api.base import BaseAdsClient, JSONData, JSONList
+from amazon_ads_api.base import JSONData, JSONList
+
+try:
+    from amazon_ads_api.generated.clients.clients_sd import SdClient as _GenBase
+except ImportError:
+    from amazon_ads_api.base import BaseAdsClient as _GenBase  # type: ignore[assignment]
 
 
-class SDModerationAPI(BaseAdsClient):
+class SDModerationAPI(_GenBase):
     """
     SD Creative Moderation API (全异步)
     

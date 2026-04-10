@@ -5,10 +5,15 @@ SB媒体上传管理
 官方文档: SponsoredBrands_v3.yaml
 """
 
-from amazon_ads_api.base import BaseAdsClient, JSONData
+from amazon_ads_api.base import JSONData
+
+try:
+    from amazon_ads_api.generated.clients.clients_sb import SbClient as _GenBase
+except ImportError:
+    from amazon_ads_api.base import BaseAdsClient as _GenBase  # type: ignore[assignment]
 
 
-class SBMediaAPI(BaseAdsClient):
+class SBMediaAPI(_GenBase):
     """
     SB Media API (全异步)
     

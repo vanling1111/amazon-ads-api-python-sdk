@@ -3,10 +3,15 @@ Sponsored Products - Targeting API (异步版本)
 SP产品定向管理（Product Ads + Targets + Negative Targets）
 """
 
-from amazon_ads_api.base import BaseAdsClient, JSONData, JSONList
+from amazon_ads_api.base import JSONData, JSONList
+
+try:
+    from amazon_ads_api.generated.clients.clients_sp import SpClient as _GenBase
+except ImportError:
+    from amazon_ads_api.base import BaseAdsClient as _GenBase  # type: ignore[assignment]
 
 
-class SPTargetingAPI(BaseAdsClient):
+class SPTargetingAPI(_GenBase):
     """SP Targeting API (全异步)"""
 
     # ============ Product Ads ============

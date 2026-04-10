@@ -8,10 +8,15 @@ Amazon DSP - Target KPI Recommendations API (异步版本)
 参考文档: https://advertising.amazon.com/API/docs/en-us/dsp-campaign-api
 """
 
-from amazon_ads_api.base import BaseAdsClient, JSONData
+from amazon_ads_api.base import JSONData
+
+try:
+    from amazon_ads_api.generated.clients.clients_dsp_target_kpi import DspTargetKpiClient as _GenBase
+except ImportError:
+    from amazon_ads_api.base import BaseAdsClient as _GenBase  # type: ignore[assignment]
 
 
-class DSPTargetKPIAPI(BaseAdsClient):
+class DSPTargetKPIAPI(_GenBase):
     """
     DSP Target KPI Recommendations API (全异步)
     

@@ -8,14 +8,19 @@ OpenAPI规范: https://d1y2lf8k3vrkfu.cloudfront.net/openapi/en-us/dest/Insights
 """
 
 from typing import Literal
-from amazon_ads_api.base import BaseAdsClient, JSONData
+from amazon_ads_api.base import JSONData
+
+try:
+    from amazon_ads_api.generated.clients.clients_insights import InsightsClient as _GenBase
+except ImportError:
+    from amazon_ads_api.base import BaseAdsClient as _GenBase  # type: ignore[assignment]
 
 
 # Content-Type 常量
 INSIGHTS_V2_CONTENT_TYPE = "application/vnd.insightsaudiencesoverlap.v2+json"
 
 
-class AudienceInsightsAPI(BaseAdsClient):
+class AudienceInsightsAPI(_GenBase):
     """
     Audience Insights API
     

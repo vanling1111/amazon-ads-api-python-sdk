@@ -8,10 +8,15 @@ OpenAPI Spec: SponsoredBrands_v3.yaml
 注意：SB v3 只有 1 个 moderation 端点
 """
 
-from amazon_ads_api.base import BaseAdsClient, JSONData
+from amazon_ads_api.base import JSONData
+
+try:
+    from amazon_ads_api.generated.clients.clients_sb import SbClient as _GenBase
+except ImportError:
+    from amazon_ads_api.base import BaseAdsClient as _GenBase  # type: ignore[assignment]
 
 
-class SBModerationAPI(BaseAdsClient):
+class SBModerationAPI(_GenBase):
     """
     SB Moderation API (全异步)
     

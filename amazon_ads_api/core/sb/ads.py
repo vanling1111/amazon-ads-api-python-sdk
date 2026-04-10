@@ -3,10 +3,15 @@ Sponsored Brands - Ads API (异步版本)
 SB广告管理（不同类型的品牌广告）
 """
 
-from amazon_ads_api.base import BaseAdsClient, JSONData, JSONList
+from amazon_ads_api.base import JSONData, JSONList
+
+try:
+    from amazon_ads_api.generated.clients.clients_sb import SbClient as _GenBase
+except ImportError:
+    from amazon_ads_api.base import BaseAdsClient as _GenBase  # type: ignore[assignment]
 
 
-class SBAdsAPI(BaseAdsClient):
+class SBAdsAPI(_GenBase):
     """SB Ads API (全异步)"""
 
     # SB v4 Content-Types
@@ -330,9 +335,25 @@ class SBAdsAPI(BaseAdsClient):
 
     # ============ Brands & Stores ============
 
-    async def list_brands(self) -> JSONList:
-        """获取可用的品牌列表"""
-        result = await self.get("/sb/brands")
+    async def list_brands(self, brand_type_filter: str | None = None) -> JSONList:
+        """
+        获取可用的品牌列表
+        
+        官方端点：GET /brands (注意：不是 /sb/brands)
+        
+        Args:
+            brand_type_filter: 品牌类型过滤（可选）
+            
+        Returns:
+            品牌列表，每个品牌包含：
+            - brandId: 品牌ID
+            - brandEntityId: 品牌实体ID（seller专用，创建SB Campaign必需）
+            - brandRegistryName: 品牌注册名称
+        """
+        params = {}
+        if brand_type_filter:
+            params["brandTypeFilter"] = brand_type_filter
+        result = await self.get("/brands", params=params or None)
         return result if isinstance(result, list) else []
 
     async def list_stores(self, brand_entity_id: str | None = None) -> JSONList:

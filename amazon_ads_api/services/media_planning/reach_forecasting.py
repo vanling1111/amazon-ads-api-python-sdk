@@ -15,13 +15,18 @@ Stability: 高
 """
 
 from typing import Any
-from amazon_ads_api.base import BaseAdsClient, JSONData
+from amazon_ads_api.base import JSONData
+
+try:
+    from amazon_ads_api.generated.clients.clients_reach_planning import ReachPlanningClient as _GenBase
+except ImportError:
+    from amazon_ads_api.base import BaseAdsClient as _GenBase  # type: ignore[assignment]
 
 # Content-Type
 MEDIA_PLAN_CONTENT_TYPE = "application/vnd.mediaPlanForecastParams.v1+json"
 
 
-class ReachForecastingAPI(BaseAdsClient):
+class ReachForecastingAPI(_GenBase):
     """
     Reach Forecasting API (全异步)
     

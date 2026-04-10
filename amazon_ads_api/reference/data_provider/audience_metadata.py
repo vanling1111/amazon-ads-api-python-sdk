@@ -12,10 +12,15 @@ Amazon Ads Data Provider Audience Metadata API (异步版本)
 """
 
 from typing import Any
-from amazon_ads_api.base import BaseAdsClient, JSONData
+from amazon_ads_api.base import JSONData
+
+try:
+    from amazon_ads_api.generated.clients.clients_data_provider import DataProviderClient as _GenBase
+except ImportError:
+    from amazon_ads_api.base import BaseAdsClient as _GenBase  # type: ignore[assignment]
 
 
-class AudienceMetadataAPI(BaseAdsClient):
+class AudienceMetadataAPI(_GenBase):
     """Data Provider Audience Metadata API (全异步)
     
     官方验证: 4个端点

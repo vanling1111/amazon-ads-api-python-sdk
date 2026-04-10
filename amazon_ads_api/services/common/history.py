@@ -6,7 +6,12 @@ Change History API (异步版本)
 """
 
 from typing import Literal
-from amazon_ads_api.base import BaseAdsClient, JSONData, JSONList
+from amazon_ads_api.base import JSONData, JSONList
+
+try:
+    from amazon_ads_api.generated.clients.clients_change_history import ChangeHistoryClient as _GenBase
+except ImportError:
+    from amazon_ads_api.base import BaseAdsClient as _GenBase  # type: ignore[assignment]
 
 
 # 支持的实体类型
@@ -30,7 +35,7 @@ AdProduct = Literal[
 ]
 
 
-class HistoryAPI(BaseAdsClient):
+class HistoryAPI(_GenBase):
     """
     Change History API (全异步)
     

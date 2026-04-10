@@ -5,10 +5,15 @@ SD优化规则管理
 官方文档: https://advertising.amazon.com/API/docs/en-us/sponsored-display/3-0/openapi
 """
 
-from amazon_ads_api.base import BaseAdsClient, JSONData, JSONList
+from amazon_ads_api.base import JSONData, JSONList
+
+try:
+    from amazon_ads_api.generated.clients.clients_sd import SdClient as _GenBase
+except ImportError:
+    from amazon_ads_api.base import BaseAdsClient as _GenBase  # type: ignore[assignment]
 
 
-class SDOptimizationAPI(BaseAdsClient):
+class SDOptimizationAPI(_GenBase):
     """SD Optimization Rules API (全异步)"""
 
     # ============ Optimization Rules CRUD ============

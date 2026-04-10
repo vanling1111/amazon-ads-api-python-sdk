@@ -8,7 +8,12 @@ Brand Metrics API (异步版本)
 """
 
 from typing import Literal
-from amazon_ads_api.base import BaseAdsClient, JSONData
+from amazon_ads_api.base import JSONData
+
+try:
+    from amazon_ads_api.generated.clients.clients_brand_metrics import BrandMetricsClient as _GenBase
+except ImportError:
+    from amazon_ads_api.base import BaseAdsClient as _GenBase  # type: ignore[assignment]
 
 
 # 报告类型
@@ -24,7 +29,7 @@ ReportType = Literal[
 Granularity = Literal["DAY", "WEEK", "MONTH"]
 
 
-class BrandMetricsAPI(BaseAdsClient):
+class BrandMetricsAPI(_GenBase):
     """
     Brand Metrics API (全异步)
     

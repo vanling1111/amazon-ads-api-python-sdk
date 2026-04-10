@@ -3,10 +3,15 @@ Sponsored Brands - Video API (异步版本)
 SB视频广告管理
 """
 
-from amazon_ads_api.base import BaseAdsClient, JSONData, JSONList
+from amazon_ads_api.base import JSONData, JSONList
+
+try:
+    from amazon_ads_api.generated.clients.clients_sb import SbClient as _GenBase
+except ImportError:
+    from amazon_ads_api.base import BaseAdsClient as _GenBase  # type: ignore[assignment]
 
 
-class SBBrandVideoAPI(BaseAdsClient):
+class SBBrandVideoAPI(_GenBase):
     """SB Brand Video API (全异步)"""
 
     # ============ Video Campaigns ============

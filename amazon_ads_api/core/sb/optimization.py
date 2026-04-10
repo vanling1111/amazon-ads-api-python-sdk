@@ -5,10 +5,15 @@ SB优化规则管理
 官方文档: https://advertising.amazon.com/API/docs/en-us/sponsored-brands/4-0/openapi
 """
 
-from amazon_ads_api.base import BaseAdsClient, JSONData, JSONList
+from amazon_ads_api.base import JSONData, JSONList
+
+try:
+    from amazon_ads_api.generated.clients.clients_sb import SbClient as _GenBase
+except ImportError:
+    from amazon_ads_api.base import BaseAdsClient as _GenBase  # type: ignore[assignment]
 
 
-class SBOptimizationAPI(BaseAdsClient):
+class SBOptimizationAPI(_GenBase):
     """SB Optimization Rules API (全异步)"""
 
     SB_OPTIMIZATION_CONTENT_TYPE = "application/vnd.sboptimizationrules.v1+json"

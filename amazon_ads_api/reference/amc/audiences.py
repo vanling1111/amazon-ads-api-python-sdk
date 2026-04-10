@@ -8,10 +8,15 @@ Amazon Marketing Cloud Advertiser Audiences API (异步版本)
 """
 
 from typing import Any
-from amazon_ads_api.base import BaseAdsClient, JSONData
+from amazon_ads_api.base import JSONData
+
+try:
+    from amazon_ads_api.generated.clients.clients_amc_advertiser_audiences import AmcAdvertiserAudiencesClient as _GenBase
+except ImportError:
+    from amazon_ads_api.base import BaseAdsClient as _GenBase  # type: ignore[assignment]
 
 
-class AMCAudiencesAPI(BaseAdsClient):
+class AMCAudiencesAPI(_GenBase):
     """AMC Advertiser Audiences API (全异步)
     
     API Tier: L1

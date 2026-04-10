@@ -75,3 +75,12 @@ dmypy.json
 .DS_Store
 Thumbs.db
 
+# Temp spec files in root (real specs live in specs/)
+/*.json
+/*.yaml
+/*.yml
+!pyproject.toml
+
+# Build artifacts
+*.tar.gz
+

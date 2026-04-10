@@ -36,7 +36,7 @@ API 分级体系:
 - README.md - 快速开始指南
 """
 
-__version__ = "2.0.0"
+__version__ = "2.1.0"
 __author__ = "Amazon Ads SDK Team"
 
 # 主入口

@@ -3,10 +3,15 @@ Sponsored Display - Targeting API (异步版本)
 SD定向管理（受众定向 + 上下文定向）
 """
 
-from amazon_ads_api.base import BaseAdsClient, JSONData, JSONList
+from amazon_ads_api.base import JSONData, JSONList
+
+try:
+    from amazon_ads_api.generated.clients.clients_sd import SdClient as _GenBase
+except ImportError:
+    from amazon_ads_api.base import BaseAdsClient as _GenBase  # type: ignore[assignment]
 
 
-class SDTargetingAPI(BaseAdsClient):
+class SDTargetingAPI(_GenBase):
     """SD Targeting API (全异步)"""
 
     # ============ Targets ============

@@ -12,11 +12,16 @@ Audiences Discovery API - 受众发现 (异步版本)
 """
 
 from typing import Any
-from amazon_ads_api.base import BaseAdsClient, JSONData, JSONList
+from amazon_ads_api.base import JSONData, JSONList
+
+try:
+    from amazon_ads_api.generated.clients.clients_audiences import AudiencesClient as _GenBase
+except ImportError:
+    from amazon_ads_api.base import BaseAdsClient as _GenBase  # type: ignore[assignment]
 import uuid
 
 
-class AudiencesDiscoveryAPI(BaseAdsClient):
+class AudiencesDiscoveryAPI(_GenBase):
     """
     Audiences Discovery API (全异步)
     

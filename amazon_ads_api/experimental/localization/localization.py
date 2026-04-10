@@ -12,10 +12,15 @@ Localization API - 本地化 (异步版本)
 """
 
 from typing import Any
-from amazon_ads_api.base import BaseAdsClient, JSONData, JSONList
+from amazon_ads_api.base import JSONData, JSONList
+
+try:
+    from amazon_ads_api.generated.clients.clients_localization import LocalizationClient as _GenBase
+except ImportError:
+    from amazon_ads_api.base import BaseAdsClient as _GenBase  # type: ignore[assignment]
 
 
-class LocalizationAPI(BaseAdsClient):
+class LocalizationAPI(_GenBase):
     """
     Localization API - 广告内容本地化 (全异步)
     

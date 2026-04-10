@@ -1,16 +1,28 @@
 """
 Sponsored Products - Campaigns API (异步版本)
 SP广告系列管理
+
+Inherits auto-generated raw methods from SpClient and adds
+high-level convenience methods on top.
 """
 
-from amazon_ads_api.base import BaseAdsClient, JSONData, JSONList
+from amazon_ads_api.base import JSONData, JSONList
 
-# API v3 Content-Type
+try:
+    from amazon_ads_api.generated.clients.clients_sp import SpClient as _SpClientBase
+except ImportError:
+    from amazon_ads_api.base import BaseAdsClient as _SpClientBase  # type: ignore[assignment]
+
 CONTENT_TYPE_CAMPAIGN = "application/vnd.spCampaign.v3+json"
 
 
-class SPCampaignsAPI(BaseAdsClient):
-    """SP Campaigns API (全异步)"""
+class SPCampaignsAPI(_SpClientBase):
+    """SP Campaigns API with convenience methods.
+
+    Inherits all 80 auto-generated raw operations from SpClient
+    (e.g. create_sponsored_products_campaigns, list_sponsored_products_campaigns).
+    The methods below provide a friendlier interface for the most common operations.
+    """
 
     async def list_campaigns(
         self,
@@ -66,12 +78,25 @@ class SPCampaignsAPI(BaseAdsClient):
             params["includeExtendedDataFields"] = True
 
         result = await self.post("/sp/campaigns/list", json_data=params, content_type=CONTENT_TYPE_CAMPAIGN)
-        return result if isinstance(result, dict) else {"campaigns": []}
+        # 确保返回格式正确：{"campaigns": [...], "nextToken": "..."}
+        if not isinstance(result, dict):
+            return {"campaigns": []}
+        # 如果API直接返回数组（旧版本兼容），包装成新格式
+        if isinstance(result, list):
+            return {"campaigns": result}
+        return result
 
     async def get_campaign(self, campaign_id: str) -> JSONData:
-        """获取单个Campaign详情"""
-        result = await self.get(f"/sp/campaigns/{campaign_id}", content_type=CONTENT_TYPE_CAMPAIGN)
-        return result if isinstance(result, dict) else {}
+        """获取单个Campaign详情
+        
+        注意：Amazon Ads API的GET /sp/campaigns/{id}端点需要AWS Signature V4签名，
+        但我们使用Bearer Token认证。因此改用list_campaigns的POST方式获取单个campaign。
+        """
+        result = await self.list_campaigns(campaign_ids=[campaign_id], include_extended_data=True)
+        campaigns = result.get("campaigns", [])
+        if campaigns:
+            return campaigns[0]
+        return {}
 
     async def create_campaigns(self, campaigns: JSONList) -> JSONData:
         """

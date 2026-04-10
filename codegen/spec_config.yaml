@@ -1,0 +1,514 @@
+# Amazon Ads API SDK - Spec Configuration
+# Controls which specs are used for code generation, how they map to modules,
+# and their API tier classification.
+#
+# generate: true   -> generate models + clients
+# generate: false  -> skip (keep spec file for reference)
+# generate: delete -> spec is empty/obsolete, should be removed
+
+specs:
+  # ══════════════════════════════════════════
+  # Sponsored Products (SP)
+  # ══════════════════════════════════════════
+  - file: SponsoredProducts_prod_3p.json
+    module: sp
+    tier: L1
+    generate: true
+
+  - file: SponsoredProducts_v2_openapi.yaml
+    module: sp_v2
+    tier: L1
+    generate: false
+    note: "Legacy v2 spec, superseded by prod_3p (v3)"
+
+  # ══════════════════════════════════════════
+  # Sponsored Brands (SB)
+  # ══════════════════════════════════════════
+  - file: SponsoredBrands_v4_openapi.json
+    module: sb
+    tier: L1
+    generate: true
+    priority: 1
+
+  - file: SponsoredBrands_prod_3p.json
+    module: sb_legacy
+    tier: L1
+    generate: false
+    note: "v3+v4 mixed, v4_openapi is preferred"
+
+  - file: SponsoredBrands_v3_openapi.yaml
+    module: sb_v3
+    tier: L1
+    generate: false
+    note: "Legacy v3, superseded by v4"
+
+  - file: SponsoredBrandsCategoryBenchmark_prod_3p.json
+    module: sb_benchmarks
+    tier: L1
+    generate: true
+
+  # ══════════════════════════════════════════
+  # Sponsored Display (SD)
+  # ══════════════════════════════════════════
+  - file: SponsoredDisplay_prod_3p.json
+    module: sd
+    tier: L1
+    generate: true
+
+  - file: SponsoredDisplay_v3_openapi.yaml
+    module: sd_v3
+    tier: L1
+    generate: true
+    note: "Complementary to prod_3p, contains additional endpoints"
+
+  # ══════════════════════════════════════════
+  # Sponsored TV (STV)
+  # ══════════════════════════════════════════
+  - file: SponsoredTV_prod_3p.json
+    module: stv
+    tier: L1
+    generate: true
+
+  # ══════════════════════════════════════════
+  # DSP
+  # ══════════════════════════════════════════
+  - file: DSPCampaignManagement_prod_3p.json
+    module: dsp_campaigns
+    tier: L1
+    generate: true
+
+  - file: DSPGuidance_prod_3p.json
+    module: dsp_guidance
+    tier: L1
+    generate: true
+
+  - file: DSPQuickActions_prod_3p.json
+    module: dsp_quick_actions
+    tier: L1
+    generate: true
+
+  - file: DSPReports_prod_3p.json
+    module: dsp_reports
+    tier: L1
+    generate: true
+
+  - file: DSPTargetKPI_prod_3p.json
+    module: dsp_target_kpi
+    tier: L1
+    generate: true
+
+  - file: DSP_Advertiser_v3_openapi.yaml
+    module: dsp_advertiser
+    tier: L1
+    generate: true
+
+  - file: DSP_Reports_v2_openapi.yaml
+    module: dsp_reports_v2
+    tier: L1
+    generate: true
+
+  - file: DSP_v3.1_openapi.yaml
+    module: dsp_v3
+    tier: L1
+    generate: true
+
+  - file: ADSPAudiences_prod_3p.json
+    module: dsp_audiences
+    tier: L1
+    generate: true
+
+  - file: AdGroupTargeting-ProductCategory_prod_3p.json
+    module: dsp_product_category
+    tier: L1
+    generate: true
+
+  - file: BidModifiers_prod_3p.json
+    module: dsp_bid_modifiers
+    tier: L1
+    generate: true
+
+  - file: CombinedAudienceAPI_prod_3p.json
+    module: dsp_combined_audiences
+    tier: L1
+    generate: true
+
+  - file: D16GDspApiActionableInsights_prod_3p.json
+    module: dsp_actionable_insights
+    tier: L1
+    generate: true
+
+  - file: D16GDspApiCampaignInsightsV1_prod_3p.json
+    module: dsp_campaign_insights
+    tier: L1
+    generate: true
+
+  - file: D16GFMApiFrequencyGroupAssociationV1_prod_3p.json
+    module: dsp_frequency_associations
+    tier: L1
+    generate: true
+
+  - file: D16GFMApiFrequencyGroupV1_prod_3p.json
+    module: dsp_frequency_groups
+    tier: L1
+    generate: true
+
+  - file: Measurement_prod_3p.json
+    module: dsp_measurement
+    tier: L1
+    generate: true
+
+  # ══════════════════════════════════════════
+  # AMC (Amazon Marketing Cloud)
+  # ══════════════════════════════════════════
+  - file: AMCAdministration_prod_3p.json
+    module: amc_administration
+    tier: L2
+    generate: true
+
+  - file: AMCCustomModels_prod_3p.json
+    module: amc_custom_models
+    tier: L2
+    generate: true
+
+  - file: WorkflowManagementService_prod_3p.json
+    module: amc_workflow
+    tier: L2
+    generate: true
+
+  - file: Rule-BasedAudiences_prod_3p.json
+    module: amc_rule_based_audiences
+    tier: L2
+    generate: true
+
+  - file: Advertiseraudiences_prod_3p.json
+    module: amc_advertiser_audiences
+    tier: L2
+    generate: true
+
+  - file: AdvertiserDataUpload_prod_3p.json
+    module: amc_data_upload
+    tier: L2
+    generate: true
+
+  # ══════════════════════════════════════════
+  # Account & Profile Management
+  # ══════════════════════════════════════════
+  - file: Profiles_prod_3p.json
+    module: profiles
+    tier: L1
+    generate: true
+
+  - file: Profiles_v3_openapi.yaml
+    module: profiles_v3
+    tier: L1
+    generate: true
+
+  - file: Portfolios_prod_3p.json
+    module: portfolios
+    tier: L1
+    generate: true
+
+  - file: AccountManagement_prod_3p.json
+    module: account_management
+    tier: L1
+    generate: true
+
+  - file: AdvertisingAccounts_prod_3p.json
+    module: advertising_accounts
+    tier: L1
+    generate: true
+
+  - file: Advertisers_prod_3p.json
+    module: advertisers
+    tier: L1
+    generate: true
+
+  - file: AdvertisingTestAccount_prod_3p.json
+    module: test_accounts
+    tier: L1
+    generate: true
+
+  - file: ManagerAccount_prod_3p.json
+    module: manager_accounts
+    tier: L1
+    generate: true
+
+  - file: AdvertisingInvitations_prod_3p.json
+    module: invitations
+    tier: L1
+    generate: true
+
+  - file: AdvertisingUserPermissionsManagement_prod_3p.json
+    module: user_permissions
+    tier: L1
+    generate: true
+
+  # ══════════════════════════════════════════
+  # Billing
+  # ══════════════════════════════════════════
+  - file: AdvertisingBilling_prod_3p.json
+    module: billing
+    tier: L1
+    generate: true
+
+  - file: Billing_prod_3p.json
+    module: billing_legacy
+    tier: L1
+    generate: true
+    note: "Subset of AdvertisingBilling, kept for invoice-specific schemas"
+
+  # ══════════════════════════════════════════
+  # Reporting
+  # ══════════════════════════════════════════
+  - file: OfflineReport_prod_3p.json
+    module: reporting
+    tier: L1
+    generate: true
+
+  - file: Reporting_prod_3p.json
+    generate: delete
+    note: "Empty stub, 0 paths"
+
+  # ══════════════════════════════════════════
+  # Retail Ad Service
+  # ══════════════════════════════════════════
+  - file: AmazonAdvertiserAPIforRetailAdService_prod_3p.json
+    module: retail_ad_service
+    tier: L2
+    generate: true
+
+  - file: RetailerIdentityAPIforRetailAdService_prod_3p.json
+    module: retail_identity
+    tier: L2
+    generate: true
+
+  # ══════════════════════════════════════════
+  # Targeting & Eligibility
+  # ══════════════════════════════════════════
+  - file: Eligibility_prod_3p.json
+    module: eligibility
+    tier: L1
+    generate: true
+
+  - file: ProductSelector_prod_3p.json
+    module: product_selector
+    tier: L1
+    generate: true
+
+  - file: TargetableEntities_prod_3p.json
+    module: targetable_entities
+    tier: L1
+    generate: true
+
+  - file: Discovery-AdvertisedProductCategories-V1_prod_3p.json
+    module: discovery_categories
+    tier: L1
+    generate: true
+
+  # ══════════════════════════════════════════
+  # Audiences & Recommendations
+  # ══════════════════════════════════════════
+  - file: Audiences_prod_3p.json
+    module: audiences
+    tier: L1
+    generate: true
+
+  - file: Recommendations_prod_3p.json
+    module: recommendations
+    tier: L1
+    generate: true
+
+  # ══════════════════════════════════════════
+  # Campaign Management
+  # ══════════════════════════════════════════
+  - file: CampaignManagement_prod_3p.json
+    module: campaign_management
+    tier: L1
+    generate: true
+
+  # ══════════════════════════════════════════
+  # Conversions
+  # ══════════════════════════════════════════
+  - file: ConversionsAPI_prod_3p.json
+    module: conversions
+    tier: L1
+    generate: true
+
+  # ══════════════════════════════════════════
+  # Exports & Streams
+  # ══════════════════════════════════════════
+  - file: AmazonAdsAPIExports_prod_3p.json
+    module: exports
+    tier: L1
+    generate: true
+
+  - file: AmazonMarketingStream_prod_3p.json
+    module: marketing_stream
+    tier: L2
+    generate: true
+
+  # ══════════════════════════════════════════
+  # Attribution
+  # ══════════════════════════════════════════
+  - file: AmazonAttribution_prod_3p.json
+    module: attribution
+    tier: L1
+    generate: true
+
+  # ══════════════════════════════════════════
+  # Insights & Analytics
+  # ══════════════════════════════════════════
+  - file: Insights_prod_3p.json
+    module: insights
+    tier: L3
+    generate: true
+
+  - file: BrandMetrics_prod_3p.json
+    module: brand_metrics
+    tier: L3
+    generate: true
+
+  - file: BrandBenchmarks_prod_3p.json
+    module: brand_benchmarks
+    tier: L3
+    generate: true
+
+  - file: MarketingMixModeling_prod_3p.json
+    module: mmm
+    tier: L3
+    generate: true
+
+  - file: Diagnostics_prod_3p.json
+    module: diagnostics
+    tier: L3
+    generate: true
+
+  - file: MediaInsightsHub_prod_3p.json
+    module: media_insights
+    tier: L3
+    generate: true
+
+  - file: ReachPlanningService_prod_3p.json
+    module: reach_planning
+    tier: L3
+    generate: true
+
+  - file: PersonaBuilderAPI_prod_3p.json
+    module: persona_builder
+    tier: L4
+    generate: true
+
+  # ══════════════════════════════════════════
+  # Brand & Creative
+  # ══════════════════════════════════════════
+  - file: BrandAidV2_prod_3p.json
+    module: brand_associations
+    tier: L3
+    generate: true
+
+  - file: BrandHome_prod_3p.json
+    module: brand_home
+    tier: L4
+    generate: true
+
+  - file: Moderation_prod_3p.json
+    module: moderation
+    tier: L4
+    generate: true
+
+  - file: PreModeration_prod_3p.json
+    module: pre_moderation
+    tier: L4
+    generate: true
+
+  - file: CreativeAssetLibrary_openapi.yaml
+    module: creative_assets
+    tier: L1
+    generate: true
+
+  # ══════════════════════════════════════════
+  # Data & Content
+  # ══════════════════════════════════════════
+  - file: AdLibraryAPI_prod_3p.json
+    module: ad_library
+    tier: L4
+    generate: true
+
+  - file: AdsDataManager_prod_3p.json
+    module: ads_data_manager
+    tier: L3
+    generate: true
+
+  - file: DataProvider_prod_3p.json
+    module: data_provider
+    tier: L1
+    generate: true
+
+  - file: DataProvider_openapi.yaml
+    module: data_provider_v2
+    tier: L1
+    generate: true
+
+  - file: HashedRecords_prod_3p.json
+    module: hashed_records
+    tier: L2
+    generate: true
+
+  - file: Localization_prod_3p.json
+    module: localization
+    tier: L4
+    generate: true
+
+  - file: Locations_prod_3p.json
+    module: locations
+    tier: L1
+    generate: true
+
+  - file: PartnerOpportunities_prod_3p.json
+    module: partner_opportunities
+    tier: L4
+    generate: true
+
+  - file: Posts_prod_3p.json
+    module: posts
+    tier: L4
+    generate: true
+
+  - file: ValidationConfigurationsAPI_prod_3p.json
+    module: validation_configs
+    tier: L1
+    generate: true
+
+  # ══════════════════════════════════════════
+  # Stores & History
+  # ══════════════════════════════════════════
+  - file: Stores_prod_3p.json
+    module: stores
+    tier: L1
+    generate: true
+
+  - file: Changehistory_prod_3p.json
+    module: change_history
+    tier: L1
+    generate: true
+
+  # ══════════════════════════════════════════
+  # Unified / Merged API (reference only)
+  # ══════════════════════════════════════════
+  - file: AmazonAdsAPIALLMerged_prod_3p.json
+    module: unified_ga
+    tier: L1
+    generate: false
+    note: "Unified API v1 GA - /adsApi/v1/ pattern, future use"
+
+  - file: AmazonAdsAPIALLMerged_prod_3p_ALL.json
+    module: unified_all
+    tier: L1
+    generate: false
+    note: "Unified API v1 GA+Beta merged"
+
+  - file: AmazonAdsAPIALLMerged_prod_3p_BETA.json
+    module: unified_beta
+    tier: L1
+    generate: false
+    note: "Unified API v1 Beta only"

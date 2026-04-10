@@ -6,7 +6,12 @@ Creative Asset Library API (异步版本)
 """
 
 from typing import Literal, BinaryIO
-from amazon_ads_api.base import BaseAdsClient, JSONData, JSONList
+from amazon_ads_api.base import JSONData, JSONList
+
+try:
+    from amazon_ads_api.generated.clients.clients_creative_assets import CreativeAssetsClient as _GenBase
+except ImportError:
+    from amazon_ads_api.base import BaseAdsClient as _GenBase  # type: ignore[assignment]
 
 
 # 资产类型
@@ -26,7 +31,7 @@ AssetSubType = Literal[
 ]
 
 
-class AssetsAPI(BaseAdsClient):
+class AssetsAPI(_GenBase):
     """
     Creative Asset Library API (全异步)
     

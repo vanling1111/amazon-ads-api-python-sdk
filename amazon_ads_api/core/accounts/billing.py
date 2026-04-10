@@ -7,7 +7,12 @@ OpenAPI Spec: AdvertisingBilling_prod_3p.json
 账单、发票、支付管理
 """
 
-from amazon_ads_api.base import BaseAdsClient, JSONData, JSONList
+from amazon_ads_api.base import JSONData, JSONList
+
+try:
+    from amazon_ads_api.generated.clients.clients_billing import BillingClient as _GenBase
+except ImportError:
+    from amazon_ads_api.base import BaseAdsClient as _GenBase  # type: ignore[assignment]
 
 
 # Content-Type 常量
@@ -25,7 +30,7 @@ INVOICE_V1 = "application/vnd.invoice.v1.1+json"
 INVOICES_V1 = "application/vnd.invoices.v1+json"
 
 
-class BillingAPI(BaseAdsClient):
+class BillingAPI(_GenBase):
     """
     Billing API (全异步)
     

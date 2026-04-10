@@ -8,7 +8,12 @@ Portfolios API v3 (异步版本)
 - Content-Type: application/vnd.spPortfolio.v3+json
 """
 
-from amazon_ads_api.base import BaseAdsClient, JSONData, JSONList
+from amazon_ads_api.base import JSONData, JSONList
+
+try:
+    from amazon_ads_api.generated.clients.clients_portfolios import PortfoliosClient as _GenBase
+except ImportError:
+    from amazon_ads_api.base import BaseAdsClient as _GenBase  # type: ignore[assignment]
 
 
 # v3 API Content-Type
@@ -16,7 +21,7 @@ PORTFOLIO_CONTENT_TYPE = "application/vnd.spPortfolio.v3+json"
 BUDGET_USAGE_CONTENT_TYPE = "application/vnd.portfoliobudgetusage.v1+json"
 
 
-class PortfoliosAPI(BaseAdsClient):
+class PortfoliosAPI(_GenBase):
     """Portfolios API v3 (全异步)"""
 
     # ============ Portfolios v3 ============

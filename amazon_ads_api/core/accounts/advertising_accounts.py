@@ -8,10 +8,15 @@ Amazon Ads Advertising Accounts API (异步版本)
 """
 
 from typing import Any
-from amazon_ads_api.base import BaseAdsClient, JSONData, JSONList
+from amazon_ads_api.base import JSONData, JSONList
+
+try:
+    from amazon_ads_api.generated.clients.clients_advertising_accounts import AdvertisingAccountsClient as _GenBase
+except ImportError:
+    from amazon_ads_api.base import BaseAdsClient as _GenBase  # type: ignore[assignment]
 
 
-class AdvertisingAccountsAPI(BaseAdsClient):
+class AdvertisingAccountsAPI(_GenBase):
     """
     Advertising Accounts API (全异步)
     

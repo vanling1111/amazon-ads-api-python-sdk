@@ -7,7 +7,12 @@ Source: https://advertising.amazon.com/API/docs/en-us/posts
 """
 
 from typing import Any
-from amazon_ads_api.base import BaseAdsClient, JSONData
+from amazon_ads_api.base import JSONData
+
+try:
+    from amazon_ads_api.generated.clients.clients_posts import PostsClient as _GenBase
+except ImportError:
+    from amazon_ads_api.base import BaseAdsClient as _GenBase  # type: ignore[assignment]
 
 # Posts API 自定义 Content-Type
 BP_POST_CONTENT_TYPE = "application/vnd.bpPost.v2+json"
@@ -15,7 +20,7 @@ BP_PROFILE_CONTENT_TYPE = "application/vnd.bpProfile.v2+json"
 BP_PRODUCT_CONTENT_TYPE = "application/vnd.bpProduct.v2+json"
 
 
-class PostsAPI(BaseAdsClient):
+class PostsAPI(_GenBase):
     """Posts管理 - 管理Posts内容 (全异步)
     
     API Tier: L2 (API Reference Only)

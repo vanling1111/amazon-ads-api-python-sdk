@@ -7,14 +7,19 @@ OpenAPI Spec: Advertisers_prod_3p.json
 账户预算功能标志管理
 """
 
-from amazon_ads_api.base import BaseAdsClient, JSONData
+from amazon_ads_api.base import JSONData
+
+try:
+    from amazon_ads_api.generated.clients.clients_billing import BillingClient as _GenBase
+except ImportError:
+    from amazon_ads_api.base import BaseAdsClient as _GenBase  # type: ignore[assignment]
 
 
 # Content-Type 常量
 FEATURE_FLAGS_CONTENT_TYPE = "application/vnd.accountBudgetFeatureFlags.v1+json"
 
 
-class AccountBudgetsAPI(BaseAdsClient):
+class AccountBudgetsAPI(_GenBase):
     """
     Account Budget Feature Flags API (全异步)
     

@@ -3,10 +3,15 @@ Sponsored Brands - Campaigns API (异步版本)
 SB广告系列管理
 """
 
-from amazon_ads_api.base import BaseAdsClient, JSONData, JSONList
+from amazon_ads_api.base import JSONData, JSONList
+
+try:
+    from amazon_ads_api.generated.clients.clients_sb import SbClient as _GenBase
+except ImportError:
+    from amazon_ads_api.base import BaseAdsClient as _GenBase  # type: ignore[assignment]
 
 
-class SBCampaignsAPI(BaseAdsClient):
+class SBCampaignsAPI(_GenBase):
     """SB Campaigns API (全异步)"""
 
     # ============ Campaigns ============
@@ -98,8 +103,13 @@ class SBCampaignsAPI(BaseAdsClient):
         return result if isinstance(result, dict) else {"campaigns": {"success": [], "error": []}}
 
     async def delete_campaign(self, campaign_id: str) -> JSONData:
-        """归档SB Campaign"""
-        return await self.delete(f"/sb/v4/campaigns/{campaign_id}")
+        """
+        归档单个SB Campaign
+        
+        注意：SB v4不支持单个DELETE，使用批量delete方法
+        官方端点：POST /sb/v4/campaigns/delete
+        """
+        return await self.delete_campaigns([str(campaign_id)])
 
     # ============ Ad Groups ============
 
@@ -197,7 +207,8 @@ class SBCampaignsAPI(BaseAdsClient):
         """
         result = await self.post(
             "/sb/v4/campaigns/delete",
-            json_data={"campaignIdFilter": {"include": campaign_ids}}
+            json_data={"campaignIdFilter": {"include": campaign_ids}},
+            content_type=self.SB_CAMPAIGN_V4_CONTENT_TYPE
         )
         return result if isinstance(result, dict) else {"campaigns": {"success": [], "error": []}}
 

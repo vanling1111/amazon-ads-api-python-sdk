@@ -7,10 +7,15 @@ OpenAPI Spec: AdvertisingTestAccount_prod_3p.json
 测试账户管理
 """
 
-from amazon_ads_api.base import BaseAdsClient, JSONData, JSONList
+from amazon_ads_api.base import JSONData, JSONList
+
+try:
+    from amazon_ads_api.generated.clients.clients_test_accounts import TestAccountsClient as _GenBase
+except ImportError:
+    from amazon_ads_api.base import BaseAdsClient as _GenBase  # type: ignore[assignment]
 
 
-class TestAccountsAPI(BaseAdsClient):
+class TestAccountsAPI(_GenBase):
     """
     Test Accounts API (全异步)
     

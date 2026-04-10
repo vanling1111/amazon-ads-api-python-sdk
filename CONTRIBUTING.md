@@ -66,17 +66,35 @@ AMAZON_ADS_REGION=NA
 ```
 amazon-ads-api-python-sdk/
 ├── amazon_ads_api/          # SDK source code
-│   ├── core/               # L1: OpenAPI-verified APIs
+│   ├── generated/          # Auto-generated (do not edit manually)
+│   │   ├── models/         # Pydantic v2 models
+│   │   └── clients/        # Async client classes
+│   ├── core/               # L1: OpenAPI-verified APIs (hand-written wrappers)
 │   ├── reference/          # L2: Official documentation APIs
 │   ├── services/           # L3: Product-level aggregation
 │   └── experimental/       # L4: Beta/experimental APIs
+├── codegen/                # Code generator
+│   ├── spec_config.yaml    # Spec selection & mapping
+│   └── generate.py         # Main entry point
 ├── tests/
 │   ├── unit/              # Unit tests (mock responses)
 │   ├── integration/       # Integration tests (real API)
 │   └── e2e/               # End-to-end tests (full workflows)
 ├── scripts/               # Maintenance scripts
-└── specs/                 # Official OpenAPI specifications
+└── specs/                 # Official OpenAPI specifications (86 files)
 ```
+
+## Code Generation
+
+When specs are updated, regenerate models and clients:
+
+```bash
+python -m codegen.generate -v
+```
+
+The generated code in `amazon_ads_api/generated/` should be committed to the repo.
+Hand-written files in `core/`, `reference/`, `services/`, and `experimental/` inherit
+from the generated clients and add convenience methods on top.
 
 ## Coding Standards
 

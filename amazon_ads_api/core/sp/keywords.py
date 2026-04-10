@@ -3,7 +3,12 @@ Sponsored Products - Keywords API (异步版本)
 SP关键词管理（正向关键词 + 否定关键词）
 """
 
-from amazon_ads_api.base import BaseAdsClient, JSONData, JSONList
+from amazon_ads_api.base import JSONData, JSONList
+
+try:
+    from amazon_ads_api.generated.clients.clients_sp import SpClient as _GenBase
+except ImportError:
+    from amazon_ads_api.base import BaseAdsClient as _GenBase  # type: ignore[assignment]
 
 # API v3 Content-Types
 CONTENT_TYPE_KEYWORD = "application/vnd.spKeyword.v3+json"
@@ -11,7 +16,7 @@ CONTENT_TYPE_NEGATIVE_KEYWORD = "application/vnd.spNegativeKeyword.v3+json"
 CONTENT_TYPE_CAMPAIGN_NEGATIVE_KEYWORD = "application/vnd.spCampaignNegativeKeyword.v3+json"
 
 
-class SPKeywordsAPI(BaseAdsClient):
+class SPKeywordsAPI(_GenBase):
     """SP Keywords API (全异步)"""
 
     # ============ 正向关键词 ============
@@ -230,8 +235,8 @@ class SPKeywordsAPI(BaseAdsClient):
         Args:
             keyword_ids: Keyword ID列表
         """
-        # 官方请求格式: {"keywordIdFilter": {"include": [...]}}
-        body = {"keywordIdFilter": {"include": keyword_ids}}
+        # 官方请求格式: {"negativeKeywordIdFilter": {"include": [...]}}
+        body = {"negativeKeywordIdFilter": {"include": keyword_ids}}
         result = await self.post("/sp/negativeKeywords/delete", json_data=body, content_type=CONTENT_TYPE_NEGATIVE_KEYWORD)
         return result if isinstance(result, dict) else {"negativeKeywords": {"success": [], "error": []}}
 
@@ -318,8 +323,8 @@ class SPKeywordsAPI(BaseAdsClient):
         Args:
             keyword_ids: Keyword ID列表
         """
-        # 官方请求格式: {"keywordIdFilter": {"include": [...]}}
-        body = {"keywordIdFilter": {"include": keyword_ids}}
+        # 官方请求格式: {"campaignNegativeKeywordIdFilter": {"include": [...]}}
+        body = {"campaignNegativeKeywordIdFilter": {"include": keyword_ids}}
         result = await self.post("/sp/campaignNegativeKeywords/delete", json_data=body, content_type=CONTENT_TYPE_CAMPAIGN_NEGATIVE_KEYWORD)
         return result if isinstance(result, dict) else {"campaignNegativeKeywords": {"success": [], "error": []}}
 

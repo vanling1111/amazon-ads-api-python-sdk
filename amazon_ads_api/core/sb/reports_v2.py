@@ -5,10 +5,15 @@ SB HSA 报告（旧版 v2 API）
 官方文档: SponsoredBrands_v3.yaml
 """
 
-from amazon_ads_api.base import BaseAdsClient, JSONData
+from amazon_ads_api.base import JSONData
+
+try:
+    from amazon_ads_api.generated.clients.clients_sb import SbClient as _GenBase
+except ImportError:
+    from amazon_ads_api.base import BaseAdsClient as _GenBase  # type: ignore[assignment]
 
 
-class SBReportsV2API(BaseAdsClient):
+class SBReportsV2API(_GenBase):
     """
     SB Reports v2 API (全异步)
     

@@ -6,13 +6,18 @@ Source: https://advertising.amazon.com/API/docs/en-us/sponsored-tv
 """
 
 from typing import Any
-from amazon_ads_api.base import BaseAdsClient, JSONData
+from amazon_ads_api.base import JSONData
+
+try:
+    from amazon_ads_api.generated.clients.clients_stv import StvClient as _GenBase
+except ImportError:
+    from amazon_ads_api.base import BaseAdsClient as _GenBase  # type: ignore[assignment]
 
 ST_TARGET_CONTENT_TYPE = "application/vnd.stTargetingClause.v1+json"
 ST_LOCATION_CONTENT_TYPE = "application/vnd.stLocation.v1+json"
 
 
-class SponsoredTVTargetingAPI(BaseAdsClient):
+class SponsoredTVTargetingAPI(_GenBase):
     """Sponsored TV Targeting API (全异步)"""
 
     # ==================== Targeting Clauses ====================

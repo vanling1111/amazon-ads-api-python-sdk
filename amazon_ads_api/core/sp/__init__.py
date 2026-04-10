@@ -7,6 +7,7 @@ Sponsored Products API 模块
 from .campaigns import SPCampaignsAPI
 from .ad_groups import SPAdGroupsAPI
 from .keywords import SPKeywordsAPI
+from .product_ads import SPProductAdsAPI
 from .targeting import SPTargetingAPI
 from .budget_rules import SPBudgetRulesAPI
 from .recommendations import SPRecommendationsAPI
@@ -19,6 +20,7 @@ __all__ = [
     "SPCampaignsAPI",
     "SPAdGroupsAPI",
     "SPKeywordsAPI",
+    "SPProductAdsAPI",
     "SPTargetingAPI",
     "SPBudgetRulesAPI",
     "SPRecommendationsAPI",

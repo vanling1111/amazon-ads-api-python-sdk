@@ -8,10 +8,15 @@ Amazon Marketing Cloud Administration API (异步版本)
 """
 
 from typing import Any
-from amazon_ads_api.base import BaseAdsClient, JSONData
+from amazon_ads_api.base import JSONData
+
+try:
+    from amazon_ads_api.generated.clients.clients_amc_administration import AmcAdministrationClient as _GenBase
+except ImportError:
+    from amazon_ads_api.base import BaseAdsClient as _GenBase  # type: ignore[assignment]
 
 
-class AMCAdministrationAPI(BaseAdsClient):
+class AMCAdministrationAPI(_GenBase):
     """AMC Administration API (全异步)
     
     API Tier: L1

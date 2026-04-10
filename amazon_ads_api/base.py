@@ -230,18 +230,24 @@ class BaseAdsClient(ABC):
         """获取有效的 Access Token"""
         return await self._token_manager.get_access_token()
 
-    async def _get_headers(self, content_type: str | None = None) -> dict[str, str]:
+    async def _get_headers(self, content_type: str | None = None, method: str = "POST") -> dict[str, str]:
         """构建请求头
         
         Args:
             content_type: 自定义 Content-Type（用于 API v3）
+            method: HTTP方法（GET/DELETE请求不添加Content-Type）
         """
         token = await self._get_access_token()
         headers = {
             "Authorization": f"Bearer {token}",
             "Amazon-Advertising-API-ClientId": self.client_id,
-            "Content-Type": content_type or "application/json",
         }
+        
+        # GET和DELETE请求不需要Content-Type（因为没有body）
+        # 添加Content-Type可能导致Amazon API返回403错误
+        if method not in ("GET", "DELETE", "HEAD"):
+            headers["Content-Type"] = content_type or "application/json"
+        
         if content_type:
             headers["Accept"] = content_type
         if self.profile_id:
@@ -270,7 +276,7 @@ class BaseAdsClient(ABC):
             accept: 自定义 Accept 头
         """
         url = f"{self.base_url}{endpoint}"
-        headers = await self._get_headers(content_type)
+        headers = await self._get_headers(content_type, method=method)
         if accept:
             headers["Accept"] = accept
         client = await self._get_client()

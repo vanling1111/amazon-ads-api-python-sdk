@@ -10,10 +10,15 @@ Keyword Insights API (异步版本)
 官方文档: https://advertising.amazon.com/API/docs/en-us/sponsored-products/3-0/openapi/prod
 """
 
-from amazon_ads_api.base import BaseAdsClient, JSONData, JSONList
+from amazon_ads_api.base import JSONData, JSONList
+
+try:
+    from amazon_ads_api.generated.clients.clients_insights import InsightsClient as _GenBase
+except ImportError:
+    from amazon_ads_api.base import BaseAdsClient as _GenBase  # type: ignore[assignment]
 
 
-class KeywordInsightsAPI(BaseAdsClient):
+class KeywordInsightsAPI(_GenBase):
     """
     Keyword Insights API (全异步)
     

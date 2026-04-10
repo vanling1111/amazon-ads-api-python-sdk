@@ -8,10 +8,15 @@ Amazon Ads Partner Opportunities API (异步版本)
 """
 
 from typing import Any
-from amazon_ads_api.base import BaseAdsClient, JSONData, JSONList
+from amazon_ads_api.base import JSONData, JSONList
+
+try:
+    from amazon_ads_api.generated.clients.clients_partner_opportunities import PartnerOpportunitiesClient as _GenBase
+except ImportError:
+    from amazon_ads_api.base import BaseAdsClient as _GenBase  # type: ignore[assignment]
 
 
-class PartnerOpportunitiesAPI(BaseAdsClient):
+class PartnerOpportunitiesAPI(_GenBase):
     """
     Partner Opportunities API (全异步)
     

@@ -3,10 +3,15 @@ Sponsored Display - Campaigns API (异步版本)
 SD广告系列管理
 """
 
-from amazon_ads_api.base import BaseAdsClient, JSONData, JSONList
+from amazon_ads_api.base import JSONData, JSONList
+
+try:
+    from amazon_ads_api.generated.clients.clients_sd import SdClient as _GenBase
+except ImportError:
+    from amazon_ads_api.base import BaseAdsClient as _GenBase  # type: ignore[assignment]
 
 
-class SDCampaignsAPI(BaseAdsClient):
+class SDCampaignsAPI(_GenBase):
     """SD Campaigns API (全异步)"""
 
     # ============ Campaigns ============
@@ -71,7 +76,19 @@ class SDCampaignsAPI(BaseAdsClient):
         - T00001: 上下文定向
         """
         result = await self.post("/sd/campaigns", json_data=campaigns)
-        return result if isinstance(result, dict) else {"campaigns": {"success": [], "error": []}}
+        
+        # SD API返回数组格式的207 Multi-Status响应，需要转换为标准格式
+        if isinstance(result, list):
+            # 解析数组中的success和error项
+            success_items = [item for item in result if item.get('code') == 'SUCCESS']
+            error_items = [item for item in result if item.get('code') != 'SUCCESS']
+            return {"campaigns": {"success": success_items, "error": error_items}}
+        elif isinstance(result, dict):
+            # 如果已经是对象格式，直接返回
+            return result
+        else:
+            # 意外格式，返回空结构
+            return {"campaigns": {"success": [], "error": []}}
 
     async def update_campaigns(self, campaigns: JSONList) -> JSONData:
         """批量更新SD Campaign"""

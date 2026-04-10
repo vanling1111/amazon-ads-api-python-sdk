@@ -7,7 +7,12 @@ OpenAPI Spec: ProductSelector_prod_3p.json
 产品元数据查询
 """
 
-from amazon_ads_api.base import BaseAdsClient, JSONData, JSONList
+from amazon_ads_api.base import JSONData, JSONList
+
+try:
+    from amazon_ads_api.generated.clients.clients_product_selector import ProductSelectorClient as _GenBase
+except ImportError:
+    from amazon_ads_api.base import BaseAdsClient as _GenBase  # type: ignore[assignment]
 
 
 # Content-Type 常量
@@ -15,7 +20,7 @@ PRODUCT_METADATA_REQUEST = "application/vnd.productmetadatarequest.v1+json"
 PRODUCT_METADATA_RESPONSE = "application/vnd.productmetadataresponse.v1+json"
 
 
-class ProductSelectorAPI(BaseAdsClient):
+class ProductSelectorAPI(_GenBase):
     """
     Product Selector API (全异步)
     

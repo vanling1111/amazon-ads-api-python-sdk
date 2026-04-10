@@ -10,7 +10,12 @@ Brand Home API - 品牌主页 (异步版本)
 """
 
 from typing import Literal
-from amazon_ads_api.base import BaseAdsClient, JSONData, JSONList
+from amazon_ads_api.base import JSONData, JSONList
+
+try:
+    from amazon_ads_api.generated.clients.clients_brand_home import BrandHomeClient as _GenBase
+except ImportError:
+    from amazon_ads_api.base import BaseAdsClient as _GenBase  # type: ignore[assignment]
 
 
 # Content-Type
@@ -21,7 +26,7 @@ BH_PAGES_LIST_CONTENT_TYPE = "application/brandStores.ListPages.v1+json"
 IdentifierType = Literal["ASIN", "BRAND_AID_ID", "ENTITY_ID", "GCOR", "NODE", "STORE"]
 
 
-class BrandHomeAPI(BaseAdsClient):
+class BrandHomeAPI(_GenBase):
     """
     Brand Home API - 管理品牌主页 (全异步)
     

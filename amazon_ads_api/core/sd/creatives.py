@@ -3,10 +3,15 @@ Sponsored Display - Creatives API (异步版本)
 SD创意管理（自定义图片、视频等）
 """
 
-from amazon_ads_api.base import BaseAdsClient, JSONData, JSONList
+from amazon_ads_api.base import JSONData, JSONList
+
+try:
+    from amazon_ads_api.generated.clients.clients_sd import SdClient as _GenBase
+except ImportError:
+    from amazon_ads_api.base import BaseAdsClient as _GenBase  # type: ignore[assignment]
 
 
-class SDCreativesAPI(BaseAdsClient):
+class SDCreativesAPI(_GenBase):
     """SD Creatives API (全异步)"""
 
     # ============ Creatives ============

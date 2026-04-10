@@ -5,10 +5,15 @@ SB品牌旗舰店资产管理
 官方文档: SponsoredBrands_v3.yaml
 """
 
-from amazon_ads_api.base import BaseAdsClient, JSONData, JSONList
+from amazon_ads_api.base import JSONData, JSONList
+
+try:
+    from amazon_ads_api.generated.clients.clients_sb import SbClient as _GenBase
+except ImportError:
+    from amazon_ads_api.base import BaseAdsClient as _GenBase  # type: ignore[assignment]
 
 
-class SBStoresAPI(BaseAdsClient):
+class SBStoresAPI(_GenBase):
     """
     SB Stores API (全异步)
     

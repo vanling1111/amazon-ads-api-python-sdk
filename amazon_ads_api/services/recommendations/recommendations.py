@@ -11,7 +11,12 @@ OpenAPI规范: https://dtrnk0o2zy01c.cloudfront.net/openapi/en-us/dest/Recommend
 """
 
 from typing import Literal
-from amazon_ads_api.base import BaseAdsClient, JSONData, JSONList
+from amazon_ads_api.base import JSONData, JSONList
+
+try:
+    from amazon_ads_api.generated.clients.clients_recommendations import RecommendationsClient as _GenBase
+except ImportError:
+    from amazon_ads_api.base import BaseAdsClient as _GenBase  # type: ignore[assignment]
 
 
 # Content-Type 常量
@@ -49,7 +54,7 @@ RecommendationStatus = Literal[
 ]
 
 
-class RecommendationsAPI(BaseAdsClient):
+class RecommendationsAPI(_GenBase):
     """
     Recommendations API
     

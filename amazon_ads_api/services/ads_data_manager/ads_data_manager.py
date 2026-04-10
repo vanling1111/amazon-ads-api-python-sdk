@@ -6,10 +6,15 @@ Ads Data Manager API - 广告数据管理器 (异步版本)
 """
 
 from typing import Any, Dict, List, Optional
-from amazon_ads_api.base import BaseAdsClient, JSONData
+from amazon_ads_api.base import JSONData
+
+try:
+    from amazon_ads_api.generated.clients.clients_ads_data_manager import AdsDataManagerClient as _GenBase
+except ImportError:
+    from amazon_ads_api.base import BaseAdsClient as _GenBase  # type: ignore[assignment]
 
 
-class AdsDataManagerAPI(BaseAdsClient):
+class AdsDataManagerAPI(_GenBase):
     """
     Ads Data Manager API (全异步)
     
