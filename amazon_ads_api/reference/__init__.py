@@ -6,7 +6,7 @@ Amazon Ads API - Reference APIs (L2)
 
 使用方式:
     from amazon_ads_api.reference.amc import AMCQueriesAPI
-    
+
 或通过 Client:
     client.reference.amc.run_query(...)
 

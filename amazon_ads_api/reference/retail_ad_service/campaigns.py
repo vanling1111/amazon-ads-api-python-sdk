@@ -59,7 +59,7 @@ class RASCampaignsAPI(_GenBase):
         campaign_ids: list[str],
     ) -> JSONData:
         """删除RAS广告活动
-        
+
         官方请求格式: {"campaignIdFilter": {"include": [...]}}
         """
         result = await self.post(

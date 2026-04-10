@@ -18,12 +18,12 @@ except ImportError:
 
 class AMCReportingAPI(_GenBase):
     """AMC Reporting API (全异步)
-    
+
     API Tier: L1
     Source: OpenAPI
     OpenAPI_SPEC: WorkflowManagementService_prod_3p.json (AMC Reporting)
     Stability: 高
-    
+
     管理 AMC 报告工作流、调度和执行。
     官方验证: 17个端点
     """
@@ -32,7 +32,7 @@ class AMCReportingAPI(_GenBase):
 
     async def list_data_sources(self, instance_id: str) -> JSONData:
         """获取数据源列表
-        
+
         官方端点: GET /amc/reporting/{instanceId}/dataSources
         """
         result = await self.get(f"/amc/reporting/{instance_id}/dataSources")
@@ -44,7 +44,7 @@ class AMCReportingAPI(_GenBase):
         data_source_id: str,
     ) -> JSONData:
         """获取数据源详情
-        
+
         官方端点: GET /amc/reporting/{instanceId}/dataSources/{dataSourceId}
         """
         result = await self.get(
@@ -56,7 +56,7 @@ class AMCReportingAPI(_GenBase):
 
     async def list_schedules(self, instance_id: str) -> JSONData:
         """获取调度列表
-        
+
         官方端点: GET /amc/reporting/{instanceId}/schedules
         """
         result = await self.get(f"/amc/reporting/{instance_id}/schedules")
@@ -68,7 +68,7 @@ class AMCReportingAPI(_GenBase):
         schedule_data: dict[str, Any],
     ) -> JSONData:
         """创建调度
-        
+
         官方端点: POST /amc/reporting/{instanceId}/schedules
         """
         result = await self.post(
@@ -83,7 +83,7 @@ class AMCReportingAPI(_GenBase):
         schedule_id: str,
     ) -> JSONData:
         """获取调度详情
-        
+
         官方端点: GET /amc/reporting/{instanceId}/schedules/{scheduleId}
         """
         result = await self.get(
@@ -98,7 +98,7 @@ class AMCReportingAPI(_GenBase):
         schedule_data: dict[str, Any],
     ) -> JSONData:
         """更新调度
-        
+
         官方端点: PUT /amc/reporting/{instanceId}/schedules/{scheduleId}
         """
         result = await self.put(
@@ -113,7 +113,7 @@ class AMCReportingAPI(_GenBase):
         schedule_id: str,
     ) -> JSONData:
         """删除调度
-        
+
         官方端点: DELETE /amc/reporting/{instanceId}/schedules/{scheduleId}
         """
         result = await self.delete(
@@ -125,7 +125,7 @@ class AMCReportingAPI(_GenBase):
 
     async def list_workflows(self, instance_id: str) -> JSONData:
         """获取工作流列表
-        
+
         官方端点: GET /amc/reporting/{instanceId}/workflows
         """
         result = await self.get(f"/amc/reporting/{instance_id}/workflows")
@@ -137,7 +137,7 @@ class AMCReportingAPI(_GenBase):
         workflow_data: dict[str, Any],
     ) -> JSONData:
         """创建工作流
-        
+
         官方端点: POST /amc/reporting/{instanceId}/workflows
         """
         result = await self.post(
@@ -152,7 +152,7 @@ class AMCReportingAPI(_GenBase):
         workflow_id: str,
     ) -> JSONData:
         """获取工作流详情
-        
+
         官方端点: GET /amc/reporting/{instanceId}/workflows/{workflowId}
         """
         result = await self.get(
@@ -167,7 +167,7 @@ class AMCReportingAPI(_GenBase):
         workflow_data: dict[str, Any],
     ) -> JSONData:
         """更新工作流
-        
+
         官方端点: PUT /amc/reporting/{instanceId}/workflows/{workflowId}
         """
         result = await self.put(
@@ -182,7 +182,7 @@ class AMCReportingAPI(_GenBase):
         workflow_id: str,
     ) -> JSONData:
         """删除工作流
-        
+
         官方端点: DELETE /amc/reporting/{instanceId}/workflows/{workflowId}
         """
         result = await self.delete(
@@ -194,7 +194,7 @@ class AMCReportingAPI(_GenBase):
 
     async def list_workflow_executions(self, instance_id: str) -> JSONData:
         """获取工作流执行列表
-        
+
         官方端点: GET /amc/reporting/{instanceId}/workflowExecutions
         """
         result = await self.get(f"/amc/reporting/{instance_id}/workflowExecutions")
@@ -206,9 +206,9 @@ class AMCReportingAPI(_GenBase):
         execution_data: dict[str, Any],
     ) -> JSONData:
         """创建工作流执行
-        
+
         官方端点: POST /amc/reporting/{instanceId}/workflowExecutions
-        
+
         Args:
             instance_id: AMC实例ID
             execution_data: 执行配置，可包含:
@@ -230,7 +230,7 @@ class AMCReportingAPI(_GenBase):
         workflow_execution_id: str,
     ) -> JSONData:
         """获取工作流执行详情
-        
+
         官方端点: GET /amc/reporting/{instanceId}/workflowExecutions/{workflowExecutionId}
         """
         result = await self.get(
@@ -245,7 +245,7 @@ class AMCReportingAPI(_GenBase):
         execution_data: dict[str, Any],
     ) -> JSONData:
         """更新工作流执行
-        
+
         官方端点: PUT /amc/reporting/{instanceId}/workflowExecutions/{workflowExecutionId}
         """
         result = await self.put(
@@ -260,7 +260,7 @@ class AMCReportingAPI(_GenBase):
         workflow_execution_id: str,
     ) -> JSONData:
         """获取工作流执行结果的下载链接
-        
+
         官方端点: GET /amc/reporting/{instanceId}/workflowExecutions/{workflowExecutionId}/downloadUrls
         """
         result = await self.get(

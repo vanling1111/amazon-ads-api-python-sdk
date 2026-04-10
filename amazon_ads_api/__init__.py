@@ -9,23 +9,23 @@ API 分级体系:
 
 使用示例:
     from amazon_ads_api import AmazonAdsClient
-    
+
     client = AmazonAdsClient(
         client_id="xxx",
         client_secret="xxx",
         refresh_token="xxx",
         profile_id="123456789"
     )
-    
+
     # L1: 默认访问（最安全）
     campaigns = await client.sp.campaigns.list_campaigns()
-    
+
     # L2: 显式命名空间
     result = await client.reference.amc.run_query(...)
-    
+
     # L3: 服务层
     report = await client.services.reporting.create_report(...)
-    
+
     # L4: 需确认风险
     exp = client.experimental(acknowledge_risk=True)
     await exp.sponsored_tv.create_campaign(...)

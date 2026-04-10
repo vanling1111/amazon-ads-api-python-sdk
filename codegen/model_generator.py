@@ -16,10 +16,9 @@ from __future__ import annotations
 import keyword
 import re
 from dataclasses import dataclass
-from pathlib import Path
 from typing import Any
 
-from .spec_parser import ParsedSpec, SchemaDefinition, ref_to_name, resolve_ref
+from .spec_parser import ParsedSpec, ref_to_name, resolve_ref
 
 HEADER = '''"""Auto-generated Pydantic models. Do not edit manually.
 

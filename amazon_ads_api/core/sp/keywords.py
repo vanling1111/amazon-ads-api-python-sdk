@@ -33,7 +33,7 @@ class SPKeywordsAPI(_GenBase):
     ) -> JSONData:
         """
         获取Keyword列表
-        
+
         Args:
             ad_group_id: Ad Group ID过滤
             campaign_id: Campaign ID过滤
@@ -44,7 +44,7 @@ class SPKeywordsAPI(_GenBase):
             include_extended_data: 是否包含扩展字段
         """
         params: JSONData = {"maxResults": max_results}
-        
+
         # ID过滤 - 官方格式: {"include": [...]}
         if ad_group_id:
             params["adGroupIdFilter"] = {"include": [ad_group_id]}
@@ -52,15 +52,15 @@ class SPKeywordsAPI(_GenBase):
             params["campaignIdFilter"] = {"include": [campaign_id]}
         if keyword_ids:
             params["keywordIdFilter"] = {"include": keyword_ids}
-        
+
         # 状态过滤
         if state_filter:
             states = [state_filter] if isinstance(state_filter, str) else state_filter
             params["stateFilter"] = {"include": [s.upper() for s in states]}
-        
+
         if next_token:
             params["nextToken"] = next_token
-        
+
         if include_extended_data:
             params["includeExtendedDataFields"] = True
 
@@ -75,7 +75,7 @@ class SPKeywordsAPI(_GenBase):
     async def create_keywords(self, keywords: JSONList) -> JSONData:
         """
         批量创建Keyword
-        
+
         Args:
             keywords: Keyword列表
             [
@@ -95,7 +95,7 @@ class SPKeywordsAPI(_GenBase):
     async def update_keywords(self, keywords: JSONList) -> JSONData:
         """
         批量更新Keyword
-        
+
         Args:
             keywords: [{"keywordId": "xxx", "state": "paused", "bid": 1.5}]
         """
@@ -105,12 +105,12 @@ class SPKeywordsAPI(_GenBase):
     async def delete_keywords(self, keyword_ids: list[str]) -> JSONData:
         """
         批量归档Keyword（官方 v3 /delete 端点）
-        
+
         注意：Amazon Ads 不支持真正删除广告实体，此操作将 Keyword 状态设置为 "archived"。
-        
+
         Args:
             keyword_ids: Keyword ID列表
-            
+
         Returns:
             {"keywords": {"success": [...], "error": [...]}}
         """
@@ -122,7 +122,7 @@ class SPKeywordsAPI(_GenBase):
     async def delete_keyword(self, keyword_id: str) -> JSONData:
         """归档单个Keyword（状态变为 archived）"""
         return await self.delete_keywords([keyword_id])
-    
+
     # archive_keyword 是 delete_keyword 的别名
     async def archive_keyword(self, keyword_id: str) -> JSONData:
         """归档Keyword（等同于 delete_keyword）"""
@@ -145,7 +145,7 @@ class SPKeywordsAPI(_GenBase):
     async def batch_update_bids(self, bid_updates: list[dict]) -> JSONData:
         """
         批量更新竞价
-        
+
         Args:
             bid_updates: [{"keywordId": "xxx", "bid": 1.5}, ...]
         """
@@ -164,7 +164,7 @@ class SPKeywordsAPI(_GenBase):
     ) -> JSONData:
         """
         获取Ad Group级别Negative Keyword列表
-        
+
         Args:
             ad_group_id: Ad Group ID过滤
             campaign_id: Campaign ID过滤
@@ -174,7 +174,7 @@ class SPKeywordsAPI(_GenBase):
             next_token: 分页token
         """
         params: JSONData = {"maxResults": max_results}
-        
+
         # ID过滤 - 官方格式: {"include": [...]}
         if ad_group_id:
             params["adGroupIdFilter"] = {"include": [ad_group_id]}
@@ -182,12 +182,12 @@ class SPKeywordsAPI(_GenBase):
             params["campaignIdFilter"] = {"include": [campaign_id]}
         if keyword_ids:
             params["keywordIdFilter"] = {"include": keyword_ids}
-        
+
         # 状态过滤
         if state_filter:
             states = [state_filter] if isinstance(state_filter, str) else state_filter
             params["stateFilter"] = {"include": [s.upper() for s in states]}
-        
+
         if next_token:
             params["nextToken"] = next_token
 
@@ -197,9 +197,9 @@ class SPKeywordsAPI(_GenBase):
     async def create_negative_keywords(self, keywords: JSONList) -> JSONData:
         """
         批量创建Negative Keyword
-        
+
         官方端点: POST /sp/negativeKeywords
-        
+
         Args:
             keywords: [
                 {
@@ -217,9 +217,9 @@ class SPKeywordsAPI(_GenBase):
     async def update_negative_keywords(self, keywords: JSONList) -> JSONData:
         """
         批量更新Negative Keyword
-        
+
         官方端点: PUT /sp/negativeKeywords
-        
+
         Args:
             keywords: [{"keywordId": "xxx", "state": "paused"}]
         """
@@ -229,9 +229,9 @@ class SPKeywordsAPI(_GenBase):
     async def delete_negative_keywords(self, keyword_ids: list[str]) -> JSONData:
         """
         批量归档Ad Group级别Negative Keyword（官方 v3 /delete 端点）
-        
+
         注意：此操作将 Negative Keyword 状态设置为 "archived"。
-        
+
         Args:
             keyword_ids: Keyword ID列表
         """
@@ -256,7 +256,7 @@ class SPKeywordsAPI(_GenBase):
     ) -> JSONData:
         """
         获取Campaign级别Negative Keyword列表
-        
+
         Args:
             campaign_id: Campaign ID过滤
             keyword_ids: Keyword ID过滤
@@ -265,18 +265,18 @@ class SPKeywordsAPI(_GenBase):
             next_token: 分页token
         """
         params: JSONData = {"maxResults": max_results}
-        
+
         # ID过滤 - 官方格式: {"include": [...]}
         if campaign_id:
             params["campaignIdFilter"] = {"include": [campaign_id]}
         if keyword_ids:
             params["keywordIdFilter"] = {"include": keyword_ids}
-        
+
         # 状态过滤
         if state_filter:
             states = [state_filter] if isinstance(state_filter, str) else state_filter
             params["stateFilter"] = {"include": [s.upper() for s in states]}
-        
+
         if next_token:
             params["nextToken"] = next_token
 
@@ -286,9 +286,9 @@ class SPKeywordsAPI(_GenBase):
     async def create_campaign_negative_keywords(self, keywords: JSONList) -> JSONData:
         """
         批量创建Campaign Negative Keyword
-        
+
         官方端点: POST /sp/campaignNegativeKeywords
-        
+
         Args:
             keywords: [
                 {
@@ -305,9 +305,9 @@ class SPKeywordsAPI(_GenBase):
     async def update_campaign_negative_keywords(self, keywords: JSONList) -> JSONData:
         """
         批量更新Campaign Negative Keyword
-        
+
         官方端点: PUT /sp/campaignNegativeKeywords
-        
+
         Args:
             keywords: [{"keywordId": "xxx", "state": "paused"}]
         """
@@ -317,9 +317,9 @@ class SPKeywordsAPI(_GenBase):
     async def delete_campaign_negative_keywords(self, keyword_ids: list[str]) -> JSONData:
         """
         批量归档Campaign级别Negative Keyword（官方 v3 /delete 端点）
-        
+
         注意：此操作将 Campaign Negative Keyword 状态设置为 "archived"。
-        
+
         Args:
             keyword_ids: Keyword ID列表
         """

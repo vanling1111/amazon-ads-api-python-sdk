@@ -23,7 +23,7 @@ except ImportError:
 class DSPCampaignsAPI(_GenBase):
     """
     DSP Campaign and Ad Group API (全异步)
-    
+
     用于管理 DSP 广告活动和广告组。
     """
 
@@ -39,30 +39,30 @@ class DSPCampaignsAPI(_GenBase):
     ) -> JSONData:
         """
         列出广告活动
-        
+
         官方端点: POST /dsp/v1/campaigns/list
-        
+
         Args:
             advertiser_id: 广告主 ID
             campaign_ids: 广告活动 ID 列表（过滤）
             max_results: 最大返回数量
             next_token: 分页令牌
             **kwargs: 其他过滤条件
-            
+
         Returns:
             广告活动列表
         """
         body: JSONData = {"maxResults": max_results}
-        
+
         if advertiser_id:
             body["advertiserId"] = advertiser_id
         if campaign_ids:
             body["campaignIds"] = campaign_ids
         if next_token:
             body["nextToken"] = next_token
-            
+
         body.update(kwargs)
-        
+
         result = await self.post("/dsp/v1/campaigns/list", json_data=body)
         return result if isinstance(result, dict) else {"campaigns": []}
 
@@ -72,17 +72,17 @@ class DSPCampaignsAPI(_GenBase):
     ) -> JSONData:
         """
         批量创建广告活动
-        
+
         官方端点: POST /dsp/v1/campaigns
-        
+
         Args:
             campaigns: 广告活动列表
-            
+
         Returns:
             创建结果（207 Multi-Status）
         """
         body: JSONData = {"campaigns": campaigns}
-        
+
         result = await self.post("/dsp/v1/campaigns", json_data=body)
         return result if isinstance(result, dict) else {}
 
@@ -92,17 +92,17 @@ class DSPCampaignsAPI(_GenBase):
     ) -> JSONData:
         """
         批量更新广告活动
-        
+
         官方端点: PATCH /dsp/v1/campaigns
-        
+
         Args:
             campaigns: 要更新的广告活动列表（必须包含 campaignId）
-            
+
         Returns:
             更新结果（207 Multi-Status）
         """
         body: JSONData = {"campaigns": campaigns}
-        
+
         result = await self.patch("/dsp/v1/campaigns", json_data=body)
         return result if isinstance(result, dict) else {}
 
@@ -119,9 +119,9 @@ class DSPCampaignsAPI(_GenBase):
     ) -> JSONData:
         """
         列出广告组
-        
+
         官方端点: POST /dsp/v1/adGroups/list
-        
+
         Args:
             advertiser_id: 广告主 ID
             campaign_id: 广告活动 ID（过滤）
@@ -129,12 +129,12 @@ class DSPCampaignsAPI(_GenBase):
             max_results: 最大返回数量
             next_token: 分页令牌
             **kwargs: 其他过滤条件
-            
+
         Returns:
             广告组列表
         """
         body: JSONData = {"maxResults": max_results}
-        
+
         if advertiser_id:
             body["advertiserId"] = advertiser_id
         if campaign_id:
@@ -143,9 +143,9 @@ class DSPCampaignsAPI(_GenBase):
             body["adGroupIds"] = ad_group_ids
         if next_token:
             body["nextToken"] = next_token
-            
+
         body.update(kwargs)
-        
+
         result = await self.post("/dsp/v1/adGroups/list", json_data=body)
         return result if isinstance(result, dict) else {"adGroups": []}
 
@@ -155,17 +155,17 @@ class DSPCampaignsAPI(_GenBase):
     ) -> JSONData:
         """
         批量创建广告组
-        
+
         官方端点: POST /dsp/v1/adGroups
-        
+
         Args:
             ad_groups: 广告组列表
-            
+
         Returns:
             创建结果（207 Multi-Status）
         """
         body: JSONData = {"adGroups": ad_groups}
-        
+
         result = await self.post("/dsp/v1/adGroups", json_data=body)
         return result if isinstance(result, dict) else {}
 
@@ -175,17 +175,17 @@ class DSPCampaignsAPI(_GenBase):
     ) -> JSONData:
         """
         批量更新广告组
-        
+
         官方端点: PATCH /dsp/v1/adGroups
-        
+
         Args:
             ad_groups: 要更新的广告组列表（必须包含 adGroupId）
-            
+
         Returns:
             更新结果（207 Multi-Status）
         """
         body: JSONData = {"adGroups": ad_groups}
-        
+
         result = await self.patch("/dsp/v1/adGroups", json_data=body)
         return result if isinstance(result, dict) else {}
 
@@ -194,10 +194,10 @@ class DSPCampaignsAPI(_GenBase):
     async def get_campaign(self, campaign_id: str) -> JSONData | None:
         """
         获取单个广告活动
-        
+
         Args:
             campaign_id: 广告活动 ID
-            
+
         Returns:
             广告活动详情，未找到返回 None
         """
@@ -208,10 +208,10 @@ class DSPCampaignsAPI(_GenBase):
     async def get_ad_group(self, ad_group_id: str) -> JSONData | None:
         """
         获取单个广告组
-        
+
         Args:
             ad_group_id: 广告组 ID
-            
+
         Returns:
             广告组详情，未找到返回 None
         """

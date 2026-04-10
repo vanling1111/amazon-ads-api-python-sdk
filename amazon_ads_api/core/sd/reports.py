@@ -28,7 +28,7 @@ class SDReportsAPI(_GenBase):
     ) -> JSONData:
         """
         请求创建报告（V2 Legacy）
-        
+
         Args:
             record_type: campaigns, adGroups, productAds, targets, asins
             report_date: 报告日期 (YYYYMMDD)
@@ -69,7 +69,7 @@ class SDReportsAPI(_GenBase):
     ) -> JSONData:
         """
         请求创建快照
-        
+
         Args:
             record_type: campaigns, adGroups, productAds, targets, negativeTargets
             state_filter: enabled, paused, archived, pending
@@ -103,7 +103,7 @@ class SDReportsAPI(_GenBase):
     ) -> JSONData:
         """
         获取创意标题推荐
-        
+
         Args:
             asins: ASIN列表
             max_results: 最大推荐数
@@ -125,37 +125,37 @@ class SDReportsAPI(_GenBase):
     ) -> JSONData:
         """
         请求报告并等待完成
-        
+
         Args:
             record_type: 记录类型
             report_date: 报告日期
             max_wait_seconds: 最大等待时间
             poll_interval_seconds: 轮询间隔
-            
+
         Returns:
             报告下载结果
         """
         import asyncio
-        
+
         # 请求报告
         response = await self.request_report(record_type, report_date)
         report_id = response.get("reportId")
         if not report_id:
             return {"error": "Failed to create report", "response": response}
-        
+
         # 等待完成
         elapsed = 0
         while elapsed < max_wait_seconds:
             status = await self.get_report(report_id)
             state = status.get("status", "").upper()
-            
+
             if state == "COMPLETED":
                 return await self.download_report(report_id)
             elif state == "FAILED":
                 return {"error": "Report failed", "status": status}
-            
+
             await asyncio.sleep(poll_interval_seconds)
             elapsed += poll_interval_seconds
-        
+
         return {"error": "Report timed out", "reportId": report_id}
 

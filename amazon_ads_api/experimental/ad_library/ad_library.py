@@ -28,12 +28,12 @@ NameMatchType = Literal["CONTAINS", "EXACT_MATCH"]
 class AdLibraryAPI(_GenBase):
     """
     Ad Library API (全异步)
-    
+
     API Tier: L1
     Source: OpenAPI
     OpenAPI Spec: AdLibraryAPI_prod_3p.json
     Stability: 高
-    
+
     官方端点 (共2个):
     - POST /adRepository/ads/list - 列出广告
     - GET /adRepository/ads/{id} - 获取单个广告
@@ -54,10 +54,10 @@ class AdLibraryAPI(_GenBase):
     ) -> JSONData:
         """
         列出广告
-        
+
         官方端点: POST /adRepository/ads/list
         官方规范: AdLibraryAPI_prod_3p.json
-        
+
         Args:
             advertiser_name: 广告主名称过滤
             advertisement_purpose: 广告目的过滤
@@ -68,7 +68,7 @@ class AdLibraryAPI(_GenBase):
             site_name: 站点名称 (如 amazon.de, amazon.fr)
             max_results: 最大结果数 (1-1000, 默认10)
             next_token: 分页令牌
-            
+
         Returns:
             {
                 "ads": [...],
@@ -77,7 +77,7 @@ class AdLibraryAPI(_GenBase):
             }
         """
         request_body: JSONData = {}
-        
+
         if advertiser_name:
             request_body["advertiserName"] = advertiser_name
         if advertisement_purpose:
@@ -108,13 +108,13 @@ class AdLibraryAPI(_GenBase):
     async def get_ad_by_id(self, ad_id: str) -> JSONData:
         """
         获取单个广告详情
-        
+
         官方端点: GET /adRepository/ads/{id}
         官方规范: AdLibraryAPI_prod_3p.json
-        
+
         Args:
             ad_id: 广告ID (全局唯一标识符)
-            
+
         Returns:
             {
                 "ad": {
@@ -148,17 +148,17 @@ class AdLibraryAPI(_GenBase):
     ) -> JSONList:
         """
         获取所有广告 (自动分页)
-        
+
         Args:
             advertiser_name: 广告主名称过滤
             **kwargs: 其他 list_ads 参数
-            
+
         Returns:
             所有广告列表
         """
         all_ads: JSONList = []
         next_token = None
-        
+
         while True:
             result = await self.list_ads(
                 advertiser_name=advertiser_name,
@@ -168,11 +168,11 @@ class AdLibraryAPI(_GenBase):
             )
             ads = result.get("ads", [])
             all_ads.extend(ads)
-            
+
             next_token = result.get("nextToken")
             if not next_token or not ads:
                 break
-        
+
         return all_ads
 
     async def search_by_advertiser(
@@ -182,11 +182,11 @@ class AdLibraryAPI(_GenBase):
     ) -> JSONList:
         """
         按广告主名称搜索广告
-        
+
         Args:
             advertiser_name: 广告主名称
             exact_match: 是否精确匹配 (默认模糊匹配)
-            
+
         Returns:
             匹配的广告列表
         """

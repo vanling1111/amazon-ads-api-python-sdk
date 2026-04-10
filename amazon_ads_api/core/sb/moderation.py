@@ -19,10 +19,10 @@ except ImportError:
 class SBModerationAPI(_GenBase):
     """
     SB Moderation API (全异步)
-    
+
     官方端点 (共1个):
     - GET /sb/moderation/campaigns/{campaignId} - 获取Campaign审核状态
-    
+
     注意：
     - 这是 SB v3 API 端点
     - 更全面的审核功能请使用通用 Moderation API
@@ -31,12 +31,12 @@ class SBModerationAPI(_GenBase):
     async def get_campaign_moderation(self, campaign_id: str) -> JSONData:
         """
         获取 Campaign 审核状态
-        
+
         官方端点: GET /sb/moderation/campaigns/{campaignId}
-        
+
         Args:
             campaign_id: Campaign ID
-        
+
         Returns:
             {
                 "campaignId": "xxx",

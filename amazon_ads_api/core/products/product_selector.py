@@ -23,10 +23,10 @@ PRODUCT_METADATA_RESPONSE = "application/vnd.productmetadataresponse.v1+json"
 class ProductSelectorAPI(_GenBase):
     """
     Product Selector API (全异步)
-    
+
     官方端点 (共1个):
     - POST /product/metadata - 获取产品元数据
-    
+
     支持的商家类型:
     - Seller（卖家）
     - Vendor（供应商）
@@ -51,9 +51,9 @@ class ProductSelectorAPI(_GenBase):
     ) -> JSONData:
         """
         获取产品元数据
-        
+
         POST /product/metadata
-        
+
         Args:
             page_index: 页索引（从0开始）
             page_size: 每页数量（1-300，默认50）
@@ -75,7 +75,7 @@ class ProductSelectorAPI(_GenBase):
                 - DESC: 降序（推荐排序必须是 DESC）
             cursor_token: 分页 token（用于推荐排序或作者账户）
             locale: 响应语言（如 "zh_CN"）
-        
+
         Returns:
             {
                 "ProductMetadataList": [
@@ -100,7 +100,7 @@ class ProductSelectorAPI(_GenBase):
                 ],
                 "cursorToken": "..."
             }
-            
+
         库存状态 (availability):
             - IN_STOCK: 有库存
             - IN_STOCK_SCARCE: 库存紧张
@@ -113,7 +113,7 @@ class ProductSelectorAPI(_GenBase):
             "pageIndex": page_index,
             "pageSize": page_size,
         }
-        
+
         # 只能使用一种输入方式
         if asins:
             body["asins"] = asins[:300]
@@ -121,7 +121,7 @@ class ProductSelectorAPI(_GenBase):
             body["skus"] = skus[:300]
         elif search_str:
             body["searchStr"] = search_str[:200]
-        
+
         if ad_type:
             body["adType"] = ad_type
         if check_eligibility:
@@ -138,7 +138,7 @@ class ProductSelectorAPI(_GenBase):
             body["cursorToken"] = cursor_token
         if locale:
             body["locale"] = locale
-        
+
         result = await self.post(
             "/product/metadata",
             json_data=body,
@@ -157,7 +157,7 @@ class ProductSelectorAPI(_GenBase):
     ) -> JSONList:
         """
         按 ASIN 批量获取产品信息
-        
+
         Args:
             asins: ASIN 列表（最多300个）
             check_eligibility: 是否检查广告资格
@@ -180,7 +180,7 @@ class ProductSelectorAPI(_GenBase):
     ) -> JSONList:
         """
         按 SKU 批量获取产品信息
-        
+
         Args:
             skus: SKU 列表（最多300个）
             check_eligibility: 是否检查广告资格
@@ -203,7 +203,7 @@ class ProductSelectorAPI(_GenBase):
     ) -> JSONList:
         """
         搜索产品（按标题模糊匹配）
-        
+
         Args:
             query: 搜索关键词
             page_size: 返回数量
@@ -226,7 +226,7 @@ class ProductSelectorAPI(_GenBase):
     ) -> JSONData:
         """
         获取推荐产品（最可能产生点击的产品）
-        
+
         仅支持 SP 卖家
         """
         return await self.get_product_metadata(
@@ -246,7 +246,7 @@ class ProductSelectorAPI(_GenBase):
     ) -> JSONList:
         """
         获取符合广告资格的产品
-        
+
         Args:
             ad_type: SP, SB, SD
         """
@@ -257,7 +257,7 @@ class ProductSelectorAPI(_GenBase):
             check_item_details=True,
             ad_type=ad_type,
         )
-        
+
         # 过滤出符合资格的产品
         products = result.get("ProductMetadataList", [])
         return [p for p in products if p.get("eligibilityStatus") == "ELIGIBLE"]
@@ -280,26 +280,26 @@ class ProductSelectorAPI(_GenBase):
     ) -> JSONList:
         """
         获取所有产品（自动分页）
-        
+
         注意：结果最多 10000 个产品
         """
         all_products: JSONList = []
-        
+
         for page_index in range(max_pages):
             result = await self.get_product_metadata(
                 page_index=page_index,
                 page_size=page_size,
                 check_item_details=True,
             )
-            
+
             products = result.get("ProductMetadataList", [])
             if not products:
                 break
-            
+
             all_products.extend(products)
-            
+
             # 检查是否还有更多数据
             if len(products) < page_size:
                 break
-        
+
         return all_products

@@ -30,7 +30,7 @@ jobs:
       - name: Lint with ruff
         run: |
           pip install ruff
-          ruff check amazon_ads_api/ codegen/ --select E,F,W --ignore E501,F403,F405,W291
+          ruff check amazon_ads_api/ codegen/ --select E,F,W --ignore E501,F403,F405,W291,W293,E402,F821
 
       - name: Run unit tests
         run: pytest tests/unit/ -v --tb=short

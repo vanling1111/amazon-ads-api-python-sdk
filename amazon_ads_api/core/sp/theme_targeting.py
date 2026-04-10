@@ -21,7 +21,7 @@ PRODUCTS_COUNT_CONTENT_TYPE = "application/vnd.sptargetsproductscount.v1+json"
 class SPThemeTargetingAPI(_GenBase):
     """
     SP Theme & Category Targeting API (全异步)
-    
+
     官方端点 (共4个):
     - GET /sp/targets/categories - 获取可定向品类
     - POST /sp/targets/categories/recommendations - 获取品类建议
@@ -36,12 +36,12 @@ class SPThemeTargetingAPI(_GenBase):
     ) -> JSONData:
         """
         获取可定向的品类列表
-        
+
         官方端点: GET /sp/targets/categories
-        
+
         Args:
             asins: 可选，要分析的 ASIN 列表（用于获取相关品类）
-        
+
         Returns:
             {
                 "categories": [
@@ -57,7 +57,7 @@ class SPThemeTargetingAPI(_GenBase):
         params = {}
         if asins:
             params["asins"] = ",".join(asins)
-        
+
         result = await self.get("/sp/targets/categories", params=params if params else None)
         return result if isinstance(result, dict) else {"categories": []}
 
@@ -68,13 +68,13 @@ class SPThemeTargetingAPI(_GenBase):
     ) -> JSONData:
         """
         获取品类定向建议
-        
+
         官方端点: POST /sp/targets/categories/recommendations
-        
+
         Args:
             asins: 要分析的 ASIN 列表
             max_results: 最大结果数
-        
+
         Returns:
             {
                 "categoryRecommendations": [
@@ -99,11 +99,11 @@ class SPThemeTargetingAPI(_GenBase):
     ) -> JSONData:
         """
         获取品类细化选项
-        
+
         官方端点: GET /sp/targets/category/{categoryId}/refinements
-        
+
         返回可用于细化定向的品牌、价格范围、评分等选项。
-        
+
         Returns:
             {
                 "brands": [{"brandId": "...", "brandName": "..."}],
@@ -120,11 +120,11 @@ class SPThemeTargetingAPI(_GenBase):
     ) -> JSONData:
         """
         获取目标表达式匹配的产品数量
-        
+
         官方端点: POST /sp/targets/products/count
-        
+
         用于评估定向表达式的覆盖范围。
-        
+
         Args:
             expressions: 定向表达式列表
             [
@@ -137,7 +137,7 @@ class SPThemeTargetingAPI(_GenBase):
                     "value": "B00XXXX"
                 }
             ]
-        
+
         Returns:
             {
                 "counts": [
@@ -159,15 +159,15 @@ class SPThemeTargetingAPI(_GenBase):
     ) -> JSONData:
         """
         获取关键词分组推荐
-        
+
         官方端点: POST /sp/targeting/recommendations/keywordGroups
-        
+
         返回基于 ASIN 的关键词分组推荐，用于优化定向策略。
-        
+
         Args:
             asins: 要分析的 ASIN 列表
             max_results: 最大结果数
-        
+
         Returns:
             {
                 "keywordGroups": [
@@ -201,15 +201,15 @@ class SPThemeTargetingAPI(_GenBase):
     ) -> JSONList:
         """
         构建品类定向表达式
-        
+
         这是一个工具方法，帮助构建正确的定向表达式格式。
-        
+
         Args:
             category_id: 品类 ID
             brand_ids: 品牌筛选（来自 refinements）
             price_min/max: 价格范围（来自 refinements）
             review_rating: 最低评分（来自 refinements）
-        
+
         Returns:
             可用于 targets API 的表达式列表
         """
@@ -243,7 +243,7 @@ class SPThemeTargetingAPI(_GenBase):
     ) -> JSONList:
         """
         构建产品定向表达式
-        
+
         Args:
             asins: ASIN 列表
             expanded: 是否扩展到相似产品
@@ -266,7 +266,7 @@ class SPThemeTargetingAPI(_GenBase):
     ) -> int:
         """
         估算品类定向覆盖的产品数量
-        
+
         Args:
             category_id: 品类 ID
             refinements: 可选的细化条件
@@ -278,7 +278,7 @@ class SPThemeTargetingAPI(_GenBase):
             price_max=refinements.get("price_max") if refinements else None,
             review_rating=refinements.get("review_rating") if refinements else None,
         )
-        
+
         result = await self.get_products_count([{"expression": expression}])
         counts = result.get("counts", [])
         return counts[0].get("count", 0) if counts else 0

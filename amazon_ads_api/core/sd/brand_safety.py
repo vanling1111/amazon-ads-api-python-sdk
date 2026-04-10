@@ -26,7 +26,7 @@ class SDBrandSafetyAPI(_GenBase):
     async def add_to_deny_list(self, items: JSONList) -> JSONData:
         """
         添加到拒绝列表
-        
+
         Args:
             items: [{"type": "DOMAIN", "value": "example.com"}, ...]
         """
@@ -36,7 +36,7 @@ class SDBrandSafetyAPI(_GenBase):
     async def remove_from_deny_list(self, items: JSONList) -> JSONData:
         """
         从拒绝列表移除
-        
+
         Args:
             items: [{"type": "DOMAIN", "value": "example.com"}, ...]
         """

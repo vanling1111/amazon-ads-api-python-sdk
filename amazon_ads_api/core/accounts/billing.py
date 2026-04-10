@@ -33,7 +33,7 @@ INVOICES_V1 = "application/vnd.invoices.v1+json"
 class BillingAPI(_GenBase):
     """
     Billing API (全异步)
-    
+
     官方端点共 18 个:
     - Billing Documents: 1
     - Billing Notifications: 1
@@ -57,9 +57,9 @@ class BillingAPI(_GenBase):
     ) -> JSONData:
         """
         获取账单文档
-        
+
         GET /billing/documents/{documentId}
-        
+
         Args:
             document_id: 文档ID
             doc_types: 文档类型列表
@@ -69,7 +69,7 @@ class BillingAPI(_GenBase):
                 - INVOICE
                 - PAYMENT_COMPLEMENT
                 - PREPAYMENT_RECEIPT
-        
+
         Returns:
             {
                 "availableDocuments": [...],
@@ -93,15 +93,15 @@ class BillingAPI(_GenBase):
     ) -> JSONData:
         """
         获取账单通知
-        
+
         POST /billing/notifications
-        
+
         Args:
             advertiser_marketplaces: [
                 {"advertiserId": "A123...", "marketplaceId": "A2NODRKZP88ZB9"}
             ]
             locale: 语言 (en_US, ja_JP, de_DE, etc.)
-        
+
         Returns:
             {
                 "success": [...],
@@ -128,15 +128,15 @@ class BillingAPI(_GenBase):
     ) -> JSONData:
         """
         获取账单状态
-        
+
         POST /billing/statuses
-        
+
         Args:
             advertiser_marketplaces: [
                 {"advertiserId": "A123...", "marketplaceId": "A2NODRKZP88ZB9"}
             ]
             locale: 语言
-        
+
         Returns:
             {
                 "success": [{"advertiserMarketplace": {...}, "billingStatus": {...}}],
@@ -146,7 +146,7 @@ class BillingAPI(_GenBase):
         body: JSONData = {"advertiserMarketplaces": advertiser_marketplaces}
         if locale:
             body["locale"] = locale
-        
+
         result = await self.post(
             "/billing/statuses",
             json_data=body,
@@ -162,9 +162,9 @@ class BillingAPI(_GenBase):
     ) -> JSONData:
         """
         创建或更新支付协议
-        
+
         POST /billing/paymentAgreements
-        
+
         Args:
             payment_agreements: 支付协议列表
         """
@@ -183,9 +183,9 @@ class BillingAPI(_GenBase):
     ) -> JSONData:
         """
         获取支付协议列表
-        
+
         POST /billing/paymentAgreements/list
-        
+
         Args:
             agreement_type: 协议类型
             next_token: 分页 token
@@ -193,7 +193,7 @@ class BillingAPI(_GenBase):
         params = {"agreementType": agreement_type}
         if next_token:
             params["nextToken"] = next_token
-        
+
         result = await self.post(
             "/billing/paymentAgreements/list",
             params=params,
@@ -210,9 +210,9 @@ class BillingAPI(_GenBase):
     ) -> JSONData:
         """
         获取支付方式列表
-        
+
         POST /billing/paymentMethods/list
-        
+
         Args:
             criteria_type: 筛选条件类型
             next_token: 分页 token
@@ -220,7 +220,7 @@ class BillingAPI(_GenBase):
         params = {"criteriaType": criteria_type}
         if next_token:
             params["nextToken"] = next_token
-        
+
         result = await self.post(
             "/billing/paymentMethods/list",
             params=params,
@@ -236,9 +236,9 @@ class BillingAPI(_GenBase):
     ) -> JSONData:
         """
         创建或更新支付配置
-        
+
         POST /billing/paymentProfiles
-        
+
         Args:
             payment_profiles: 支付配置列表
         """
@@ -258,9 +258,9 @@ class BillingAPI(_GenBase):
     ) -> JSONData:
         """
         创建账单配置
-        
+
         POST /billingProfiles
-        
+
         Args:
             billing_profiles: [
                 {
@@ -287,9 +287,9 @@ class BillingAPI(_GenBase):
     ) -> JSONData:
         """
         更新账单配置
-        
+
         PUT /billingProfiles
-        
+
         Args:
             billing_profiles: [
                 {
@@ -317,9 +317,9 @@ class BillingAPI(_GenBase):
     ) -> JSONData:
         """
         获取账单配置列表
-        
+
         POST /billingProfiles/list
-        
+
         Args:
             billing_profile_ids: 配置 ID 过滤
             default_only: 仅获取默认配置
@@ -327,7 +327,7 @@ class BillingAPI(_GenBase):
             next_token: 分页 token
         """
         body: JSONData = {"maxResults": max_results}
-        
+
         filters: JSONData = {}
         if billing_profile_ids:
             filters["billingProfileIdFilter"] = billing_profile_ids
@@ -335,10 +335,10 @@ class BillingAPI(_GenBase):
             filters["defaultBillingProfileFilter"] = True
         if filters:
             body["filters"] = filters
-        
+
         if next_token:
             body["nextToken"] = next_token
-        
+
         result = await self.post(
             "/billingProfiles/list",
             json_data=body,
@@ -355,9 +355,9 @@ class BillingAPI(_GenBase):
     ) -> JSONData:
         """
         关联账单配置到国家/地区
-        
+
         POST /billingProfileUsages
-        
+
         Args:
             billing_profile_id: 账单配置 ID
             advertisers: [{"countryCode": "US"}, {"countryCode": "DE"}]
@@ -383,9 +383,9 @@ class BillingAPI(_GenBase):
     ) -> JSONData:
         """
         获取账单配置关联列表
-        
+
         POST /billingProfileUsages/list
-        
+
         Args:
             advertiser_filter: [{"countryCode": "US"}]
             expand_billing_profile: 展开配置详情
@@ -398,13 +398,13 @@ class BillingAPI(_GenBase):
             "expandFallbackBillingProfile": expand_fallback,
             "maxResults": max_results,
         }
-        
+
         if advertiser_filter:
             body["filters"] = {"advertiserFilter": advertiser_filter}
-        
+
         if next_token:
             body["nextToken"] = next_token
-        
+
         result = await self.post(
             "/billingProfileUsages/list",
             json_data=body,
@@ -424,16 +424,16 @@ class BillingAPI(_GenBase):
     ) -> JSONData:
         """
         创建账单报表
-        
+
         POST /billingStatements
-        
+
         Args:
             start_date: 开始日期 (YYYY-MM-DD)
             end_date: 结束日期 (YYYY-MM-DD)
             locale: 语言 (en_US, ja_JP, etc.)
             country_codes: 国家代码列表
             file_format: 文件格式 (CSV)
-        
+
         Returns:
             {
                 "billingStatementRequestId": "xxx",
@@ -448,7 +448,7 @@ class BillingAPI(_GenBase):
         }
         if country_codes:
             body["countryCodes"] = country_codes
-        
+
         result = await self.post(
             "/billingStatements",
             json_data=body,
@@ -462,12 +462,12 @@ class BillingAPI(_GenBase):
     ) -> JSONData:
         """
         获取账单报表状态和下载链接
-        
+
         GET /billingStatements/{billingStatementRequestId}
-        
+
         Args:
             billing_statement_request_id: 报表请求 ID
-        
+
         Returns:
             {
                 "reportStatus": "SUCCESS" | "IN_PROGRESS" | "FAILED",
@@ -493,9 +493,9 @@ class BillingAPI(_GenBase):
     ) -> JSONData:
         """
         获取账单摘要列表
-        
+
         POST /invoiceSummaries/list
-        
+
         Args:
             filters: 过滤条件
             sort: 排序条件
@@ -504,7 +504,7 @@ class BillingAPI(_GenBase):
             next_token: 分页 token
         """
         body: JSONData = {"maxResults": max_results}
-        
+
         if filters:
             body["filters"] = filters
         if sort:
@@ -513,7 +513,7 @@ class BillingAPI(_GenBase):
             body["aggregations"] = aggregations
         if next_token:
             body["nextToken"] = next_token
-        
+
         result = await self.post(
             "/invoiceSummaries/list",
             json_data=body,
@@ -533,9 +533,9 @@ class BillingAPI(_GenBase):
     ) -> JSONData:
         """
         获取发票列表
-        
+
         GET /invoices
-        
+
         Args:
             invoice_statuses: 发票状态过滤
                 - ISSUED
@@ -546,7 +546,7 @@ class BillingAPI(_GenBase):
             end_date: 结束日期 (ISO-8601)
             count: 每页数量 (最大 100)
             cursor: 分页游标
-        
+
         Returns:
             {
                 "invoiceSummaries": [...],
@@ -555,7 +555,7 @@ class BillingAPI(_GenBase):
             }
         """
         params: JSONData = {}
-        
+
         if invoice_statuses:
             params["invoiceStatuses"] = ",".join(invoice_statuses)
         if start_date:
@@ -566,7 +566,7 @@ class BillingAPI(_GenBase):
             params["cursor"] = cursor
         else:
             params["count"] = count
-        
+
         result = await self.get(
             "/invoices",
             params=params,
@@ -577,12 +577,12 @@ class BillingAPI(_GenBase):
     async def get_invoice(self, invoice_id: str) -> JSONData:
         """
         获取发票详情
-        
+
         GET /invoices/{invoiceId}
-        
+
         Args:
             invoice_id: 发票 ID
-        
+
         Returns:
             完整发票对象，包含:
             - invoiceSummary
@@ -606,9 +606,9 @@ class BillingAPI(_GenBase):
     ) -> JSONData:
         """
         支付发票
-        
+
         POST /billing/invoices/pay
-        
+
         Args:
             invoice_ids: 要支付的发票 ID 列表
             pay_all: 支付所有未付发票
@@ -618,7 +618,7 @@ class BillingAPI(_GenBase):
             body["invoiceIds"] = invoice_ids
         if pay_all:
             body["payAll"] = True
-        
+
         result = await self.post(
             "/billing/invoices/pay",
             json_data=body,
@@ -640,7 +640,7 @@ class BillingAPI(_GenBase):
         """
         all_invoices: JSONList = []
         cursor = None
-        
+
         while True:
             result = await self.list_invoices(
                 invoice_statuses=invoice_statuses,
@@ -650,11 +650,11 @@ class BillingAPI(_GenBase):
             )
             invoices = result.get("invoiceSummaries", [])
             all_invoices.extend(invoices)
-            
+
             cursor = result.get("nextCursor")
             if not cursor:
                 break
-        
+
         return all_invoices
 
     async def get_unpaid_invoices(self) -> JSONList:
@@ -670,13 +670,13 @@ class BillingAPI(_GenBase):
     ) -> JSONData:
         """
         获取账单配置协议内容
-        
+
         GET /billingProfileAgreementContents/{billingProfileAgreementContentId}
-        
+
         Args:
             agreement_id: 协议 ID
             language: 语言
-        
+
         Returns:
             {"content": "HTML内容..."}
         """

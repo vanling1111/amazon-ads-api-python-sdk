@@ -11,7 +11,7 @@ OpenAPI规范: https://dtrnk0o2zy01c.cloudfront.net/openapi/en-us/dest/Recommend
 """
 
 from typing import Literal
-from amazon_ads_api.base import JSONData, JSONList
+from amazon_ads_api.base import JSONData
 
 try:
     from amazon_ads_api.generated.clients.clients_recommendations import RecommendationsClient as _GenBase
@@ -57,7 +57,7 @@ RecommendationStatus = Literal[
 class RecommendationsAPI(_GenBase):
     """
     Recommendations API
-    
+
     官方端点 (共3个):
     - POST /recommendations/apply
     - POST /recommendations/list
@@ -73,9 +73,9 @@ class RecommendationsAPI(_GenBase):
     ) -> JSONData:
         """
         获取推荐列表
-        
+
         官方端点: POST /recommendations/list
-        
+
         Args:
             filters: 过滤条件列表，每个过滤器包含:
                 - field: 过滤字段 (AD_PRODUCT, CAMPAIGN_ID, RECOMMENDATION_TYPE, STATUS, GROUPING_TYPE)
@@ -85,7 +85,7 @@ class RecommendationsAPI(_GenBase):
             locale: 语言代码 (如 "en_US", "zh_CN")
             max_results: 最大结果数 (1-500，默认500)
             next_token: 分页token
-            
+
         Returns:
             {
                 "recommendations": [...],
@@ -94,14 +94,14 @@ class RecommendationsAPI(_GenBase):
             }
         """
         body: dict = {"maxResults": max_results}
-        
+
         if filters:
             body["filters"] = filters
         if locale:
             body["locale"] = locale
         if next_token:
             body["nextToken"] = next_token
-        
+
         result = await self.post(
             "/recommendations/list",
             json_data=body,
@@ -116,12 +116,12 @@ class RecommendationsAPI(_GenBase):
     ) -> JSONData:
         """
         应用一个或多个推荐
-        
+
         官方端点: POST /recommendations/apply
-        
+
         Args:
             recommendation_ids: 推荐ID列表 (1-100个)
-            
+
         Returns:
             {
                 "successes": [
@@ -143,7 +143,7 @@ class RecommendationsAPI(_GenBase):
         """
         if not recommendation_ids or len(recommendation_ids) > 100:
             raise ValueError("recommendation_ids must have 1-100 items")
-        
+
         result = await self.post(
             "/recommendations/apply",
             json_data={"recommendationIds": recommendation_ids},
@@ -161,27 +161,27 @@ class RecommendationsAPI(_GenBase):
     ) -> JSONData:
         """
         更新推荐
-        
+
         官方端点: PUT /recommendations/{recommendationId}
-        
+
         Args:
             recommendation_id: 推荐ID
             recommended_value: 新的推荐值 (根据推荐类型不同，类型不同)
             budget_rule: 预算规则更新 (用于 NEW_CAMPAIGN_BUDGET_RULE, CAMPAIGN_BUDGET_RULE)
             rule_based_bidding: 规则出价更新 (用于 NEW_CAMPAIGN_BIDDING_RULE, CAMPAIGN_BIDDING_RULE)
-            
+
         Returns:
             更新后的推荐对象
         """
         body: dict = {}
-        
+
         if recommended_value is not None:
             body["recommendedValue"] = recommended_value
         if budget_rule:
             body["budgetRule"] = budget_rule
         if rule_based_bidding:
             body["ruleBasedBidding"] = rule_based_bidding
-        
+
         result = await self.put(
             f"/recommendations/{recommendation_id}",
             json_data=body,
@@ -202,19 +202,19 @@ class RecommendationsAPI(_GenBase):
     ) -> list[JSONData]:
         """
         获取所有推荐（自动分页）
-        
+
         Args:
             ad_product: 广告产品过滤 (SP, SB, SD, ST)
             recommendation_type: 推荐类型过滤
             status: 状态过滤
             campaign_id: Campaign ID过滤
             max_pages: 最大页数限制
-            
+
         Returns:
             所有推荐列表
         """
         filters = []
-        
+
         if ad_product:
             filters.append({
                 "field": "AD_PRODUCT",
@@ -239,24 +239,24 @@ class RecommendationsAPI(_GenBase):
                 "operator": "EXACT",
                 "values": [campaign_id],
             })
-        
+
         all_recommendations = []
         next_token = None
-        
+
         for _ in range(max_pages):
             result = await self.list_recommendations(
                 filters=filters if filters else None,
                 max_results=500,
                 next_token=next_token,
             )
-            
+
             recommendations = result.get("recommendations", [])
             all_recommendations.extend(recommendations)
-            
+
             next_token = result.get("nextToken")
             if not next_token:
                 break
-        
+
         return all_recommendations
 
     async def apply_and_check(
@@ -265,15 +265,15 @@ class RecommendationsAPI(_GenBase):
     ) -> tuple[list[str], list[str]]:
         """
         应用推荐并返回成功/失败的ID
-        
+
         Args:
             recommendation_ids: 推荐ID列表
-            
+
         Returns:
             (成功的ID列表, 失败的ID列表)
         """
         result = await self.apply_recommendations(recommendation_ids)
-        
+
         success_ids = [
             s.get("recommendationId", "")
             for s in result.get("successes", [])
@@ -282,6 +282,6 @@ class RecommendationsAPI(_GenBase):
             f.get("recommendationId", "")
             for f in result.get("failures", [])
         ]
-        
+
         return success_ids, failure_ids
 

@@ -22,7 +22,7 @@ except ImportError:
 
 class AudienceMetadataAPI(_GenBase):
     """Data Provider Audience Metadata API (全异步)
-    
+
     官方验证: 4个端点
     """
 
@@ -36,10 +36,10 @@ class AudienceMetadataAPI(_GenBase):
         metadata: dict[str, Any],
     ) -> JSONData:
         """创建新的数据提供商受众
-        
+
         官方端点: POST /v2/dp/audiencemetadata/
         限流: 1 TPS
-        
+
         Args:
             name: 受众名称 (10-128字符，字母数字)
             description: 受众描述 (0-1000字符)
@@ -50,7 +50,7 @@ class AudienceMetadataAPI(_GenBase):
                 - ttl: 生存时间 (秒)
                 - audienceFees: 受众费用列表
                 - dataSourceCountry: 数据源国家列表
-        
+
         Returns:
             创建结果，包含 requestId 和 audience 对象
         """
@@ -67,13 +67,13 @@ class AudienceMetadataAPI(_GenBase):
 
     async def get_audience(self, audience_id: int) -> JSONData:
         """获取受众元数据
-        
+
         官方端点: GET /v2/dp/audiencemetadata/{audienceId}
         限流: 1 TPS
-        
+
         Args:
             audience_id: 受众ID (int64)
-        
+
         Returns:
             受众详情，包含 id, name, description, advertiserId, metadata
         """
@@ -89,10 +89,10 @@ class AudienceMetadataAPI(_GenBase):
         metadata: dict[str, Any] | None = None,
     ) -> JSONData:
         """更新受众元数据
-        
+
         官方端点: PUT /v2/dp/audiencemetadata/{audienceId}
         限流: 1 TPS
-        
+
         Args:
             audience_id: 受众ID (int64)
             description: 新的受众描述 (可选)
@@ -100,7 +100,7 @@ class AudienceMetadataAPI(_GenBase):
                 - ttl: 生存时间 (秒)
                 - audienceFees: 受众费用列表
                 - dataSourceCountry: 数据源国家列表
-        
+
         Returns:
             更新后的受众详情
         """
@@ -120,17 +120,17 @@ class AudienceMetadataAPI(_GenBase):
         patches: list[dict[str, Any]],
     ) -> JSONData:
         """关联或取消关联记录与受众
-        
+
         官方端点: PATCH /v2/dp/audience
         限流: 100 TPS
         最大负载: 6MB 或 2000 条记录
-        
+
         Args:
             patches: 补丁操作列表，每个补丁包含:
                 - op: 操作类型 ("add" 或 "remove")
                 - path: 受众路径
                 - value: 记录值
-        
+
         Returns:
             请求结果，包含 jobId 和 requestId
             注意: 请求可能需要最多2小时处理
@@ -146,16 +146,16 @@ class AudienceMetadataAPI(_GenBase):
         patches: list[dict[str, Any]],
     ) -> JSONData:
         """删除用户数据（GDPR/隐私合规）
-        
+
         官方端点: PATCH /v2/dp/users
         官方规范: DataProvider.yaml
-        
+
         Args:
             patches: 补丁操作列表，每个补丁包含:
                 - op: 操作类型 ("remove")
                 - path: 用户路径
                 - value: 用户标识符
-        
+
         Returns:
             请求结果
         """

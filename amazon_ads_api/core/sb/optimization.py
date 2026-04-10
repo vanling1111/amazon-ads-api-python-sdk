@@ -30,7 +30,7 @@ class SBOptimizationAPI(_GenBase):
     ) -> JSONData:
         """
         获取优化规则列表
-        
+
         Args:
             campaign_ids: 过滤的Campaign ID列表
             rule_ids: 过滤的Rule ID列表
@@ -39,18 +39,18 @@ class SBOptimizationAPI(_GenBase):
             next_token: 分页token
         """
         body: JSONData = {"maxResults": max_results}
-        
+
         # ID过滤 - 官方格式: {"include": [...]}
         if campaign_ids:
             body["campaignIdFilter"] = {"include": campaign_ids}
         if rule_ids:
             body["ruleIdFilter"] = {"include": rule_ids}
-        
+
         # 状态过滤
         if states:
             state_list = [states] if isinstance(states, str) else states
             body["stateFilter"] = {"include": [s.upper() for s in state_list]}
-        
+
         if next_token:
             body["nextToken"] = next_token
 
@@ -64,7 +64,7 @@ class SBOptimizationAPI(_GenBase):
     async def create_optimization_rules(self, rules: JSONList) -> JSONData:
         """
         批量创建优化规则
-        
+
         Args:
             rules: [
                 {
@@ -86,7 +86,7 @@ class SBOptimizationAPI(_GenBase):
     async def update_optimization_rules(self, rules: JSONList) -> JSONData:
         """
         批量更新优化规则
-        
+
         Args:
             rules: [{"ruleId": "xxx", "state": "PAUSED", ...}]
         """
@@ -105,7 +105,7 @@ class SBOptimizationAPI(_GenBase):
     ) -> JSONData:
         """
         将优化规则关联到Campaign
-        
+
         Args:
             associations: [{"ruleId": "xxx", "campaignId": "yyy"}, ...]
         """
@@ -122,7 +122,7 @@ class SBOptimizationAPI(_GenBase):
     ) -> JSONData:
         """
         从Campaign移除优化规则关联
-        
+
         Args:
             associations: [{"ruleId": "xxx", "campaignId": "yyy"}, ...]
         """
@@ -142,7 +142,7 @@ class SBOptimizationAPI(_GenBase):
     ) -> JSONData:
         """
         获取优化建议
-        
+
         Args:
             campaign_ids: Campaign ID列表
             recommendation_types: 建议类型过滤

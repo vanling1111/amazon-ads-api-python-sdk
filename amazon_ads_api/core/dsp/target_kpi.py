@@ -19,9 +19,9 @@ except ImportError:
 class DSPTargetKPIAPI(_GenBase):
     """
     DSP Target KPI Recommendations API (全异步)
-    
+
     为创建新 DSP 广告活动的广告商提供目标 KPI 推荐值。
-    
+
     官方端点 (共1个):
     - POST /dsp/campaigns/targetKpi/recommendations
     """
@@ -40,10 +40,10 @@ class DSPTargetKPIAPI(_GenBase):
     ) -> JSONData:
         """
         获取目标 KPI 推荐
-        
+
         官方端点: POST /dsp/campaigns/targetKpi/recommendations
         官方规范: DSP_TargetKPI.json
-        
+
         Args:
             advertiser_id: 广告商标识符 (必填)
                 Example: "2622920504"
@@ -61,7 +61,7 @@ class DSPTargetKPIAPI(_GenBase):
                 Example: "Entertainment", "Electronics"
             budget_amount: 用户设置的预算金额 (可选, Pre-Budget 场景时为 null)
                 Example: 100000
-            
+
         Returns:
             {
                 "currencyCode": "JPY",
@@ -81,14 +81,14 @@ class DSPTargetKPIAPI(_GenBase):
             "flightEndDate": flight_end_date,
             "goalKpi": goal_kpi,
         }
-        
+
         if advertiser_country:
             body["advertiserCountry"] = advertiser_country
         if advertiser_industry:
             body["advertiserIndustry"] = advertiser_industry
         if budget_amount is not None:
             body["budgetAmount"] = budget_amount
-        
+
         result = await self.post(
             "/dsp/campaigns/targetKpi/recommendations",
             json_data=body,

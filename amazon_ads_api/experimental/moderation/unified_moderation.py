@@ -29,9 +29,9 @@ except ImportError:
 class UnifiedModerationAPI(_GenBase):
     """
     Unified Moderation API (全异步)
-    
+
     用于获取 SP/SB/SD 广告的审核结果。
-    
+
     官方端点 (共1个):
     - POST /moderation/results
     """
@@ -48,10 +48,10 @@ class UnifiedModerationAPI(_GenBase):
     ) -> JSONData:
         """
         获取广告审核结果
-        
+
         官方端点: POST /moderation/results
         官方规范: Moderation.json
-        
+
         Args:
             ad_program_type: 广告程序类型 (必填)
                 - SB_PRODUCT_COLLECTION
@@ -69,7 +69,7 @@ class UnifiedModerationAPI(_GenBase):
                 - REJECTED
             version_id_filter: 版本 ID 过滤 (可选)
             next_token: 分页 token
-        
+
         Returns:
             {
                 "moderationResults": [
@@ -92,14 +92,14 @@ class UnifiedModerationAPI(_GenBase):
             "idType": id_type,
             "maxResults": min(max(1, max_results), 10),
         }
-        
+
         if moderation_status_filter:
             body["moderationStatusFilter"] = moderation_status_filter
         if version_id_filter:
             body["versionIdFilter"] = version_id_filter
         if next_token:
             body["nextToken"] = next_token
-        
+
         result = await self.post(
             "/moderation/results",
             json_data=body,
@@ -109,7 +109,7 @@ class UnifiedModerationAPI(_GenBase):
         return result if isinstance(result, dict) else {"moderationResults": []}
 
     # ============ 便捷方法 ============
-    
+
     async def get_sp_moderation_results(
         self,
         ad_id: str,
@@ -117,7 +117,7 @@ class UnifiedModerationAPI(_GenBase):
     ) -> JSONData:
         """
         获取 Sponsored Products 广告审核结果
-        
+
         Args:
             ad_id: SP 广告 ID
             **kwargs: 其他可选参数
@@ -127,7 +127,7 @@ class UnifiedModerationAPI(_GenBase):
             ad_id=ad_id,
             **kwargs,
         )
-    
+
     async def get_sd_moderation_results(
         self,
         ad_id: str,
@@ -135,7 +135,7 @@ class UnifiedModerationAPI(_GenBase):
     ) -> JSONData:
         """
         获取 Sponsored Display 广告审核结果
-        
+
         Args:
             ad_id: SD 广告 ID
             **kwargs: 其他可选参数
@@ -145,7 +145,7 @@ class UnifiedModerationAPI(_GenBase):
             ad_id=ad_id,
             **kwargs,
         )
-    
+
     async def get_sb_moderation_results(
         self,
         ad_id: str,
@@ -154,7 +154,7 @@ class UnifiedModerationAPI(_GenBase):
     ) -> JSONData:
         """
         获取 Sponsored Brands 广告审核结果
-        
+
         Args:
             ad_id: SB 广告 ID
             ad_format: SB 广告格式
@@ -168,7 +168,7 @@ class UnifiedModerationAPI(_GenBase):
             ad_id=ad_id,
             **kwargs,
         )
-    
+
     async def get_rejected_ads(
         self,
         ad_program_type: str,
@@ -176,11 +176,11 @@ class UnifiedModerationAPI(_GenBase):
     ) -> JSONList:
         """
         获取被拒绝的广告及其违规原因
-        
+
         Args:
             ad_program_type: 广告程序类型
             ad_id: 广告 ID
-        
+
         Returns:
             被拒绝的审核结果列表（包含违规原因）
         """
@@ -190,7 +190,7 @@ class UnifiedModerationAPI(_GenBase):
             moderation_status_filter=["REJECTED"],
         )
         return result.get("moderationResults", [])
-    
+
     async def is_ad_approved(
         self,
         ad_program_type: str,
@@ -198,11 +198,11 @@ class UnifiedModerationAPI(_GenBase):
     ) -> bool:
         """
         检查广告是否已通过审核
-        
+
         Args:
             ad_program_type: 广告程序类型
             ad_id: 广告 ID
-        
+
         Returns:
             True 如果已通过审核，否则 False
         """

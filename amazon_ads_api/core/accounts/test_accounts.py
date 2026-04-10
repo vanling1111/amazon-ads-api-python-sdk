@@ -18,11 +18,11 @@ except ImportError:
 class TestAccountsAPI(_GenBase):
     """
     Test Accounts API (全异步)
-    
+
     官方端点 (共2个):
     - GET /testAccounts - 获取测试账户信息
     - POST /testAccounts - 创建测试账户
-    
+
     注意:
     - 每个市场只能创建 1 个测试账户
     - 支持的账户类型: AUTHOR, VENDOR
@@ -35,12 +35,12 @@ class TestAccountsAPI(_GenBase):
     ) -> JSONList:
         """
         获取测试账户信息
-        
+
         GET /testAccounts
-        
+
         Args:
             request_id: 可选，按请求 ID 过滤
-        
+
         Returns:
             [
                 {
@@ -55,7 +55,7 @@ class TestAccountsAPI(_GenBase):
         params = {}
         if request_id:
             params["requestId"] = request_id
-        
+
         result = await self.get(
             "/testAccounts",
             params=params if params else None
@@ -70,9 +70,9 @@ class TestAccountsAPI(_GenBase):
     ) -> JSONData:
         """
         创建测试账户
-        
+
         POST /testAccounts
-        
+
         Args:
             account_type: 账户类型
                 - "AUTHOR": 作者账户（用于图书广告）
@@ -80,12 +80,12 @@ class TestAccountsAPI(_GenBase):
             country_code: 国家代码
                 - 支持: AE, AU, BE, BR, CA, DE, EG, ES, FR, IT, JP, MX, NL, PL, SA, SE, SG, TR, UK, US
             vendor_code: 供应商代码（仅 VENDOR 类型需要）
-        
+
         Returns:
             {
                 "requestId": "A7BCDGCEVXQ1CJJ4301V"
             }
-            
+
         注意:
             - 每个市场只能创建 1 个同类型的测试账户
             - 创建是异步的，使用返回的 requestId 查询状态
@@ -95,10 +95,10 @@ class TestAccountsAPI(_GenBase):
             "accountType": account_type,
             "countryCode": country_code,
         }
-        
+
         if vendor_code:
             body["accountMetaData"] = {"vendorCode": vendor_code}
-        
+
         result = await self.post("/testAccounts", json_data=body)
         return result if isinstance(result, dict) else {}
 
@@ -107,7 +107,7 @@ class TestAccountsAPI(_GenBase):
     async def create_author_account(self, country_code: str) -> JSONData:
         """
         创建 Author 测试账户
-        
+
         用于图书广告测试
         """
         return await self.create_test_account(
@@ -122,7 +122,7 @@ class TestAccountsAPI(_GenBase):
     ) -> JSONData:
         """
         创建 Vendor 测试账户
-        
+
         用于品牌广告测试
         """
         return await self.create_test_account(
@@ -145,7 +145,7 @@ class TestAccountsAPI(_GenBase):
     async def check_creation_status(self, request_id: str) -> str:
         """
         检查测试账户创建状态
-        
+
         Returns:
             "COMPLETED" | "IN_PROGRESS" | "FAILED"
         """

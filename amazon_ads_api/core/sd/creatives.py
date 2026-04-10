@@ -27,10 +27,10 @@ class SDCreativesAPI(_GenBase):
     ) -> JSONList:
         """
         获取SD Creative列表 (v3 GET API)
-        
+
         官方端点: GET /sd/creatives
         官方文档: SponsoredDisplay_v3.yaml
-        
+
         Args:
             start_index: 分页起始位置
             count: 最大返回数量
@@ -104,10 +104,10 @@ class SDCreativesAPI(_GenBase):
     async def preview_creative(self, creative: JSONData) -> JSONData:
         """
         预览创意效果
-        
+
         Args:
             creative: 创意配置（与创建相同格式）
-            
+
         Returns:
             预览数据（HTML或图片URL）
         """

@@ -19,19 +19,19 @@ except ImportError:
 class DSPAdvertisersAPI(_GenBase):
     """
     DSP Advertisers API (全异步)
-    
+
     官方只支持读取操作，不支持创建/更新/删除广告主。
     """
 
     async def get_advertiser(self, advertiser_id: str) -> JSONData:
         """
         获取单个广告主详情
-        
+
         官方端点: GET /dsp/advertisers/{advertiserId}
-        
+
         Args:
             advertiser_id: 广告主 ID
-            
+
         Returns:
             广告主详情
         """
@@ -41,9 +41,9 @@ class DSPAdvertisersAPI(_GenBase):
     async def list_advertisers(self) -> JSONList:
         """
         获取广告主列表
-        
+
         官方端点: GET /dsp/advertisers
-        
+
         Returns:
             广告主列表
         """
@@ -55,10 +55,10 @@ class DSPAdvertisersAPI(_GenBase):
     async def get_advertiser_by_name(self, name: str) -> JSONData | None:
         """
         根据名称获取广告主
-        
+
         Args:
             name: 广告主名称
-            
+
         Returns:
             匹配的广告主，未找到返回 None
         """

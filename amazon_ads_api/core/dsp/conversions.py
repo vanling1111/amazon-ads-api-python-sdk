@@ -22,7 +22,7 @@ except ImportError:
 class DSPConversionsAPI(_GenBase):
     """
     DSP Conversions API (全异步)
-    
+
     用于管理 DSP 转化定义和追踪。
     """
 
@@ -35,7 +35,7 @@ class DSPConversionsAPI(_GenBase):
     ) -> JSONData:
         """
         列出广告标签事件
-        
+
         官方端点: GET /accounts/{accountId}/dsp/adTagEvents/{adTagId}/list
         """
         result = await self.get(f"/accounts/{account_id}/dsp/adTagEvents/{ad_tag_id}/list")
@@ -44,7 +44,7 @@ class DSPConversionsAPI(_GenBase):
     async def get_amazon_ad_tag(self, account_id: str) -> JSONData:
         """
         获取 Amazon 广告标签
-        
+
         官方端点: GET /accounts/{accountId}/dsp/amazonAdTag
         """
         result = await self.get(f"/accounts/{account_id}/dsp/amazonAdTag")
@@ -59,7 +59,7 @@ class DSPConversionsAPI(_GenBase):
     ) -> JSONData:
         """
         列出转化定义
-        
+
         官方端点: POST /accounts/{accountId}/dsp/conversionDefinitions/list
         """
         result = await self.post(
@@ -75,7 +75,7 @@ class DSPConversionsAPI(_GenBase):
     ) -> JSONData:
         """
         创建转化定义
-        
+
         官方端点: POST /accounts/{accountId}/dsp/conversionDefinitions
         """
         body: JSONData = {"conversionDefinitions": definitions}
@@ -92,7 +92,7 @@ class DSPConversionsAPI(_GenBase):
     ) -> JSONData:
         """
         更新转化定义
-        
+
         官方端点: PUT /accounts/{accountId}/dsp/conversionDefinitions
         """
         body: JSONData = {"conversionDefinitions": definitions}
@@ -109,7 +109,7 @@ class DSPConversionsAPI(_GenBase):
     ) -> JSONData:
         """
         删除转化定义
-        
+
         官方端点: POST /accounts/{accountId}/dsp/conversionDefinitions/delete
         """
         body: JSONData = {"conversionDefinitionIds": definition_ids}
@@ -126,7 +126,7 @@ class DSPConversionsAPI(_GenBase):
     ) -> JSONData:
         """
         获取转化事件数据
-        
+
         官方端点: POST /accounts/{accountId}/dsp/conversionDefinitions/eventData
         """
         result = await self.post(
@@ -142,7 +142,7 @@ class DSPConversionsAPI(_GenBase):
     ) -> JSONData:
         """
         获取广告标签事件关联
-        
+
         官方端点: GET /accounts/{accountId}/dsp/conversionDefinitions/{conversionDefinitionId}/adTagEventAssociations
         """
         result = await self.get(
@@ -158,7 +158,7 @@ class DSPConversionsAPI(_GenBase):
     ) -> JSONData:
         """
         创建广告标签事件关联
-        
+
         官方端点: POST /accounts/{accountId}/dsp/conversionDefinitions/{conversionDefinitionId}/adTagEventAssociations
         """
         body: JSONData = {"associations": associations}
@@ -175,7 +175,7 @@ class DSPConversionsAPI(_GenBase):
     ) -> JSONData:
         """
         获取移动测量合作伙伴注册信息
-        
+
         官方端点: GET /accounts/{accountId}/dsp/conversionDefinitions/{conversionDefinitionId}/mobileMeasurementPartnerAppRegistration
         """
         result = await self.get(
@@ -192,7 +192,7 @@ class DSPConversionsAPI(_GenBase):
     ) -> JSONData:
         """
         列出移动测量合作伙伴
-        
+
         官方端点: POST /accounts/{accountId}/dsp/mobileMeasurementPartners/list
         """
         result = await self.post(
@@ -208,7 +208,7 @@ class DSPConversionsAPI(_GenBase):
     ) -> JSONData:
         """
         创建移动测量合作伙伴
-        
+
         官方端点: POST /accounts/{accountId}/dsp/mobileMeasurementPartners
         """
         body: JSONData = {"partners": partners}
@@ -225,7 +225,7 @@ class DSPConversionsAPI(_GenBase):
     ) -> JSONData:
         """
         更新移动测量合作伙伴
-        
+
         官方端点: PUT /accounts/{accountId}/dsp/mobileMeasurementPartners
         """
         body: JSONData = {"partners": partners}
@@ -242,7 +242,7 @@ class DSPConversionsAPI(_GenBase):
     ) -> JSONData:
         """
         删除移动测量合作伙伴
-        
+
         官方端点: POST /accounts/{accountId}/dsp/mobileMeasurementPartners/delete
         """
         body: JSONData = {"partnerIds": partner_ids}
@@ -261,7 +261,7 @@ class DSPConversionsAPI(_GenBase):
     ) -> JSONData:
         """
         获取订单转化关联
-        
+
         官方端点: GET /accounts/{accountId}/dsp/orders/{orderId}/conversionDefinitionAssociations
         """
         result = await self.get(
@@ -277,7 +277,7 @@ class DSPConversionsAPI(_GenBase):
     ) -> JSONData:
         """
         创建订单转化关联
-        
+
         官方端点: POST /accounts/{accountId}/dsp/orders/{orderId}/conversionDefinitionAssociations
         """
         body: JSONData = {"associations": associations}
@@ -296,7 +296,7 @@ class DSPConversionsAPI(_GenBase):
     ) -> JSONData:
         """
         批量创建订单转化关联
-        
+
         官方端点: POST /accounts/{accountId}/dsp/batchOrders/conversionDefinitionAssociations
         """
         body: JSONData = {"associations": associations}

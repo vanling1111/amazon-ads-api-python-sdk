@@ -65,7 +65,7 @@ class RASTargetsAPI(_GenBase):
         target_ids: list[str],
     ) -> JSONData:
         """删除定向
-        
+
         官方请求格式: {"targetIdFilter": {"include": [...]}}
         """
         result = await self.post(

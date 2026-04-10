@@ -62,7 +62,7 @@ class RASProductAdsAPI(_GenBase):
         product_ad_ids: list[str],
     ) -> JSONData:
         """删除产品广告
-        
+
         官方请求格式: {"productAdIdFilter": {"include": [...]}}
         """
         result = await self.post(

@@ -19,12 +19,12 @@ except ImportError:
 class AdvertisingAccountsAPI(_GenBase):
     """
     Advertising Accounts API (全异步)
-    
+
     API Tier: L1
     Source: OpenAPI
     OpenAPI_SPEC: AdvertisingAccounts.json
     Stability: 高
-    
+
     管理广告账户，包括创建、查询和条款接受。
     官方验证: 5个端点
     """
@@ -37,9 +37,9 @@ class AdvertisingAccountsAPI(_GenBase):
     ) -> JSONData:
         """
         创建广告账户
-        
+
         官方端点: POST /adsAccounts
-        
+
         Args:
             account_data: 账户创建数据，包含:
                 - name: 账户名称
@@ -59,14 +59,14 @@ class AdvertisingAccountsAPI(_GenBase):
     ) -> JSONData:
         """
         获取广告账户列表
-        
+
         官方端点: POST /adsAccounts/list
-        
+
         Args:
             filters: 过滤条件
             max_results: 每页数量
             next_token: 分页令牌
-            
+
         Returns:
             {
                 "adsAccounts": [...],
@@ -74,12 +74,12 @@ class AdvertisingAccountsAPI(_GenBase):
             }
         """
         body: dict[str, Any] = {"maxResults": max_results}
-        
+
         if filters:
             body["filters"] = filters
         if next_token:
             body["nextToken"] = next_token
-        
+
         result = await self.post("/adsAccounts/list", json_data=body)
         return result if isinstance(result, dict) else {"adsAccounts": []}
 
@@ -89,9 +89,9 @@ class AdvertisingAccountsAPI(_GenBase):
     ) -> JSONData:
         """
         获取广告账户详情
-        
+
         官方端点: GET /adsAccounts/{advertisingAccountId}
-        
+
         Args:
             advertising_account_id: 广告账户 ID
         """
@@ -106,11 +106,11 @@ class AdvertisingAccountsAPI(_GenBase):
     ) -> JSONData:
         """
         创建条款令牌
-        
+
         官方端点: POST /termsTokens
-        
+
         用于记录用户接受服务条款的令牌
-        
+
         Args:
             token_data: 令牌数据，包含:
                 - termsType: 条款类型
@@ -125,9 +125,9 @@ class AdvertisingAccountsAPI(_GenBase):
     ) -> JSONData:
         """
         获取条款令牌状态
-        
+
         官方端点: GET /termsTokens/{termsToken}
-        
+
         Args:
             terms_token: 条款令牌
         """
@@ -140,7 +140,7 @@ class AdvertisingAccountsAPI(_GenBase):
         """获取所有广告账户（自动分页）"""
         all_accounts: JSONList = []
         next_token = None
-        
+
         while True:
             result = await self.list_accounts(
                 max_results=100,
@@ -148,11 +148,11 @@ class AdvertisingAccountsAPI(_GenBase):
             )
             accounts = result.get("adsAccounts", [])
             all_accounts.extend(accounts)
-            
+
             next_token = result.get("nextToken")
             if not next_token:
                 break
-        
+
         return all_accounts
 
     async def accept_terms(self, terms_type: str) -> JSONData:

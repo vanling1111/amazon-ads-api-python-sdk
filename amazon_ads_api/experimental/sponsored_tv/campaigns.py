@@ -21,7 +21,7 @@ ST_FORECAST_CONTENT_TYPE = "application/vnd.stForecast.v1+json"
 
 class SponsoredTVCampaignsAPI(_GenBase):
     """Sponsored TV Campaigns API (全异步)
-    
+
     API Tier: L4 (Experimental - Beta)
     官方文档: https://advertising.amazon.com/API/docs/en-us/sponsored-tv
     """
@@ -31,7 +31,7 @@ class SponsoredTVCampaignsAPI(_GenBase):
         campaigns: list[dict[str, Any]],
     ) -> JSONData:
         """创建Sponsored TV广告活动
-        
+
         POST /st/campaigns
         Content-Type: application/vnd.stCampaign.v1+json
         """
@@ -52,7 +52,7 @@ class SponsoredTVCampaignsAPI(_GenBase):
         next_token: str | None = None,
     ) -> JSONData:
         """获取Sponsored TV广告活动列表
-        
+
         POST /st/campaigns/list
         Content-Type: application/vnd.stCampaign.v1+json
         """
@@ -79,7 +79,7 @@ class SponsoredTVCampaignsAPI(_GenBase):
         campaigns: list[dict[str, Any]],
     ) -> JSONData:
         """更新Sponsored TV广告活动
-        
+
         PUT /st/campaigns
         Content-Type: application/vnd.stCampaign.v1+json
         """
@@ -95,7 +95,7 @@ class SponsoredTVCampaignsAPI(_GenBase):
         campaign_ids: list[str],
     ) -> JSONData:
         """删除Sponsored TV广告活动
-        
+
         POST /st/campaigns/delete
         Content-Type: application/vnd.stCampaign.v1+json
         """
@@ -111,7 +111,7 @@ class SponsoredTVCampaignsAPI(_GenBase):
         forecast_request: dict[str, Any],
     ) -> JSONData:
         """获取Sponsored TV预测
-        
+
         POST /st/forecasts
         Content-Type: application/vnd.stForecast.v1+json
         """

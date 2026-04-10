@@ -28,7 +28,7 @@ class SBCreativesAPI(_GenBase):
     ) -> JSONData:
         """
         更新广告创意
-        
+
         Args:
             creative: {
                 "headline": "New Headline",
@@ -49,7 +49,7 @@ class SBCreativesAPI(_GenBase):
     ) -> JSONData:
         """
         获取标题建议
-        
+
         AI生成的广告标题推荐
         """
         result = await self.post("/sb/recommendations/creative/headline", json_data={

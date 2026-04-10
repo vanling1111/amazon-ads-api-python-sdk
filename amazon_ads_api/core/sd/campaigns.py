@@ -25,9 +25,9 @@ class SDCampaignsAPI(_GenBase):
     ) -> JSONData:
         """
         获取SD Campaign列表
-        
+
         SD API 使用 GET 请求，与 SP 不同
-        
+
         Args:
             state_filter: enabled, paused, archived
             name_filter: 名称过滤
@@ -42,7 +42,7 @@ class SDCampaignsAPI(_GenBase):
             params["startIndex"] = next_token
 
         result = await self.get("/sd/campaigns", params=params)
-        
+
         # SD API 直接返回数组，不是对象
         if isinstance(result, list):
             return {"campaigns": result, "totalResults": len(result)}
@@ -56,7 +56,7 @@ class SDCampaignsAPI(_GenBase):
     async def create_campaigns(self, campaigns: JSONList) -> JSONData:
         """
         批量创建SD Campaign
-        
+
         Args:
             campaigns: [
                 {
@@ -69,14 +69,14 @@ class SDCampaignsAPI(_GenBase):
                     "costType": "cpc"
                 }
             ]
-        
+
         Tactics:
         - T00020: 受众(Views)
         - T00030: 受众(Purchases)
         - T00001: 上下文定向
         """
         result = await self.post("/sd/campaigns", json_data=campaigns)
-        
+
         # SD API返回数组格式的207 Multi-Status响应，需要转换为标准格式
         if isinstance(result, list):
             # 解析数组中的success和error项
@@ -267,7 +267,7 @@ class SDCampaignsAPI(_GenBase):
     async def create_ad_groups(self, ad_groups: JSONList) -> JSONData:
         """
         批量创建SD Ad Group
-        
+
         Args:
             ad_groups: [
                 {
@@ -362,7 +362,7 @@ class SDCampaignsAPI(_GenBase):
     async def create_product_ads(self, product_ads: JSONList) -> JSONData:
         """
         批量创建SD Product Ad
-        
+
         Args:
             product_ads: [
                 {
@@ -395,7 +395,7 @@ class SDCampaignsAPI(_GenBase):
     ) -> JSONData:
         """
         获取Campaign预测
-        
+
         预测给定设置下的Impressions、Clicks等
         """
         result = await self.post("/sd/forecasts", json_data={
@@ -447,7 +447,7 @@ class SDCampaignsAPI(_GenBase):
     ) -> JSONData:
         """
         快速创建受众定向Campaign
-        
+
         Args:
             name: Campaign名称
             daily_budget: 日预算
@@ -470,7 +470,7 @@ class SDCampaignsAPI(_GenBase):
     ) -> JSONData:
         """
         快速创建上下文定向Campaign
-        
+
         Args:
             name: Campaign名称
             daily_budget: 日预算

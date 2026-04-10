@@ -16,7 +16,7 @@ except ImportError:
 class SBThemesAPI(_GenBase):
     """
     SB Themes API (全异步)
-    
+
     API Tier: L1
     Source: OpenAPI
     OpenAPI_SPEC: SponsoredBrands_v3.yaml
@@ -26,10 +26,10 @@ class SBThemesAPI(_GenBase):
     async def create_themes(self, themes: JSONList) -> JSONData:
         """
         创建主题定向
-        
+
         官方端点: POST /sb/themes
         官方文档: SponsoredBrands_v3.yaml
-        
+
         Args:
             themes: 主题定向列表
         """
@@ -39,10 +39,10 @@ class SBThemesAPI(_GenBase):
     async def update_themes(self, themes: JSONList) -> JSONData:
         """
         更新主题定向
-        
+
         官方端点: PUT /sb/themes
         官方文档: SponsoredBrands_v3.yaml
-        
+
         Args:
             themes: 主题定向列表
         """
@@ -59,10 +59,10 @@ class SBThemesAPI(_GenBase):
     ) -> JSONData:
         """
         获取主题定向列表
-        
+
         官方端点: POST /sb/themes/list
         官方文档: SponsoredBrands_v3.yaml
-        
+
         Args:
             campaign_id_filter: Campaign ID 过滤
             ad_group_id_filter: Ad Group ID 过滤

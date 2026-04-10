@@ -6,7 +6,7 @@ OpenAPI 验证的核心 API，可信度最高，生产可用。
 使用方式:
     from amazon_ads_api.core.sp import SPCampaignsAPI
     from amazon_ads_api.core.sb import SBCampaignsAPI
-    
+
 或通过 Client:
     client.sp.campaigns.list()
 

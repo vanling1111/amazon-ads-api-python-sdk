@@ -59,7 +59,7 @@ class RASAdGroupsAPI(_GenBase):
         ad_group_ids: list[str],
     ) -> JSONData:
         """删除广告组
-        
+
         官方请求格式: {"adGroupIdFilter": {"include": [...]}}
         """
         result = await self.post(

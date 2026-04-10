@@ -12,7 +12,7 @@ Localization API - 本地化 (异步版本)
 """
 
 from typing import Any
-from amazon_ads_api.base import JSONData, JSONList
+from amazon_ads_api.base import JSONData
 
 try:
     from amazon_ads_api.generated.clients.clients_localization import LocalizationClient as _GenBase
@@ -23,12 +23,12 @@ except ImportError:
 class LocalizationAPI(_GenBase):
     """
     Localization API - 广告内容本地化 (全异步)
-    
+
     API Tier: L1
     Source: OpenAPI
     OpenAPI Spec: Localization_prod_3p.json
     Stability: 高
-    
+
     官方端点 (共4个):
     - POST /currencies/localize - 本地化货币
     - POST /keywords/localize - 本地化关键词
@@ -42,10 +42,10 @@ class LocalizationAPI(_GenBase):
     ) -> JSONData:
         """
         本地化货币
-        
+
         官方端点: POST /currencies/localize
         官方规范: Localization_prod_3p.json
-        
+
         Args:
             localize_currency_requests: 货币本地化请求列表
                 [
@@ -56,7 +56,7 @@ class LocalizationAPI(_GenBase):
                         ...
                     }
                 ]
-            
+
         Returns:
             本地化结果
         """
@@ -72,10 +72,10 @@ class LocalizationAPI(_GenBase):
     ) -> JSONData:
         """
         本地化关键词
-        
+
         官方端点: POST /keywords/localize
         官方规范: Localization_prod_3p.json
-        
+
         Args:
             localize_keyword_requests: 关键词本地化请求列表
                 [
@@ -86,7 +86,7 @@ class LocalizationAPI(_GenBase):
                         ...
                     }
                 ]
-            
+
         Returns:
             本地化结果 (包含翻译后的关键词)
         """
@@ -102,10 +102,10 @@ class LocalizationAPI(_GenBase):
     ) -> JSONData:
         """
         本地化产品
-        
+
         官方端点: POST /products/localize
         官方规范: Localization_prod_3p.json
-        
+
         Args:
             localize_product_requests: 产品本地化请求列表
                 [
@@ -116,7 +116,7 @@ class LocalizationAPI(_GenBase):
                         ...
                     }
                 ]
-            
+
         Returns:
             本地化结果 (包含目标市场的产品映射)
         """
@@ -132,10 +132,10 @@ class LocalizationAPI(_GenBase):
     ) -> JSONData:
         """
         本地化定向表达式
-        
+
         官方端点: POST /targetingExpression/localize
         官方规范: Localization_prod_3p.json
-        
+
         Args:
             localize_targeting_expression_requests: 定向表达式本地化请求列表
                 [
@@ -146,7 +146,7 @@ class LocalizationAPI(_GenBase):
                         ...
                     }
                 ]
-            
+
         Returns:
             本地化结果 (包含翻译后的定向表达式)
         """
@@ -166,12 +166,12 @@ class LocalizationAPI(_GenBase):
     ) -> str | None:
         """
         翻译单个关键词
-        
+
         Args:
             keyword: 源关键词
             source_locale: 源语言区域 (如 "en_US")
             target_locale: 目标语言区域 (如 "de_DE")
-            
+
         Returns:
             翻译后的关键词，失败返回 None
         """
@@ -195,12 +195,12 @@ class LocalizationAPI(_GenBase):
     ) -> str | None:
         """
         获取产品在目标市场的 ASIN
-        
+
         Args:
             asin: 源 ASIN
             source_marketplace_id: 源市场 ID
             target_marketplace_id: 目标市场 ID
-            
+
         Returns:
             目标市场的 ASIN，未找到返回 None
         """
@@ -224,12 +224,12 @@ class LocalizationAPI(_GenBase):
     ) -> float | None:
         """
         货币转换
-        
+
         Args:
             amount: 金额
             source_currency: 源货币 (如 "USD")
             target_currency: 目标货币 (如 "EUR")
-            
+
         Returns:
             转换后的金额，失败返回 None
         """

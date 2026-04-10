@@ -24,16 +24,16 @@ import uuid
 class AudiencesDiscoveryAPI(_GenBase):
     """
     Audiences Discovery API (全异步)
-    
+
     官方端点 (共4个):
     - POST /audiences/list - 获取受众列表
     - POST /audiences/taxonomy/list - 获取分类树
     - PUT /dsp/audiences/edit - 编辑 DSP 受众
     - POST /dsp/audiences/delete - 删除 DSP 受众
     """
-    
+
     # ==================== Discovery ====================
-    
+
     async def fetch_taxonomy(
         self,
         ad_type: str,
@@ -45,10 +45,10 @@ class AudiencesDiscoveryAPI(_GenBase):
     ) -> JSONData:
         """
         浏览受众类别分类树
-        
+
         官方端点: POST /audiences/taxonomy/list
         官方规范: Audiences.json
-        
+
         Args:
             ad_type: 广告类型 (必填)
                 - "DSP": DSP 广告
@@ -61,7 +61,7 @@ class AudiencesDiscoveryAPI(_GenBase):
             advertiser_id: 广告商ID (DSP 类型必填，SD 类型可选)
             next_token: 分页令牌
             max_results: 每页最大数量 (1-250, 默认250)
-        
+
         Returns:
             {
                 "categories": [{"category": "string", "audienceCount": 100}],
@@ -72,25 +72,25 @@ class AudiencesDiscoveryAPI(_GenBase):
         request_body: JSONData = {
             "adType": ad_type,
         }
-        
+
         if category_path:
             request_body["categoryPath"] = category_path
         if countries:
             request_body["countries"] = countries
-        
+
         params: dict[str, Any] = {"maxResults": max_results}
         if advertiser_id:
             params["advertiserId"] = advertiser_id
         if next_token:
             params["nextToken"] = next_token
-            
+
         result = await self.post(
             "/audiences/taxonomy/list", 
             json_data=request_body,
             params=params,
         )
         return result if isinstance(result, dict) else {"categories": []}
-    
+
     async def list_audiences(
         self,
         ad_type: str,
@@ -103,10 +103,10 @@ class AudiencesDiscoveryAPI(_GenBase):
     ) -> JSONData:
         """
         根据筛选条件获取受众片段列表
-        
+
         官方端点: POST /audiences/list
         官方规范: Audiences.json
-        
+
         Args:
             ad_type: 广告类型 (必填)
                 - "DSP": DSP 广告
@@ -124,7 +124,7 @@ class AudiencesDiscoveryAPI(_GenBase):
             can_target: 仅返回可定向的受众 (默认 false)
             max_results: 每页最大数量 (1-250, 默认10)
             next_token: 分页令牌
-        
+
         Returns:
             {
                 "audiences": [...],
@@ -135,12 +135,12 @@ class AudiencesDiscoveryAPI(_GenBase):
         request_body: JSONData = {
             "adType": ad_type,
         }
-        
+
         if filters:
             request_body["filters"] = filters
         if countries:
             request_body["countries"] = countries
-        
+
         params: dict[str, Any] = {
             "maxResults": max_results,
             "canTarget": str(can_target).lower(),
@@ -149,16 +149,16 @@ class AudiencesDiscoveryAPI(_GenBase):
             params["advertiserId"] = advertiser_id
         if next_token:
             params["nextToken"] = next_token
-            
+
         result = await self.post(
             "/audiences/list", 
             json_data=request_body,
             params=params,
         )
         return result if isinstance(result, dict) else {"audiences": []}
-    
+
     # ==================== DSP Audiences Management ====================
-    
+
     async def edit_dsp_audience(
         self,
         advertiser_id: str,
@@ -172,10 +172,10 @@ class AudiencesDiscoveryAPI(_GenBase):
     ) -> JSONData:
         """
         编辑 DSP 受众
-        
+
         官方端点: PUT /dsp/audiences/edit
         官方规范: Audiences.json
-        
+
         Args:
             advertiser_id: 广告商ID (Header: AdvertiserId)
             audience_id: 受众ID (必填)
@@ -197,7 +197,7 @@ class AudiencesDiscoveryAPI(_GenBase):
                     "clause": "INCLUDE",
                     "operator": "ONE_OF"
                 }]
-        
+
         Returns:
             {
                 "failed": [...],
@@ -209,7 +209,7 @@ class AudiencesDiscoveryAPI(_GenBase):
             "audienceType": audience_type,
             "idempotencyKey": idempotency_key or str(uuid.uuid4()),
         }
-        
+
         if name:
             edit_item["name"] = name
         if description:
@@ -218,11 +218,11 @@ class AudiencesDiscoveryAPI(_GenBase):
             edit_item["lookback"] = lookback
         if rules:
             edit_item["rules"] = rules
-        
+
         request_body: JSONData = {
             "dspAudienceEditRequestItems": [edit_item]
         }
-        
+
         result = await self.put(
             "/dsp/audiences/edit", 
             json_data=request_body,
@@ -230,7 +230,7 @@ class AudiencesDiscoveryAPI(_GenBase):
             headers={"AdvertiserId": advertiser_id},
         )
         return result if isinstance(result, dict) else {"success": [], "failed": []}
-    
+
     async def delete_dsp_audience(
         self,
         advertiser_id: str,
@@ -239,22 +239,22 @@ class AudiencesDiscoveryAPI(_GenBase):
     ) -> JSONData:
         """
         删除 DSP 受众
-        
+
         官方端点: POST /dsp/audiences/delete
         官方规范: Audiences.json
-        
+
         仅支持以下类型的受众:
         - PRODUCT_PURCHASES
         - PRODUCT_VIEWS
         - PRODUCT_SIMS
         - PRODUCT_SEARCH
         - COMBINED_AUDIENCE
-        
+
         Args:
             advertiser_id: 广告商ID (Header: AdvertiserId)
             audience_id: 要删除的受众ID
             idempotency_key: 请求的唯一标识 (可选，自动生成)
-        
+
         Returns:
             {
                 "failed": [...],
@@ -265,11 +265,11 @@ class AudiencesDiscoveryAPI(_GenBase):
             "audienceId": audience_id,
             "idempotencyKey": idempotency_key or str(uuid.uuid4()),
         }
-        
+
         request_body: JSONData = {
             "dspAudienceDeleteRequestItems": [delete_item]
         }
-        
+
         result = await self.post(
             "/dsp/audiences/delete", 
             json_data=request_body,
@@ -277,9 +277,9 @@ class AudiencesDiscoveryAPI(_GenBase):
             headers={"AdvertiserId": advertiser_id},
         )
         return result if isinstance(result, dict) else {"success": [], "failed": []}
-    
+
     # ==================== 便捷方法 ====================
-    
+
     async def list_all_audiences(
         self,
         ad_type: str,
@@ -291,7 +291,7 @@ class AudiencesDiscoveryAPI(_GenBase):
     ) -> JSONList:
         """
         获取所有受众（自动分页）
-        
+
         Args:
             ad_type: 广告类型 ("DSP", "SD", "ST")
             filters: 过滤条件
@@ -299,13 +299,13 @@ class AudiencesDiscoveryAPI(_GenBase):
             advertiser_id: 广告商ID
             can_target: 仅返回可定向受众
             max_items: 最大返回数量
-        
+
         Returns:
             所有受众的列表
         """
         all_audiences: JSONList = []
         next_token = None
-        
+
         while len(all_audiences) < max_items:
             result = await self.list_audiences(
                 ad_type=ad_type,
@@ -316,16 +316,16 @@ class AudiencesDiscoveryAPI(_GenBase):
                 max_results=min(250, max_items - len(all_audiences)),
                 next_token=next_token,
             )
-            
+
             audiences = result.get("audiences", [])
             all_audiences.extend(audiences)
-            
+
             next_token = result.get("nextToken")
             if not next_token or not audiences:
                 break
-        
+
         return all_audiences[:max_items]
-    
+
     async def search_audiences_by_name(
         self,
         ad_type: str,
@@ -335,13 +335,13 @@ class AudiencesDiscoveryAPI(_GenBase):
     ) -> JSONList:
         """
         按名称搜索受众（广泛匹配，非精确匹配）
-        
+
         Args:
             ad_type: 广告类型
             name: 受众名称（广泛匹配）
             countries: 国家代码列表
             advertiser_id: 广告商ID
-        
+
         Returns:
             匹配的受众列表
         """
@@ -353,7 +353,7 @@ class AudiencesDiscoveryAPI(_GenBase):
             advertiser_id=advertiser_id,
         )
         return result.get("audiences", [])
-    
+
     async def get_audience_by_id(
         self,
         ad_type: str,
@@ -362,12 +362,12 @@ class AudiencesDiscoveryAPI(_GenBase):
     ) -> JSONData | None:
         """
         按ID获取受众
-        
+
         Args:
             ad_type: 广告类型
             audience_id: 受众ID
             advertiser_id: 广告商ID
-        
+
         Returns:
             受众详情或 None
         """

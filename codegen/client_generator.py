@@ -9,7 +9,6 @@ typed response models (from the generated models module).
 from __future__ import annotations
 
 import re
-from typing import Any
 
 from .spec_parser import ParsedSpec, Operation, ref_to_name
 from .model_generator import _safe_class_name, _camel_to_snake, _sanitize_str
@@ -99,10 +98,6 @@ def _generate_method(op: Operation, models_module: str) -> list[str]:
     if has_body and op.request_body_ref:
         req_type = _safe_class_name(ref_to_name(op.request_body_ref))
 
-    resp_type = None
-    if op.response_ref:
-        resp_type = _safe_class_name(ref_to_name(op.response_ref))
-
     sig_parts = ["self"]
     for pp in path_params:
         sig_parts.append(f"{_camel_to_snake(pp)}: str")
@@ -123,9 +118,9 @@ def _generate_method(op: Operation, models_module: str) -> list[str]:
     lines.append(f"    async def {method_name}({sig}) -> {return_type}:")
     lines.append(f'        """{op.method} {op.path}')
     if desc:
-        lines.append(f"")
+        lines.append("")
         lines.append(f"        {desc}")
-    lines.append(f'        """')
+    lines.append('        """')
 
     path_expr = op.path
     if path_params:

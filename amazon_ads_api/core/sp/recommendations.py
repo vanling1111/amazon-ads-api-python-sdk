@@ -24,7 +24,7 @@ class SPRecommendationsAPI(_GenBase):
     ) -> JSONData:
         """
         获取竞价建议
-        
+
         Args:
             ad_group_id: 广告组ID
             keywords: [{"keyword": "running shoes", "matchType": "BROAD"}]
@@ -42,7 +42,7 @@ class SPRecommendationsAPI(_GenBase):
     async def get_keyword_bid_recommendations(self, keyword_ids: list[str]) -> JSONList:
         """
         获取已有关键词竞价建议
-        
+
         Args:
             keyword_ids: 关键词ID列表
         """
@@ -52,7 +52,7 @@ class SPRecommendationsAPI(_GenBase):
     async def get_target_bid_recommendations(self, target_ids: list[str]) -> JSONList:
         """
         获取已有Target竞价建议
-        
+
         Args:
             target_ids: Target ID列表
         """
@@ -70,7 +70,7 @@ class SPRecommendationsAPI(_GenBase):
     ) -> JSONData:
         """
         获取关键词建议
-        
+
         Args:
             ad_group_id: 广告组ID（二选一）
             asins: ASIN列表（二选一）
@@ -96,7 +96,7 @@ class SPRecommendationsAPI(_GenBase):
     ) -> JSONData:
         """
         获取按相关性排序的关键词建议
-        
+
         Args:
             asins: ASIN列表
             max_recommendations: 最大建议数
@@ -117,7 +117,7 @@ class SPRecommendationsAPI(_GenBase):
     ) -> JSONData:
         """
         获取产品定向建议
-        
+
         Args:
             ad_group_id: 广告组ID
             asins: 基于这些ASIN推荐相关产品
@@ -139,7 +139,7 @@ class SPRecommendationsAPI(_GenBase):
     ) -> JSONData:
         """
         获取品类定向建议
-        
+
         Args:
             asins: ASIN列表
             max_recommendations: 最大建议数
@@ -159,7 +159,7 @@ class SPRecommendationsAPI(_GenBase):
     ) -> JSONData:
         """
         获取综合建议（一站式获取所有建议）
-        
+
         Args:
             campaign_id: Campaign ID
             recommendation_types: [
@@ -183,7 +183,7 @@ class SPRecommendationsAPI(_GenBase):
     ) -> JSONData:
         """
         获取否定关键词建议
-        
+
         基于Search Term Report分析，推荐应该否定的关键词
         """
         result = await self.post("/sp/negativeKeywords/recommendations", json_data={
@@ -199,7 +199,7 @@ class SPRecommendationsAPI(_GenBase):
     ) -> JSONData:
         """
         获取否定定向建议
-        
+
         推荐应该排除的ASIN/品类
         """
         result = await self.post("/sp/negativeTargets/recommendations", json_data={
@@ -217,7 +217,7 @@ class SPRecommendationsAPI(_GenBase):
     ) -> JSONData:
         """
         获取ASIN（产品）推荐
-        
+
         推荐应该添加到广告组的产品
         """
         body: JSONData = {}
@@ -238,7 +238,7 @@ class SPRecommendationsAPI(_GenBase):
     ) -> JSONData:
         """
         获取基于主题的竞价建议（新版）
-        
+
         Args:
             ad_group_id: 广告组ID
             keywords: [
@@ -263,7 +263,7 @@ class SPRecommendationsAPI(_GenBase):
     ) -> JSONData:
         """
         应用关键词建议
-        
+
         Args:
             ad_group_id: 广告组ID
             recommendations: 从get_keyword_recommendations获取的建议
@@ -287,7 +287,7 @@ class SPRecommendationsAPI(_GenBase):
     ) -> JSONData:
         """
         应用竞价建议
-        
+
         Args:
             recommendations: [{"keywordId": "xxx", "suggestedBid": 1.5}]
         """

@@ -7,7 +7,7 @@ Title:  Rule-Based Audiences
 from __future__ import annotations
 
 from enum import StrEnum
-from typing import Any, Optional, Union
+from typing import Any, Optional
 
 from pydantic import BaseModel, Field
 

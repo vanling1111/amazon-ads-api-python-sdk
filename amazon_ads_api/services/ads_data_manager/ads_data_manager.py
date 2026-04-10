@@ -5,7 +5,7 @@ Ads Data Manager API - 广告数据管理器 (异步版本)
 用于管理和上传第一方数据用于广告定向
 """
 
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, Optional
 from amazon_ads_api.base import JSONData
 
 try:
@@ -17,15 +17,15 @@ except ImportError:
 class AdsDataManagerAPI(_GenBase):
     """
     Ads Data Manager API (全异步)
-    
+
     用于管理广告商的第一方数据，包括：
     - 客户数据上传
     - 数据段管理
     - 匹配率报告
     """
-    
+
     # ==================== 数据源管理 ====================
-    
+
     async def create_data_source(
         self,
         *,
@@ -40,13 +40,13 @@ class AdsDataManagerAPI(_GenBase):
         }
         if description:
             request_body["description"] = description
-            
+
         result = await self.post(
             "/adsDataManager/dataSources",
             json_data=request_body
         )
         return result if isinstance(result, dict) else {}
-    
+
     async def list_data_sources(
         self,
         *,
@@ -59,7 +59,7 @@ class AdsDataManagerAPI(_GenBase):
             params["nextToken"] = next_token
         result = await self.get("/adsDataManager/dataSources", params=params)
         return result if isinstance(result, dict) else {"dataSources": []}
-    
+
     async def get_data_source(
         self,
         data_source_id: str,
@@ -67,7 +67,7 @@ class AdsDataManagerAPI(_GenBase):
         """获取数据源详情"""
         result = await self.get(f"/adsDataManager/dataSources/{data_source_id}")
         return result if isinstance(result, dict) else {}
-    
+
     async def update_data_source(
         self,
         data_source_id: str,
@@ -81,13 +81,13 @@ class AdsDataManagerAPI(_GenBase):
             request_body["name"] = name
         if description:
             request_body["description"] = description
-            
+
         result = await self.put(
             f"/adsDataManager/dataSources/{data_source_id}",
             json_data=request_body
         )
         return result if isinstance(result, dict) else {}
-    
+
     async def delete_data_source(
         self,
         data_source_id: str,
@@ -95,9 +95,9 @@ class AdsDataManagerAPI(_GenBase):
         """删除数据源"""
         result = await self.delete(f"/adsDataManager/dataSources/{data_source_id}")
         return result if isinstance(result, dict) else {}
-    
+
     # ==================== 数据上传 ====================
-    
+
     async def create_upload_url(
         self,
         data_source_id: str,
@@ -114,7 +114,7 @@ class AdsDataManagerAPI(_GenBase):
             }
         )
         return result if isinstance(result, dict) else {}
-    
+
     async def list_uploads(
         self,
         data_source_id: str,
@@ -131,7 +131,7 @@ class AdsDataManagerAPI(_GenBase):
             params=params
         )
         return result if isinstance(result, dict) else {"uploads": []}
-    
+
     async def get_upload_status(
         self,
         data_source_id: str,
@@ -142,9 +142,9 @@ class AdsDataManagerAPI(_GenBase):
             f"/adsDataManager/dataSources/{data_source_id}/uploads/{upload_id}"
         )
         return result if isinstance(result, dict) else {}
-    
+
     # ==================== 数据段管理 ====================
-    
+
     async def create_segment(
         self,
         data_source_id: str,
@@ -160,13 +160,13 @@ class AdsDataManagerAPI(_GenBase):
         }
         if description:
             request_body["description"] = description
-            
+
         result = await self.post(
             f"/adsDataManager/dataSources/{data_source_id}/segments",
             json_data=request_body
         )
         return result if isinstance(result, dict) else {}
-    
+
     async def list_segments(
         self,
         data_source_id: str,
@@ -183,7 +183,7 @@ class AdsDataManagerAPI(_GenBase):
             params=params
         )
         return result if isinstance(result, dict) else {"segments": []}
-    
+
     async def get_segment(
         self,
         data_source_id: str,
@@ -194,7 +194,7 @@ class AdsDataManagerAPI(_GenBase):
             f"/adsDataManager/dataSources/{data_source_id}/segments/{segment_id}"
         )
         return result if isinstance(result, dict) else {}
-    
+
     async def delete_segment(
         self,
         data_source_id: str,
@@ -205,9 +205,9 @@ class AdsDataManagerAPI(_GenBase):
             f"/adsDataManager/dataSources/{data_source_id}/segments/{segment_id}"
         )
         return result if isinstance(result, dict) else {}
-    
+
     # ==================== 匹配率报告 ====================
-    
+
     async def get_match_rate_report(
         self,
         data_source_id: str,

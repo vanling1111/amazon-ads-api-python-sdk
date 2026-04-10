@@ -20,7 +20,7 @@ GLOBAL_KEYWORD_RECOMMENDATIONS_CONTENT_TYPE = "application/vnd.spglobalkeywordre
 class SPGlobalRecommendationsAPI(_GenBase):
     """
     SP Global Recommendations API (全异步)
-    
+
     提供跨账号的全局推荐，无需特定Campaign/AdGroup。
     """
 
@@ -31,12 +31,12 @@ class SPGlobalRecommendationsAPI(_GenBase):
     ) -> JSONData:
         """
         获取全局目标竞价建议
-        
+
         官方端点: POST /sp/global/targets/bid/recommendations
-        
+
         该端点允许在没有Campaign的情况下获取目标竞价建议。
         适用于前期规划和竞价评估。
-        
+
         Args:
             targets: [
                 {
@@ -68,12 +68,12 @@ class SPGlobalRecommendationsAPI(_GenBase):
     ) -> JSONData:
         """
         获取全局关键词推荐列表
-        
+
         官方端点: POST /sp/global/targets/keywords/recommendations/list
-        
+
         该端点允许在没有Campaign的情况下获取关键词推荐。
         适用于前期规划和关键词研究。
-        
+
         Args:
             asins: 要分析的ASIN列表
             marketplace_id: 市场ID
@@ -132,7 +132,7 @@ class SPGlobalRecommendationsAPI(_GenBase):
     ) -> JSONData:
         """
         获取特定类目的竞价建议
-        
+
         便捷方法，封装了 get_global_bid_recommendations
         """
         targets = [
@@ -152,7 +152,7 @@ class SPGlobalRecommendationsAPI(_GenBase):
     ) -> JSONData:
         """
         获取特定ASIN的竞价建议
-        
+
         便捷方法，封装了 get_global_bid_recommendations
         """
         targets = [

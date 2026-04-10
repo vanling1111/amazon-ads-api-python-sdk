@@ -5,7 +5,7 @@ SB定向管理（品类、品牌推荐）
 官方文档: https://advertising.amazon.com/API/docs/en-us/sponsored-brands/4-0/openapi
 """
 
-from amazon_ads_api.base import JSONData, JSONList
+from amazon_ads_api.base import JSONData
 
 try:
     from amazon_ads_api.generated.clients.clients_sb import SbClient as _GenBase
@@ -24,7 +24,7 @@ class SBTargetingAPI(_GenBase):
     ) -> JSONData:
         """
         获取可定向的品类列表
-        
+
         Args:
             parent_category_id: 父品类ID（用于获取子品类）
         """
@@ -41,7 +41,7 @@ class SBTargetingAPI(_GenBase):
     ) -> JSONData:
         """
         获取品类细化选项
-        
+
         返回可用于细化定向的品牌、价格范围、评分等
         """
         result = await self.get(f"/sb/targets/categories/{category_id}/refinements")
@@ -54,7 +54,7 @@ class SBTargetingAPI(_GenBase):
     ) -> JSONData:
         """
         获取品类中的产品数量
-        
+
         Args:
             category_id: 品类ID
             refinements: 细化条件
@@ -75,7 +75,7 @@ class SBTargetingAPI(_GenBase):
     ) -> JSONData:
         """
         获取否定品牌推荐
-        
+
         Args:
             ad_group_id: Ad Group ID
             campaign_id: Campaign ID
@@ -103,12 +103,12 @@ class SBTargetingAPI(_GenBase):
         # 获取根品类列表并过滤
         result = await self.list_targetable_categories()
         categories = result.get("categories", [])
-        
+
         # 简单文本匹配过滤
         filtered = [
             c for c in categories 
             if query.lower() in c.get("name", "").lower()
         ][:max_results]
-        
+
         return {"categories": filtered}
 

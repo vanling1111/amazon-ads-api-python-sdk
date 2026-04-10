@@ -18,10 +18,10 @@ except ImportError:
 class LocationsAPI(_GenBase):
     """
     Locations API (全异步)
-    
+
     官方端点 (共1个):
     - POST /locations/list - 获取位置列表
-    
+
     注意:
     - 目前仅支持美国市场 (US only)
     - 支持按 locationId、name、category 过滤
@@ -35,9 +35,9 @@ class LocationsAPI(_GenBase):
     ) -> JSONData:
         """
         获取位置列表
-        
+
         POST /locations/list
-        
+
         Args:
             filters: 过滤条件列表
                 [
@@ -45,7 +45,7 @@ class LocationsAPI(_GenBase):
                     {"field": "name", "values": ["New York"]},  # 模糊搜索
                     {"field": "category", "values": ["CITY"]}
                 ]
-                
+
                 field 支持:
                 - locationId: 位置 ID
                 - name: 位置名称（模糊搜索）
@@ -57,7 +57,7 @@ class LocationsAPI(_GenBase):
                     - POSTAL_CODE: 邮编
             max_results: 每页结果数 (1-2000，默认 10)
             next_token: 分页 token
-        
+
         Returns:
             {
                 "locations": [
@@ -71,16 +71,16 @@ class LocationsAPI(_GenBase):
             }
         """
         params: JSONData = {}
-        
+
         if max_results != 10:
             params["maxResults"] = max_results
         if next_token:
             params["nextToken"] = next_token
-        
+
         body: JSONData = {}
         if filters:
             body["filters"] = filters
-        
+
         result = await self.post(
             "/locations/list",
             json_data=body if body else None,
@@ -98,16 +98,16 @@ class LocationsAPI(_GenBase):
     ) -> JSONList:
         """
         按名称搜索位置（模糊搜索）
-        
+
         Args:
             name: 位置名称
             category: 可选，限制类别
         """
         filters = [{"field": "name", "values": [name]}]
-        
+
         if category:
             filters.append({"field": "category", "values": [category.upper()]})
-        
+
         result = await self.list_locations(filters=filters, max_results=max_results)
         return result.get("locations", [])
 
@@ -127,7 +127,7 @@ class LocationsAPI(_GenBase):
         filters = [{"field": "category", "values": ["CITY"]}]
         if name_query:
             filters.append({"field": "name", "values": [name_query]})
-        
+
         result = await self.list_locations(filters=filters, max_results=max_results)
         return result.get("locations", [])
 
@@ -136,7 +136,7 @@ class LocationsAPI(_GenBase):
         filters = [{"field": "category", "values": ["STATE"]}]
         if name_query:
             filters.append({"field": "name", "values": [name_query]})
-        
+
         result = await self.list_locations(filters=filters, max_results=max_results)
         return result.get("locations", [])
 
@@ -145,7 +145,7 @@ class LocationsAPI(_GenBase):
         filters = [{"field": "category", "values": ["DMA"]}]
         if name_query:
             filters.append({"field": "name", "values": [name_query]})
-        
+
         result = await self.list_locations(filters=filters, max_results=max_results)
         return result.get("locations", [])
 
@@ -154,7 +154,7 @@ class LocationsAPI(_GenBase):
         filters = [{"field": "category", "values": ["POSTAL_CODE"]}]
         if name_query:
             filters.append({"field": "name", "values": [name_query]})
-        
+
         result = await self.list_locations(filters=filters, max_results=max_results)
         return result.get("locations", [])
 
@@ -165,26 +165,26 @@ class LocationsAPI(_GenBase):
     ) -> JSONList:
         """
         获取所有位置（自动处理分页）
-        
+
         Args:
             filters: 过滤条件
             max_pages: 最大页数限制
         """
         all_locations: JSONList = []
         next_token = None
-        
+
         for _ in range(max_pages):
             result = await self.list_locations(
                 filters=filters,
                 max_results=2000,
                 next_token=next_token
             )
-            
+
             locations = result.get("locations", [])
             all_locations.extend(locations)
-            
+
             next_token = result.get("nextToken")
             if not next_token:
                 break
-        
+
         return all_locations

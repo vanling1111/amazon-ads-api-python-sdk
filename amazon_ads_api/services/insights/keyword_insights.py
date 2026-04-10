@@ -21,7 +21,7 @@ except ImportError:
 class KeywordInsightsAPI(_GenBase):
     """
     Keyword Insights API (全异步)
-    
+
     基于官方 SP/SB Keyword Recommendations API
     """
 
@@ -36,15 +36,15 @@ class KeywordInsightsAPI(_GenBase):
     ) -> JSONData:
         """
         获取 SP 关键词推荐 (官方 API v5)
-        
+
         POST /sp/targets/keywords/recommendations
-        
+
         Args:
             asins: 产品ASIN列表
             max_recommendations: 最大推荐数量 (最大 200)
             sort_dimension: 排序维度 CLICKS | CONVERSIONS | DEFAULT
             locale: 语言 (如 "en-US")
-        
+
         Returns:
             {
                 "keywordTargetList": [
@@ -71,7 +71,7 @@ class KeywordInsightsAPI(_GenBase):
         }
         if locale:
             body["locale"] = locale
-        
+
         result = await self.post(
             "/sp/targets/keywords/recommendations",
             json_data=body,
@@ -90,9 +90,9 @@ class KeywordInsightsAPI(_GenBase):
     ) -> JSONData:
         """
         获取广告组的 SP 关键词推荐
-        
+
         POST /sp/targets/keywords/recommendations
-        
+
         Args:
             campaign_id: Campaign ID
             ad_group_id: Ad Group ID
@@ -109,7 +109,7 @@ class KeywordInsightsAPI(_GenBase):
         }
         if locale:
             body["locale"] = locale
-        
+
         result = await self.post(
             "/sp/targets/keywords/recommendations",
             json_data=body,
@@ -127,9 +127,9 @@ class KeywordInsightsAPI(_GenBase):
     ) -> JSONData:
         """
         获取 SP 全球关键词推荐 (跨市场)
-        
+
         POST /sp/global/targets/keywords/recommendations/list
-        
+
         Args:
             product_details_list: [
                 {"asin": "B001", "catalogSourceCountryCode": "US"},
@@ -146,7 +146,7 @@ class KeywordInsightsAPI(_GenBase):
         }
         if ad_group_id:
             body["adGroupId"] = ad_group_id
-        
+
         result = await self.post(
             "/sp/global/targets/keywords/recommendations/list",
             json_data=body,
@@ -164,9 +164,9 @@ class KeywordInsightsAPI(_GenBase):
     ) -> JSONData:
         """
         获取 SB 关键词推荐 (官方 API)
-        
+
         POST /sb/recommendations/keyword
-        
+
         Args:
             asins: ASIN列表 (与 url 二选一)
             url: Landing page URL (与 asins 二选一)
@@ -181,7 +181,7 @@ class KeywordInsightsAPI(_GenBase):
             body["url"] = url
         else:
             raise ValueError("必须提供 asins 或 url 之一")
-        
+
         result = await self.post(
             "/sb/recommendations/keyword",
             json_data=body,
@@ -197,9 +197,9 @@ class KeywordInsightsAPI(_GenBase):
     ) -> JSONData:
         """
         获取 SP 类目推荐
-        
+
         POST /sp/targets/categories/recommendations
-        
+
         Args:
             asins: ASIN列表
             max_recommendations: 最大推荐数
@@ -208,7 +208,7 @@ class KeywordInsightsAPI(_GenBase):
             "asins": asins,
             "maxRecommendations": max_recommendations,
         }
-        
+
         result = await self.post(
             "/sp/targets/categories/recommendations",
             json_data=body,
@@ -224,9 +224,9 @@ class KeywordInsightsAPI(_GenBase):
     ) -> JSONData:
         """
         获取 SP 关键词竞价建议
-        
+
         POST /sp/keywords/bids/recommendations
-        
+
         Args:
             ad_group_id: Ad Group ID
             keywords: [
@@ -238,7 +238,7 @@ class KeywordInsightsAPI(_GenBase):
             "adGroupId": ad_group_id,
             "keywords": keywords,
         }
-        
+
         result = await self.post(
             "/sp/keywords/bids/recommendations",
             json_data=body,
@@ -255,13 +255,13 @@ class KeywordInsightsAPI(_GenBase):
     ) -> JSONList:
         """
         获取产品的关键词推荐 (便捷方法)
-        
+
         综合使用 SP Keyword Recommendations API
-        
+
         Args:
             asins: ASIN列表
             max_recommendations: 最大推荐数
-        
+
         Returns:
             推荐关键词列表
         """
@@ -277,19 +277,19 @@ class KeywordInsightsAPI(_GenBase):
     ) -> JSONData:
         """
         获取单个ASIN的所有推荐
-        
+
         包括关键词推荐和类目推荐
         """
         keywords = await self.get_sp_keyword_recommendations(
             asins=[asin],
             max_recommendations=100,
         )
-        
+
         categories = await self.get_sp_category_recommendations(
             asins=[asin],
             max_recommendations=50,
         )
-        
+
         return {
             "asin": asin,
             "keywordRecommendations": keywords.get("keywordTargetList", []),
@@ -303,11 +303,11 @@ class KeywordInsightsAPI(_GenBase):
     ) -> JSONList:
         """
         批量获取关键词推荐
-        
+
         分批处理大量ASIN
         """
         all_keywords = []
-        
+
         for i in range(0, len(asins), batch_size):
             batch = asins[i:i + batch_size]
             result = await self.get_sp_keyword_recommendations(
@@ -315,7 +315,7 @@ class KeywordInsightsAPI(_GenBase):
                 max_recommendations=200,
             )
             all_keywords.extend(result.get("keywordTargetList", []))
-        
+
         return all_keywords
 
 

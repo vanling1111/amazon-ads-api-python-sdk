@@ -24,16 +24,6 @@ Amazon Ads API - Experimental APIs (L4)
 """
 
 import warnings
-from typing import TYPE_CHECKING
-
-def _warn_experimental(api_name: str):
-    """发出实验性 API 警告"""
-    warnings.warn(
-        f"'{api_name}' 是实验性 API (L4)，可能不稳定或随时变更。"
-        "生产环境使用需谨慎。",
-        UserWarning,
-        stacklevel=3
-    )
 
 # Sponsored TV
 from .sponsored_tv.campaigns import SponsoredTVCampaignsAPI
@@ -54,6 +44,17 @@ from .ad_library.ad_library import AdLibraryAPI
 
 # Brand Home
 from .brand_home.brand_home import BrandHomeAPI
+
+
+def _warn_experimental(api_name: str):
+    """发出实验性 API 警告"""
+    warnings.warn(
+        f"'{api_name}' 是实验性 API (L4)，可能不稳定或随时变更。"
+        "生产环境使用需谨慎。",
+        UserWarning,
+        stacklevel=3
+    )
+
 
 __all__ = [
     "_warn_experimental",

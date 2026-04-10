@@ -18,12 +18,12 @@ except ImportError:
 
 class AMCAudiencesAPI(_GenBase):
     """AMC Advertiser Audiences API (全异步)
-    
+
     API Tier: L1
     Source: OpenAPI
     OpenAPI_SPEC: Advertiseraudiences_prod_3p.json
     Stability: 高
-    
+
     管理 AMC 广告主受众连接、元数据和记录。
     官方验证: 10个端点
     """
@@ -32,7 +32,7 @@ class AMCAudiencesAPI(_GenBase):
 
     async def list_connections(self) -> JSONData:
         """获取受众连接列表
-        
+
         官方端点: GET /amc/audiences/connections
         """
         result = await self.get("/amc/audiences/connections")
@@ -43,9 +43,9 @@ class AMCAudiencesAPI(_GenBase):
         connection_data: dict[str, Any],
     ) -> JSONData:
         """创建受众连接
-        
+
         官方端点: POST /amc/audiences/connections
-        
+
         Args:
             connection_data: 连接配置
         """
@@ -57,9 +57,9 @@ class AMCAudiencesAPI(_GenBase):
         connection_ids: list[str] | None = None,
     ) -> JSONData:
         """删除受众连接
-        
+
         官方端点: DELETE /amc/audiences/connections
-        
+
         Args:
             connection_ids: 要删除的连接 ID 列表 (通过 query params)
         """
@@ -73,7 +73,7 @@ class AMCAudiencesAPI(_GenBase):
 
     async def get_connections_terms(self) -> JSONData:
         """获取受众连接条款
-        
+
         官方端点: GET /amc/audiences/connections/terms
         """
         result = await self.get("/amc/audiences/connections/terms")
@@ -84,9 +84,9 @@ class AMCAudiencesAPI(_GenBase):
         terms_data: dict[str, Any],
     ) -> JSONData:
         """更新受众连接条款 (接受条款)
-        
+
         官方端点: PATCH /amc/audiences/connections/terms
-        
+
         Args:
             terms_data: 条款更新数据，包含:
                 - accepted: 是否接受条款 (boolean)
@@ -101,9 +101,9 @@ class AMCAudiencesAPI(_GenBase):
         metadata: dict[str, Any],
     ) -> JSONData:
         """创建受众元数据
-        
+
         官方端点: POST /amc/audiences/metadata
-        
+
         Args:
             metadata: 受众元数据配置，包含:
                 - name: 受众名称
@@ -120,9 +120,9 @@ class AMCAudiencesAPI(_GenBase):
         audience_id: str,
     ) -> JSONData:
         """获取受众元数据
-        
+
         官方端点: GET /amc/audiences/metadata/{audienceId}
-        
+
         Args:
             audience_id: 受众 ID
         """
@@ -135,9 +135,9 @@ class AMCAudiencesAPI(_GenBase):
         metadata: dict[str, Any],
     ) -> JSONData:
         """更新受众元数据
-        
+
         官方端点: PUT /amc/audiences/metadata/{audienceId}
-        
+
         Args:
             audience_id: 受众 ID
             metadata: 更新的元数据
@@ -155,9 +155,9 @@ class AMCAudiencesAPI(_GenBase):
         records_data: dict[str, Any],
     ) -> JSONData:
         """创建/上传受众记录
-        
+
         官方端点: POST /amc/audiences/records
-        
+
         Args:
             records_data: 记录数据，包含:
                 - audienceId: 受众 ID
@@ -172,9 +172,9 @@ class AMCAudiencesAPI(_GenBase):
         job_request_id: str,
     ) -> JSONData:
         """获取受众记录任务状态
-        
+
         官方端点: GET /amc/audiences/records/{jobRequestId}
-        
+
         Args:
             job_request_id: 任务请求 ID
         """

@@ -19,16 +19,16 @@ TARGET_PROMOTION_GROUPS_CONTENT_TYPE = "application/vnd.sptargetpromotiongroups.
 class SPTargetPromotionGroupsAPI(_GenBase):
     """
     SP Target Promotion Groups API (全异步)
-    
+
     目标推广组允许将多个相关产品组合在一起进行推广。
     """
 
     async def create_target_promotion_groups(self, groups: JSONList) -> JSONData:
         """
         创建目标推广组
-        
+
         官方端点: POST /sp/targetPromotionGroups
-        
+
         Args:
             groups: [
                 {
@@ -58,7 +58,7 @@ class SPTargetPromotionGroupsAPI(_GenBase):
     ) -> JSONData:
         """
         获取目标推广组列表
-        
+
         官方端点: POST /sp/targetPromotionGroups/list
         """
         body: JSONData = {"maxResults": max_results}
@@ -83,9 +83,9 @@ class SPTargetPromotionGroupsAPI(_GenBase):
     ) -> JSONData:
         """
         获取目标推广组建议
-        
+
         官方端点: POST /sp/targetPromotionGroups/recommendations
-        
+
         Args:
             asins: 要分析的ASIN列表
             max_results: 最大建议数
@@ -100,9 +100,9 @@ class SPTargetPromotionGroupsAPI(_GenBase):
     async def create_target_promotion_group_targets(self, targets: JSONList) -> JSONData:
         """
         为推广组创建目标
-        
+
         官方端点: POST /sp/targetPromotionGroups/targets
-        
+
         Args:
             targets: [
                 {
@@ -127,7 +127,7 @@ class SPTargetPromotionGroupsAPI(_GenBase):
     ) -> JSONData:
         """
         获取推广组目标列表
-        
+
         官方端点: POST /sp/targetPromotionGroups/targets/list
         """
         body: JSONData = {"maxResults": max_results}

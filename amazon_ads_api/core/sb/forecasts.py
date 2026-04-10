@@ -24,12 +24,12 @@ class SBForecastsAPI(_GenBase):
     ) -> JSONData:
         """
         获取Campaign预算效果预测
-        
+
         Args:
             campaign_id: Campaign ID
             budget_scenarios: 预算场景列表（如 [50, 100, 200]）
             forecast_days: 预测天数
-            
+
         Returns:
             预测结果，包含不同预算下的预期效果
         """
@@ -49,7 +49,7 @@ class SBForecastsAPI(_GenBase):
     ) -> JSONData:
         """
         批量获取预测
-        
+
         Args:
             requests: [
                 {

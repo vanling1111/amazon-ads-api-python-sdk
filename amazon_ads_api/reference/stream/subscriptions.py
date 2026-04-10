@@ -16,7 +16,7 @@ except ImportError:
 
 class MarketingStreamAPI(_GenBase):
     """Amazon Marketing Stream API (全异步)
-    
+
     管理营销数据流订阅，包括普通流和DSP流。
     """
 
@@ -24,7 +24,7 @@ class MarketingStreamAPI(_GenBase):
 
     async def list_subscriptions(self) -> JSONList:
         """获取订阅列表
-        
+
         GET /streams/subscriptions
         """
         response = await self.get("/streams/subscriptions")
@@ -40,7 +40,7 @@ class MarketingStreamAPI(_GenBase):
         notes: str | None = None,
     ) -> JSONData:
         """创建订阅
-        
+
         POST /streams/subscriptions
         """
         data: dict[str, Any] = {
@@ -57,7 +57,7 @@ class MarketingStreamAPI(_GenBase):
 
     async def get_subscription(self, subscription_id: str) -> JSONData:
         """获取订阅详情
-        
+
         GET /streams/subscriptions/{subscriptionId}
         """
         result = await self.get(f"/streams/subscriptions/{subscription_id}")
@@ -70,7 +70,7 @@ class MarketingStreamAPI(_GenBase):
         notes: str | None = None,
     ) -> JSONData:
         """更新订阅
-        
+
         PUT /streams/subscriptions/{subscriptionId}
         """
         data: dict[str, Any] = {}
@@ -88,7 +88,7 @@ class MarketingStreamAPI(_GenBase):
 
     async def list_dsp_subscriptions(self) -> JSONList:
         """获取DSP订阅列表
-        
+
         GET /dsp/streams/subscriptions
         """
         response = await self.get("/dsp/streams/subscriptions")
@@ -104,7 +104,7 @@ class MarketingStreamAPI(_GenBase):
         notes: str | None = None,
     ) -> JSONData:
         """创建DSP订阅
-        
+
         POST /dsp/streams/subscriptions
         """
         data: dict[str, Any] = {
@@ -121,7 +121,7 @@ class MarketingStreamAPI(_GenBase):
 
     async def get_dsp_subscription(self, subscription_id: str) -> JSONData:
         """获取DSP订阅详情
-        
+
         GET /dsp/streams/subscriptions/{subscriptionId}
         """
         result = await self.get(f"/dsp/streams/subscriptions/{subscription_id}")
@@ -134,7 +134,7 @@ class MarketingStreamAPI(_GenBase):
         notes: str | None = None,
     ) -> JSONData:
         """更新DSP订阅
-        
+
         PUT /dsp/streams/subscriptions/{subscriptionId}
         """
         data: dict[str, Any] = {}

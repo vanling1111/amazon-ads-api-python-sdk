@@ -21,7 +21,7 @@ CAMPAIGN_OPTIMIZATION_CONTENT_TYPE = "application/vnd.optimizationrules.v1+json"
 class SPCampaignOptimizationAPI(_GenBase):
     """
     SP Campaign Optimization Rules API (全异步)
-    
+
     允许创建基于时间或效果的竞价/预算自动优化规则。
     支持两种规则类型：
     - Schedule Rules: 基于时间调度的规则
@@ -33,9 +33,9 @@ class SPCampaignOptimizationAPI(_GenBase):
     async def create_optimization_rules(self, optimization_rules: JSONList) -> JSONData:
         """
         创建优化规则
-        
+
         官方端点: POST /sp/rules/optimization
-        
+
         Args:
             optimization_rules: 规则列表
             [
@@ -73,7 +73,7 @@ class SPCampaignOptimizationAPI(_GenBase):
     async def update_optimization_rules(self, optimization_rules: JSONList) -> JSONData:
         """
         更新优化规则
-        
+
         官方端点: PUT /sp/rules/optimization
         """
         result = await self.put(
@@ -93,9 +93,9 @@ class SPCampaignOptimizationAPI(_GenBase):
     ) -> JSONData:
         """
         搜索优化规则
-        
+
         官方端点: POST /sp/rules/optimization/search
-        
+
         Args:
             campaign_ids: 按Campaign过滤
             rule_ids: 按规则ID过滤
@@ -104,7 +104,7 @@ class SPCampaignOptimizationAPI(_GenBase):
             next_token: 分页token
         """
         body: JSONData = {"pageSize": page_size}
-        
+
         filters = []
         if campaign_ids:
             filters.append({"field": "campaignId", "values": campaign_ids})
@@ -112,7 +112,7 @@ class SPCampaignOptimizationAPI(_GenBase):
             filters.append({"field": "ruleId", "values": rule_ids})
         if rule_states:
             filters.append({"field": "status", "values": rule_states})
-        
+
         if filters:
             body["filters"] = filters
         if next_token:
@@ -133,7 +133,7 @@ class SPCampaignOptimizationAPI(_GenBase):
     ) -> JSONData:
         """
         创建Campaign优化规则
-        
+
         官方端点: POST /sp/rules/campaignOptimization
         """
         result = await self.post(
@@ -146,7 +146,7 @@ class SPCampaignOptimizationAPI(_GenBase):
     async def update_campaign_optimization_rules(self, rules: JSONList) -> JSONData:
         """
         更新Campaign优化规则
-        
+
         官方端点: PUT /sp/rules/campaignOptimization
         """
         result = await self.put(
@@ -159,7 +159,7 @@ class SPCampaignOptimizationAPI(_GenBase):
     async def get_campaign_optimization_rule(self, campaign_optimization_id: str) -> JSONData:
         """
         获取单个Campaign优化规则
-        
+
         官方端点: GET /sp/rules/campaignOptimization/{campaignOptimizationId}
         """
         result = await self.get(
@@ -171,7 +171,7 @@ class SPCampaignOptimizationAPI(_GenBase):
     async def delete_campaign_optimization_rule(self, campaign_optimization_id: str) -> JSONData:
         """
         删除Campaign优化规则
-        
+
         官方端点: DELETE /sp/rules/campaignOptimization/{campaignOptimizationId}
         """
         result = await self.delete(
@@ -186,7 +186,7 @@ class SPCampaignOptimizationAPI(_GenBase):
     ) -> JSONData:
         """
         检查Campaigns是否有资格使用优化规则
-        
+
         官方端点: POST /sp/rules/campaignOptimization/eligibility
         """
         result = await self.post(
@@ -202,9 +202,9 @@ class SPCampaignOptimizationAPI(_GenBase):
     ) -> JSONData:
         """
         批量更新Campaign优化规则状态
-        
+
         官方端点: POST /sp/rules/campaignOptimization/state
-        
+
         Args:
             updates: [
                 {
@@ -227,7 +227,7 @@ class SPCampaignOptimizationAPI(_GenBase):
     ) -> JSONData:
         """
         将优化规则关联到Campaign
-        
+
         官方端点: POST /sp/campaigns/{campaignId}/optimizationRules
         """
         result = await self.post(
@@ -250,7 +250,7 @@ class SPCampaignOptimizationAPI(_GenBase):
     ) -> JSONData:
         """
         创建竞价调度规则
-        
+
         Args:
             name: 规则名称
             increase_percent: 竞价增加百分比
@@ -296,7 +296,7 @@ class SPCampaignOptimizationAPI(_GenBase):
     ) -> JSONData:
         """
         创建基于效果的竞价规则
-        
+
         Args:
             name: 规则名称
             increase_percent: 竞价调整百分比

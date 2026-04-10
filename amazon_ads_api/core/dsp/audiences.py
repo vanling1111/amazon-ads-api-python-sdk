@@ -14,7 +14,7 @@ Amazon DSP - Audiences API (异步版本)
 
 from typing import Literal
 from uuid import uuid4
-from amazon_ads_api.base import JSONData, JSONList
+from amazon_ads_api.base import JSONData
 
 try:
     from amazon_ads_api.generated.clients.clients_dsp_audiences import DspAudiencesClient as _GenBase
@@ -41,13 +41,13 @@ CountryCode = Literal[
 class DSPAudiencesAPI(_GenBase):
     """
     DSP Audiences API (全异步)
-    
+
     官方 API 仅支持创建受众，其他操作需通过 Amazon DSP 控制台完成。
-    
+
     API Tier: L1
     Source: ADSPAudiences_prod_3p.json
     OpenAPI: ✅
-    
+
     支持的受众类型:
     - PRODUCT_PURCHASES: 购买过指定产品的用户 (回溯 1-365 天)
     - PRODUCT_VIEWS: 浏览过指定产品的用户 (回溯 1-90 天)
@@ -64,7 +64,7 @@ class DSPAudiencesAPI(_GenBase):
         "PRODUCT_SIMS": (1, 90),
         "WHOLE_FOODS_MARKET_PURCHASES": (1, 365),
     }
-    
+
     # 各受众类型的最大 ASIN 数量
     MAX_ASINS = {
         "PRODUCT_PURCHASES": 1000,
@@ -87,10 +87,10 @@ class DSPAudiencesAPI(_GenBase):
     ) -> JSONData:
         """
         创建 DSP 受众
-        
+
         官方端点: POST /dsp/audiences
         Content-Type: application/vnd.dspaudiences.v1+json
-        
+
         Args:
             advertiser_id: 广告主 ID (必填，作为查询参数)
             name: 受众名称 (1-128 字符)
@@ -108,7 +108,7 @@ class DSPAudiencesAPI(_GenBase):
                 - WHOLE_FOODS_MARKET_PURCHASES: 1-365 天
             country: ISO Alpha-2 国家代码 (Global Account 必填)
             idempotency_key: 幂等键 (UUID 格式，可选，默认自动生成)
-            
+
         Returns:
             {
                 "success": [
@@ -120,17 +120,17 @@ class DSPAudiencesAPI(_GenBase):
                 ],
                 "error": []
             }
-            
+
         Raises:
             ValueError: 参数验证失败
         """
         # 参数验证
         self._validate_params(audience_type, asins, lookback, name, description)
-        
+
         # 生成幂等键
         if not idempotency_key:
             idempotency_key = str(uuid4())
-        
+
         # 构建规则
         rule = {
             "attributeType": "ASIN",
@@ -138,7 +138,7 @@ class DSPAudiencesAPI(_GenBase):
             "clause": "INCLUDE",
             "operator": "ONE_OF",
         }
-        
+
         # 构建请求体
         body: JSONData = {
             "audienceType": audience_type,
@@ -148,10 +148,10 @@ class DSPAudiencesAPI(_GenBase):
             "idempotencyKey": idempotency_key,
             "rules": [rule],
         }
-        
+
         if country:
             body["country"] = country
-        
+
         # 发送请求 (注意：请求体是数组)
         result = await self.post(
             "/dsp/audiences",
@@ -160,7 +160,7 @@ class DSPAudiencesAPI(_GenBase):
             content_type="application/vnd.dspaudiences.v1+json",
             accept="application/vnd.dspaudiencesresponse.v1+json",
         )
-        
+
         return result if isinstance(result, dict) else {"success": [], "error": []}
 
     def _validate_params(
@@ -179,22 +179,22 @@ class DSPAudiencesAPI(_GenBase):
                 f"Invalid audience_type: {audience_type}. "
                 f"Must be one of: {valid_types}"
             )
-        
+
         # 验证名称
         if not name or len(name) < 1 or len(name) > 128:
             raise ValueError("name must be 1-128 characters")
-        
+
         # 验证描述
         if not description or len(description) < 1 or len(description) > 1000:
             raise ValueError("description must be 1-1000 characters")
-        
+
         # 验证 ASIN 数量
         max_asins = self.MAX_ASINS.get(audience_type, 1000)
         if not asins or len(asins) < 1 or len(asins) > max_asins:
             raise ValueError(
                 f"asins must contain 1-{max_asins} items for {audience_type}"
             )
-        
+
         # 验证回溯天数
         min_lookback, max_lookback = self.LOOKBACK_LIMITS.get(audience_type, (1, 365))
         if lookback < min_lookback or lookback > max_lookback:
@@ -215,9 +215,9 @@ class DSPAudiencesAPI(_GenBase):
     ) -> JSONData:
         """
         创建产品浏览受众
-        
+
         定向浏览过指定产品的用户。
-        
+
         Args:
             advertiser_id: 广告主 ID
             name: 受众名称
@@ -247,9 +247,9 @@ class DSPAudiencesAPI(_GenBase):
     ) -> JSONData:
         """
         创建产品购买受众
-        
+
         定向购买过指定产品的用户。
-        
+
         Args:
             advertiser_id: 广告主 ID
             name: 受众名称
@@ -279,9 +279,9 @@ class DSPAudiencesAPI(_GenBase):
     ) -> JSONData:
         """
         创建产品搜索受众
-        
+
         定向搜索过指定产品的用户。
-        
+
         Args:
             advertiser_id: 广告主 ID
             name: 受众名称
@@ -311,9 +311,9 @@ class DSPAudiencesAPI(_GenBase):
     ) -> JSONData:
         """
         创建相似产品受众
-        
+
         定向浏览过相似产品的用户。
-        
+
         Args:
             advertiser_id: 广告主 ID
             name: 受众名称

@@ -26,7 +26,7 @@ class SDOptimizationAPI(_GenBase):
     ) -> JSONData:
         """
         获取优化规则列表
-        
+
         Args:
             rule_ids: 过滤的Rule ID列表
             states: 状态过滤 (ENABLED, PAUSED)
@@ -51,7 +51,7 @@ class SDOptimizationAPI(_GenBase):
     async def create_optimization_rules(self, rules: JSONList) -> JSONData:
         """
         批量创建优化规则
-        
+
         Args:
             rules: [
                 {

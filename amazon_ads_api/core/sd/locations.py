@@ -5,7 +5,7 @@ SD地理位置定向
 官方文档: https://advertising.amazon.com/API/docs/en-us/sponsored-display/3-0/openapi
 """
 
-from amazon_ads_api.base import JSONData, JSONList
+from amazon_ads_api.base import JSONData
 
 try:
     from amazon_ads_api.generated.clients.clients_sd import SdClient as _GenBase
@@ -23,7 +23,7 @@ class SDLocationsAPI(_GenBase):
     ) -> JSONData:
         """
         获取可用的地理位置列表
-        
+
         Args:
             location_type: 位置类型（COUNTRY, REGION, CITY等）
             max_results: 最大结果数
@@ -45,7 +45,7 @@ class SDLocationsAPI(_GenBase):
     ) -> JSONData:
         """
         搜索地理位置
-        
+
         Args:
             query: 搜索关键词
             location_type: 位置类型
@@ -61,9 +61,9 @@ class SDLocationsAPI(_GenBase):
     async def delete_locations(self, location_ids: list[str]) -> JSONData:
         """
         删除位置定向 (归档)
-        
+
         官方请求格式: {"locationExpressionIdFilter": {"include": [...]}}
-        
+
         Args:
             location_ids: Location Expression ID列表
         """

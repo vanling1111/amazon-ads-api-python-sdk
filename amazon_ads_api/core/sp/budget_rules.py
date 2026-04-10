@@ -19,7 +19,7 @@ BUDGET_RULES_V1_CONTENT_TYPE = "application/vnd.spbudgetrules.v1+json"
 class SPBudgetRulesAPI(_GenBase):
     """
     SP Budget Rules API (全异步)
-    
+
     Budget Rules 允许你设置基于时间或效果的预算自动调整规则。
     """
 
@@ -32,9 +32,9 @@ class SPBudgetRulesAPI(_GenBase):
     ) -> JSONData:
         """
         获取所有Budget Rule列表
-        
+
         官方端点: GET /sp/budgetRules
-        
+
         Args:
             page_size: 每页结果数 (默认30，最大100)
             next_token: 分页token
@@ -53,7 +53,7 @@ class SPBudgetRulesAPI(_GenBase):
     async def get_budget_rule(self, budget_rule_id: str) -> JSONData:
         """
         获取单个Budget Rule详情
-        
+
         官方端点: GET /sp/budgetRules/{budgetRuleId}
         """
         result = await self.get(
@@ -65,9 +65,9 @@ class SPBudgetRulesAPI(_GenBase):
     async def create_budget_rules(self, budget_rules: JSONList) -> JSONData:
         """
         批量创建Budget Rule
-        
+
         官方端点: POST /sp/budgetRules
-        
+
         Args:
             budget_rules: Budget Rule 列表
             [
@@ -103,9 +103,9 @@ class SPBudgetRulesAPI(_GenBase):
     async def update_budget_rules(self, budget_rules: JSONList) -> JSONData:
         """
         批量更新Budget Rule
-        
+
         官方端点: PUT /sp/budgetRules
-        
+
         Args:
             budget_rules: 包含 budgetRuleId 的更新列表
             [
@@ -126,7 +126,7 @@ class SPBudgetRulesAPI(_GenBase):
     async def get_budget_rule_campaigns(self, budget_rule_id: str) -> JSONData:
         """
         获取Budget Rule关联的所有Campaigns
-        
+
         官方端点: GET /sp/budgetRules/{budgetRuleId}/campaigns
         """
         result = await self.get(
@@ -140,9 +140,9 @@ class SPBudgetRulesAPI(_GenBase):
     async def associate_budget_rules(self, associations: JSONList) -> JSONData:
         """
         将Budget Rules关联到Campaigns
-        
+
         官方端点: POST /sp/budgetRulesAssociation
-        
+
         Args:
             associations: 关联列表
             [
@@ -162,9 +162,9 @@ class SPBudgetRulesAPI(_GenBase):
     async def disassociate_budget_rules(self, associations: JSONList) -> JSONData:
         """
         删除Budget Rules与Campaigns的关联
-        
+
         官方端点: POST /sp/budgetRulesAssociation/delete
-        
+
         Args:
             associations: 要删除的关联列表
             [
@@ -191,7 +191,7 @@ class SPBudgetRulesAPI(_GenBase):
     ) -> JSONData:
         """
         获取Campaign关联的所有Budget Rules
-        
+
         官方端点: GET /sp/campaigns/{campaignId}/budgetRules
         """
         params: JSONData = {"pageSize": page_size}
@@ -212,7 +212,7 @@ class SPBudgetRulesAPI(_GenBase):
     ) -> JSONData:
         """
         将Budget Rules关联到特定Campaign
-        
+
         官方端点: POST /sp/campaigns/{campaignId}/budgetRules
         """
         result = await self.post(
@@ -229,7 +229,7 @@ class SPBudgetRulesAPI(_GenBase):
     ) -> JSONData:
         """
         从Campaign删除特定Budget Rule关联
-        
+
         官方端点: DELETE /sp/campaigns/{campaignId}/budgetRules/{budgetRuleId}
         """
         result = await self.delete(
@@ -243,9 +243,9 @@ class SPBudgetRulesAPI(_GenBase):
     async def get_budget_usage(self, campaign_ids: list[str]) -> JSONData:
         """
         获取Campaigns预算使用情况
-        
+
         官方端点: POST /sp/campaigns/budget/usage
-        
+
         Args:
             campaign_ids: Campaign ID列表
         """
@@ -258,7 +258,7 @@ class SPBudgetRulesAPI(_GenBase):
     async def get_budget_recommendations(self, campaign_ids: list[str]) -> JSONData:
         """
         获取Campaigns预算建议（批量）
-        
+
         官方端点: POST /sp/campaigns/budgetRecommendations
         """
         result = await self.post(
@@ -275,9 +275,9 @@ class SPBudgetRulesAPI(_GenBase):
     ) -> JSONData:
         """
         获取Budget Rules建议
-        
+
         官方端点: POST /sp/campaigns/budgetRules/recommendations
-        
+
         根据Campaign历史表现推荐预算规则
         """
         body: JSONData = {"pageSize": page_size}
@@ -301,9 +301,9 @@ class SPBudgetRulesAPI(_GenBase):
     ) -> JSONData:
         """
         获取新Campaign预算建议
-        
+
         官方端点: POST /sp/campaigns/initialBudgetRecommendation
-        
+
         Args:
             daily_budget: 计划的日预算
             targeting_type: MANUAL | AUTO
@@ -337,7 +337,7 @@ class SPBudgetRulesAPI(_GenBase):
     ) -> JSONData:
         """
         创建时间调度规则
-        
+
         Args:
             name: 规则名称
             increase_percent: 预算增加百分比 (0-900)
@@ -378,7 +378,7 @@ class SPBudgetRulesAPI(_GenBase):
     ) -> JSONData:
         """
         创建效果触发规则
-        
+
         Args:
             name: 规则名称
             increase_percent: 预算增加百分比
@@ -447,14 +447,14 @@ class SPBudgetRulesAPI(_GenBase):
     async def get_rule_events(self, marketplace_id: str | None = None) -> JSONData:
         """
         获取所有特殊事件和日期范围建议
-        
+
         官方端点: POST /sp/v1/events
-        
+
         返回所有个别和分组的特殊事件（如黑五、Prime Day），
         以及在广告主市场中建议的日期范围。
-        
+
         用于创建 EVENT_BASED 预算规则时选择事件。
-        
+
         Args:
             marketplace_id: 市场ID（可选）
         """

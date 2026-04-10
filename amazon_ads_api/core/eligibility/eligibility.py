@@ -7,7 +7,7 @@ OpenAPI Spec: Eligibility_prod_3p.json
 广告资格检查
 """
 
-from amazon_ads_api.base import JSONData, JSONList
+from amazon_ads_api.base import JSONData
 
 try:
     from amazon_ads_api.generated.clients.clients_eligibility import EligibilityClient as _GenBase
@@ -22,7 +22,7 @@ PROGRAM_ELIGIBILITY_V2 = "application/vnd.programeligibility.v2+json"
 class EligibilityAPI(_GenBase):
     """
     Eligibility API (全异步)
-    
+
     官方端点 (共2个):
     - POST /eligibility/product/list - 检查产品广告资格
     - POST /eligibility/programs - 检查项目资格
@@ -38,9 +38,9 @@ class EligibilityAPI(_GenBase):
     ) -> JSONData:
         """
         检查产品广告资格
-        
+
         POST /eligibility/product/list
-        
+
         Args:
             products: 产品列表，每个产品包含:
                 - asin: 必需，Amazon 产品标识符
@@ -53,7 +53,7 @@ class EligibilityAPI(_GenBase):
                 - "sd": Sponsored Display
                 - "dsp": Demand Side Platform
             locale: 响应语言，如 "en_US"
-        
+
         Returns:
             {
                 "productResponseList": [
@@ -71,12 +71,12 @@ class EligibilityAPI(_GenBase):
                     }
                 ]
             }
-            
+
         状态说明:
             - ELIGIBLE: 产品可以投放广告
             - ELIGIBLE_WITH_WARNING: 产品可投放但可能不会获得展示
             - INELIGIBLE: 产品不能投放广告
-            
+
         不符资格原因:
             - ADULT_PRODUCT: 成人产品
             - CLOSED_CATEGORY: 关闭的类目
@@ -95,10 +95,10 @@ class EligibilityAPI(_GenBase):
             "adType": ad_type,
             "productDetailsList": products,
         }
-        
+
         if locale:
             body["locale"] = locale
-        
+
         result = await self.post("/eligibility/product/list", json_data=body)
         return result if isinstance(result, dict) else {"productResponseList": []}
 
@@ -108,12 +108,12 @@ class EligibilityAPI(_GenBase):
     ) -> JSONData:
         """
         检查账户项目资格 (v1)
-        
+
         POST /eligibility/programs
-        
+
         Args:
             skip_all_billing_checks: 是否跳过账单检查
-        
+
         Returns:
             {
                 "eligibilityStatusMap": {
@@ -133,7 +133,7 @@ class EligibilityAPI(_GenBase):
                     "SPOT": {...}
                 }
             }
-            
+
         项目说明:
             - SB: Sponsored Brands
             - SD: Sponsored Display
@@ -142,10 +142,10 @@ class EligibilityAPI(_GenBase):
             - SPOT: Sponsored Products
         """
         body: JSONData = {}
-        
+
         if skip_all_billing_checks:
             body["skipChecks"] = {"skipAllBillingChecks": True}
-        
+
         result = await self.post("/eligibility/programs", json_data=body)
         return result if isinstance(result, dict) else {"eligibilityStatusMap": {}}
 
@@ -156,14 +156,14 @@ class EligibilityAPI(_GenBase):
     ) -> JSONData:
         """
         检查账户项目资格 (v2 - 支持分页和多市场)
-        
+
         POST /eligibility/programs
         Content-Type: application/vnd.programeligibility.v2+json
-        
+
         Args:
             max_results: 最大结果数 (1-100)
             next_token: 分页 token
-        
+
         Returns:
             {
                 "eligibilityStatusLists": [
@@ -182,10 +182,10 @@ class EligibilityAPI(_GenBase):
             }
         """
         body: JSONData = {"maxResults": max_results}
-        
+
         if next_token:
             body["nextToken"] = next_token
-        
+
         result = await self.post(
             "/eligibility/programs",
             json_data=body,
@@ -203,7 +203,7 @@ class EligibilityAPI(_GenBase):
     ) -> JSONData:
         """
         检查单个 ASIN 的广告资格
-        
+
         Args:
             asin: Amazon 产品标识符
             ad_type: 广告类型 (sp, sb, sd, dsp)
@@ -222,7 +222,7 @@ class EligibilityAPI(_GenBase):
     ) -> JSONData:
         """
         批量检查 ASIN 广告资格
-        
+
         Args:
             asins: ASIN 列表（最多 50 个）
             ad_type: 广告类型
@@ -237,19 +237,19 @@ class EligibilityAPI(_GenBase):
     ) -> list[str]:
         """
         过滤出符合广告资格的 ASIN
-        
+
         Returns:
             符合资格的 ASIN 列表
         """
         result = await self.check_asins_eligibility(asins, ad_type)
         eligible_asins = []
-        
+
         for response in result.get("productResponseList", []):
             if response.get("overallStatus") in ["ELIGIBLE", "ELIGIBLE_WITH_WARNING"]:
                 asin = response.get("productDetails", {}).get("asin")
                 if asin:
                     eligible_asins.append(asin)
-        
+
         return eligible_asins
 
     async def is_asin_eligible(self, asin: str, ad_type: str = "sp") -> bool:
@@ -261,7 +261,7 @@ class EligibilityAPI(_GenBase):
     async def is_eligible_for_program(self, program: str) -> bool:
         """
         检查是否有资格投放特定广告项目
-        
+
         Args:
             program: SB, SD, DTC, MAAS, SPOT
         """
@@ -285,7 +285,7 @@ class EligibilityAPI(_GenBase):
     async def get_ineligibility_reasons(self, program: str) -> list[dict]:
         """
         获取特定项目不符资格的原因
-        
+
         Returns:
             [
                 {"code": "NO_BRAND_RELATIONS", "description": "...", "level": "..."}

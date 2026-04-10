@@ -5,7 +5,7 @@ Creative Asset Library API (异步版本)
 官方端点: 6个
 """
 
-from typing import Literal, BinaryIO
+from typing import Literal
 from amazon_ads_api.base import JSONData, JSONList
 
 try:
@@ -34,7 +34,7 @@ AssetSubType = Literal[
 class AssetsAPI(_GenBase):
     """
     Creative Asset Library API (全异步)
-    
+
     官方端点:
     - GET /assets (列表)
     - POST /assets/register (注册单个)
@@ -57,16 +57,16 @@ class AssetsAPI(_GenBase):
     ) -> JSONData:
         """
         获取资产列表
-        
+
         官方端点: GET /assets
-        
+
         Args:
             asset_type: 资产类型 (IMAGE, VIDEO, BRANDLOGO)
             asset_sub_type_list: 子类型列表
             asset_id_list: 资产ID列表
             media_type: 媒体类型 (image/jpeg, video/mp4 等)
             next_token: 分页令牌
-            
+
         Returns:
             {
                 "assets": [...],
@@ -101,16 +101,16 @@ class AssetsAPI(_GenBase):
     ) -> JSONData:
         """
         注册单个资产（从URL）
-        
+
         官方端点: POST /assets/register
-        
+
         Args:
             url: 资产URL (必须是可公开访问的URL)
             asset_type: 资产类型
             asset_sub_type: 子类型
             name: 资产名称
             associated_sub_entity_list: 关联实体列表
-            
+
         Returns:
             {
                 "assetId": "...",
@@ -138,16 +138,16 @@ class AssetsAPI(_GenBase):
     ) -> JSONData:
         """
         批量注册资产
-        
+
         官方端点: POST /assets/batchRegister
-        
+
         Args:
             assets: 资产列表，每个资产包含:
                 - url: 资产URL
                 - assetType: 类型
                 - assetSubType: 子类型 (可选)
                 - name: 名称 (可选)
-                
+
         Returns:
             {
                 "requestId": "...",
@@ -160,12 +160,12 @@ class AssetsAPI(_GenBase):
     async def get_batch_register_status(self, request_id: str) -> JSONData:
         """
         获取批量注册状态
-        
+
         官方端点: GET /assets/batchRegister/{requestId}
-        
+
         Args:
             request_id: 批量注册请求ID
-            
+
         Returns:
             {
                 "requestId": "...",
@@ -189,23 +189,23 @@ class AssetsAPI(_GenBase):
     ) -> JSONData:
         """
         直接上传资产文件
-        
+
         官方端点: POST /assets/upload
-        
+
         Args:
             file_content: 文件内容 (bytes)
             file_name: 文件名
             content_type: MIME类型 (image/jpeg, image/png, video/mp4)
             asset_type: 资产类型
             asset_sub_type: 子类型
-            
+
         Returns:
             {
                 "assetId": "...",
                 "status": "...",
                 ...
             }
-            
+
         Note:
             此方法使用 multipart/form-data 上传。
             对于大文件，建议使用 register_asset 从URL注册。
@@ -240,16 +240,16 @@ class AssetsAPI(_GenBase):
     ) -> JSONData:
         """
         搜索资产
-        
+
         官方端点: POST /assets/search
-        
+
         Args:
             asset_type: 资产类型
             asset_sub_type_list: 子类型列表
             name_filter: 名称过滤（模糊匹配）
             associated_sub_entity_list: 关联实体过滤
             next_token: 分页令牌
-            
+
         Returns:
             {
                 "assets": [...],
@@ -276,7 +276,7 @@ class AssetsAPI(_GenBase):
     async def get_asset_by_id(self, asset_id: str) -> JSONData | None:
         """
         根据ID获取资产
-        
+
         通过 list_assets 实现（官方无单独获取端点）
         """
         result = await self.list_assets(asset_id_list=[asset_id])

@@ -24,7 +24,7 @@ class ReportsV3API(_GenBase):
         "sb": "SPONSORED_BRANDS",
         "sd": "SPONSORED_DISPLAY",
     }
-    
+
     # 默认 groupBy 字段（必须符合 Amazon Ads API V3 规范）
     # 每种报告类型只能使用其允许的 groupBy 值
     DEFAULT_GROUP_BY = {
@@ -57,7 +57,7 @@ class ReportsV3API(_GenBase):
     ) -> JSONData:
         """
         创建报告请求
-        
+
         Args:
             report_type: 
                 SP: spCampaigns, spAdGroups, spKeywords, spTargeting, spSearchTerm
@@ -73,10 +73,10 @@ class ReportsV3API(_GenBase):
         # 确定 adProduct
         ad_product_key = report_type[:2].lower()
         ad_product = self.AD_PRODUCT_MAP.get(ad_product_key, "SPONSORED_PRODUCTS")
-        
+
         # 确定 groupBy（必填字段）
         effective_group_by = group_by or self.DEFAULT_GROUP_BY.get(report_type, ["campaign"])
-        
+
         body: JSONData = {
             "startDate": start_date,
             "endDate": end_date,
@@ -99,9 +99,9 @@ class ReportsV3API(_GenBase):
     async def get_report_status(self, report_id: str) -> JSONData:
         """
         获取报告状态
-        
+
         官方端点: GET /reporting/reports/{reportId}
-        
+
         Returns:
             status: PENDING | IN_PROGRESS | COMPLETED | FAILED
         """
@@ -111,13 +111,13 @@ class ReportsV3API(_GenBase):
     async def delete_report(self, report_id: str) -> JSONData:
         """
         删除报告
-        
+
         官方端点: DELETE /reporting/reports/{reportId}
         官方文档: OfflineReport.json
-        
+
         Args:
             report_id: 报告ID
-            
+
         Returns:
             删除结果
         """
@@ -126,7 +126,7 @@ class ReportsV3API(_GenBase):
     async def download_report_data(self, report_id: str) -> JSONList:
         """
         下载报告数据
-        
+
         需先确认报告状态为COMPLETED
         """
         status = await self.get_report_status(report_id)
@@ -155,7 +155,7 @@ class ReportsV3API(_GenBase):
     ) -> JSONList:
         """
         创建报告并等待完成（异步）
-        
+
         Args:
             max_wait_seconds: 最大等待秒数
             poll_interval: 轮询间隔秒数
@@ -209,7 +209,7 @@ class ReportsV3API(_GenBase):
     ) -> JSONList:
         """
         获取Campaign效果报告
-        
+
         Args:
             ad_product: SP | SB | SD
         """
@@ -322,7 +322,7 @@ class ReportsV3API(_GenBase):
     # ============ 报告类型常量（官方文档定义） ============
     # 注意: Reports v3 API 没有 /reporting/reportTypes 端点
     # 报告类型是在 POST /reporting/reports 请求中通过 reportTypeId 指定
-    
+
     # 可用的报告类型 (来自官方文档)
     REPORT_TYPES = {
         # Sponsored Products
@@ -341,11 +341,11 @@ class ReportsV3API(_GenBase):
         "sdAdGroups": "SponsoredDisplayAdGroupsDailyReport",
         "sdTargets": "SponsoredDisplayTargetingDailyReport",
     }
-    
+
     def get_available_report_types(self) -> list[str]:
         """
         获取所有可用的报告类型
-        
+
         注意: Reports v3 API 没有 /reporting/reportTypes 端点，
         此方法返回 SDK 已知的报告类型列表。
         """

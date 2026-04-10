@@ -38,7 +38,7 @@ AdProduct = Literal[
 class HistoryAPI(_GenBase):
     """
     Change History API (全异步)
-    
+
     官方只有 1 个端点: POST /history
     用于查询广告实体的变更历史记录
     """
@@ -60,9 +60,9 @@ class HistoryAPI(_GenBase):
     ) -> JSONData:
         """
         获取变更历史记录
-        
+
         官方端点: POST /history
-        
+
         Args:
             from_date: 开始日期 (YYYY-MM-DD, 最多90天前)
             to_date: 结束日期 (YYYY-MM-DD)
@@ -78,14 +78,14 @@ class HistoryAPI(_GenBase):
             sort_order: 排序顺序 ASC/DESC
             count: 返回数量 (最大100)
             next_token: 分页令牌
-            
+
         Returns:
             {
                 "events": [...],
                 "totalResults": 100,
                 "nextToken": "..."
             }
-            
+
         Example:
             # 获取最近7天所有 SP Campaign 的预算变更
             history = await client.common.history.get_history(
@@ -102,7 +102,7 @@ class HistoryAPI(_GenBase):
             "sortOrder": sort_order,
             "count": count,
         }
-        
+
         if event_types:
             body["eventTypes"] = event_types
         if parent_entity_ids:
@@ -131,12 +131,12 @@ class HistoryAPI(_GenBase):
     ) -> JSONList:
         """
         获取所有变更历史（自动分页）
-        
+
         Args:
             from_date: 开始日期
             to_date: 结束日期
             **kwargs: 其他 get_history 参数
-            
+
         Returns:
             所有事件列表
         """
@@ -166,7 +166,7 @@ class HistoryAPI(_GenBase):
     ) -> JSONList:
         """
         获取最近N天的变更
-        
+
         Args:
             days: 天数 (最大90天)
             **kwargs: 其他 get_history 参数

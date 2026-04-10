@@ -24,7 +24,7 @@ class SBLegacyMigrationAPI(_GenBase):
     ) -> JSONData:
         """
         创建旧版Campaign迁移任务
-        
+
         Args:
             campaign_ids: 要迁移的旧版Campaign ID列表
         """
@@ -40,7 +40,7 @@ class SBLegacyMigrationAPI(_GenBase):
     ) -> JSONData:
         """
         获取迁移任务状态
-        
+
         Args:
             job_id: 迁移任务ID
         """
@@ -56,7 +56,7 @@ class SBLegacyMigrationAPI(_GenBase):
     ) -> JSONData:
         """
         获取迁移任务结果
-        
+
         Args:
             job_id: 迁移任务ID
         """
@@ -72,7 +72,7 @@ class SBLegacyMigrationAPI(_GenBase):
     ) -> JSONData:
         """
         获取整体迁移结果统计
-        
+
         Args:
             campaign_ids: 可选，过滤特定Campaign
         """
@@ -96,36 +96,36 @@ class SBLegacyMigrationAPI(_GenBase):
     ) -> JSONData:
         """
         创建迁移任务并等待完成
-        
+
         Args:
             campaign_ids: 要迁移的Campaign ID列表
             max_wait_seconds: 最大等待时间（秒）
             poll_interval_seconds: 轮询间隔（秒）
-            
+
         Returns:
             迁移结果
         """
         import asyncio
-        
+
         # 创建迁移任务
         job = await self.create_migration_job(campaign_ids)
         job_id = job.get("jobId")
         if not job_id:
             return {"error": "Failed to create migration job", "job": job}
-        
+
         # 等待完成
         elapsed = 0
         while elapsed < max_wait_seconds:
             status = await self.get_migration_job_status(job_id)
             state = status.get("status", "").upper()
-            
+
             if state == "COMPLETED":
                 return await self.get_migration_job_results(job_id)
             elif state == "FAILED":
                 return {"error": "Migration job failed", "status": status}
-            
+
             await asyncio.sleep(poll_interval_seconds)
             elapsed += poll_interval_seconds
-        
+
         return {"error": "Migration job timed out", "jobId": job_id}
 

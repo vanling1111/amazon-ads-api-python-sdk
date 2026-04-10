@@ -27,7 +27,7 @@ class SPTargetingAPI(_GenBase):
     ) -> JSONData:
         """
         获取Product Ad列表
-        
+
         Args:
             ad_group_id: Ad Group ID过滤
             campaign_id: Campaign ID过滤
@@ -37,7 +37,7 @@ class SPTargetingAPI(_GenBase):
             next_token: 分页token
         """
         params: JSONData = {"maxResults": max_results}
-        
+
         # ID过滤 - 官方格式: {"include": [...]}
         if ad_group_id:
             params["adGroupIdFilter"] = {"include": [ad_group_id]}
@@ -45,12 +45,12 @@ class SPTargetingAPI(_GenBase):
             params["campaignIdFilter"] = {"include": [campaign_id]}
         if ad_ids:
             params["adIdFilter"] = {"include": ad_ids}
-        
+
         # 状态过滤
         if state_filter:
             states = [state_filter] if isinstance(state_filter, str) else state_filter
             params["stateFilter"] = {"include": [s.upper() for s in states]}
-        
+
         if next_token:
             params["nextToken"] = next_token
 
@@ -65,7 +65,7 @@ class SPTargetingAPI(_GenBase):
     async def create_product_ads(self, product_ads: JSONList) -> JSONData:
         """
         批量创建Product Ad
-        
+
         Args:
             product_ads: [
                 {
@@ -96,9 +96,9 @@ class SPTargetingAPI(_GenBase):
     async def delete_product_ads(self, ad_ids: list[str]) -> JSONData:
         """
         批量归档Product Ad（官方 v3 /delete 端点）
-        
+
         注意：Amazon Ads 不支持真正删除广告实体，此操作将 Product Ad 状态设置为 "archived"。
-        
+
         Args:
             ad_ids: Product Ad ID列表
         """
@@ -133,7 +133,7 @@ class SPTargetingAPI(_GenBase):
     ) -> JSONData:
         """
         获取Target列表 (v3 API)
-        
+
         Args:
             ad_group_id: Ad Group ID过滤
             campaign_id: Campaign ID过滤
@@ -143,7 +143,7 @@ class SPTargetingAPI(_GenBase):
             next_token: 分页token
         """
         params: JSONData = {"maxResults": max_results}
-        
+
         # ID过滤 - 官方格式: {"include": [...]}
         if ad_group_id:
             params["adGroupIdFilter"] = {"include": [ad_group_id]}
@@ -151,12 +151,12 @@ class SPTargetingAPI(_GenBase):
             params["campaignIdFilter"] = {"include": [campaign_id]}
         if target_ids:
             params["targetIdFilter"] = {"include": target_ids}
-        
+
         # 状态过滤
         if state_filter:
             states = [state_filter] if isinstance(state_filter, str) else state_filter
             params["stateFilter"] = {"include": [s.upper() for s in states]}
-        
+
         if next_token:
             params["nextToken"] = next_token
 
@@ -175,7 +175,7 @@ class SPTargetingAPI(_GenBase):
     async def create_targets(self, targets: JSONList) -> JSONData:
         """
         批量创建Target
-        
+
         Args:
             targets: [
                 {
@@ -200,7 +200,7 @@ class SPTargetingAPI(_GenBase):
     async def update_targets(self, targets: JSONList) -> JSONData:
         """
         批量更新Target
-        
+
         Args:
             targets: [{"targetId": "xxx", "state": "paused", "bid": 1.5}]
         """
@@ -214,9 +214,9 @@ class SPTargetingAPI(_GenBase):
     async def delete_targets(self, target_ids: list[str]) -> JSONData:
         """
         批量归档Target（官方 v3 /delete 端点）
-        
+
         注意：Amazon Ads 不支持真正删除广告实体，此操作将 Target 状态设置为 "archived"。
-        
+
         Args:
             target_ids: Target ID列表
         """
@@ -242,7 +242,7 @@ class SPTargetingAPI(_GenBase):
     async def batch_update_target_bids(self, bid_updates: list[dict]) -> JSONData:
         """
         批量更新Target竞价
-        
+
         Args:
             bid_updates: [{"targetId": "xxx", "bid": 1.5}, ...]
         """
@@ -261,7 +261,7 @@ class SPTargetingAPI(_GenBase):
     ) -> JSONData:
         """
         获取Ad Group级别Negative Target列表 (v3 API)
-        
+
         Args:
             ad_group_id: Ad Group ID过滤
             campaign_id: Campaign ID过滤
@@ -271,7 +271,7 @@ class SPTargetingAPI(_GenBase):
             next_token: 分页token
         """
         params: JSONData = {"maxResults": max_results}
-        
+
         # ID过滤 - 官方格式: {"include": [...]}
         if ad_group_id:
             params["adGroupIdFilter"] = {"include": [ad_group_id]}
@@ -279,12 +279,12 @@ class SPTargetingAPI(_GenBase):
             params["campaignIdFilter"] = {"include": [campaign_id]}
         if target_ids:
             params["targetIdFilter"] = {"include": target_ids}
-        
+
         # 状态过滤
         if state_filter:
             states = [state_filter] if isinstance(state_filter, str) else state_filter
             params["stateFilter"] = {"include": [s.upper() for s in states]}
-        
+
         if next_token:
             params["nextToken"] = next_token
 
@@ -298,9 +298,9 @@ class SPTargetingAPI(_GenBase):
     async def create_negative_targets(self, targets: JSONList) -> JSONData:
         """
         批量创建Negative Target
-        
+
         官方端点: POST /sp/negativeTargets
-        
+
         Args:
             targets: [
                 {
@@ -324,9 +324,9 @@ class SPTargetingAPI(_GenBase):
     async def update_negative_targets(self, targets: JSONList) -> JSONData:
         """
         批量更新Negative Target
-        
+
         官方端点: PUT /sp/negativeTargets
-        
+
         Args:
             targets: [{"targetId": "xxx", "state": "paused"}]
         """
@@ -340,7 +340,7 @@ class SPTargetingAPI(_GenBase):
     async def get_negative_target_brand_recommendations(self) -> JSONData:
         """
         获取Negative Target品牌推荐
-        
+
         官方端点: GET /sp/negativeTargets/brands/recommendations
         """
         result = await self.get(
@@ -356,9 +356,9 @@ class SPTargetingAPI(_GenBase):
     ) -> JSONData:
         """
         搜索可用于Negative Target的品牌
-        
+
         官方端点: POST /sp/negativeTargets/brands/search
-        
+
         Args:
             keyword: 搜索关键词
             max_results: 最大结果数
@@ -373,9 +373,9 @@ class SPTargetingAPI(_GenBase):
     async def delete_negative_targets(self, target_ids: list[str]) -> JSONData:
         """
         批量归档Negative Target（官方 v3 /delete 端点）
-        
+
         注意：此操作将 Negative Target 状态设置为 "archived"。
-        
+
         Args:
             target_ids: Negative Target ID列表
         """
@@ -404,7 +404,7 @@ class SPTargetingAPI(_GenBase):
     ) -> JSONData:
         """
         获取Campaign级别Negative Target列表
-        
+
         Args:
             campaign_id: Campaign ID过滤
             target_ids: Target ID过滤
@@ -413,18 +413,18 @@ class SPTargetingAPI(_GenBase):
             next_token: 分页token
         """
         params: JSONData = {"maxResults": max_results}
-        
+
         # ID过滤 - 官方格式: {"include": [...]}
         if campaign_id:
             params["campaignIdFilter"] = {"include": [campaign_id]}
         if target_ids:
             params["targetIdFilter"] = {"include": target_ids}
-        
+
         # 状态过滤
         if state_filter:
             states = [state_filter] if isinstance(state_filter, str) else state_filter
             params["stateFilter"] = {"include": [s.upper() for s in states]}
-        
+
         if next_token:
             params["nextToken"] = next_token
 
@@ -441,7 +441,7 @@ class SPTargetingAPI(_GenBase):
     async def create_campaign_negative_targets(self, targets: JSONList) -> JSONData:
         """
         批量创建Campaign Negative Target
-        
+
         官方端点: POST /sp/campaignNegativeTargets
         """
         result = await self.post(
@@ -454,9 +454,9 @@ class SPTargetingAPI(_GenBase):
     async def update_campaign_negative_targets(self, targets: JSONList) -> JSONData:
         """
         批量更新Campaign Negative Target
-        
+
         官方端点: PUT /sp/campaignNegativeTargets
-        
+
         Args:
             targets: [{"targetId": "xxx", "state": "paused"}]
         """
@@ -470,7 +470,7 @@ class SPTargetingAPI(_GenBase):
     async def delete_campaign_negative_targets(self, target_ids: list[str]) -> JSONData:
         """
         批量归档Campaign Negative Target
-        
+
         官方端点: POST /sp/campaignNegativeTargets/delete
         官方请求格式: {"targetIdFilter": {"include": [...]}}
         """

@@ -36,7 +36,7 @@ class SPCampaignsAPI(_SpClientBase):
     ) -> JSONData:
         """
         获取Campaign列表
-        
+
         Args:
             state_filter: 状态过滤 ["ENABLED", "PAUSED", "ARCHIVED"]
             name_filter: 名称过滤（模糊匹配）
@@ -45,35 +45,35 @@ class SPCampaignsAPI(_SpClientBase):
             max_results: 最大结果数(1-100)
             next_token: 分页token
             include_extended_data: 是否包含扩展字段
-            
+
         Returns:
             {"campaigns": [...], "nextToken": "..."}
         """
         params: JSONData = {"maxResults": max_results}
-        
+
         # 状态过滤 - 官方格式: {"include": [...]}
         if state_filter:
             states = [state_filter] if isinstance(state_filter, str) else state_filter
             params["stateFilter"] = {"include": [s.upper() for s in states]}
-        
+
         # 名称过滤 - 官方格式: {"queryTermMatchType": "BROAD_MATCH", "include": [...]}
         if name_filter:
             params["nameFilter"] = {
                 "queryTermMatchType": "BROAD_MATCH",
                 "include": [name_filter]
             }
-        
+
         # Campaign ID过滤
         if campaign_ids:
             params["campaignIdFilter"] = {"include": campaign_ids}
-        
+
         # Portfolio ID过滤
         if portfolio_ids:
             params["portfolioIdFilter"] = {"include": portfolio_ids}
-        
+
         if next_token:
             params["nextToken"] = next_token
-        
+
         if include_extended_data:
             params["includeExtendedDataFields"] = True
 
@@ -88,7 +88,7 @@ class SPCampaignsAPI(_SpClientBase):
 
     async def get_campaign(self, campaign_id: str) -> JSONData:
         """获取单个Campaign详情
-        
+
         注意：Amazon Ads API的GET /sp/campaigns/{id}端点需要AWS Signature V4签名，
         但我们使用Bearer Token认证。因此改用list_campaigns的POST方式获取单个campaign。
         """
@@ -101,7 +101,7 @@ class SPCampaignsAPI(_SpClientBase):
     async def create_campaigns(self, campaigns: JSONList) -> JSONData:
         """
         批量创建Campaign
-        
+
         Args:
             campaigns: Campaign列表
             [
@@ -123,7 +123,7 @@ class SPCampaignsAPI(_SpClientBase):
     async def update_campaigns(self, campaigns: JSONList) -> JSONData:
         """
         批量更新Campaign
-        
+
         Args:
             campaigns: 包含campaignId的更新数据
             [{"campaignId": "xxx", "state": "paused", "dailyBudget": 20.0}]
@@ -134,15 +134,15 @@ class SPCampaignsAPI(_SpClientBase):
     async def delete_campaigns(self, campaign_ids: list[str]) -> JSONData:
         """
         批量归档Campaign（官方 v3 /delete 端点）
-        
+
         注意：Amazon Ads 不支持真正删除广告实体，此操作将 Campaign 状态设置为 "archived"。
         归档后的 Campaign 仍可在报告中查询，但无法恢复为 enabled/paused。
-        
+
         官方请求格式: {"campaignIdFilter": {"include": [...]}}
-        
+
         Args:
             campaign_ids: Campaign ID列表
-            
+
         Returns:
             {"campaigns": {"success": [...], "error": [...]}}
         """
@@ -153,7 +153,7 @@ class SPCampaignsAPI(_SpClientBase):
     async def delete_campaign(self, campaign_id: str) -> JSONData:
         """归档单个Campaign（状态变为 archived）"""
         return await self.delete_campaigns([campaign_id])
-    
+
     # archive_campaign 是 delete_campaign 的别名
     async def archive_campaign(self, campaign_id: str) -> JSONData:
         """归档Campaign（等同于 delete_campaign）"""
@@ -179,7 +179,7 @@ class SPCampaignsAPI(_SpClientBase):
     async def update_bidding_strategy(self, campaign_id: str, strategy: str) -> JSONData:
         """
         更新竞价策略
-        
+
         Args:
             strategy: LEGACY_FOR_SALES | AUTO_FOR_SALES | MANUAL
         """
@@ -216,10 +216,10 @@ class SPCampaignsAPI(_SpClientBase):
     async def get_campaigns_batch(self, campaign_ids: list[str]) -> JSONList:
         """
         并行批量获取Campaign详情
-        
+
         Args:
             campaign_ids: Campaign ID列表
-            
+
         Returns:
             Campaign详情列表
         """
@@ -230,7 +230,7 @@ class SPCampaignsAPI(_SpClientBase):
     async def list_campaigns_summary(self, state_filter: str | None = None) -> JSONData:
         """
         获取Campaign汇总统计（快速）
-        
+
         Returns:
             {
                 "total": 100,
@@ -241,7 +241,7 @@ class SPCampaignsAPI(_SpClientBase):
             }
         """
         campaigns = await self.list_all_campaigns(state_filter=state_filter)
-        
+
         summary = {
             "total": len(campaigns),
             "enabled": 0,
@@ -249,18 +249,18 @@ class SPCampaignsAPI(_SpClientBase):
             "archived": 0,
             "total_budget": 0.0,
         }
-        
+
         for c in campaigns:
             state = c.get("state", "").lower()
             if state in summary:
                 summary[state] += 1
-            
+
             budget = c.get("budget", {})
             if isinstance(budget, dict):
                 summary["total_budget"] += budget.get("budget", 0) or 0
             elif isinstance(budget, (int, float)):
                 summary["total_budget"] += budget
-        
+
         return summary
 
     # ============ Campaign Recommendations ============
@@ -272,9 +272,9 @@ class SPCampaignsAPI(_SpClientBase):
     ) -> JSONData:
         """
         获取Campaign推荐
-        
+
         官方端点: GET /sp/campaign/recommendations
-        
+
         返回Campaign级别的优化建议。
         """
         params: JSONData = {"maxResults": max_results}
@@ -293,9 +293,9 @@ class SPCampaignsAPI(_SpClientBase):
     ) -> JSONData:
         """
         获取Campaign推荐列表（POST版本）
-        
+
         官方端点: POST /sp/campaign/recommendations
-        
+
         Args:
             campaign_ids: Campaign ID过滤
             recommendation_types: 推荐类型过滤

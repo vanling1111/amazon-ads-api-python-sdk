@@ -30,12 +30,12 @@ class SBAdsAPI(_GenBase):
     ) -> JSONData:
         """
         获取SB Ad列表
-        
+
         SB广告类型:
         - productCollection: 产品集广告
         - video: 视频广告
         - storeSpotlight: 品牌旗舰店聚焦广告
-        
+
         Args:
             campaign_id: Campaign ID过滤
             ad_group_id: Ad Group ID过滤
@@ -45,7 +45,7 @@ class SBAdsAPI(_GenBase):
             next_token: 分页token
         """
         params: JSONData = {"maxResults": max_results}
-        
+
         # ID过滤 - 官方格式: {"include": [...]}
         if campaign_id:
             params["campaignIdFilter"] = {"include": [campaign_id]}
@@ -53,12 +53,12 @@ class SBAdsAPI(_GenBase):
             params["adGroupIdFilter"] = {"include": [ad_group_id]}
         if ad_ids:
             params["adIdFilter"] = {"include": ad_ids}
-        
+
         # 状态过滤
         if state_filter:
             states = [state_filter] if isinstance(state_filter, str) else state_filter
             params["stateFilter"] = {"include": [s.upper() for s in states]}
-        
+
         if next_token:
             params["nextToken"] = next_token
 
@@ -77,7 +77,7 @@ class SBAdsAPI(_GenBase):
     async def create_ads(self, ads: JSONList) -> JSONData:
         """
         批量创建SB Ad
-        
+
         Args:
             ads: [
                 {
@@ -117,7 +117,7 @@ class SBAdsAPI(_GenBase):
     async def delete_ads(self, ad_ids: list[str]) -> JSONData:
         """
         批量归档SB Ad（官方 v4 /delete 端点）
-        
+
         注意：Amazon Ads 不支持真正删除，此操作将 Ad 状态设置为 "archived"。
         """
         result = await self.post(
@@ -235,7 +235,7 @@ class SBAdsAPI(_GenBase):
     ) -> JSONData:
         """
         创建产品集广告
-        
+
         最常用的SB广告类型
         """
         ads = [{
@@ -267,7 +267,7 @@ class SBAdsAPI(_GenBase):
     ) -> JSONData:
         """
         创建视频广告
-        
+
         需要先上传视频到Creative Assets
         """
         ads = [{
@@ -295,7 +295,7 @@ class SBAdsAPI(_GenBase):
     ) -> JSONData:
         """
         创建品牌旗舰店聚焦广告
-        
+
         Args:
             store_pages: [
                 {"pageTitle": "Page 1", "asin": "B00XXXX"},
@@ -325,7 +325,7 @@ class SBAdsAPI(_GenBase):
     ) -> JSONData:
         """
         获取Landing Page上的ASIN
-        
+
         用于验证和选择要推广的产品
         """
         result = await self.post("/sb/landingPageAsins", json_data={
@@ -338,12 +338,12 @@ class SBAdsAPI(_GenBase):
     async def list_brands(self, brand_type_filter: str | None = None) -> JSONList:
         """
         获取可用的品牌列表
-        
+
         官方端点：GET /brands (注意：不是 /sb/brands)
-        
+
         Args:
             brand_type_filter: 品牌类型过滤（可选）
-            
+
         Returns:
             品牌列表，每个品牌包含：
             - brandId: 品牌ID
@@ -369,7 +369,7 @@ class SBAdsAPI(_GenBase):
     async def get_moderation_status(self, ad_ids: list[str]) -> JSONList:
         """
         获取广告审核状态
-        
+
         SB广告需要经过Amazon审核
         """
         result = await self.post("/sb/moderation", json_data={"adIds": ad_ids})

@@ -29,7 +29,7 @@ class SPAdGroupsAPI(_GenBase):
     ) -> JSONData:
         """
         获取Ad Group列表
-        
+
         Args:
             campaign_id: 过滤特定Campaign
             ad_group_ids: Ad Group ID过滤
@@ -40,28 +40,28 @@ class SPAdGroupsAPI(_GenBase):
             include_extended_data: 是否包含扩展字段
         """
         params: JSONData = {"maxResults": max_results}
-        
+
         # ID过滤 - 官方格式: {"include": [...]}
         if campaign_id:
             params["campaignIdFilter"] = {"include": [campaign_id]}
         if ad_group_ids:
             params["adGroupIdFilter"] = {"include": ad_group_ids}
-        
+
         # 状态过滤
         if state_filter:
             states = [state_filter] if isinstance(state_filter, str) else state_filter
             params["stateFilter"] = {"include": [s.upper() for s in states]}
-        
+
         # 名称过滤
         if name_filter:
             params["nameFilter"] = {
                 "queryTermMatchType": "BROAD_MATCH",
                 "include": [name_filter]
             }
-        
+
         if next_token:
             params["nextToken"] = next_token
-        
+
         if include_extended_data:
             params["includeExtendedDataFields"] = True
 
@@ -76,7 +76,7 @@ class SPAdGroupsAPI(_GenBase):
     async def create_ad_groups(self, ad_groups: JSONList) -> JSONData:
         """
         批量创建Ad Group
-        
+
         Args:
             ad_groups: Ad Group列表
             [
@@ -94,7 +94,7 @@ class SPAdGroupsAPI(_GenBase):
     async def update_ad_groups(self, ad_groups: JSONList) -> JSONData:
         """
         批量更新Ad Group
-        
+
         Args:
             ad_groups: 包含adGroupId的更新数据
             [{"adGroupId": "xxx", "state": "paused", "defaultBid": 1.5}]
@@ -105,12 +105,12 @@ class SPAdGroupsAPI(_GenBase):
     async def delete_ad_groups(self, ad_group_ids: list[str]) -> JSONData:
         """
         批量归档Ad Group（官方 v3 /delete 端点）
-        
+
         注意：Amazon Ads 不支持真正删除广告实体，此操作将 Ad Group 状态设置为 "archived"。
-        
+
         Args:
             ad_group_ids: Ad Group ID列表
-            
+
         Returns:
             {"adGroups": {"success": [...], "error": [...]}}
         """
@@ -122,7 +122,7 @@ class SPAdGroupsAPI(_GenBase):
     async def delete_ad_group(self, ad_group_id: str) -> JSONData:
         """归档单个Ad Group（状态变为 archived）"""
         return await self.delete_ad_groups([ad_group_id])
-    
+
     # archive_ad_group 是 delete_ad_group 的别名
     async def archive_ad_group(self, ad_group_id: str) -> JSONData:
         """归档Ad Group（等同于 delete_ad_group）"""

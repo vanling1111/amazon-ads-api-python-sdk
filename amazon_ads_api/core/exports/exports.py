@@ -7,7 +7,7 @@ OpenAPI Spec: Exports_prod_3p.json
 数据导出
 """
 
-from amazon_ads_api.base import JSONData, JSONList
+from amazon_ads_api.base import JSONData
 
 try:
     from amazon_ads_api.generated.clients.clients_exports import ExportsClient as _GenBase
@@ -25,7 +25,7 @@ TARGETS_EXPORT_CONTENT_TYPE = "application/vnd.targetsexport.v1+json"
 class ExportsAPI(_GenBase):
     """
     Exports API (全异步)
-    
+
     官方端点 (共5个):
     - POST /adGroups/export - 导出广告组
     - POST /ads/export - 导出广告
@@ -43,9 +43,9 @@ class ExportsAPI(_GenBase):
     ) -> JSONData:
         """
         创建 Campaigns 导出
-        
+
         POST /campaigns/export
-        
+
         Args:
             ad_product_filter: 广告产品过滤（默认全部）
                 - SPONSORED_PRODUCTS
@@ -55,7 +55,7 @@ class ExportsAPI(_GenBase):
                 - ENABLED
                 - PAUSED
                 - ARCHIVED
-        
+
         Returns:
             {
                 "exportId": "xxx",
@@ -65,12 +65,12 @@ class ExportsAPI(_GenBase):
             }
         """
         body: JSONData = {}
-        
+
         if ad_product_filter:
             body["adProductFilter"] = ad_product_filter
         if state_filter:
             body["stateFilter"] = state_filter
-        
+
         result = await self.post(
             "/campaigns/export",
             json_data=body,
@@ -86,20 +86,20 @@ class ExportsAPI(_GenBase):
     ) -> JSONData:
         """
         创建 Ad Groups 导出
-        
+
         POST /adGroups/export
-        
+
         Args:
             ad_product_filter: 广告产品过滤
             state_filter: 状态过滤
         """
         body: JSONData = {}
-        
+
         if ad_product_filter:
             body["adProductFilter"] = ad_product_filter
         if state_filter:
             body["stateFilter"] = state_filter
-        
+
         result = await self.post(
             "/adGroups/export",
             json_data=body,
@@ -115,20 +115,20 @@ class ExportsAPI(_GenBase):
     ) -> JSONData:
         """
         创建 Ads 导出
-        
+
         POST /ads/export
-        
+
         Args:
             ad_product_filter: 广告产品过滤
             state_filter: 状态过滤
         """
         body: JSONData = {}
-        
+
         if ad_product_filter:
             body["adProductFilter"] = ad_product_filter
         if state_filter:
             body["stateFilter"] = state_filter
-        
+
         result = await self.post(
             "/ads/export",
             json_data=body,
@@ -147,9 +147,9 @@ class ExportsAPI(_GenBase):
     ) -> JSONData:
         """
         创建 Targets 导出
-        
+
         POST /targets/export
-        
+
         Args:
             ad_product_filter: 广告产品过滤
             state_filter: 状态过滤
@@ -171,7 +171,7 @@ class ExportsAPI(_GenBase):
                 - [True, False]: 两者都返回
         """
         body: JSONData = {}
-        
+
         if ad_product_filter:
             body["adProductFilter"] = ad_product_filter
         if state_filter:
@@ -182,7 +182,7 @@ class ExportsAPI(_GenBase):
             body["targetLevelFilter"] = target_level_filter
         if negative_filter:
             body["negativeFilter"] = negative_filter
-        
+
         result = await self.post(
             "/targets/export",
             json_data=body,
@@ -200,9 +200,9 @@ class ExportsAPI(_GenBase):
     ) -> JSONData:
         """
         获取导出状态
-        
+
         GET /exports/{exportId}
-        
+
         Args:
             export_id: 导出 ID
             export_type: 导出类型（用于确定 Accept header）
@@ -210,7 +210,7 @@ class ExportsAPI(_GenBase):
                 - adGroups
                 - ads
                 - targets
-        
+
         Returns:
             {
                 "exportId": "xxx",
@@ -230,7 +230,7 @@ class ExportsAPI(_GenBase):
             "targets": TARGETS_EXPORT_CONTENT_TYPE,
         }
         accept = content_type_map.get(export_type, CAMPAIGNS_EXPORT_CONTENT_TYPE)
-        
+
         result = await self.get(f"/exports/{export_id}", accept=accept)
         return result if isinstance(result, dict) else {}
 
@@ -289,27 +289,27 @@ class ExportsAPI(_GenBase):
     ) -> JSONData:
         """
         等待导出完成
-        
+
         Args:
             export_id: 导出 ID
             export_type: 导出类型
             max_wait_seconds: 最大等待时间（秒）
             poll_interval: 轮询间隔（秒）
-        
+
         Returns:
             导出结果（包含 url 或 error）
         """
         import asyncio
-        
+
         elapsed = 0
         while elapsed < max_wait_seconds:
             result = await self.get_export(export_id, export_type)
             status = result.get("status")
-            
+
             if status == "COMPLETED" or status == "FAILED":
                 return result
-            
+
             await asyncio.sleep(poll_interval)
             elapsed += poll_interval
-        
+
         return {"status": "TIMEOUT", "exportId": export_id}

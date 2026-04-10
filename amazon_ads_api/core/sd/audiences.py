@@ -41,13 +41,13 @@ except ImportError:
 class SDAudienceTargetingAPI(_GenBase):
     """
     SD Audience Targeting API (全异步)
-    
+
     ⚠️ 注意：这不是独立的 audiences API！
     这是通过 /sd/targets 端点实现受众定向的辅助类。
-    
+
     SD 受众定向使用 TargetingPredicateNested 表达式，
     通过 targeting 端点进行配置。
-    
+
     API Tier: L1
     Source: SponsoredDisplay_v3.yaml (targeting 部分)
     """
@@ -63,15 +63,15 @@ class SDAudienceTargetingAPI(_GenBase):
     ) -> JSONData:
         """
         创建受众定向目标
-        
+
         通过 POST /sd/targets 端点实现
-        
+
         Args:
             ad_group_id: 广告组 ID
             audience_id: 受众 ID (通过 Audiences Discovery API 获取)
             bid: 竞价金额
             state: 状态 (enabled, paused, archived)
-        
+
         Returns:
             创建结果
         """
@@ -85,14 +85,14 @@ class SDAudienceTargetingAPI(_GenBase):
                 }]
             }]
         }
-        
+
         body: JSONData = {
             "adGroupId": ad_group_id,
             "targetingClause": targeting_clause,
             "bid": bid,
             "state": state,
         }
-        
+
         result = await self.post("/sd/targets", json_data=[body])
         return result if isinstance(result, (dict, list)) else {}
 
@@ -102,14 +102,14 @@ class SDAudienceTargetingAPI(_GenBase):
     ) -> JSONData:
         """
         批量创建受众定向目标
-        
+
         Args:
             targets: 目标列表，每个包含:
                 - ad_group_id: 广告组 ID
                 - audience_id: 受众 ID
                 - bid: 竞价金额
                 - state: 状态 (可选)
-        
+
         Returns:
             批量创建结果
         """
@@ -130,7 +130,7 @@ class SDAudienceTargetingAPI(_GenBase):
                 "bid": target["bid"],
                 "state": target.get("state", "enabled"),
             })
-        
+
         result = await self.post("/sd/targets", json_data=formatted_targets)
         return result if isinstance(result, (dict, list)) else {}
 
@@ -141,13 +141,13 @@ class SDAudienceTargetingAPI(_GenBase):
     ) -> JSONData:
         """
         更新受众定向目标的竞价
-        
+
         通过 PUT /sd/targets 端点实现
-        
+
         Args:
             target_id: 目标 ID
             bid: 新竞价金额
-        
+
         Returns:
             更新结果
         """
@@ -163,12 +163,12 @@ class SDAudienceTargetingAPI(_GenBase):
     ) -> JSONData:
         """
         归档受众定向目标
-        
+
         通过 PUT /sd/targets 端点实现
-        
+
         Args:
             target_id: 目标 ID
-        
+
         Returns:
             归档结果
         """
@@ -188,14 +188,14 @@ class SDAudienceTargetingAPI(_GenBase):
     ) -> JSONData:
         """
         创建否定受众定向
-        
+
         通过 POST /sd/negativeTargets 端点实现
-        
+
         Args:
             ad_group_id: 广告组 ID
             audience_id: 要排除的受众 ID
             state: 状态
-        
+
         Returns:
             创建结果
         """
@@ -208,13 +208,13 @@ class SDAudienceTargetingAPI(_GenBase):
                 }]
             }]
         }
-        
+
         body: JSONData = {
             "adGroupId": ad_group_id,
             "targetingClause": targeting_clause,
             "state": state,
         }
-        
+
         result = await self.post("/sd/negativeTargets", json_data=[body])
         return result if isinstance(result, (dict, list)) else {}
 
@@ -224,7 +224,7 @@ class SDAudienceTargetingAPI(_GenBase):
     ) -> JSONData:
         """
         归档否定受众定向
-        
+
         通过 PUT /sd/negativeTargets 端点实现
         """
         result = await self.put("/sd/negativeTargets", json_data=[{
@@ -243,18 +243,18 @@ class SDAudienceTargetingAPI(_GenBase):
     ) -> JSONData:
         """
         创建动态受众定向 (Audiences Likely Interested In Ad)
-        
+
         官方文档说明:
         Target audiences that are likely to consider and buy from your business.
         We recommend adding this segment to all campaigns for greater reach.
-        
+
         ⚠️ 注意: 仅当 landingPageType 为 OFF_AMAZON_LINK 时支持
-        
+
         Args:
             ad_group_id: 广告组 ID
             bid: 竞价金额
             state: 状态
-        
+
         Returns:
             创建结果
         """
@@ -263,14 +263,14 @@ class SDAudienceTargetingAPI(_GenBase):
                 "type": "audiencesLikelyInterestedInAd"
             }]
         }
-        
+
         body: JSONData = {
             "adGroupId": ad_group_id,
             "targetingClause": targeting_clause,
             "bid": bid,
             "state": state,
         }
-        
+
         result = await self.post("/sd/targets", json_data=[body])
         return result if isinstance(result, (dict, list)) else {}
 

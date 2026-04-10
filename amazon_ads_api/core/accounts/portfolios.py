@@ -36,16 +36,16 @@ class PortfoliosAPI(_GenBase):
     ) -> JSONData:
         """
         获取Portfolio列表 (v3 API)
-        
+
         使用 POST /portfolios/list 端点
-        
+
         Args:
             name_filter: 按名称过滤（支持模糊匹配）
             portfolio_ids: 按 ID 列表过滤
             state_filter: 按状态过滤 (enabled, paused, archived)
             include_extended: 是否包含扩展字段
             next_token: 分页 token
-        
+
         Returns:
             {
                 "portfolios": [...],
@@ -53,22 +53,22 @@ class PortfoliosAPI(_GenBase):
             }
         """
         body: JSONData = {}
-        
+
         if include_extended:
             body["includeExtendedDataFields"] = True
-        
+
         if name_filter:
             body["nameFilter"] = {"queryTermMatchType": "BROAD_MATCH", "include": [name_filter]}
-        
+
         if portfolio_ids:
             body["portfolioIdFilter"] = {"include": portfolio_ids}
-        
+
         if state_filter:
             body["stateFilter"] = {"include": [state_filter.upper()]}
-        
+
         if next_token:
             body["nextToken"] = next_token
-        
+
         result = await self.post(
             "/portfolios/list",
             json_data=body,
@@ -86,7 +86,7 @@ class PortfoliosAPI(_GenBase):
         """
         all_portfolios: JSONList = []
         next_token = None
-        
+
         while True:
             result = await self.list_portfolios(
                 name_filter=name_filter,
@@ -95,17 +95,17 @@ class PortfoliosAPI(_GenBase):
             )
             portfolios = result.get("portfolios", [])
             all_portfolios.extend(portfolios)
-            
+
             next_token = result.get("nextToken")
             if not next_token:
                 break
-        
+
         return all_portfolios
 
     async def get_portfolio(self, portfolio_id: str) -> JSONData:
         """
         获取单个Portfolio详情
-        
+
         通过 list 接口过滤单个 ID
         """
         result = await self.list_portfolios(portfolio_ids=[portfolio_id])
@@ -115,7 +115,7 @@ class PortfoliosAPI(_GenBase):
     async def create_portfolios(self, portfolios: JSONList) -> JSONData:
         """
         批量创建Portfolio (v3 API)
-        
+
         Args:
             portfolios: [
                 {
@@ -129,7 +129,7 @@ class PortfoliosAPI(_GenBase):
                     "state": "ENABLED"
                 }
             ]
-        
+
         Returns:
             {
                 "portfolios": {
@@ -148,7 +148,7 @@ class PortfoliosAPI(_GenBase):
     async def update_portfolios(self, portfolios: JSONList) -> JSONData:
         """
         批量更新Portfolio (v3 API)
-        
+
         Args:
             portfolios: [
                 {
@@ -170,10 +170,10 @@ class PortfoliosAPI(_GenBase):
     async def get_budget_usage(self, portfolio_ids: list[str]) -> JSONData:
         """
         获取Portfolio预算使用情况
-        
+
         Args:
             portfolio_ids: Portfolio ID 列表（最多100个）
-        
+
         Returns:
             {
                 "success": [...],
@@ -199,7 +199,7 @@ class PortfoliosAPI(_GenBase):
     ) -> JSONData:
         """
         设置Portfolio预算
-        
+
         Args:
             amount: 预算金额
             policy: DATE_RANGE | MONTHLY_RECURRING
@@ -277,14 +277,14 @@ class PortfoliosAPI(_GenBase):
         return success[0] if success else {}
 
     # ============ 兼容 v2 API 的方法（已废弃）============
-    
+
     async def list_portfolios_extended(self) -> JSONList:
         """
         [已废弃] 使用 list_portfolios(include_extended=True) 代替
         """
         result = await self.list_portfolios(include_extended=True)
         return result.get("portfolios", [])
-    
+
     async def get_portfolio_extended(self, portfolio_id: str) -> JSONData:
         """
         [已废弃] 使用 get_portfolio() 代替，v3 API 默认包含扩展字段

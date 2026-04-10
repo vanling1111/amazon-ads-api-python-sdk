@@ -21,7 +21,7 @@ CONTENT_TYPE_PRODUCT_AD = "application/vnd.spProductAd.v3+json"
 
 class SPProductAdsAPI(_GenBase):
     """SP Product Ads API (全异步)
-    
+
     基于官方OpenAPI规范实现：
     - POST /sp/productAds - 创建Product Ads
     - PUT /sp/productAds - 更新Product Ads
@@ -35,9 +35,9 @@ class SPProductAdsAPI(_GenBase):
     async def create_product_ads(self, product_ads: JSONList) -> JSONData:
         """
         批量创建Product Ads
-        
+
         POST /sp/productAds
-        
+
         Args:
             product_ads: Product Ad列表
             [
@@ -50,7 +50,7 @@ class SPProductAdsAPI(_GenBase):
                     "sku": "MY-SKU-001"  # For sellers
                 }
             ]
-            
+
         Returns:
             {
                 "productAds": {
@@ -63,13 +63,13 @@ class SPProductAdsAPI(_GenBase):
                     "error": []
                 }
             }
-            
+
         Required fields:
             - adGroupId: Ad Group ID
             - campaignId: Campaign ID  
             - state: ENABLED | PAUSED
             - asin (vendors) OR sku (sellers): 二选一
-            
+
         OpenAPI Schema: SponsoredProductsCreateSponsoredProductsProductAdsRequestContent
         """
         payload = {"productAds": product_ads}
@@ -78,7 +78,7 @@ class SPProductAdsAPI(_GenBase):
             json_data=payload,
             content_type=CONTENT_TYPE_PRODUCT_AD
         )
-        
+
         # 解析207 Multi-Status响应
         # OpenAPI定义的返回格式已经是 {"productAds": {"success": [...], "error": [...]}}
         return result
@@ -86,9 +86,9 @@ class SPProductAdsAPI(_GenBase):
     async def update_product_ads(self, product_ads: JSONList) -> JSONData:
         """
         批量更新Product Ads
-        
+
         PUT /sp/productAds
-        
+
         Args:
             product_ads: Product Ad更新列表
             [
@@ -97,7 +97,7 @@ class SPProductAdsAPI(_GenBase):
                     "state": "PAUSED"  # ENABLED | PAUSED
                 }
             ]
-            
+
         Returns:
             {
                 "productAds": {
@@ -110,13 +110,13 @@ class SPProductAdsAPI(_GenBase):
                     "error": []
                 }
             }
-            
+
         Required fields:
             - adId: Product Ad ID
-            
+
         Optional fields:
             - state: ENABLED | PAUSED
-            
+
         OpenAPI Schema: SponsoredProductsUpdateSponsoredProductsProductAdsRequestContent
         """
         payload = {"productAds": product_ads}
@@ -130,12 +130,12 @@ class SPProductAdsAPI(_GenBase):
     async def delete_product_ads(self, ad_ids: list[str]) -> JSONData:
         """
         批量删除Product Ads
-        
+
         POST /sp/productAds/delete
-        
+
         Args:
             ad_ids: Product Ad ID列表
-            
+
         Returns:
             {
                 "productAds": {
@@ -148,7 +148,7 @@ class SPProductAdsAPI(_GenBase):
                     "error": []
                 }
             }
-            
+
         OpenAPI Schema: SponsoredProductsDeleteSponsoredProductsProductAdsRequestContent
         Note: 使用 adIdFilter.include 格式
         """
@@ -176,9 +176,9 @@ class SPProductAdsAPI(_GenBase):
     ) -> JSONData:
         """
         列出Product Ads
-        
+
         POST /sp/productAds/list
-        
+
         Args:
             ad_ids: Product Ad ID过滤
             ad_group_id: Ad Group ID过滤
@@ -187,41 +187,41 @@ class SPProductAdsAPI(_GenBase):
             max_results: 最大结果数
             next_token: 分页token
             include_extended_data: 是否包含扩展字段（creationDate, lastUpdateDate, servingStatus）
-            
+
         Returns:
             {
                 "productAds": [...],
                 "nextToken": "..."  # 如果有下一页
             }
-            
+
         OpenAPI Schema: SponsoredProductsListSponsoredProductsProductAdsRequestContent
         Response: 200 OK (not 207)
         """
         params: JSONData = {}
-        
+
         # Ad ID过滤 - 格式: {"include": [...]}
         if ad_ids:
             params["adIdFilter"] = {"include": ad_ids}
-        
+
         # Ad Group ID过滤 - 使用ReducedObjectIdFilter格式
         if ad_group_id:
             params["adGroupIdFilter"] = {"include": [ad_group_id]}
-        
+
         # Campaign ID过滤 - 使用ReducedObjectIdFilter格式
         if campaign_id:
             params["campaignIdFilter"] = {"include": [campaign_id]}
-        
+
         # 状态过滤 - 格式: {"include": ["ENABLED", ...]}
         if state_filter:
             states = [state_filter] if isinstance(state_filter, str) else state_filter
             params["stateFilter"] = {"include": [s.upper() for s in states]}
-        
+
         if max_results is not None:
             params["maxResults"] = max_results
-        
+
         if next_token:
             params["nextToken"] = next_token
-        
+
         if include_extended_data:
             params["includeExtendedDataFields"] = True
 
@@ -230,7 +230,7 @@ class SPProductAdsAPI(_GenBase):
             json_data=params,
             content_type=CONTENT_TYPE_PRODUCT_AD
         )
-        
+
         # list接口返回200 OK，格式: {"productAds": [...], "nextToken": "..."}
         if not isinstance(result, dict):
             return {"productAds": []}
@@ -239,12 +239,12 @@ class SPProductAdsAPI(_GenBase):
     async def archive_product_ad(self, ad_id: str) -> JSONData:
         """
         归档单个Product Ad（便利方法）
-        
+
         内部调用 delete_product_ads([ad_id])
-        
+
         Args:
             ad_id: Product Ad ID
-            
+
         Returns:
             {
                 "productAds": {

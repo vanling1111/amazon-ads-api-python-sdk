@@ -44,7 +44,7 @@ class SDTargetingAPI(_GenBase):
     async def create_targets(self, targets: JSONList) -> JSONData:
         """
         批量创建SD Target
-        
+
         受众定向示例:
         {
             "adGroupId": "xxx",
@@ -54,7 +54,7 @@ class SDTargetingAPI(_GenBase):
             ],
             "bid": 1.0
         }
-        
+
         上下文定向示例:
         {
             "adGroupId": "xxx",
@@ -169,7 +169,7 @@ class SDTargetingAPI(_GenBase):
     ) -> JSONData:
         """
         获取定向建议
-        
+
         Args:
             ad_group_id: 广告组ID
             asins: 基于这些ASIN推荐
@@ -203,7 +203,7 @@ class SDTargetingAPI(_GenBase):
     async def list_audiences(self) -> JSONList:
         """
         获取可用的受众列表
-        
+
         包括In-Market、Lifestyle等受众类型
         """
         result = await self.get("/sd/audiences")
@@ -212,7 +212,7 @@ class SDTargetingAPI(_GenBase):
     async def get_audience_categories(self) -> JSONData:
         """
         获取受众类别树
-        
+
         用于受众定向选择
         """
         result = await self.get("/sd/audiences/categories")
@@ -223,7 +223,7 @@ class SDTargetingAPI(_GenBase):
     async def get_brand_safety_list(self, ad_group_id: str) -> JSONData:
         """
         获取品牌安全列表
-        
+
         排除不想展示广告的位置
         """
         result = await self.get(f"/sd/adGroups/{ad_group_id}/brandSafetyList")
@@ -237,7 +237,7 @@ class SDTargetingAPI(_GenBase):
     ) -> JSONData:
         """
         更新品牌安全列表
-        
+
         Args:
             domains: 要排除的网站域名
             apps: 要排除的App
@@ -270,7 +270,7 @@ class SDTargetingAPI(_GenBase):
     ) -> JSONData:
         """
         创建受众定向
-        
+
         Args:
             audience_type: audienceCategory, lifestyle, inMarket等
             audience_value: 具体值

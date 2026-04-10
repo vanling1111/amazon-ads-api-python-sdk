@@ -19,7 +19,7 @@ Amazon Ads Marketing Mix Modeling (MMM) API (异步版本)
 """
 
 from typing import Any
-from amazon_ads_api.base import JSONData, JSONList
+from amazon_ads_api.base import JSONData
 
 try:
     from amazon_ads_api.generated.clients.clients_mmm import MmmClient as _GenBase
@@ -30,15 +30,15 @@ except ImportError:
 class MarketingMixModelingAPI(_GenBase):
     """
     Marketing Mix Modeling (MMM) API (全异步)
-    
+
     用于请求包含聚合 Amazon 销售和媒体表现信号的报告，
     用于营销组合建模 (MMM)。
-    
+
     官方端点 (共10个):
     - Brand Groups: 2个
     - Brand Group Overrides: 3个
     - Reports: 5个
-    
+
     注意: 需要 Amazon-Advertising-API-Manager-Account header
     """
 
@@ -53,20 +53,20 @@ class MarketingMixModelingAPI(_GenBase):
     ) -> JSONData:
         """
         列出品牌组
-        
+
         POST /mmm/v1/brandGroups/list
-        
+
         Args:
             brand_group_id_filter: 只列出这些ID的品牌组
             country_code_filter: 只列出这些国家代码的品牌组 (ISO 3166)
             max_results: 每页记录数 (1-100, 默认100)
             next_token: 分页令牌
-            
+
         Returns:
             包含 brandGroups 数组和可选 nextToken 的字典
         """
         body: dict[str, Any] = {}
-        
+
         if brand_group_id_filter:
             body["brandGroupIdFilter"] = {"include": brand_group_id_filter}
         if country_code_filter:
@@ -75,7 +75,7 @@ class MarketingMixModelingAPI(_GenBase):
             body["maxResults"] = max_results
         if next_token:
             body["nextToken"] = next_token
-            
+
         result = await self.post("/mmm/v1/brandGroups/list", json_data=body)
         return result if isinstance(result, dict) else {}
 
@@ -87,16 +87,16 @@ class MarketingMixModelingAPI(_GenBase):
     ) -> JSONData:
         """
         获取品牌组的活动列表
-        
+
         GET /mmm/v1/brandGroups/{brandGroupId}/campaigns
-        
+
         返回与品牌组产品关联的活动列表（最近3年内）。
-        
+
         Args:
             brand_group_id: 品牌组ID
             max_results: 每页记录数 (1-100)
             next_token: 分页令牌
-            
+
         Returns:
             包含 campaigns 数组和可选 nextToken 的字典
         """
@@ -105,7 +105,7 @@ class MarketingMixModelingAPI(_GenBase):
             params["maxResults"] = max_results
         if next_token:
             params["nextToken"] = next_token
-            
+
         result = await self.get(
             f"/mmm/v1/brandGroups/{brand_group_id}/campaigns",
             params=params
@@ -120,16 +120,16 @@ class MarketingMixModelingAPI(_GenBase):
     ) -> JSONData:
         """
         获取品牌组的产品列表
-        
+
         GET /mmm/v1/brandGroups/{brandGroupId}/products
-        
+
         返回品牌组的产品列表（最近3年内销售的）。
-        
+
         Args:
             brand_group_id: 品牌组ID
             max_results: 每页记录数 (1-100)
             next_token: 分页令牌
-            
+
         Returns:
             包含 products 数组和可选 nextToken 的字典
         """
@@ -138,7 +138,7 @@ class MarketingMixModelingAPI(_GenBase):
             params["maxResults"] = max_results
         if next_token:
             params["nextToken"] = next_token
-            
+
         result = await self.get(
             f"/mmm/v1/brandGroups/{brand_group_id}/products",
             params=params
@@ -153,21 +153,21 @@ class MarketingMixModelingAPI(_GenBase):
     ) -> JSONData:
         """
         创建品牌组覆盖
-        
+
         POST /mmm/v1/brandGroupOverrides
-        
+
         覆盖强制品牌组包含或排除特定产品或活动。
-        
+
         Args:
             overrides: 覆盖列表，每个包含:
                 - brandGroupId: 品牌组ID
                 - identifierType: "ASIN" 或 "CAMPAIGN_ID"
                 - identifierValue: ASIN 或活动ID
                 - overrideType: "INCLUDE" 或 "EXCLUDE"
-                
+
         Returns:
             包含 success 和 error 数组的字典
-            
+
         Example:
             await api.create_brand_group_overrides([
                 {
@@ -191,20 +191,20 @@ class MarketingMixModelingAPI(_GenBase):
     ) -> JSONData:
         """
         列出品牌组覆盖
-        
+
         POST /mmm/v1/brandGroupOverrides/list
-        
+
         Args:
             brand_group_id_filter: 只列出这些品牌组的覆盖
             override_id_filter: 只列出这些ID的覆盖
             max_results: 每页记录数 (1-100)
             next_token: 分页令牌
-            
+
         Returns:
             包含 overrides 数组和可选 nextToken 的字典
         """
         body: dict[str, Any] = {}
-        
+
         if brand_group_id_filter:
             body["brandGroupIdFilter"] = {"include": brand_group_id_filter}
         if override_id_filter:
@@ -213,7 +213,7 @@ class MarketingMixModelingAPI(_GenBase):
             body["maxResults"] = max_results
         if next_token:
             body["nextToken"] = next_token
-            
+
         result = await self.post("/mmm/v1/brandGroupOverrides/list", json_data=body)
         return result if isinstance(result, dict) else {}
 
@@ -223,12 +223,12 @@ class MarketingMixModelingAPI(_GenBase):
     ) -> JSONData:
         """
         删除品牌组覆盖
-        
+
         POST /mmm/v1/brandGroupOverrides/delete
-        
+
         Args:
             override_ids: 要删除的覆盖ID列表
-            
+
         Returns:
             包含 success 和 error 数组的字典
         """
@@ -254,9 +254,9 @@ class MarketingMixModelingAPI(_GenBase):
     ) -> JSONData:
         """
         创建 MMM 报告
-        
+
         POST /mmm/v1/reports
-        
+
         Args:
             brand_group_id: 品牌组ID
             start_date: 报告开始日期 (YYYY-MM-DD)
@@ -276,7 +276,7 @@ class MarketingMixModelingAPI(_GenBase):
             report_name: 报告显示名称
             description: 报告描述
             due_date: 截止日期 (用于优先级)
-            
+
         Returns:
             创建的报告详情，包含 reportId 和 status
         """
@@ -290,14 +290,14 @@ class MarketingMixModelingAPI(_GenBase):
             "startDate": start_date,
             "endDate": end_date,
         }
-        
+
         if report_name:
             body["reportName"] = report_name
         if description:
             body["description"] = description
         if due_date:
             body["dueDate"] = due_date
-            
+
         result = await self.post("/mmm/v1/reports", json_data=body)
         return result if isinstance(result, dict) else {}
 
@@ -309,38 +309,38 @@ class MarketingMixModelingAPI(_GenBase):
     ) -> JSONData:
         """
         列出报告
-        
+
         POST /mmm/v1/reports/list
-        
+
         Args:
             report_id_filter: 只列出这些ID的报告
             max_results: 每页记录数 (1-100)
             next_token: 分页令牌
-            
+
         Returns:
             包含 reports 数组和可选 nextToken 的字典
         """
         body: dict[str, Any] = {}
-        
+
         if report_id_filter:
             body["reportIdFilter"] = {"include": report_id_filter}
         if max_results != 100:
             body["maxResults"] = max_results
         if next_token:
             body["nextToken"] = next_token
-            
+
         result = await self.post("/mmm/v1/reports/list", json_data=body)
         return result if isinstance(result, dict) else {}
 
     async def get_report(self, report_id: str) -> JSONData:
         """
         获取报告状态
-        
+
         GET /mmm/v1/reports/{reportId}
-        
+
         Args:
             report_id: 报告ID
-            
+
         Returns:
             报告详情，包含:
             - status: PENDING, PROCESSING, SUCCEEDED, FAILED, CANCELED
@@ -353,14 +353,14 @@ class MarketingMixModelingAPI(_GenBase):
     async def delete_report(self, report_id: str) -> bool:
         """
         删除报告
-        
+
         DELETE /mmm/v1/reports/{reportId}
-        
+
         用于取消或清理报告。
-        
+
         Args:
             report_id: 报告ID
-            
+
         Returns:
             成功返回 True
         """
@@ -377,28 +377,28 @@ class MarketingMixModelingAPI(_GenBase):
     ) -> JSONData:
         """
         等待报告完成
-        
+
         轮询报告状态直到完成或超时。
-        
+
         Args:
             report_id: 报告ID
             max_wait_seconds: 最大等待时间（默认24小时）
             poll_interval_seconds: 轮询间隔（默认60秒）
-            
+
         Returns:
             最终报告状态
-            
+
         Raises:
             TimeoutError: 超时
             RuntimeError: 报告失败
         """
         import asyncio
-        
+
         elapsed = 0
         while elapsed < max_wait_seconds:
             report = await self.get_report(report_id)
             status = report.get("status", "")
-            
+
             if status == "SUCCEEDED":
                 return report
             elif status == "FAILED":
@@ -407,8 +407,8 @@ class MarketingMixModelingAPI(_GenBase):
                 raise RuntimeError(f"Report failed: {failure_code} - {failure_message}")
             elif status == "CANCELED":
                 raise RuntimeError("Report was canceled")
-            
+
             await asyncio.sleep(poll_interval_seconds)
             elapsed += poll_interval_seconds
-            
+
         raise TimeoutError(f"Report did not complete within {max_wait_seconds} seconds")

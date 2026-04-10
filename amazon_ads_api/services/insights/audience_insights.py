@@ -23,7 +23,7 @@ INSIGHTS_V2_CONTENT_TYPE = "application/vnd.insightsaudiencesoverlap.v2+json"
 class AudienceInsightsAPI(_GenBase):
     """
     Audience Insights API
-    
+
     官方端点 (共1个):
     - GET /insights/audiences/{audienceId}/overlappingAudiences
     """
@@ -41,9 +41,9 @@ class AudienceInsightsAPI(_GenBase):
     ) -> JSONData:
         """
         获取与指定受众重叠的受众列表
-        
+
         官方端点: GET /insights/audiences/{audienceId}/overlappingAudiences
-        
+
         Args:
             audience_id: 受众ID
             ad_type: 广告类型 ("DSP" 或 "SD")
@@ -53,7 +53,7 @@ class AudienceInsightsAPI(_GenBase):
             audience_category: 受众类别过滤 (最多20个)
             max_results: 最大结果数 (1-500，默认30)
             next_token: 分页token
-            
+
         Returns:
             {
                 "marketplace": str,
@@ -76,7 +76,7 @@ class AudienceInsightsAPI(_GenBase):
             "adType": ad_type,
             "maxResults": max_results,
         }
-        
+
         if advertiser_id:
             params["advertiserId"] = advertiser_id
         if minimum_overlap_affinity is not None:
@@ -87,7 +87,7 @@ class AudienceInsightsAPI(_GenBase):
             params["audienceCategory"] = ",".join(audience_category[:20])
         if next_token:
             params["nextToken"] = next_token
-        
+
         result = await self.get(
             f"/insights/audiences/{audience_id}/overlappingAudiences",
             params=params,
@@ -106,19 +106,19 @@ class AudienceInsightsAPI(_GenBase):
     ) -> list[JSONData]:
         """
         获取所有重叠受众（自动分页）
-        
+
         Args:
             audience_id: 受众ID
             ad_type: 广告类型
             advertiser_id: 广告主ID
             max_pages: 最大页数限制
-            
+
         Returns:
             所有重叠受众列表
         """
         all_audiences = []
         next_token = None
-        
+
         for _ in range(max_pages):
             result = await self.get_overlapping_audiences(
                 audience_id=audience_id,
@@ -127,12 +127,12 @@ class AudienceInsightsAPI(_GenBase):
                 max_results=500,
                 next_token=next_token,
             )
-            
+
             audiences = result.get("overlappingAudiences", [])
             all_audiences.extend(audiences)
-            
+
             next_token = result.get("nextToken")
             if not next_token:
                 break
-        
+
         return all_audiences

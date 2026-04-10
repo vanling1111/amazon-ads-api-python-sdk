@@ -32,7 +32,7 @@ Granularity = Literal["DAY", "WEEK", "MONTH"]
 class BrandMetricsAPI(_GenBase):
     """
     Brand Metrics API (全异步)
-    
+
     官方只有 2 个端点:
     - POST /insights/brandMetrics/report (创建报告)
     - GET /insights/brandMetrics/report/{reportId} (获取报告状态/下载)
@@ -52,9 +52,9 @@ class BrandMetricsAPI(_GenBase):
     ) -> JSONData:
         """
         创建品牌指标报告
-        
+
         官方端点: POST /insights/brandMetrics/report
-        
+
         Args:
             advertiser_id: 广告主ID
             brand_entity_id: 品牌实体ID
@@ -69,7 +69,7 @@ class BrandMetricsAPI(_GenBase):
             category_node_ids: 类目节点ID列表
             granularity: 时间粒度 (DAY, WEEK, MONTH)
             marketplace_ids: 市场ID列表
-            
+
         Returns:
             {
                 "reportId": "...",
@@ -84,7 +84,7 @@ class BrandMetricsAPI(_GenBase):
             "endDate": end_date,
             "granularity": granularity,
         }
-        
+
         if category_node_ids:
             body["categoryNodeIds"] = category_node_ids
         if marketplace_ids:
@@ -96,19 +96,19 @@ class BrandMetricsAPI(_GenBase):
     async def get_report(self, report_id: str) -> JSONData:
         """
         获取品牌指标报告状态/下载
-        
+
         官方端点: GET /insights/brandMetrics/report/{reportId}
-        
+
         Args:
             report_id: 报告ID
-            
+
         Returns:
             报告状态为 PENDING/PROCESSING 时:
             {
                 "reportId": "...",
                 "status": "PROCESSING"
             }
-            
+
             报告状态为 COMPLETED 时:
             {
                 "reportId": "...",
@@ -136,17 +136,17 @@ class BrandMetricsAPI(_GenBase):
     ) -> JSONData:
         """
         创建报告并等待完成
-        
+
         Args:
             timeout_seconds: 超时时间（秒）
             poll_interval: 轮询间隔（秒）
             **kwargs: 其他 create_report 参数
-            
+
         Returns:
             完成的报告（包含下载URL）
         """
         import asyncio
-        
+
         # 创建报告
         result = await self.create_report(
             advertiser_id=advertiser_id,
@@ -156,21 +156,21 @@ class BrandMetricsAPI(_GenBase):
             end_date=end_date,
             **kwargs,
         )
-        
+
         report_id = result.get("reportId")
         if not report_id:
             return result
-        
+
         # 轮询等待
         elapsed = 0
         while elapsed < timeout_seconds:
             await asyncio.sleep(poll_interval)
             elapsed += poll_interval
-            
+
             status = await self.get_report(report_id)
             if status.get("status") == "COMPLETED":
                 return status
             if status.get("status") == "FAILED":
                 return status
-        
+
         return {"reportId": report_id, "status": "TIMEOUT"}

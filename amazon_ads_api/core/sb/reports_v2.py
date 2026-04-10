@@ -16,7 +16,7 @@ except ImportError:
 class SBReportsV2API(_GenBase):
     """
     SB Reports v2 API (全异步)
-    
+
     API Tier: L1
     Source: OpenAPI
     OpenAPI_SPEC: SponsoredBrands_v3.yaml
@@ -32,10 +32,10 @@ class SBReportsV2API(_GenBase):
     ) -> JSONData:
         """
         请求创建 HSA 报告
-        
+
         官方端点: POST /v2/hsa/{recordType}/report
         官方文档: SponsoredBrands_v3.yaml
-        
+
         Args:
             record_type: 报告类型 (campaigns, adGroups, keywords, targets)
             report_date: 报告日期 (YYYYMMDD)
@@ -56,10 +56,10 @@ class SBReportsV2API(_GenBase):
     async def get_report(self, report_id: str) -> JSONData:
         """
         获取报告状态
-        
+
         官方端点: GET /v2/reports/{reportId}
         官方文档: SponsoredBrands_v3.yaml
-        
+
         Args:
             report_id: 报告 ID
         """
@@ -69,10 +69,10 @@ class SBReportsV2API(_GenBase):
     async def download_report(self, report_id: str) -> JSONData:
         """
         下载报告
-        
+
         官方端点: GET /v2/reports/{reportId}/download
         官方文档: SponsoredBrands_v3.yaml
-        
+
         Args:
             report_id: 报告 ID
         """

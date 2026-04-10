@@ -24,17 +24,16 @@ import json
 from abc import ABC
 from datetime import datetime, timedelta
 from enum import StrEnum
-from typing import Any, Self, Callable, Coroutine
+from typing import Any, Self, Callable, Coroutine, TypeAlias
 from dataclasses import dataclass, field
 
 import httpx
 from loguru import logger
 
-# Type Aliases
-type AccessToken = str
-type ProfileID = str
-type JSONData = dict[str, Any]
-type JSONList = list[JSONData]
+AccessToken: TypeAlias = str
+ProfileID: TypeAlias = str
+JSONData: TypeAlias = dict[str, Any]
+JSONList: TypeAlias = list[JSONData]
 
 
 class AdsRegion(StrEnum):
@@ -60,16 +59,16 @@ class AmazonAdsError(Exception):
 class AsyncTokenManager:
     """
     异步 Token 管理器（线程安全单例）
-    
+
     所有 API 模块共享同一个 token，避免重复刷新
     使用 asyncio.Lock 保证并发安全
     """
-    
+
     TOKEN_URL = "https://api.amazon.com/auth/o2/token"
-    
+
     _instances: dict[str, "AsyncTokenManager"] = {}
     _lock = asyncio.Lock()
-    
+
     def __new__(cls, client_id: str, client_secret: str, refresh_token: str, timeout: int = 30):
         """根据 refresh_token 创建或获取单例"""
         key = f"{client_id}:{refresh_token[:20]}"
@@ -78,11 +77,11 @@ class AsyncTokenManager:
             instance._initialized = False
             cls._instances[key] = instance
         return cls._instances[key]
-    
+
     def __init__(self, client_id: str, client_secret: str, refresh_token: str, timeout: int = 30):
         if getattr(self, "_initialized", False):
             return
-        
+
         self.client_id = client_id
         self.client_secret = client_secret
         self.refresh_token = refresh_token
@@ -91,7 +90,7 @@ class AsyncTokenManager:
         self._token_expires_at: datetime | None = None
         self._token_lock = asyncio.Lock()
         self._initialized = True
-    
+
     async def get_access_token(self) -> AccessToken:
         """获取有效的 Access Token（异步，自动刷新）"""
         # 快速路径：token 有效时直接返回
@@ -101,7 +100,7 @@ class AsyncTokenManager:
             and datetime.now() < self._token_expires_at
         ):
             return self._access_token
-        
+
         # 慢路径：需要刷新 token（加锁）
         async with self._token_lock:
             # 双重检查
@@ -112,7 +111,7 @@ class AsyncTokenManager:
             ):
                 return self._access_token
             return await self._refresh_access_token()
-    
+
     async def _refresh_access_token(self) -> AccessToken:
         """刷新 Access Token（调用前需持有锁）"""
         async with httpx.AsyncClient(timeout=self.timeout) as client:
@@ -145,14 +144,14 @@ class AsyncTokenManager:
 class BaseAdsClient(ABC):
     """
     Amazon Ads API 异步基础客户端
-    
+
     特性：
     - 全异步设计（async/await）
     - HTTP/2 支持（连接复用，更低延迟）
     - 自动重试（指数退避）
     - Rate Limit 处理（自动等待）
     - 共享连接池
-    
+
     使用方法：
         client = MyAPIClient(...)
         result = await client.get("/endpoint")
@@ -184,7 +183,7 @@ class BaseAdsClient(ABC):
 
         # 使用共享的异步 TokenManager
         self._token_manager = AsyncTokenManager(client_id, client_secret, refresh_token, timeout)
-        
+
         # 延迟初始化的 httpx 客户端
         self._client: httpx.AsyncClient | None = None
         self._client_lock = asyncio.Lock()
@@ -232,7 +231,7 @@ class BaseAdsClient(ABC):
 
     async def _get_headers(self, content_type: str | None = None, method: str = "POST") -> dict[str, str]:
         """构建请求头
-        
+
         Args:
             content_type: 自定义 Content-Type（用于 API v3）
             method: HTTP方法（GET/DELETE请求不添加Content-Type）
@@ -242,12 +241,12 @@ class BaseAdsClient(ABC):
             "Authorization": f"Bearer {token}",
             "Amazon-Advertising-API-ClientId": self.client_id,
         }
-        
+
         # GET和DELETE请求不需要Content-Type（因为没有body）
         # 添加Content-Type可能导致Amazon API返回403错误
         if method not in ("GET", "DELETE", "HEAD"):
             headers["Content-Type"] = content_type or "application/json"
-        
+
         if content_type:
             headers["Accept"] = content_type
         if self.profile_id:
@@ -266,7 +265,7 @@ class BaseAdsClient(ABC):
         accept: str | None = None,
     ) -> JSONData | JSONList:
         """执行异步 HTTP 请求（带自动重试）
-        
+
         Args:
             method: HTTP方法
             endpoint: API端点
@@ -280,9 +279,9 @@ class BaseAdsClient(ABC):
         if accept:
             headers["Accept"] = accept
         client = await self._get_client()
-        
+
         last_error: Exception | None = None
-        
+
         for attempt in range(self.max_retries + 1):
             try:
                 response = await client.request(
@@ -292,21 +291,21 @@ class BaseAdsClient(ABC):
                     params=params,
                     json=json_data,
                 )
-                
+
                 # Rate Limit 处理
                 if response.status_code == 429:
                     retry_after = int(response.headers.get("Retry-After", 5))
                     logger.warning(f"Rate limited, waiting {retry_after}s (attempt {attempt + 1})")
                     await asyncio.sleep(retry_after)
                     continue
-                
+
                 # 服务器错误，重试
                 if response.status_code >= 500:
                     wait_time = min(2 ** attempt, 30)  # 指数退避，最大30秒
                     logger.warning(f"Server error {response.status_code}, retrying in {wait_time}s")
                     await asyncio.sleep(wait_time)
                     continue
-                
+
                 # 客户端错误，不重试
                 if not response.is_success:
                     error_detail = response.json() if response.text else {}
@@ -315,25 +314,25 @@ class BaseAdsClient(ABC):
                         message=f"API request failed: {endpoint}",
                         details=error_detail,
                     )
-                
+
                 # 成功
                 if response.status_code == 204:
                     return {}
-                
+
                 return response.json()
-                
+
             except httpx.TimeoutException as e:
                 last_error = e
                 wait_time = min(2 ** attempt, 30)
                 logger.warning(f"Request timeout, retrying in {wait_time}s (attempt {attempt + 1})")
                 await asyncio.sleep(wait_time)
-                
+
             except httpx.RequestError as e:
                 last_error = e
                 wait_time = min(2 ** attempt, 30)
                 logger.warning(f"Request error: {e}, retrying in {wait_time}s")
                 await asyncio.sleep(wait_time)
-        
+
         # 所有重试都失败
         raise AmazonAdsError(
             status_code=0,
@@ -380,16 +379,16 @@ class BaseAdsClient(ABC):
     async def download_report(self, url: str) -> JSONList:
         """异步下载并解压报告"""
         client = await self._get_client()
-        
+
         try:
             response = await client.get(url, timeout=60.0)
             if not response.is_success:
                 return []
-            
+
             # 解压 gzip 数据
             decompressed = gzip.decompress(response.content)
             return json.loads(decompressed)
-            
+
         except Exception as e:
             logger.error(f"Failed to download/decompress report: {e}")
             return []
@@ -403,24 +402,24 @@ class BaseAdsClient(ABC):
     ) -> list[Any]:
         """
         并行执行多个异步任务（带并发限制）
-        
+
         Args:
             tasks: 协程列表
             max_concurrent: 最大并发数
-            
+
         Returns:
             结果列表（按任务顺序）
-        
+
         Example:
             tasks = [client.get(f"/campaigns/{id}") for id in campaign_ids]
             results = await client.parallel_execute(tasks, max_concurrent=5)
         """
         semaphore = asyncio.Semaphore(max_concurrent)
-        
+
         async def limited_task(coro: Coroutine) -> Any:
             async with semaphore:
                 return await coro
-        
+
         return await asyncio.gather(
             *[limited_task(task) for task in tasks],
             return_exceptions=True,
@@ -433,25 +432,25 @@ class BaseAdsClient(ABC):
     ) -> list:
         """
         并行分页获取数据
-        
+
         第一阶段：串行获取所有页面的 next_token
         第二阶段：并行获取所有页面数据（如果需要）
-        
+
         Args:
             fetch_page: 获取单页数据的异步函数，参数为 next_token，返回 (items, next_token)
             max_workers: 最大并行数
-            
+
         Returns:
             所有数据列表
         """
         all_items = []
         next_token = None
-        
+
         while True:
             items, next_token = await fetch_page(next_token)
             all_items.extend(items)
-            
+
             if not next_token:
                 break
-        
+
         return all_items

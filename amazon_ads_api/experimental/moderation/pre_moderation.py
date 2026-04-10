@@ -28,9 +28,9 @@ except ImportError:
 class PreModerationAPI(_GenBase):
     """
     Pre-Moderation API (全异步)
-    
+
     用于在创建广告前预审核广告组件，提前发现政策违规。
-    
+
     官方端点 (共1个):
     - POST /preModeration
     """
@@ -51,12 +51,12 @@ class PreModerationAPI(_GenBase):
     ) -> JSONData:
         """
         预审核广告组件
-        
+
         官方端点: POST /preModeration
         官方规范: PreModeration.json
-        
+
         推荐: 将同一实体的所有组件一起发送，以便更好地检测政策违规。
-        
+
         Args:
             ad_program: 广告程序类型 (必填)
                 - DSP, DSP_CONSOLIDATED_TEMPLATE, DSP_IMAGE, DSP_REC, DSP_THIRD_PARTY
@@ -107,7 +107,7 @@ class PreModerationAPI(_GenBase):
                     "endDate": "yyyy-MM-dd HH:mm:ss"
                 }]
             third_party_components: 第三方组件列表 (最多10个)
-        
+
         Returns:
             {
                 "preModerationId": "...",
@@ -127,7 +127,7 @@ class PreModerationAPI(_GenBase):
             "adProgram": ad_program,
             "locale": locale,
         }
-        
+
         if record_id:
             body["recordId"] = record_id
         if target_language:
@@ -146,12 +146,12 @@ class PreModerationAPI(_GenBase):
             body["dateComponents"] = date_components
         if third_party_components:
             body["thirdPartyComponents"] = third_party_components
-        
+
         result = await self.post("/preModeration", json_data=body)
         return result if isinstance(result, dict) else {}
 
     # ============ 便捷方法 ============
-    
+
     async def pre_moderate_headline(
         self,
         ad_program: str,
@@ -161,13 +161,13 @@ class PreModerationAPI(_GenBase):
     ) -> JSONData:
         """
         预审核标题文本
-        
+
         Args:
             ad_program: 广告程序类型
             locale: 区域设置
             headline: 标题文本
             component_id: 组件 ID
-        
+
         Returns:
             预审核结果
         """
@@ -180,7 +180,7 @@ class PreModerationAPI(_GenBase):
                 "text": headline,
             }],
         )
-    
+
     async def pre_moderate_brand_name(
         self,
         ad_program: str,
@@ -190,7 +190,7 @@ class PreModerationAPI(_GenBase):
     ) -> JSONData:
         """
         预审核品牌名称
-        
+
         Args:
             ad_program: 广告程序类型
             locale: 区域设置
@@ -206,7 +206,7 @@ class PreModerationAPI(_GenBase):
                 "text": brand_name,
             }],
         )
-    
+
     async def pre_moderate_image(
         self,
         ad_program: str,
@@ -217,7 +217,7 @@ class PreModerationAPI(_GenBase):
     ) -> JSONData:
         """
         预审核图片
-        
+
         Args:
             ad_program: 广告程序类型
             locale: 区域设置
@@ -239,7 +239,7 @@ class PreModerationAPI(_GenBase):
                 "url": image_url,
             }],
         )
-    
+
     async def pre_moderate_video(
         self,
         ad_program: str,
@@ -250,7 +250,7 @@ class PreModerationAPI(_GenBase):
     ) -> JSONData:
         """
         预审核视频
-        
+
         Args:
             ad_program: 广告程序类型
             locale: 区域设置
@@ -272,7 +272,7 @@ class PreModerationAPI(_GenBase):
                 "url": video_url,
             }],
         )
-    
+
     async def pre_moderate_asin(
         self,
         ad_program: str,
@@ -283,7 +283,7 @@ class PreModerationAPI(_GenBase):
     ) -> JSONData:
         """
         预审核 ASIN
-        
+
         Args:
             ad_program: 广告程序类型
             locale: 区域设置
@@ -300,14 +300,14 @@ class PreModerationAPI(_GenBase):
                 "asin": asin,
             }],
         )
-    
+
     def is_approved(self, result: JSONData) -> bool:
         """
         检查预审核结果是否全部通过
-        
+
         Args:
             result: pre_moderate 返回的结果
-        
+
         Returns:
             True 如果所有组件都通过，否则 False
         """
@@ -316,23 +316,23 @@ class PreModerationAPI(_GenBase):
             "asinComponents", "urlComponents", "dateComponents",
             "thirdPartyComponents"
         ]
-        
+
         for comp_type in component_types:
             components = result.get(comp_type, [])
             for comp in components:
                 status = comp.get("preModerationStatus")
                 if status != "APPROVED":
                     return False
-        
+
         return True
-    
+
     def get_policy_violations(self, result: JSONData) -> JSONList:
         """
         从预审核结果中提取所有政策违规
-        
+
         Args:
             result: pre_moderate 返回的结果
-        
+
         Returns:
             所有违规的列表
         """
@@ -342,18 +342,18 @@ class PreModerationAPI(_GenBase):
             "asinComponents", "urlComponents", "dateComponents",
             "thirdPartyComponents"
         ]
-        
+
         for comp_type in component_types:
             components = result.get(comp_type, [])
             for comp in components:
                 comp_violations = comp.get("policyViolations", [])
                 spec_violations = comp.get("specViolations", [])
-                
+
                 for v in comp_violations + spec_violations:
                     violations.append({
                         "componentId": comp.get("id"),
                         "componentType": comp.get("componentType"),
                         **v,
                     })
-        
+
         return violations

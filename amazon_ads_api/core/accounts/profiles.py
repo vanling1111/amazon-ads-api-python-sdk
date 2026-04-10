@@ -27,11 +27,11 @@ UPDATE_ACCOUNTS_RESPONSE_V1 = "application/vnd.updateadvertisingaccountsinmanage
 class ProfilesAPI(_GenBase):
     """
     Profiles & Manager Accounts API (全异步)
-    
+
     Profiles API (v2):
     - GET /v2/profiles
     - PUT /v2/profiles
-    
+
     Manager Accounts API (v3):
     - GET /managerAccounts
     - POST /managerAccounts
@@ -50,12 +50,12 @@ class ProfilesAPI(_GenBase):
     ) -> JSONList:
         """
         获取所有广告 Profile
-        
+
         GET /v2/profiles
-        
+
         Profile 代表一个市场的广告账户
         每个市场（US, UK, DE等）有独立的 Profile
-        
+
         Args:
             api_program: 过滤有特定权限的 Profile
                 - billing
@@ -75,7 +75,7 @@ class ProfilesAPI(_GenBase):
             valid_payment_method_filter: 过滤有效支付方式
                 - true
                 - false
-        
+
         Returns:
             [
                 {
@@ -95,7 +95,7 @@ class ProfilesAPI(_GenBase):
             ]
         """
         params: JSONData = {}
-        
+
         if api_program:
             params["apiProgram"] = api_program
         if access_level:
@@ -104,17 +104,17 @@ class ProfilesAPI(_GenBase):
             params["profileTypeFilter"] = profile_type_filter
         if valid_payment_method_filter:
             params["validPaymentMethodFilter"] = valid_payment_method_filter
-        
+
         result = await self.get("/v2/profiles", params=params if params else None)
         return result if isinstance(result, list) else []
 
     async def get_profile(self, profile_id: str) -> JSONData:
         """
         获取单个 Profile 详情
-        
+
         官方端点: GET /v2/profiles/{profileId}
         官方文档: Profiles_v3.yaml
-        
+
         Args:
             profile_id: Profile ID
         """
@@ -124,12 +124,12 @@ class ProfilesAPI(_GenBase):
     async def update_profiles(self, profiles: JSONList) -> JSONList:
         """
         批量更新 Profile
-        
+
         PUT /v2/profiles
-        
+
         注意：此操作仅适用于使用 Sponsored Products 的卖家
         不适用于 vendor 类型账户
-        
+
         Args:
             profiles: [
                 {
@@ -137,7 +137,7 @@ class ProfilesAPI(_GenBase):
                     "dailyBudget": 1000.0
                 }
             ]
-        
+
         Returns:
             更新后的 Profile 列表
         """
@@ -157,12 +157,12 @@ class ProfilesAPI(_GenBase):
     async def list_manager_accounts(self) -> JSONData:
         """
         获取 Manager Accounts 列表
-        
+
         GET /managerAccounts
-        
+
         Manager Account 可以管理多个 Profile
         返回最多 50 个关联的账户
-        
+
         Returns:
             {
                 "managerAccounts": [
@@ -196,15 +196,15 @@ class ProfilesAPI(_GenBase):
     ) -> JSONData:
         """
         创建 Manager Account
-        
+
         POST /managerAccounts
-        
+
         Args:
             name: Manager Account 名称
             account_type: 账户类型
                 - Advertiser: 管理自己的产品和服务
                 - Agency: 代理管理客户账户
-        
+
         Returns:
             {
                 "managerAccountId": "xxx",
@@ -231,9 +231,9 @@ class ProfilesAPI(_GenBase):
     ) -> JSONData:
         """
         将广告账户关联到 Manager Account
-        
+
         POST /managerAccounts/{managerAccountId}/associate
-        
+
         Args:
             manager_account_id: Manager Account ID
             accounts: 要关联的账户列表（最多 20 个）
@@ -244,7 +244,7 @@ class ProfilesAPI(_GenBase):
                         "roles": ["ENTITY_USER"]  # 可选
                     }
                 ]
-        
+
         Returns:
             {
                 "succeedAccounts": [...],
@@ -267,9 +267,9 @@ class ProfilesAPI(_GenBase):
     ) -> JSONData:
         """
         解除广告账户与 Manager Account 的关联
-        
+
         POST /managerAccounts/{managerAccountId}/disassociate
-        
+
         Args:
             manager_account_id: Manager Account ID
             accounts: 要解除关联的账户列表（最多 20 个）
@@ -279,7 +279,7 @@ class ProfilesAPI(_GenBase):
                         "type": "ACCOUNT_ID"
                     }
                 ]
-        
+
         Returns:
             {
                 "succeedAccounts": [...],
@@ -300,7 +300,7 @@ class ProfilesAPI(_GenBase):
     async def get_profile_by_marketplace(self, marketplace: str) -> JSONData | None:
         """
         根据市场获取 Profile
-        
+
         Args:
             marketplace: US, CA, UK, DE, FR, IT, ES, JP, AU, AE, SA, ...
         """
@@ -337,7 +337,7 @@ class ProfilesAPI(_GenBase):
     ) -> JSONData:
         """
         将单个账户关联到 Manager Account
-        
+
         Args:
             manager_account_id: Manager Account ID
             account_id: 账户 ID（ENTITY... 或 DSP Advertiser ID）

@@ -25,10 +25,10 @@ class SBCampaignsAPI(_GenBase):
     ) -> JSONData:
         """
         获取SB Campaign列表
-        
+
         SB API v4 使用 POST 请求到 /sb/v4/campaigns/list
         需要特殊的 Content-Type: application/vnd.sbcampaignresource.v4+json
-        
+
         Args:
             state_filter: enabled, paused, archived
             name_filter: 名称过滤
@@ -36,7 +36,7 @@ class SBCampaignsAPI(_GenBase):
             next_token: 分页token
         """
         body: JSONData = {"maxResults": min(max_results, 100)}
-        
+
         if state_filter:
             body["stateFilter"] = {"include": [state_filter.upper()]}
         if name_filter:
@@ -50,7 +50,7 @@ class SBCampaignsAPI(_GenBase):
             json_data=body, 
             content_type="application/vnd.sbcampaignresource.v4+json"
         )
-        
+
         if isinstance(result, dict):
             return result
         return {"campaigns": [], "totalResults": 0}
@@ -67,7 +67,7 @@ class SBCampaignsAPI(_GenBase):
     async def create_campaigns(self, campaigns: JSONList) -> JSONData:
         """
         批量创建SB Campaign
-        
+
         Args:
             campaigns: [
                 {
@@ -91,7 +91,7 @@ class SBCampaignsAPI(_GenBase):
     async def update_campaigns(self, campaigns: JSONList) -> JSONData:
         """
         批量更新SB Campaign
-        
+
         Args:
             campaigns: [{"campaignId": "xxx", "state": "paused", "budget": 200.0}]
         """
@@ -105,7 +105,7 @@ class SBCampaignsAPI(_GenBase):
     async def delete_campaign(self, campaign_id: str) -> JSONData:
         """
         归档单个SB Campaign
-        
+
         注意：SB v4不支持单个DELETE，使用批量delete方法
         官方端点：POST /sb/v4/campaigns/delete
         """
@@ -123,7 +123,7 @@ class SBCampaignsAPI(_GenBase):
     ) -> JSONData:
         """
         获取SB Ad Group列表
-        
+
         Args:
             campaign_id: Campaign ID过滤
             ad_group_ids: Ad Group ID过滤
@@ -132,18 +132,18 @@ class SBCampaignsAPI(_GenBase):
             next_token: 分页token
         """
         params: JSONData = {"maxResults": max_results}
-        
+
         # ID过滤 - 官方格式: {"include": [...]}
         if campaign_id:
             params["campaignIdFilter"] = {"include": [campaign_id]}
         if ad_group_ids:
             params["adGroupIdFilter"] = {"include": ad_group_ids}
-        
+
         # 状态过滤
         if state_filter:
             states = [state_filter] if isinstance(state_filter, str) else state_filter
             params["stateFilter"] = {"include": [s.upper() for s in states]}
-        
+
         if next_token:
             params["nextToken"] = next_token
 
@@ -182,7 +182,7 @@ class SBCampaignsAPI(_GenBase):
     async def delete_ad_groups(self, ad_group_ids: list[str]) -> JSONData:
         """
         批量归档SB Ad Group（官方 v4 /delete 端点）
-        
+
         注意：Amazon Ads 不支持真正删除，此操作将 Ad Group 状态设置为 "archived"。
         官方请求格式: {"adGroupIdFilter": {"include": [...]}}
         """
@@ -201,7 +201,7 @@ class SBCampaignsAPI(_GenBase):
     async def delete_campaigns(self, campaign_ids: list[str]) -> JSONData:
         """
         批量归档SB Campaign（官方 v4 /delete 端点）
-        
+
         注意：Amazon Ads 不支持真正删除，此操作将 Campaign 状态设置为 "archived"。
         官方请求格式: {"campaignIdFilter": {"include": [...]}}
         """
@@ -279,13 +279,13 @@ class SBCampaignsAPI(_GenBase):
     ) -> JSONData:
         """
         获取 Campaign 的特殊事件预算规则推荐
-        
+
         官方端点: POST /sb/campaigns/budgetRules/recommendations
         官方文档: SponsoredBrands_v3.yaml
-        
+
         Args:
             campaign_id: Campaign ID
-            
+
         Returns:
             包含推荐的特殊事件和建议预算增加
         """

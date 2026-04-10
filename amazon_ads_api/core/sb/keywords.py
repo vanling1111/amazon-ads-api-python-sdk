@@ -13,7 +13,7 @@ except ImportError:
 
 class SBKeywordsAPI(_GenBase):
     """SB Keywords API (全异步)"""
-    
+
     # SB Keywords API v4 Content-Type
     SB_KEYWORDS_V4_CONTENT_TYPE = "application/vnd.sbkeywordresource.v4+json"
 
@@ -29,9 +29,9 @@ class SBKeywordsAPI(_GenBase):
     ) -> JSONList:
         """
         获取SB Keyword列表 (v3 API - GET /sb/keywords)
-        
+
         官方文档: https://advertising.amazon.com/API/docs/en-us/sponsored-brands/3-0/openapi#tag/Keywords
-        
+
         Args:
             ad_group_id: 广告组ID筛选
             campaign_id: Campaign ID筛选
@@ -58,7 +58,7 @@ class SBKeywordsAPI(_GenBase):
     async def create_keywords(self, keywords: JSONList) -> JSONData:
         """
         批量创建SB Keyword
-        
+
         Args:
             keywords: [
                 {
@@ -99,7 +99,7 @@ class SBKeywordsAPI(_GenBase):
     ) -> JSONList:
         """
         获取SB Negative Keyword列表 (v3 GET API)
-        
+
         官方端点: GET /sb/negativeKeywords
         官方文档: SponsoredBrands_v3.yaml
         """
@@ -125,7 +125,7 @@ class SBKeywordsAPI(_GenBase):
     async def get_negative_keyword(self, keyword_id: str) -> JSONData:
         """
         获取单个 Negative Keyword 详情
-        
+
         官方端点: GET /sb/negativeKeywords/{keywordId}
         """
         result = await self.get(f"/sb/negativeKeywords/{keyword_id}")
@@ -150,7 +150,7 @@ class SBKeywordsAPI(_GenBase):
     async def create_negative_keywords(self, keywords: JSONList) -> JSONData:
         """
         批量创建SB Negative Keyword
-        
+
         官方端点: POST /sb/negativeKeywords
         """
         result = await self.post("/sb/negativeKeywords", json_data=keywords)
@@ -159,7 +159,7 @@ class SBKeywordsAPI(_GenBase):
     async def update_negative_keywords(self, keywords: JSONList) -> JSONData:
         """
         批量更新SB Negative Keyword
-        
+
         官方端点: PUT /sb/negativeKeywords
         """
         result = await self.put("/sb/negativeKeywords", json_data=keywords)
@@ -168,7 +168,7 @@ class SBKeywordsAPI(_GenBase):
     async def delete_negative_keyword(self, keyword_id: str) -> JSONData:
         """
         删除Negative Keyword
-        
+
         官方端点: DELETE /sb/negativeKeywords/{keywordId}
         """
         return await self.delete(f"/sb/negativeKeywords/{keyword_id}")
@@ -197,7 +197,7 @@ class SBKeywordsAPI(_GenBase):
     async def create_targets(self, targets: JSONList) -> JSONData:
         """
         批量创建SB Target
-        
+
         Args:
             targets: [
                 {
@@ -222,7 +222,7 @@ class SBKeywordsAPI(_GenBase):
     async def get_target(self, target_id: str) -> JSONData:
         """
         获取单个 Target 详情
-        
+
         官方端点: GET /sb/targets/{targetId}
         """
         result = await self.get(f"/sb/targets/{target_id}")
@@ -231,7 +231,7 @@ class SBKeywordsAPI(_GenBase):
     async def delete_target(self, target_id: str) -> JSONData:
         """
         归档Target
-        
+
         官方端点: DELETE /sb/targets/{targetId}
         """
         return await self.delete(f"/sb/targets/{target_id}")
@@ -246,7 +246,7 @@ class SBKeywordsAPI(_GenBase):
     ) -> JSONData:
         """
         获取SB Negative Target列表
-        
+
         官方端点: POST /sb/negativeTargets/list
         """
         params: JSONData = {"maxResults": max_results}
@@ -261,7 +261,7 @@ class SBKeywordsAPI(_GenBase):
     async def get_negative_target(self, negative_target_id: str) -> JSONData:
         """
         获取单个 Negative Target 详情
-        
+
         官方端点: GET /sb/negativeTargets/{negativeTargetId}
         """
         result = await self.get(f"/sb/negativeTargets/{negative_target_id}")
@@ -270,7 +270,7 @@ class SBKeywordsAPI(_GenBase):
     async def create_negative_targets(self, targets: JSONList) -> JSONData:
         """
         批量创建SB Negative Target
-        
+
         官方端点: POST /sb/negativeTargets
         """
         result = await self.post("/sb/negativeTargets", json_data=targets)
@@ -279,7 +279,7 @@ class SBKeywordsAPI(_GenBase):
     async def update_negative_targets(self, targets: JSONList) -> JSONData:
         """
         批量更新SB Negative Target
-        
+
         官方端点: PUT /sb/negativeTargets
         """
         result = await self.put("/sb/negativeTargets", json_data=targets)
@@ -288,7 +288,7 @@ class SBKeywordsAPI(_GenBase):
     async def delete_negative_target(self, negative_target_id: str) -> JSONData:
         """
         归档 Negative Target
-        
+
         官方端点: DELETE /sb/negativeTargets/{negativeTargetId}
         """
         return await self.delete(f"/sb/negativeTargets/{negative_target_id}")
@@ -352,7 +352,7 @@ class SBKeywordsAPI(_GenBase):
     ) -> JSONData:
         """
         获取品牌推荐列表
-        
+
         官方端点: POST /sb/recommendations/targets/brand
         官方文档: SponsoredBrands_v3.yaml
         """
@@ -372,7 +372,7 @@ class SBKeywordsAPI(_GenBase):
     ) -> JSONData:
         """
         获取品类推荐列表
-        
+
         官方端点: POST /sb/recommendations/targets/category
         官方文档: SponsoredBrands_v3.yaml
         """
@@ -399,7 +399,7 @@ class SBKeywordsAPI(_GenBase):
     ) -> JSONData:
         """
         获取产品推荐列表
-        
+
         官方端点: POST /sb/recommendations/targets/product/list
         官方文档: SponsoredBrands_v3.yaml
         """
@@ -420,7 +420,7 @@ class SBKeywordsAPI(_GenBase):
     ) -> JSONData:
         """
         获取可用的定向品类
-        
+
         SB支持按品类定向
         """
         body: JSONData = {}
@@ -457,15 +457,15 @@ class SBKeywordsAPI(_GenBase):
                 max_results=page_size,
                 start_index=start_index,
             )
-            
+
             if not keywords:
                 break
-                
+
             all_keywords.extend(keywords)
-            
+
             if len(keywords) < page_size:
                 break
-                
+
             start_index += len(keywords)
 
         return all_keywords

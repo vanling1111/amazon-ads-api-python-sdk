@@ -19,10 +19,10 @@ except ImportError:
 class SDModerationAPI(_GenBase):
     """
     SD Creative Moderation API (全异步)
-    
+
     官方端点 (共1个):
     - GET /sd/moderation/creatives - 获取创意审核状态列表
-    
+
     注意：
     - 这是 SD v3 API 端点
     - 更全面的审核功能请使用通用 Moderation API
@@ -36,9 +36,9 @@ class SDModerationAPI(_GenBase):
     ) -> JSONList:
         """
         获取创意审核状态列表
-        
+
         官方端点: GET /sd/moderation/creatives
-        
+
         Args:
             state_filter: 状态过滤
                 - PENDING: 待审核
@@ -46,7 +46,7 @@ class SDModerationAPI(_GenBase):
                 - REJECTED: 被拒绝
             start_index: 起始索引（分页）
             count: 返回数量（最大1000）
-        
+
         Returns:
             [
                 {
@@ -73,7 +73,7 @@ class SDModerationAPI(_GenBase):
     ) -> JSONList:
         """
         获取所有创意审核状态（自动分页）
-        
+
         Args:
             state_filter: 可选的状态过滤
         """
@@ -118,7 +118,7 @@ class SDModerationAPI(_GenBase):
     ) -> JSONData | None:
         """
         根据 ID 获取单个创意的审核状态
-        
+
         注意：这是通过 list 端点过滤实现的，官方没有单独的 get by id 端点
         """
         # 由于官方没有按 ID 获取的端点，需要遍历列表
@@ -131,7 +131,7 @@ class SDModerationAPI(_GenBase):
     async def count_by_status(self) -> JSONData:
         """统计各状态的创意数量"""
         all_creatives = await self.list_all_creative_moderation()
-        
+
         counts = {"PENDING": 0, "APPROVED": 0, "REJECTED": 0, "OTHER": 0}
         for creative in all_creatives:
             state = creative.get("state", "OTHER")
@@ -139,7 +139,7 @@ class SDModerationAPI(_GenBase):
                 counts[state] += 1
             else:
                 counts["OTHER"] += 1
-        
+
         return counts
 
     async def get_rejection_reasons(self, creative_id: str) -> list[str]:

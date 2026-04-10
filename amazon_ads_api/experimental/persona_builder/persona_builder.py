@@ -19,12 +19,12 @@ except ImportError:
 class PersonaBuilderAPI(_GenBase):
     """
     Persona Builder API (全异步)
-    
+
     API Tier: L1
     Source: OpenAPI
     OpenAPI_SPEC: PersonaBuilder.json
     Stability: Beta
-    
+
     用于获取受众洞察，构建用户画像。
     官方验证: 5个端点
     """
@@ -36,21 +36,21 @@ class PersonaBuilderAPI(_GenBase):
     ) -> JSONData:
         """
         获取受众分级规模
-        
+
         官方端点: POST /insights/bandedSize
-        
+
         Args:
             audience_ids: 受众 ID 列表
             marketplace_id: 市场 ID
-            
+
         Returns:
             受众规模分级信息
         """
         body: dict[str, Any] = {"audienceIds": audience_ids}
-        
+
         if marketplace_id:
             body["marketplaceId"] = marketplace_id
-        
+
         result = await self.post("/insights/bandedSize", json_data=body)
         return result if isinstance(result, dict) else {}
 
@@ -62,24 +62,24 @@ class PersonaBuilderAPI(_GenBase):
     ) -> JSONData:
         """
         获取受众人口统计数据
-        
+
         官方端点: POST /insights/demographics
-        
+
         Args:
             audience_ids: 受众 ID 列表
             marketplace_id: 市场 ID
             dimensions: 维度列表 (AGE, GENDER, INCOME, EDUCATION 等)
-            
+
         Returns:
             人口统计洞察数据
         """
         body: dict[str, Any] = {"audienceIds": audience_ids}
-        
+
         if marketplace_id:
             body["marketplaceId"] = marketplace_id
         if dimensions:
             body["dimensions"] = dimensions
-        
+
         result = await self.post("/insights/demographics", json_data=body)
         return result if isinstance(result, dict) else {}
 
@@ -90,21 +90,21 @@ class PersonaBuilderAPI(_GenBase):
     ) -> JSONData:
         """
         获取受众 Prime Video 观看洞察
-        
+
         官方端点: POST /insights/primeVideo
-        
+
         Args:
             audience_ids: 受众 ID 列表
             marketplace_id: 市场 ID
-            
+
         Returns:
             Prime Video 观看偏好洞察
         """
         body: dict[str, Any] = {"audienceIds": audience_ids}
-        
+
         if marketplace_id:
             body["marketplaceId"] = marketplace_id
-        
+
         result = await self.post("/insights/primeVideo", json_data=body)
         return result if isinstance(result, dict) else {}
 
@@ -116,14 +116,14 @@ class PersonaBuilderAPI(_GenBase):
     ) -> JSONData:
         """
         获取受众购买的热门品类
-        
+
         官方端点: POST /insights/topCategoriesPurchased
-        
+
         Args:
             audience_ids: 受众 ID 列表
             marketplace_id: 市场 ID
             max_results: 返回的品类数量
-            
+
         Returns:
             热门购买品类列表
         """
@@ -131,10 +131,10 @@ class PersonaBuilderAPI(_GenBase):
             "audienceIds": audience_ids,
             "maxResults": max_results,
         }
-        
+
         if marketplace_id:
             body["marketplaceId"] = marketplace_id
-        
+
         result = await self.post("/insights/topCategoriesPurchased", json_data=body)
         return result if isinstance(result, dict) else {}
 
@@ -146,14 +146,14 @@ class PersonaBuilderAPI(_GenBase):
     ) -> JSONData:
         """
         获取与指定受众重叠度最高的其他受众
-        
+
         官方端点: POST /insights/topOverlappingAudiences
-        
+
         Args:
             audience_ids: 受众 ID 列表
             marketplace_id: 市场 ID
             max_results: 返回的受众数量
-            
+
         Returns:
             重叠受众列表及重叠度指标
         """
@@ -161,10 +161,10 @@ class PersonaBuilderAPI(_GenBase):
             "audienceIds": audience_ids,
             "maxResults": max_results,
         }
-        
+
         if marketplace_id:
             body["marketplaceId"] = marketplace_id
-        
+
         result = await self.post("/insights/topOverlappingAudiences", json_data=body)
         return result if isinstance(result, dict) else {}
 
@@ -177,11 +177,11 @@ class PersonaBuilderAPI(_GenBase):
     ) -> JSONData:
         """
         获取完整的用户画像（聚合所有洞察）
-        
+
         Args:
             audience_ids: 受众 ID 列表
             marketplace_id: 市场 ID
-            
+
         Returns:
             {
                 "bandedSize": {...},
@@ -199,7 +199,7 @@ class PersonaBuilderAPI(_GenBase):
             self.get_top_categories_purchased(audience_ids, marketplace_id),
             self.get_top_overlapping_audiences(audience_ids, marketplace_id),
         ])
-        
+
         return {
             "bandedSize": results[0] if not isinstance(results[0], Exception) else {},
             "demographics": results[1] if not isinstance(results[1], Exception) else {},
