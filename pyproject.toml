@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "amazon-ads-api"
-version = "2.1.0"
+version = "2.2.0"
 description = "Full-coverage async Python SDK for Amazon Ads API with auto-generated typed models"
 readme = "README.md"
 license = {text = "MIT"}

@@ -1,5 +1,5 @@
 """Ad Library API - 广告库"""
 
-from .ad_library import AdLibraryAPI, AdType, NameMatchType
+from .ad_library import AdLibraryAPI
 
-__all__ = ["AdLibraryAPI", "AdType", "NameMatchType"]
+__all__ = ["AdLibraryAPI"]

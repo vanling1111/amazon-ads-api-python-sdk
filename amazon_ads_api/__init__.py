@@ -21,14 +21,13 @@ API 分级体系:
     campaigns = await client.sp.campaigns.list_campaigns()
 
     # L2: 显式命名空间
-    result = await client.reference.amc.run_query(...)
+    result = await client.reference.amc.queries.run_query(...)
 
     # L3: 服务层
-    report = await client.services.reporting.create_report(...)
+    report = await client.services.reporting.reports_v3.create_report(...)
 
-    # L4: 需确认风险
-    exp = client.experimental(acknowledge_risk=True)
-    await exp.sponsored_tv.create_campaign(...)
+    # L4: 实验性
+    await client.experimental.ad_library.list_ads(...)
 
 详细文档:
 - API_TIER.md - 分级规则详解
@@ -36,7 +35,7 @@ API 分级体系:
 - README.md - 快速开始指南
 """
 
-__version__ = "2.1.0"
+__version__ = "2.2.0"
 __author__ = "Amazon Ads SDK Team"
 
 # 主入口
