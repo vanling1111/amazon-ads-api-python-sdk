@@ -52,6 +52,14 @@ class CampaignDiagnosticsRequest(BaseModel):
     model_config = {'populate_by_name': True}
 
 
+class Error(BaseModel):
+    error_code: str = Field(..., alias="errorCode", description="Enum indicating the category of error. Example `NOT_FOUND`.")
+    error_message: str = Field(..., alias="errorMessage", description="Error message provided.")
+    item_request_id: str = Field(..., alias="itemRequestId", description="Campaign identifier.")
+
+    model_config = {'populate_by_name': True}
+
+
 class IssueImpactSupplementalinfo(BaseModel):
     """Provides the corresponding ASIN information in case of seller product issue, reflected as 'SKU' in entityType."""
     asin: Optional[str] = Field(None, description="Amazon product identifier.")
@@ -84,14 +92,6 @@ class campaignDiagnosticsList(BaseModel):
     """A list of diagnosed campaigns with information on identified issues."""
     campaign_id: str = Field(..., alias="campaignId", description="Campaign identifier.")
     issues_list: list["Issue"] = Field(..., alias="issuesList", description="A list of issues impacting the campaign.")
-
-    model_config = {'populate_by_name': True}
-
-
-class Error(BaseModel):
-    error_code: str = Field(..., alias="errorCode", description="Enum indicating the category of error. Example `NOT_FOUND`.")
-    error_message: str = Field(..., alias="errorMessage", description="Error message provided.")
-    item_request_id: str = Field(..., alias="itemRequestId", description="Campaign identifier.")
 
     model_config = {'populate_by_name': True}
 

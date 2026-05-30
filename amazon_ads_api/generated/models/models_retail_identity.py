@@ -13,13 +13,13 @@ from pydantic import BaseModel, Field  # noqa: F401
 
 
 
-class ErrorMessage(BaseModel):
-    """Human readable response message"""
+class ErrorCode(BaseModel):
+    """Error code"""
     pass
 
 
-class ErrorCode(BaseModel):
-    """Error code"""
+class ErrorMessage(BaseModel):
+    """Human readable response message"""
     pass
 
 

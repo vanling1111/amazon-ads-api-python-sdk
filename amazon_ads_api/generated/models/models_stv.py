@@ -96,12 +96,8 @@ class AdErrorType(StrEnum):
     RANGE_ERROR = "RANGE_ERROR"
 
 
-class RangeErrorReason(StrEnum):
-    INVALID_ENUM_VALUE = "INVALID_ENUM_VALUE"
-    NOT_IN_LIST = "NOT_IN_LIST"
-    OTHER = "OTHER"
-    TOO_HIGH = "TOO_HIGH"
-    TOO_LOW = "TOO_LOW"
+class OtherErrorReason(StrEnum):
+    OTHER_ERROR = "OTHER_ERROR"
 
 
 class ErrorCause(BaseModel):
@@ -112,6 +108,23 @@ class ErrorCause(BaseModel):
     model_config = {'populate_by_name': True}
 
 
+class OtherError(BaseModel):
+    """Errors not related to any of the other error types"""
+    cause: "ErrorCause"
+    message: str = Field(..., description="Human readable error message.")
+    reason: "OtherErrorReason"
+
+    model_config = {'populate_by_name': True}
+
+
+class RangeErrorReason(StrEnum):
+    INVALID_ENUM_VALUE = "INVALID_ENUM_VALUE"
+    NOT_IN_LIST = "NOT_IN_LIST"
+    OTHER = "OTHER"
+    TOO_HIGH = "TOO_HIGH"
+    TOO_LOW = "TOO_LOW"
+
+
 class RangeError(BaseModel):
     """Errors related to range constraints and violations"""
     allowed: Optional[list[str]] = Field(None, description="Allowed values")
@@ -120,19 +133,6 @@ class RangeError(BaseModel):
     message: str = Field(..., description="Human readable error message.")
     reason: "RangeErrorReason"
     upper_limit: Optional[str] = Field(None, alias="upperLimit", description="Optional upper limit.")
-
-    model_config = {'populate_by_name': True}
-
-
-class OtherErrorReason(StrEnum):
-    OTHER_ERROR = "OTHER_ERROR"
-
-
-class OtherError(BaseModel):
-    """Errors not related to any of the other error types"""
-    cause: "ErrorCause"
-    message: str = Field(..., description="Human readable error message.")
-    reason: "OtherErrorReason"
 
     model_config = {'populate_by_name': True}
 
@@ -427,44 +427,6 @@ class BulkAdsOperationResponse(BaseModel):
     model_config = {'populate_by_name': True}
 
 
-class CampaignErrorType(StrEnum):
-    BIDDING_ERROR = "BIDDING_ERROR"
-    BILLING_ERROR = "BILLING_ERROR"
-    BUDGET_ERROR = "BUDGET_ERROR"
-    DATE_ERROR = "DATE_ERROR"
-    OTHER_ERROR = "OTHER_ERROR"
-    RANGE_ERROR = "RANGE_ERROR"
-
-
-class CampaignMutationErrorSelector(BaseModel):
-    bidding_error: Optional["BiddingError"] = Field(None, alias="biddingError")
-    budget_error: Optional["BudgetError"] = Field(None, alias="budgetError")
-    date_error: Optional["DateError"] = Field(None, alias="dateError")
-    other_error: Optional["OtherError"] = Field(None, alias="otherError")
-    range_error: Optional["RangeError"] = Field(None, alias="rangeError")
-
-    model_config = {'populate_by_name': True}
-
-
-class CampaignMutationError(BaseModel):
-    error_type: "CampaignErrorType" = Field(..., alias="errorType")
-    error_value: "CampaignMutationErrorSelector" = Field(..., alias="errorValue")
-
-    model_config = {'populate_by_name': True}
-
-
-class CampaignFailureResponseItem(BaseModel):
-    errors: Optional[list["CampaignMutationError"]] = Field(None, description="A list of validation errors.")
-    index: int = Field(..., description="the index of the campaign in the array from the request body.")
-
-    model_config = {'populate_by_name': True}
-
-
-class TargetingType(StrEnum):
-    AUTO_RELEVANT_TO_MY_BUSINESS = "AUTO_RELEVANT_TO_MY_BUSINESS"
-    MANUAL = "MANUAL"
-
-
 class CampaignServingStatus(StrEnum):
     ADVERTISER_ACCOUNT_OUT_OF_BUDGET = "ADVERTISER_ACCOUNT_OUT_OF_BUDGET"
     ADVERTISER_ARCHIVED = "ADVERTISER_ARCHIVED"
@@ -510,6 +472,11 @@ class Tags(BaseModel):
     __root__: dict[str, str] = {}
 
 
+class TargetingType(StrEnum):
+    AUTO_RELEVANT_TO_MY_BUSINESS = "AUTO_RELEVANT_TO_MY_BUSINESS"
+    MANUAL = "MANUAL"
+
+
 class Campaign(BaseModel):
     budget_settings: "BudgetSettings" = Field(..., alias="budgetSettings")
     campaign_id: str = Field(..., alias="campaignId", description="The identifier of the Campaign.")
@@ -534,35 +501,42 @@ class CampaignSuccessResponseItem(BaseModel):
     model_config = {'populate_by_name': True}
 
 
-class BulkCampaignOperationResponse(BaseModel):
-    error: Optional[list["CampaignFailureResponseItem"]] = None
-    success: Optional[list["CampaignSuccessResponseItem"]] = None
-
-    model_config = {'populate_by_name': True}
-
-
-class CreativeMutationErrorSelector(BaseModel):
+class CampaignMutationErrorSelector(BaseModel):
+    bidding_error: Optional["BiddingError"] = Field(None, alias="biddingError")
+    budget_error: Optional["BudgetError"] = Field(None, alias="budgetError")
+    date_error: Optional["DateError"] = Field(None, alias="dateError")
     other_error: Optional["OtherError"] = Field(None, alias="otherError")
     range_error: Optional["RangeError"] = Field(None, alias="rangeError")
 
     model_config = {'populate_by_name': True}
 
 
-class CreativeErrorType(StrEnum):
+class CampaignErrorType(StrEnum):
+    BIDDING_ERROR = "BIDDING_ERROR"
+    BILLING_ERROR = "BILLING_ERROR"
+    BUDGET_ERROR = "BUDGET_ERROR"
+    DATE_ERROR = "DATE_ERROR"
     OTHER_ERROR = "OTHER_ERROR"
     RANGE_ERROR = "RANGE_ERROR"
 
 
-class CreativeMutationError(BaseModel):
-    error_type: "CreativeErrorType" = Field(..., alias="errorType")
-    error_value: "CreativeMutationErrorSelector" = Field(..., alias="errorValue")
+class CampaignMutationError(BaseModel):
+    error_type: "CampaignErrorType" = Field(..., alias="errorType")
+    error_value: "CampaignMutationErrorSelector" = Field(..., alias="errorValue")
 
     model_config = {'populate_by_name': True}
 
 
-class CreativeFailureResponseItem(BaseModel):
-    errors: Optional[list["CreativeMutationError"]] = Field(None, description="A list of validation errors.")
-    index: int = Field(..., description="The index of the creative in the array from the request body.")
+class CampaignFailureResponseItem(BaseModel):
+    errors: Optional[list["CampaignMutationError"]] = Field(None, description="A list of validation errors.")
+    index: int = Field(..., description="the index of the campaign in the array from the request body.")
+
+    model_config = {'populate_by_name': True}
+
+
+class BulkCampaignOperationResponse(BaseModel):
+    error: Optional[list["CampaignFailureResponseItem"]] = None
+    success: Optional[list["CampaignSuccessResponseItem"]] = None
 
     model_config = {'populate_by_name': True}
 
@@ -587,6 +561,32 @@ class Creative(BaseModel):
 class CreativeSuccessResponseItem(BaseModel):
     creative: Optional["Creative"] = None
     creative_id: Optional[str] = Field(None, alias="creativeId", description="The creative ID.")
+    index: int = Field(..., description="The index of the creative in the array from the request body.")
+
+    model_config = {'populate_by_name': True}
+
+
+class CreativeErrorType(StrEnum):
+    OTHER_ERROR = "OTHER_ERROR"
+    RANGE_ERROR = "RANGE_ERROR"
+
+
+class CreativeMutationErrorSelector(BaseModel):
+    other_error: Optional["OtherError"] = Field(None, alias="otherError")
+    range_error: Optional["RangeError"] = Field(None, alias="rangeError")
+
+    model_config = {'populate_by_name': True}
+
+
+class CreativeMutationError(BaseModel):
+    error_type: "CreativeErrorType" = Field(..., alias="errorType")
+    error_value: "CreativeMutationErrorSelector" = Field(..., alias="errorValue")
+
+    model_config = {'populate_by_name': True}
+
+
+class CreativeFailureResponseItem(BaseModel):
+    errors: Optional[list["CreativeMutationError"]] = Field(None, description="A list of validation errors.")
     index: int = Field(..., description="The index of the creative in the array from the request body.")
 
     model_config = {'populate_by_name': True}
@@ -658,39 +658,9 @@ class BulkLocationOperationResponse(BaseModel):
     model_config = {'populate_by_name': True}
 
 
-class TargetMutationErrorSelector(BaseModel):
-    bidding_error: Optional["BiddingError"] = Field(None, alias="biddingError")
-    billing_error: Optional["BillingError"] = Field(None, alias="billingError")
-    other_error: Optional["OtherError"] = Field(None, alias="otherError")
-    range_error: Optional["RangeError"] = Field(None, alias="rangeError")
-
-    model_config = {'populate_by_name': True}
-
-
-class TargetingClauseErrorType(StrEnum):
-    BIDDING_ERROR = "BIDDING_ERROR"
-    BILLING_ERROR = "BILLING_ERROR"
-    OTHER_ERROR = "OTHER_ERROR"
-    RANGE_ERROR = "RANGE_ERROR"
-
-
-class TargetMutationError(BaseModel):
-    error_type: "TargetingClauseErrorType" = Field(..., alias="errorType")
-    error_value: "TargetMutationErrorSelector" = Field(..., alias="errorValue")
-
-    model_config = {'populate_by_name': True}
-
-
-class TargetingClauseFailureResponseItem(BaseModel):
-    errors: Optional[list["TargetMutationError"]] = Field(None, description="A list of validation errors")
-    index: int = Field(..., description="the index of the targetingClause in the array from the request body")
-
-    model_config = {'populate_by_name': True}
-
-
-class TargetingExpressionPredicate(BaseModel):
+class TargetingResolvedExpressionPredicate(BaseModel):
     type_: Optional[str] = Field(None, alias="type")
-    value: Optional[str] = Field(None, description="'The value of the targeting predicate. Example for retail category `Arts, Crafts & Sewing`: '2617941011' Example for con")
+    value: Optional[str] = Field(None, description="'The human-readable value of the targeting predicate. Example for retail category '2617941011': `Arts, Crafts & Sewing` ")
 
     model_config = {'populate_by_name': True}
 
@@ -734,9 +704,9 @@ class TargetingClauseExtendedData(BaseModel):
     model_config = {'populate_by_name': True}
 
 
-class TargetingResolvedExpressionPredicate(BaseModel):
+class TargetingExpressionPredicate(BaseModel):
     type_: Optional[str] = Field(None, alias="type")
-    value: Optional[str] = Field(None, description="'The human-readable value of the targeting predicate. Example for retail category '2617941011': `Arts, Crafts & Sewing` ")
+    value: Optional[str] = Field(None, description="'The value of the targeting predicate. Example for retail category `Arts, Crafts & Sewing`: '2617941011' Example for con")
 
     model_config = {'populate_by_name': True}
 
@@ -759,6 +729,36 @@ class TargetingClauseSuccessResponseItem(BaseModel):
     index: int = Field(..., description="the index of the targetingClause in the array from the request body")
     target_id: Optional[str] = Field(None, alias="targetId", description="the targetingClause ID")
     targeting_clause: Optional["TargetingClause"] = Field(None, alias="targetingClause")
+
+    model_config = {'populate_by_name': True}
+
+
+class TargetingClauseErrorType(StrEnum):
+    BIDDING_ERROR = "BIDDING_ERROR"
+    BILLING_ERROR = "BILLING_ERROR"
+    OTHER_ERROR = "OTHER_ERROR"
+    RANGE_ERROR = "RANGE_ERROR"
+
+
+class TargetMutationErrorSelector(BaseModel):
+    bidding_error: Optional["BiddingError"] = Field(None, alias="biddingError")
+    billing_error: Optional["BillingError"] = Field(None, alias="billingError")
+    other_error: Optional["OtherError"] = Field(None, alias="otherError")
+    range_error: Optional["RangeError"] = Field(None, alias="rangeError")
+
+    model_config = {'populate_by_name': True}
+
+
+class TargetMutationError(BaseModel):
+    error_type: "TargetingClauseErrorType" = Field(..., alias="errorType")
+    error_value: "TargetMutationErrorSelector" = Field(..., alias="errorValue")
+
+    model_config = {'populate_by_name': True}
+
+
+class TargetingClauseFailureResponseItem(BaseModel):
+    errors: Optional[list["TargetMutationError"]] = Field(None, description="A list of validation errors")
+    index: int = Field(..., description="the index of the targetingClause in the array from the request body")
 
     model_config = {'populate_by_name': True}
 
@@ -1101,11 +1101,22 @@ class ForecastCreative(BaseModel):
     model_config = {'populate_by_name': True}
 
 
-class ForecastErrorType(StrEnum):
-    FORECAST_MODEL_ERROR = "FORECAST_MODEL_ERROR"
-    FORECAST_OTHER_ERROR = "FORECAST_OTHER_ERROR"
-    FORECAST_RULES_ERROR = "FORECAST_RULES_ERROR"
-    FORECAST_VALIDATION_ERROR = "FORECAST_VALIDATION_ERROR"
+class ForecastRulesError(BaseModel):
+    """Forecast Errors related to forecast rules as too broad or too narrow"""
+    cause: "ErrorCause"
+    message: str = Field(..., description="Human readable error message.")
+    reason: str = Field(..., description="Reason for forecast rules error")
+
+    model_config = {'populate_by_name': True}
+
+
+class ForecastModelError(BaseModel):
+    """Forecast Errors related to forecast model"""
+    cause: "ErrorCause"
+    message: str = Field(..., description="Human readable error message.")
+    reason: str = Field(..., description="Reason for forecast model error")
+
+    model_config = {'populate_by_name': True}
 
 
 class ForecastOtherError(BaseModel):
@@ -1126,24 +1137,6 @@ class ForecastValidationError(BaseModel):
     model_config = {'populate_by_name': True}
 
 
-class ForecastRulesError(BaseModel):
-    """Forecast Errors related to forecast rules as too broad or too narrow"""
-    cause: "ErrorCause"
-    message: str = Field(..., description="Human readable error message.")
-    reason: str = Field(..., description="Reason for forecast rules error")
-
-    model_config = {'populate_by_name': True}
-
-
-class ForecastModelError(BaseModel):
-    """Forecast Errors related to forecast model"""
-    cause: "ErrorCause"
-    message: str = Field(..., description="Human readable error message.")
-    reason: str = Field(..., description="Reason for forecast model error")
-
-    model_config = {'populate_by_name': True}
-
-
 class ForecastErrorSelector(BaseModel):
     forecast_model_error: Optional["ForecastModelError"] = Field(None, alias="forecastModelError")
     forecast_other_error: Optional["ForecastOtherError"] = Field(None, alias="forecastOtherError")
@@ -1151,6 +1144,13 @@ class ForecastErrorSelector(BaseModel):
     forecast_validation_error: Optional["ForecastValidationError"] = Field(None, alias="forecastValidationError")
 
     model_config = {'populate_by_name': True}
+
+
+class ForecastErrorType(StrEnum):
+    FORECAST_MODEL_ERROR = "FORECAST_MODEL_ERROR"
+    FORECAST_OTHER_ERROR = "FORECAST_OTHER_ERROR"
+    FORECAST_RULES_ERROR = "FORECAST_RULES_ERROR"
+    FORECAST_VALIDATION_ERROR = "FORECAST_VALIDATION_ERROR"
 
 
 class ForecastErrorItem(BaseModel):

@@ -210,13 +210,15 @@ class AdsDataManagerClient(BaseAdsClient):
                 json_data = body
         return await self.post(endpoint, json_data=json_data, params=params, content_type="application/vnd.admmetrics.v1+json")
 
-    async def delete_identity(self, body: DeleteIdentityRequestContent | dict[str, Any] | None = None, amazon_ads_manager_account_id: str | None = None, amazon_advertising_api_client_id: str | None = None) -> JSONData | JSONList:
+    async def delete_identity(self, body: DeleteIdentityRequestContent | dict[str, Any] | None = None, amazon_ads_account_id: str | None = None, amazon_ads_manager_account_id: str | None = None, amazon_advertising_api_client_id: str | None = None) -> JSONData | JSONList:
         """POST /adm/identities/delete
 
         Deletes matched list of users from your data room within 30 days.  **Authorized resource type**: Global Manager Account
         """
         endpoint = "/adm/identities/delete"
         params: dict[str, Any] = {}
+        if amazon_ads_account_id is not None:
+            params["Amazon-Ads-AccountId"] = amazon_ads_account_id
         if amazon_ads_manager_account_id is not None:
             params["Amazon-Ads-Manager-Account-ID"] = amazon_ads_manager_account_id
         if amazon_advertising_api_client_id is not None:
@@ -271,13 +273,15 @@ class AdsDataManagerClient(BaseAdsClient):
                 json_data = body
         return await self.post(endpoint, json_data=json_data, params=params)
 
-    async def revoke_sharing_rule(self, sharing_rule_id: str, amazon_ads_manager_account_id: str | None = None, amazon_advertising_api_client_id: str | None = None) -> JSONData | JSONList:
+    async def revoke_sharing_rule(self, sharing_rule_id: str, amazon_ads_account_id: str | None = None, amazon_ads_manager_account_id: str | None = None, amazon_advertising_api_client_id: str | None = None) -> JSONData | JSONList:
         """PATCH /adm/sharingRules/{sharingRuleId}/revoke
 
         Revoke an existing Sharing Rule in ADM.  **Authorized resource type**: Global Manager Account ID  **Parameter name**: Am
         """
         endpoint = f"/adm/sharingRules/{sharing_rule_id}/revoke"
         params: dict[str, Any] = {}
+        if amazon_ads_account_id is not None:
+            params["Amazon-Ads-AccountId"] = amazon_ads_account_id
         if amazon_ads_manager_account_id is not None:
             params["Amazon-Ads-Manager-Account-ID"] = amazon_ads_manager_account_id
         if amazon_advertising_api_client_id is not None:

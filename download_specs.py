@@ -2,7 +2,7 @@
 Download all Amazon Ads OpenAPI specification files.
 
 Uses only stdlib (urllib) so no external dependencies are needed.
-Last verified: 2026-04-10 — 79 spec files from 3 CDN domains.
+Last verified: 2026-05-30 — 78 downloadable spec files + spec_config extras.
 """
 import urllib.request
 import ssl

@@ -49,11 +49,11 @@ class AMCModelBasedAudienceIdempotencyKey(BaseModel):
     pass
 
 
-class SimpleDataType(BaseModel):
+class ComplexDataType(BaseModel):
     pass
 
 
-class ComplexDataType(BaseModel):
+class SimpleDataType(BaseModel):
     pass
 
 
@@ -139,11 +139,6 @@ class AMCModelBasedAudienceCreateModeledDatasetOutput(BaseModel):
     model_config = {'populate_by_name': True}
 
 
-class AMCModelBasedAudienceModeledDatasetUploadJobUpdateStrategy(StrEnum):
-    ADDITIVE = "ADDITIVE"
-    FULL_REPLACE = "FULL_REPLACE"
-
-
 class AMCModelBasedAudienceTrainedModelInferenceJobId(BaseModel):
     """A unique ID that represents a trained model inference job"""
     pass
@@ -162,6 +157,11 @@ class AMCModelBasedAudienceTrainedModelId(BaseModel):
 class AMCModelBasedAudienceTrainedModelIds(BaseModel):
     """A list of trainedModelIds"""
     pass
+
+
+class AMCModelBasedAudienceModeledDatasetUploadJobUpdateStrategy(StrEnum):
+    ADDITIVE = "ADDITIVE"
+    FULL_REPLACE = "FULL_REPLACE"
 
 
 class AMCModelBasedAudienceCreateModeledDatasetUploadJobInput(BaseModel):
@@ -186,6 +186,20 @@ class AMCModelBasedAudienceCreateModeledDatasetUploadJobOutput(BaseModel):
     model_config = {'populate_by_name': True}
 
 
+class AMCModelBasedAudienceEnvironment(BaseModel):
+    """The environment variables to set in the Docker container."""
+    __root__: dict[str, str] = {}
+
+
+class AMCModelBasedAudienceResourceConfig(BaseModel):
+    """Configuration options for an training resource."""
+    instance_count: Optional[int] = Field(None, alias="instanceCount", description="instanceCount of training resource.")
+    instance_type: Optional[str] = Field(None, alias="instanceType")
+    volume_size_in_gb: Optional[int] = Field(None, alias="volumeSizeInGb", description="The volume size in gigabytes (GB) of the training resource. Note that volume size limits depend on your instance type. C")
+
+    model_config = {'populate_by_name': True}
+
+
 class AMCModelBasedAudienceMlInputChannel(BaseModel):
     """A named input source that the container will consume. This is the location of the output of the query."""
     channel_name: str = Field(..., alias="channelName")
@@ -199,20 +213,6 @@ class AMCModelBasedAudienceMlInputChannels(BaseModel):
     pass
 
 
-class AMCModelBasedAudienceHyperParameters(BaseModel):
-    """Algorithm-specific parameters that influence the quality of the model."""
-    __root__: dict[str, str] = {}
-
-
-class AMCModelBasedAudienceResourceConfig(BaseModel):
-    """Configuration options for an training resource."""
-    instance_count: Optional[int] = Field(None, alias="instanceCount", description="instanceCount of training resource.")
-    instance_type: Optional[str] = Field(None, alias="instanceType")
-    volume_size_in_gb: Optional[int] = Field(None, alias="volumeSizeInGb", description="The volume size in gigabytes (GB) of the training resource. Note that volume size limits depend on your instance type. C")
-
-    model_config = {'populate_by_name': True}
-
-
 class AMCModelBasedAudienceStoppingCondition(BaseModel):
     """Specifies a limit to how long a model training job can run."""
     max_runtime_in_seconds: Optional[int] = Field(None, alias="maxRuntimeInSeconds", description="The maximum length of time, in seconds, that a model can train before it is stopped. Minimum value of 1")
@@ -220,8 +220,8 @@ class AMCModelBasedAudienceStoppingCondition(BaseModel):
     model_config = {'populate_by_name': True}
 
 
-class AMCModelBasedAudienceEnvironment(BaseModel):
-    """The environment variables to set in the Docker container."""
+class AMCModelBasedAudienceHyperParameters(BaseModel):
+    """Algorithm-specific parameters that influence the quality of the model."""
     __root__: dict[str, str] = {}
 
 

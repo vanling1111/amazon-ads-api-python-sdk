@@ -74,11 +74,6 @@ class AdPaymentsCountryCodeList(BaseModel):
     pass
 
 
-class AdPaymentsPaymentAgreementType(StrEnum):
-    AUTO_PAY = "AUTO_PAY"
-    PAY_NOW = "PAY_NOW"
-
-
 class AdPaymentsEntityType(StrEnum):
     AGENCY = "AGENCY"
     DSP_ADVERTISING_ACCOUNT = "DSP_ADVERTISING_ACCOUNT"
@@ -86,6 +81,11 @@ class AdPaymentsEntityType(StrEnum):
     MANAGER_ACCOUNT = "MANAGER_ACCOUNT"
     SELLER = "SELLER"
     VENDOR = "VENDOR"
+
+
+class AdPaymentsPaymentAgreementType(StrEnum):
+    AUTO_PAY = "AUTO_PAY"
+    PAY_NOW = "PAY_NOW"
 
 
 class AdPaymentsTarget(BaseModel):
@@ -123,14 +123,6 @@ class AdPaymentsForeignExchange(BaseModel):
     fee_percentage: Optional[float] = Field(None, alias="feePercentage", description="Percentage fee amazon is taking in transaction.")
     rate: Optional[float] = Field(None, description="Rate used for currency conversion.")
     target_currency_code: Optional[str] = Field(None, alias="targetCurrencyCode", description="Currency the customer is paying in (credit card currency).")
-
-    model_config = {'populate_by_name': True}
-
-
-class AdPaymentsExpiryDetails(BaseModel):
-    """Indicates the month a payment method will expire."""
-    month: int = Field(..., description="The month the payment method will expire.")
-    year: int = Field(..., description="The year the payment method will expire.")
 
     model_config = {'populate_by_name': True}
 
@@ -174,6 +166,14 @@ class AdPaymentsCurrencyCode(StrEnum):
 class AdPaymentsCurrencyAmount(BaseModel):
     amount: float = Field(..., description="A monetary amount.")
     currency_code: "AdPaymentsCurrencyCode" = Field(..., alias="currencyCode")
+
+    model_config = {'populate_by_name': True}
+
+
+class AdPaymentsExpiryDetails(BaseModel):
+    """Indicates the month a payment method will expire."""
+    month: int = Field(..., description="The month the payment method will expire.")
+    year: int = Field(..., description="The year the payment method will expire.")
 
     model_config = {'populate_by_name': True}
 
@@ -341,6 +341,11 @@ class AdPaymentsPaymentMethodConfigurationList(BaseModel):
     pass
 
 
+class AdPaymentsNextToken(BaseModel):
+    """To retrieve the next page of results, call the same operation and specify this token in the request. If the nextToken field is empty, there are no further results."""
+    pass
+
+
 class AdPaymentsSellerPayablePaymentMethod(BaseModel):
     """Represents Seller Payable payment method structure. Seller Payable is a type of payment method where spends are deducted from the seller balance of a particular seller account."""
     country_code: Optional["AdPaymentsCountryCode"] = Field(None, alias="countryCode")
@@ -353,11 +358,6 @@ class AdPaymentsSellerPayablePaymentMethod(BaseModel):
 
 class AdPaymentsSellerPayablePaymentMethodList(BaseModel):
     """A list of seller payable payment methods."""
-    pass
-
-
-class AdPaymentsNextToken(BaseModel):
-    """To retrieve the next page of results, call the same operation and specify this token in the request. If the nextToken field is empty, there are no further results."""
     pass
 
 
@@ -546,6 +546,7 @@ class ApplyBillingProfileResponse(BaseModel):
 
 
 class DocType(StrEnum):
+    CA_DST_REFUND = "CA_DST_REFUND"
     CREDIT_MEMO = "CREDIT_MEMO"
     GIS_CREDIT_MEMO = "GIS_CREDIT_MEMO"
     GIS_INVOICE = "GIS_INVOICE"
@@ -1050,11 +1051,6 @@ class address(BaseModel):
     model_config = {'populate_by_name': True}
 
 
-class date(BaseModel):
-    """Date in YYYYMMDD format"""
-    pass
-
-
 class currencyCode(StrEnum):
     AED = "AED"
     AUD = "AUD"
@@ -1107,6 +1103,11 @@ class fee(BaseModel):
     model_config = {'populate_by_name': True}
 
 
+class date(BaseModel):
+    """Date in YYYYMMDD format"""
+    pass
+
+
 class adjustment(BaseModel):
     accounting_date: "date" = Field(..., alias="accountingDate")
     amount: "currencyAmount"
@@ -1148,11 +1149,6 @@ class billingAggregation(BaseModel):
     billing_level: Optional["billingLevel"] = Field(None, alias="billingLevel")
 
     model_config = {'populate_by_name': True}
-
-
-class billingNotificationImpact(StrEnum):
-    CAMPAIGNS_SUSPENDED = "CAMPAIGNS_SUSPENDED"
-    NO_IMPACT = "NO_IMPACT"
 
 
 class billingNotificationNames(StrEnum):
@@ -1234,6 +1230,11 @@ class billingNotificationSeverity(StrEnum):
     ALERT = "ALERT"
     INFO = "INFO"
     WARNING = "WARNING"
+
+
+class billingNotificationImpact(StrEnum):
+    CAMPAIGNS_SUSPENDED = "CAMPAIGNS_SUSPENDED"
+    NO_IMPACT = "NO_IMPACT"
 
 
 class billingNotification(BaseModel):
@@ -1439,6 +1440,19 @@ class governmentInvoiceInformation(BaseModel):
     model_config = {'populate_by_name': True}
 
 
+class promotion(BaseModel):
+    amount: "currencyAmount"
+    description: str
+    last_consumed_date: "date" = Field(..., alias="lastConsumedDate")
+
+    model_config = {'populate_by_name': True}
+
+
+class promotions(BaseModel):
+    """List of promotions applied to the charges in this invoice."""
+    pass
+
+
 class invoiceLineCosteventtype(StrEnum):
     CLICKS = "CLICKS"
     IMPRESSIONS = "IMPRESSIONS"
@@ -1492,6 +1506,11 @@ class portfolios(BaseModel):
     pass
 
 
+class thirdPartyContactInformation(BaseModel):
+    """Additional contacts. This field is used in cases such as Loi Sapin in France where both advertiser and agency addresses need to be provided."""
+    pass
+
+
 class taxBreakupIssuertaxinformation(BaseModel):
     tax_id: str = Field(..., alias="taxId", description="Tax registration with government (Ex: VAT ID, GST ID)")
 
@@ -1541,34 +1560,6 @@ class paymentMethod(StrEnum):
     UNIFIED_BILLING = "UNIFIED_BILLING"
 
 
-class paymentStatus(StrEnum):
-    FAILED = "FAILED"
-    PROCESSING = "PROCESSING"
-    REFUNDED = "REFUNDED"
-    SUCCEEDED = "SUCCEEDED"
-    VERIFICATION_REQUIRED = "VERIFICATION_REQUIRED"
-    VOIDED = "VOIDED"
-
-
-class payment(BaseModel):
-    amount: "currencyAmount"
-    current_payment_attempt_date: Optional["date"] = Field(None, alias="currentPaymentAttemptDate")
-    id_: int = Field(..., alias="id")
-    last_payment_attempt_date: Optional["date"] = Field(None, alias="lastPaymentAttemptDate")
-    next_payment_attempt_date: Optional["date"] = Field(None, alias="nextPaymentAttemptDate")
-    payment_method: "paymentMethod" = Field(..., alias="paymentMethod")
-    reason: Optional[str] = Field(None, description="Provides additional details and reason for the payment status")
-    refunded_amount: Optional["currencyAmount"] = Field(None, alias="refundedAmount")
-    status: paymentStatus
-
-    model_config = {'populate_by_name': True}
-
-
-class payments(BaseModel):
-    """List of payments made against the invoice."""
-    pass
-
-
 class invoiceStatus(StrEnum):
     ACCUMULATING = "ACCUMULATING"
     ISSUED = "ISSUED"
@@ -1607,21 +1598,31 @@ class invoiceSummary(BaseModel):
     model_config = {'populate_by_name': True}
 
 
-class thirdPartyContactInformation(BaseModel):
-    """Additional contacts. This field is used in cases such as Loi Sapin in France where both advertiser and agency addresses need to be provided."""
-    pass
+class paymentStatus(StrEnum):
+    FAILED = "FAILED"
+    PROCESSING = "PROCESSING"
+    REFUNDED = "REFUNDED"
+    SUCCEEDED = "SUCCEEDED"
+    VERIFICATION_REQUIRED = "VERIFICATION_REQUIRED"
+    VOIDED = "VOIDED"
 
 
-class promotion(BaseModel):
+class payment(BaseModel):
     amount: "currencyAmount"
-    description: str
-    last_consumed_date: "date" = Field(..., alias="lastConsumedDate")
+    current_payment_attempt_date: Optional["date"] = Field(None, alias="currentPaymentAttemptDate")
+    id_: int = Field(..., alias="id")
+    last_payment_attempt_date: Optional["date"] = Field(None, alias="lastPaymentAttemptDate")
+    next_payment_attempt_date: Optional["date"] = Field(None, alias="nextPaymentAttemptDate")
+    payment_method: "paymentMethod" = Field(..., alias="paymentMethod")
+    reason: Optional[str] = Field(None, description="Provides additional details and reason for the payment status")
+    refunded_amount: Optional["currencyAmount"] = Field(None, alias="refundedAmount")
+    status: paymentStatus
 
     model_config = {'populate_by_name': True}
 
 
-class promotions(BaseModel):
-    """List of promotions applied to the charges in this invoice."""
+class payments(BaseModel):
+    """List of payments made against the invoice."""
     pass
 
 

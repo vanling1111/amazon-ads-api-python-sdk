@@ -25,13 +25,6 @@ class Country(BaseModel):
     model_config = {'populate_by_name': True}
 
 
-class User(BaseModel):
-    email_address: str = Field(..., alias="emailAddress", description="Email address of the user to be invited")
-    user_name: str = Field(..., alias="userName", description="Name of the user to be invited")
-
-    model_config = {'populate_by_name': True}
-
-
 class Permission(BaseModel):
     name: Optional[str] = None
 
@@ -52,6 +45,13 @@ class PermissionSet(BaseModel):
     model_config = {'populate_by_name': True}
 
 
+class User(BaseModel):
+    email_address: str = Field(..., alias="emailAddress", description="Email address of the user to be invited")
+    user_name: str = Field(..., alias="userName", description="Name of the user to be invited")
+
+    model_config = {'populate_by_name': True}
+
+
 class UserInvitationRequest(BaseModel):
     countries: Optional[list["Country"]] = Field(None, description="List of two-letter ISO 3166 country codes that the user is invited to. Only valid for invitations to global accounts.")
     permission_set: Optional["PermissionSet"] = Field(None, alias="permissionSet")
@@ -67,15 +67,6 @@ class CreateUserInvitationsRequestContent(BaseModel):
     model_config = {'populate_by_name': True}
 
 
-class InvitationError(BaseModel):
-    error_code: Optional[str] = Field(None, alias="errorCode")
-    error_detail: Optional[str] = Field(None, alias="errorDetail")
-    error_message: Optional[str] = Field(None, alias="errorMessage")
-    identifier: Optional[str] = None
-
-    model_config = {'populate_by_name': True}
-
-
 class UserInvitation(BaseModel):
     countries: Optional[list["Country"]] = None
     created_at: Optional[float] = Field(None, alias="createdAt")
@@ -86,6 +77,15 @@ class UserInvitation(BaseModel):
     state: Optional[str] = None
     target_id: Optional[str] = Field(None, alias="targetId")
     user: Optional["User"] = None
+
+    model_config = {'populate_by_name': True}
+
+
+class InvitationError(BaseModel):
+    error_code: Optional[str] = Field(None, alias="errorCode")
+    error_detail: Optional[str] = Field(None, alias="errorDetail")
+    error_message: Optional[str] = Field(None, alias="errorMessage")
+    identifier: Optional[str] = None
 
     model_config = {'populate_by_name': True}
 

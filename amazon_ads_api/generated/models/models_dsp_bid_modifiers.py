@@ -35,10 +35,6 @@ class BidModifiersServiceAllBidModifierRuleAssociations(BaseModel):
     model_config = {'populate_by_name': True}
 
 
-class BidModifiersServiceOnMultipleMatches(StrEnum):
-    APPLY_PRODUCT = "APPLY_PRODUCT"
-
-
 class BidModifiersServiceBidModifierTerm(BaseModel):
     """A bid adjustment term is composed of 1 or more of the below dimensions, and a bid adjustment.  A minimum of 1 dimension must be set, and there is no maximum on the number of dimensions. The same  dime"""
     ad_format: Optional[list[str]] = Field(None, alias="adFormat", description="Valid values: 'DISPLAY', 'AUDIO', 'VIDEO'. Values are case insensitive.")
@@ -62,6 +58,10 @@ class BidModifiersServiceBidModifierTerm(BaseModel):
     term_id: Optional[float] = Field(None, alias="termId", description="A system generated identifier for the term starting from 1.")
 
     model_config = {'populate_by_name': True}
+
+
+class BidModifiersServiceOnMultipleMatches(StrEnum):
+    APPLY_PRODUCT = "APPLY_PRODUCT"
 
 
 class BidModifiersServiceBidModifierRuleExpression(BaseModel):

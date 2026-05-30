@@ -459,6 +459,7 @@ class CountryCode(StrEnum):
     ZA = "ZA"
     ZM = "ZM"
     ZW = "ZW"
+    ZZ = "ZZ"
 
 
 class TargetResourceMetadata(BaseModel):
@@ -580,6 +581,11 @@ class ManageAudienceStatusV2ResponseContent(BaseModel):
     model_config = {'populate_by_name': True}
 
 
+class action(StrEnum):
+    CREATE = "CREATE"
+    DELETE = "DELETE"
+
+
 class MeasurementObj(BaseModel):
     pass
 
@@ -589,11 +595,6 @@ class UserConsent(BaseModel):
     geo: Optional["Geo"] = None
 
     model_config = {'populate_by_name': True}
-
-
-class action(StrEnum):
-    CREATE = "CREATE"
-    DELETE = "DELETE"
 
 
 class PayloadObj(BaseModel):

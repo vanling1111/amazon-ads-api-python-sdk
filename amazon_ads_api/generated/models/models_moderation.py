@@ -13,17 +13,11 @@ from pydantic import BaseModel, Field  # noqa: F401
 
 
 
-class ViolatingAsinEvidence(BaseModel):
-    asin: Optional[str] = Field(None, description="ASIN which has the ad policy violation.")
-
-    model_config = {'populate_by_name': True}
-
-
-class ViolatingAsinContent(BaseModel):
-    moderated_component: Optional[str] = Field(None, alias="moderatedComponent", description="Moderation component which marked the policy violation.")
-    violating_asin_evidences: Optional[list["ViolatingAsinEvidence"]] = Field(None, alias="violatingAsinEvidences")
-
-    model_config = {'populate_by_name': True}
+class ModerationStatus(StrEnum):
+    APPROVED = "APPROVED"
+    FAILED = "FAILED"
+    IN_PROGRESS = "IN_PROGRESS"
+    REJECTED = "REJECTED"
 
 
 class ImageCrop(BaseModel):
@@ -93,6 +87,19 @@ class ViolatingVideoContent(BaseModel):
     model_config = {'populate_by_name': True}
 
 
+class ViolatingAsinEvidence(BaseModel):
+    asin: Optional[str] = Field(None, description="ASIN which has the ad policy violation.")
+
+    model_config = {'populate_by_name': True}
+
+
+class ViolatingAsinContent(BaseModel):
+    moderated_component: Optional[str] = Field(None, alias="moderatedComponent", description="Moderation component which marked the policy violation.")
+    violating_asin_evidences: Optional[list["ViolatingAsinEvidence"]] = Field(None, alias="violatingAsinEvidences")
+
+    model_config = {'populate_by_name': True}
+
+
 class PolicyViolation(BaseModel):
     policy_description: Optional[str] = Field(None, alias="policyDescription", description="A human-readable description of the policy.")
     policy_link_url: Optional[str] = Field(None, alias="policyLinkUrl", description="Address of the policy documentation. Follow the link to learn more about the specified policy.")
@@ -104,18 +111,11 @@ class PolicyViolation(BaseModel):
     model_config = {'populate_by_name': True}
 
 
-class ModerationStatus(StrEnum):
-    APPROVED = "APPROVED"
-    FAILED = "FAILED"
-    IN_PROGRESS = "IN_PROGRESS"
-    REJECTED = "REJECTED"
-
-
-class TextComponentModerationResult(BaseModel):
-    id_: Optional[str] = Field(None, alias="id", description="The ID of the text component.")
-    moderation_status: Optional["ModerationStatus"] = Field(None, alias="moderationStatus", description="The moderation status of the text component.")
-    policy_violations: Optional[list["PolicyViolation"]] = Field(None, alias="policyViolations", description="A list of policy violations for a text component that has failed moderation. Note that this field is present in the resp")
-    text: Optional[str] = Field(None, description="The text value of the text component.")
+class VideoComponentModerationResult(BaseModel):
+    id_: Optional[str] = Field(None, alias="id", description="The ID of the video component.")
+    moderation_status: Optional["ModerationStatus"] = Field(None, alias="moderationStatus", description="The moderation status of the video component.")
+    policy_violations: Optional[list["PolicyViolation"]] = Field(None, alias="policyViolations", description="A list of policy violations for a video component that has failed moderation. Note that this field is present in the res")
+    video_url: Optional[str] = Field(None, alias="videoUrl", description="The URL of the video component.")
 
     model_config = {'populate_by_name': True}
 
@@ -129,11 +129,11 @@ class ImageComponentModerationResult(BaseModel):
     model_config = {'populate_by_name': True}
 
 
-class VideoComponentModerationResult(BaseModel):
-    id_: Optional[str] = Field(None, alias="id", description="The ID of the video component.")
-    moderation_status: Optional["ModerationStatus"] = Field(None, alias="moderationStatus", description="The moderation status of the video component.")
-    policy_violations: Optional[list["PolicyViolation"]] = Field(None, alias="policyViolations", description="A list of policy violations for a video component that has failed moderation. Note that this field is present in the res")
-    video_url: Optional[str] = Field(None, alias="videoUrl", description="The URL of the video component.")
+class TextComponentModerationResult(BaseModel):
+    id_: Optional[str] = Field(None, alias="id", description="The ID of the text component.")
+    moderation_status: Optional["ModerationStatus"] = Field(None, alias="moderationStatus", description="The moderation status of the text component.")
+    policy_violations: Optional[list["PolicyViolation"]] = Field(None, alias="policyViolations", description="A list of policy violations for a text component that has failed moderation. Note that this field is present in the resp")
+    text: Optional[str] = Field(None, description="The text value of the text component.")
 
     model_config = {'populate_by_name': True}
 

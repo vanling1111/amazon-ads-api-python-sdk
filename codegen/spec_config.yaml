@@ -100,7 +100,8 @@ specs:
   - file: DSP_Advertiser_v3_openapi.yaml
     module: dsp_advertiser
     tier: L1
-    generate: true
+    generate: false
+    note: "DSP advertiser list/get duplicate higher-priority DSP specs"
 
   - file: DSP_Reports_v2_openapi.yaml
     module: dsp_reports_v2
@@ -254,8 +255,8 @@ specs:
   - file: Billing_prod_3p.json
     module: billing_legacy
     tier: L1
-    generate: true
-    note: "Subset of AdvertisingBilling, kept for invoice-specific schemas"
+    generate: false
+    note: "Invoice paths duplicate AdvertisingBilling module billing; use client.generated.billing"
 
   # ══════════════════════════════════════════
   # Reporting
@@ -477,7 +478,8 @@ specs:
   - file: ValidationConfigurationsAPI_prod_3p.json
     module: validation_configs
     tier: L1
-    generate: true
+    generate: false
+    note: "validationConfigurations/* paths owned by data_provider module"
 
   # ══════════════════════════════════════════
   # Stores & History
@@ -498,8 +500,8 @@ specs:
   - file: AmazonAdsAPIALLMerged_prod_3p.json
     module: unified_ga
     tier: L1
-    generate: false
-    note: "Unified API v1 GA - /adsApi/v1/ pattern, future use"
+    generate: true
+    note: "Unified API v1 GA - /adsApi/v1/ pattern; also exposed via client.generated.unified_ga"
 
   - file: AmazonAdsAPIALLMerged_prod_3p_ALL.json
     module: unified_all

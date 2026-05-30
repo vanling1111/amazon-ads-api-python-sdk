@@ -37,19 +37,19 @@ class BadRequestResponseContent(BaseModel):
     model_config = {'populate_by_name': True}
 
 
-class BrandLogo(BaseModel):
-    """<p>Metadata for a brand logo.</p>"""
-    brand_logo_asset_id: Optional[str] = Field(None, alias="brandLogoAssetId", description="<p>Advertising Asset Library Id for a brand logo.</p>")
-
-    model_config = {'populate_by_name': True}
-
-
 class BrandStatus(StrEnum):
     MERGED = "MERGED"
     NOT_APPROVED = "NOT_APPROVED"
     PENDING_REVIEW = "PENDING_REVIEW"
     REGISTERED = "REGISTERED"
     SUSPENDED = "SUSPENDED"
+
+
+class BrandLogo(BaseModel):
+    """<p>Metadata for a brand logo.</p>"""
+    brand_logo_asset_id: Optional[str] = Field(None, alias="brandLogoAssetId", description="<p>Advertising Asset Library Id for a brand logo.</p>")
+
+    model_config = {'populate_by_name': True}
 
 
 class Brand(BaseModel):
@@ -62,16 +62,16 @@ class Brand(BaseModel):
     model_config = {'populate_by_name': True}
 
 
-class BrandAdvertiserRelationshipType(StrEnum):
-    ADVERTISER = "ADVERTISER"
-    OWNER = "OWNER"
-    RESELLER = "RESELLER"
-
-
 class BrandAdvertiserAssociationStatus(StrEnum):
     APPROVED = "APPROVED"
     NOT_APPROVED = "NOT_APPROVED"
     PENDING_REVIEW = "PENDING_REVIEW"
+
+
+class BrandAdvertiserRelationshipType(StrEnum):
+    ADVERTISER = "ADVERTISER"
+    OWNER = "OWNER"
+    RESELLER = "RESELLER"
 
 
 class BrandAdvertiserAssociation(BaseModel):

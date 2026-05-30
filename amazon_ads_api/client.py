@@ -556,6 +556,22 @@ class _DataProviderModule:
         return self._hashed_records
 
 
+class _StreamModule:
+    """L2 Marketing Stream namespace."""
+
+    def __init__(self, client: "AmazonAdsClient") -> None:
+        self._client = client
+        self._subscriptions = None
+
+    @property
+    def subscriptions(self):
+        if self._subscriptions is None:
+            from .reference.stream.subscriptions import MarketingStreamSubscriptionsAPI
+
+            self._subscriptions = self._client._create_client(MarketingStreamSubscriptionsAPI)
+        return self._subscriptions
+
+
 class _ReferenceAPIs:
     """L2: Reference APIs (非 OpenAPI 但官方文档确认)"""
 
@@ -576,10 +592,9 @@ class _ReferenceAPIs:
         return self._amc
 
     @property
-    def stream(self):
+    def stream(self) -> _StreamModule:
         if self._stream is None:
-            from .reference.stream.subscriptions import MarketingStreamAPI
-            self._stream = self._client._create_client(MarketingStreamAPI)
+            self._stream = _StreamModule(self._client)
         return self._stream
 
     @property
@@ -979,6 +994,7 @@ class AmazonAdsClient:
         self._reference: Optional[_ReferenceAPIs] = None
         self._services: Optional[_ServiceAPIs] = None
         self._experimental_instance: Optional[_ExperimentalAPIs] = None
+        self._generated = None
 
     def _create_client(self, cls: type[BaseAdsClient]) -> BaseAdsClient:
         return cls(
@@ -1006,6 +1022,7 @@ class AmazonAdsClient:
         self._reference = None
         self._services = None
         self._experimental_instance = None
+        self._generated = None
         return self
 
     # ===== L1 Core Modules =====
@@ -1092,6 +1109,15 @@ class AmazonAdsClient:
         if self._services is None:
             self._services = _ServiceAPIs(self)
         return self._services
+
+    @property
+    def generated(self):
+        """Direct access to every OpenAPI-generated client by module name."""
+        if self._generated is None:
+            from .generated.registry import GeneratedAPIs
+
+            self._generated = GeneratedAPIs(self)
+        return self._generated
 
     # ===== L4 Experimental APIs =====
 

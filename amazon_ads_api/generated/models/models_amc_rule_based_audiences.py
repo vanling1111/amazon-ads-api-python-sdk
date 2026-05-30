@@ -33,11 +33,11 @@ class CountryCodeEnum(StrEnum):
     US = "US"
 
 
-class SimpleDataType(BaseModel):
+class ComplexDataType(BaseModel):
     pass
 
 
-class ComplexDataType(BaseModel):
+class SimpleDataType(BaseModel):
     pass
 
 

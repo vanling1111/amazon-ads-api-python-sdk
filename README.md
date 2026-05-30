@@ -2,7 +2,7 @@
 
 [![Python 3.11+](https://img.shields.io/badge/python-3.11+-blue.svg)](https://www.python.org/downloads/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![API Coverage](https://img.shields.io/badge/API%20Coverage-650%20endpoints-brightgreen.svg)]()
+[![API Coverage](https://img.shields.io/badge/API%20Coverage-699%20operations-brightgreen.svg)]()
 [![Tests](https://img.shields.io/badge/Tests-79%20Passing-brightgreen.svg)]()
 
 Full-coverage async Python SDK for Amazon Ads API with auto-generated typed models and tiered API governance.
@@ -21,8 +21,8 @@ Full-coverage async Python SDK for Amazon Ads API with auto-generated typed mode
 └──────────────────────────────────────────────────────┘
 ```
 
-- **86 OpenAPI specs** parsed, **80 active** for code generation
-- **650 API operations** covered across all Amazon Ads products
+- **86 OpenAPI specs** parsed, **81 active** for code generation
+- **699 API operations** covered across all Amazon Ads products
 - **5,000+ Pydantic models** with full type safety and `alias` support
 - **L1–L4 tiered governance** separating production-ready from experimental APIs
 

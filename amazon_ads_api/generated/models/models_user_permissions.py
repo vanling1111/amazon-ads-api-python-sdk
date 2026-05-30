@@ -155,15 +155,15 @@ class PermissionId(BaseModel):
     model_config = {'populate_by_name': True}
 
 
-class Type(StrEnum):
-    CUSTOM_PERMISSION_SET = "CUSTOM_PERMISSION_SET"
-    ROLE = "ROLE"
-
-
 class Role(StrEnum):
     ADMIN = "ADMIN"
     EDITOR = "EDITOR"
     VIEWER = "VIEWER"
+
+
+class Type(StrEnum):
+    CUSTOM_PERMISSION_SET = "CUSTOM_PERMISSION_SET"
+    ROLE = "ROLE"
 
 
 class PermissionSet(BaseModel):
@@ -202,6 +202,7 @@ class QueryUserRolesRequestContent(BaseModel):
 
 class RoleForCountries(BaseModel):
     country_codes: Optional[list["CountryCode"]] = Field(None, alias="countryCodes", description="The roles for an account are associated to a specific country/countries These roles may differ per countries")
+    permissions: Optional[list[str]] = Field(None, description="List of granular permission strings populated when type is CUSTOM_PERMISSION_SET and accessType is EXTERNAL.")
     role: Optional["Role"] = None
     type_: Optional["Type"] = Field(None, alias="type")
 

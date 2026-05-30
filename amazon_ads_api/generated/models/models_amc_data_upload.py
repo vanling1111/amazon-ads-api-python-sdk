@@ -13,9 +13,16 @@ from pydantic import BaseModel, Field  # noqa: F401
 
 
 
-class ColumnType(StrEnum):
-    DIMENSION = "DIMENSION"
-    METRIC = "METRIC"
+class ExternalIdentityType(StrEnum):
+    EXPERIAN = "EXPERIAN"
+    IDFA = "IDFA"
+    KANTAR = "KANTAR"
+    LIVERAMP = "LIVERAMP"
+    MAID = "MAID"
+    MERKLE = "MERKLE"
+    NEUSTAR = "NEUSTAR"
+    REALID = "REALID"
+    SAMBATV = "SAMBATV"
 
 
 class HashedPiiType(StrEnum):
@@ -28,18 +35,6 @@ class HashedPiiType(StrEnum):
     PHONE = "PHONE"
     STATE = "STATE"
     ZIP = "ZIP"
-
-
-class ExternalIdentityType(StrEnum):
-    EXPERIAN = "EXPERIAN"
-    IDFA = "IDFA"
-    KANTAR = "KANTAR"
-    LIVERAMP = "LIVERAMP"
-    MAID = "MAID"
-    MERKLE = "MERKLE"
-    NEUSTAR = "NEUSTAR"
-    REALID = "REALID"
-    SAMBATV = "SAMBATV"
 
 
 class UserIdType(BaseModel):
@@ -61,6 +56,11 @@ class DataType(StrEnum):
     LONG = "LONG"
     STRING = "STRING"
     TIMESTAMP = "TIMESTAMP"
+
+
+class ColumnType(StrEnum):
+    DIMENSION = "DIMENSION"
+    METRIC = "METRIC"
 
 
 class Column(BaseModel):
@@ -154,6 +154,13 @@ class CreateDataSetResponseContent(BaseModel):
     model_config = {'populate_by_name': True}
 
 
+class UpdateStrategy(StrEnum):
+    ADDITIVE = "ADDITIVE"
+    FULL_REPLACE = "FULL_REPLACE"
+    OVERLAP_KEEP = "OVERLAP_KEEP"
+    OVERLAP_REPLACE = "OVERLAP_REPLACE"
+
+
 class CustomerDataSource(BaseModel):
     """Describes the source of the data. Exactly one of `sourceManifestS3Key`, `sourceFileS3Key`, or `sourceS3Prefix` must be provided."""
     source_file_s3_key: Optional[str] = Field(None, alias="sourceFileS3Key", description="S3 key of the single object to upload.")
@@ -162,6 +169,10 @@ class CustomerDataSource(BaseModel):
     source_s3_prefix: Optional[str] = Field(None, alias="sourceS3Prefix", description="S3 key prefix containing the object(s) to upload.")
 
     model_config = {'populate_by_name': True}
+
+
+class ParquetDataFormat(StrEnum):
+    PARQUET_DATA_FORMAT = "PARQUET_DATA_FORMAT"
 
 
 class CsvDataFormat(BaseModel):
@@ -175,10 +186,6 @@ class CsvDataFormat(BaseModel):
     model_config = {'populate_by_name': True}
 
 
-class ParquetDataFormat(StrEnum):
-    PARQUET_DATA_FORMAT = "PARQUET_DATA_FORMAT"
-
-
 class JsonDataFormat(StrEnum):
     DOCUMENT = "DOCUMENT"
     LINES = "LINES"
@@ -187,13 +194,6 @@ class JsonDataFormat(StrEnum):
 class FileFormat(BaseModel):
     """The format in which data to be uploaded is stored. Exactly one of `csvDataFormat`, `jsonDataFormat`, or `parquetDataFormat` must be provided."""
     pass
-
-
-class UpdateStrategy(StrEnum):
-    ADDITIVE = "ADDITIVE"
-    FULL_REPLACE = "FULL_REPLACE"
-    OVERLAP_KEEP = "OVERLAP_KEEP"
-    OVERLAP_REPLACE = "OVERLAP_REPLACE"
 
 
 class CreateUploadRequestContent(BaseModel):

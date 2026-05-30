@@ -34,11 +34,6 @@ class AmazonAdTagV1(BaseModel):
     model_config = {'populate_by_name': True}
 
 
-class MobileMeasurementPartnerPlatformV1(StrEnum):
-    ANDROID = "ANDROID"
-    FIRE_TV = "FIRE_TV"
-
-
 class MobileMeasurementPartnerNameV1(StrEnum):
     ADJUST = "ADJUST"
     AIRBRIDGE = "AIRBRIDGE"
@@ -47,6 +42,11 @@ class MobileMeasurementPartnerNameV1(StrEnum):
     KOCHAVA = "KOCHAVA"
     SINGULAR = "SINGULAR"
     TENJIN = "TENJIN"
+
+
+class MobileMeasurementPartnerPlatformV1(StrEnum):
+    ANDROID = "ANDROID"
+    FIRE_TV = "FIRE_TV"
 
 
 class MobileMeasurementPartnerAppRegistrationV1(BaseModel):
@@ -81,6 +81,13 @@ class BatchAssociateConversionDefinitionsRequestV3(BaseModel):
     pass
 
 
+class ConversionDefinitionSuccessResponseV1(BaseModel):
+    conversion_definition_id: Optional[str] = Field(None, alias="conversionDefinitionId")
+    index: Optional[int] = Field(None, description="The index of the object in the request, starting from 1.")
+
+    model_config = {'populate_by_name': True}
+
+
 class DspSubErrorV1(BaseModel):
     """The sub error object."""
     error_type: str = Field(..., alias="errorType")
@@ -99,32 +106,11 @@ class ConversionDefinitionErrorResponseV1(BaseModel):
     model_config = {'populate_by_name': True}
 
 
-class ConversionDefinitionSuccessResponseV1(BaseModel):
-    conversion_definition_id: Optional[str] = Field(None, alias="conversionDefinitionId")
-    index: Optional[int] = Field(None, description="The index of the object in the request, starting from 1.")
-
-    model_config = {'populate_by_name': True}
-
-
 class BatchAssociateConversionDefinitionsResponseV1(BaseModel):
     error: Optional[list["ConversionDefinitionErrorResponseV1"]] = None
     success: Optional[list["ConversionDefinitionSuccessResponseV1"]] = None
 
     model_config = {'populate_by_name': True}
-
-
-class ConversionDefinitionCountingMethodV1(StrEnum):
-    EVERY = "EVERY"
-    FIRST = "FIRST"
-
-
-class ConversionDefinitionSourceTypeV1(StrEnum):
-    ANDROID = "ANDROID"
-    FIRE_TABLET = "FIRE_TABLET"
-    FIRE_TV = "FIRE_TV"
-    IOS = "IOS"
-    OFFLINE = "OFFLINE"
-    WEBSITE = "WEBSITE"
 
 
 class ConversionDefinitionSourceV1(StrEnum):
@@ -144,6 +130,20 @@ class ConversionDefinitionTypeV1(StrEnum):
     SEARCH = "SEARCH"
     SIGN_UP = "SIGN_UP"
     SUBSCRIBE = "SUBSCRIBE"
+
+
+class ConversionDefinitionSourceTypeV1(StrEnum):
+    ANDROID = "ANDROID"
+    FIRE_TABLET = "FIRE_TABLET"
+    FIRE_TV = "FIRE_TV"
+    IOS = "IOS"
+    OFFLINE = "OFFLINE"
+    WEBSITE = "WEBSITE"
+
+
+class ConversionDefinitionCountingMethodV1(StrEnum):
+    EVERY = "EVERY"
+    FIRST = "FIRST"
 
 
 class ConversionDefinitionInputV1(BaseModel):
@@ -342,18 +342,18 @@ class BatchImportConversionEventDataRequestV1(BaseModel):
     model_config = {'populate_by_name': True}
 
 
-class ConversionEventDataSuccessResponseV1(BaseModel):
-    index: Optional[int] = Field(None, description="The index of the object in the request, starting from 1.")
-    message: Optional[str] = Field(None, description="A human-readable message containing further details.")
-
-    model_config = {'populate_by_name': True}
-
-
 class ConversionEventDataErrorResponseV1(BaseModel):
     code: Optional[str] = Field(None, description="An enumerated success or error code for machine use.")
     errors: Optional[list["DspSubErrorV1"]] = None
     index: Optional[int] = Field(None, description="The index of the object in the request, starting from 1.")
     message: Optional[str] = Field(None, description="A human-readable message of the code.")
+
+    model_config = {'populate_by_name': True}
+
+
+class ConversionEventDataSuccessResponseV1(BaseModel):
+    index: Optional[int] = Field(None, description="The index of the object in the request, starting from 1.")
+    message: Optional[str] = Field(None, description="A human-readable message containing further details.")
 
     model_config = {'populate_by_name': True}
 

@@ -109,6 +109,7 @@ class TargetableEntity(BaseModel):
     audience_id: Optional[str] = Field(None, alias="audienceId", description="The identifier for a target of type AUDIENCE.")
     audience_resolved: Optional[str] = Field(None, alias="audienceResolved", description="The resolved name of audienceId.")
     audience_tooltip: Optional[str] = Field(None, alias="audienceTooltip", description="The tooltip description to describe the amazon audience targetable entity.")
+    behavioural_targeting_eligibility: Optional[str] = Field(None, alias="behaviouralTargetingEligibility", description="The behavioural targeting eligibility for this browse node category. Values from Tamber browse-node-targeting-policy-val")
     child_count: Optional[float] = Field(None, alias="childCount", description="The number of direct child categories.")
     content_category_id: Optional[str] = Field(None, alias="contentCategoryId", description="The identifier for a target of type CONTENT_CATEGORY.")
     content_category_resolved: Optional[str] = Field(None, alias="contentCategoryResolved", description="The resolved name of contentCategoryId.")
@@ -141,28 +142,6 @@ class ListTargetableEntityPathsRequestContent(BaseModel):
 class ListTargetableEntityPathsResponseContent(BaseModel):
     next_token: Optional[str] = Field(None, alias="nextToken", description="Token value allowing to navigate to the next response page.")
     paths: Optional[list[list[str]]] = Field(None, description="The direct descendants of the paths specified in the request's pathsFilter field.")
-    total_results: Optional[float] = Field(None, alias="totalResults", description="The total number of entities.")
-
-    model_config = {'populate_by_name': True}
-
-
-class TextInputSearchRequestContent(BaseModel):
-    ad_product: "AdProduct" = Field(..., alias="adProduct")
-    locale: Optional["Locale"] = None
-    max_results: Optional[float] = Field(None, alias="maxResults", description="Number of records to include in the paginated response.")
-    next_token: Optional[str] = Field(None, alias="nextToken", description="Token value allowing to navigate to the next response page.")
-    parent_browse_node_id_filter: Optional[list[str]] = Field(None, alias="parentBrowseNodeIdFilter", description="Filter by parent browse node IDs. Returns entities whose parent category matches any of the provided IDs.")
-    paths_filter: Optional[list[list[str]]] = Field(None, alias="pathsFilter", description="Get direct descendant sub paths that fall under the paths specified in the field value. The value is a list of paths, wh")
-    product_category_id_filter: Optional[list[str]] = Field(None, alias="productCategoryIdFilter", description="Filter by product category IDs (browse node IDs). Returns entities matching any of the provided IDs.")
-    search_query_filter: Optional[str] = Field(None, alias="searchQueryFilter", description="The query string used to filter targetable entities. Search for terms or phrases that are relevant to your advertising g")
-    target_type_filter: Optional[list["TargetType"]] = Field(None, alias="targetTypeFilter", description="A list of targeting types. If an empty list is provided, it is equivalent to passing all targeting types.")
-
-    model_config = {'populate_by_name': True}
-
-
-class TextInputSearchResponseContent(BaseModel):
-    next_token: Optional[str] = Field(None, alias="nextToken", description="Token value allowing to navigate to the next response page.")
-    targetable_entities: Optional[list["TargetableEntity"]] = Field(None, alias="targetableEntities", description="The list of targetable entities.")
     total_results: Optional[float] = Field(None, alias="totalResults", description="The total number of entities.")
 
     model_config = {'populate_by_name': True}

@@ -18,6 +18,7 @@ from .spec_parser import get_active_specs
 from .conflict_resolver import resolve_conflicts
 from .model_generator import generate_models
 from .client_generator import generate_client
+from .registry_generator import write_registry
 
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
 SPECS_DIR = PROJECT_ROOT / "specs"
@@ -132,6 +133,13 @@ def run(
 
     print(f"  Generated {len(model_modules)} model files")
 
+    expected_models = {f"models_{name}.py" for name in model_modules}
+    for path in models_dir.glob("models_*.py"):
+        if path.name not in expected_models:
+            path.unlink()
+            if verbose:
+                print(f"  [removed] stale {path.name}")
+
     # 4. Generate clients
     print("\n[4/4] Generating clients...")
     clients_dir = OUTPUT_DIR / "clients"
@@ -157,9 +165,20 @@ def run(
 
     print(f"  Generated {len(client_modules)} client files")
 
+    # Remove stale client files from disabled/renamed modules
+    expected_clients = {f"clients_{name}.py" for name in client_modules}
+    for path in clients_dir.glob("clients_*.py"):
+        if path.name not in expected_clients:
+            path.unlink()
+            if verbose:
+                print(f"  [removed] stale {path.name}")
+
     # Generate __init__.py files
     _generate_init(OUTPUT_DIR, model_modules, "models")
     _generate_init(OUTPUT_DIR, client_modules, "clients")
+    registry_path = write_registry(OUTPUT_DIR)
+    if verbose:
+        print(f"  [written] {registry_path.name}: {len(list((OUTPUT_DIR / 'clients').glob('clients_*.py')))} modules")
 
     # Summary
     elapsed = time.time() - t0

@@ -62,29 +62,6 @@ class GetAsinEngagementForStoreResponse(BaseModel):
     model_config = {'populate_by_name': True}
 
 
-class InsightDimension(StrEnum):
-    DATE = "DATE"
-    PAGE = "PAGE"
-    SOURCE = "SOURCE"
-    STORE = "STORE"
-    TAG = "TAG"
-
-
-class TrafficSource(StrEnum):
-    ADS = "ADS"
-    ORGANIC = "ORGANIC"
-    OTHER = "OTHER"
-
-
-class InsightFilter(BaseModel):
-    """The filter to restrict the return data. Users can specifiy the pages/source/tags they feel interested in for the insights. The relationship between each field is 'AND'. E.g. The user can speficy {page"""
-    page_ids: Optional[list[str]] = Field(None, alias="pageIds", description="List of pages to be fetched for insight metrics. Users can first make request to the API with the same parameters but wi")
-    sources: Optional[list["TrafficSource"]] = Field(None, description="List of sources to be fetched for insight metrics.")
-    tags: Optional[list[str]] = Field(None, description="List of tags to be fetched for insight metrics. Users can first make request to the API with the same parameters but wit")
-
-    model_config = {'populate_by_name': True}
-
-
 class InsightMetric(StrEnum):
     ACTIONS_TAKEN_BY_PEERS = "ACTIONS_TAKEN_BY_PEERS"
     BOUNCE_RATE = "BOUNCE_RATE"
@@ -110,6 +87,29 @@ class InsightMetric(StrEnum):
     VIEWS = "VIEWS"
     VISITORS = "VISITORS"
     VISITS = "VISITS"
+
+
+class TrafficSource(StrEnum):
+    ADS = "ADS"
+    ORGANIC = "ORGANIC"
+    OTHER = "OTHER"
+
+
+class InsightFilter(BaseModel):
+    """The filter to restrict the return data. Users can specifiy the pages/source/tags they feel interested in for the insights. The relationship between each field is 'AND'. E.g. The user can speficy {page"""
+    page_ids: Optional[list[str]] = Field(None, alias="pageIds", description="List of pages to be fetched for insight metrics. Users can first make request to the API with the same parameters but wi")
+    sources: Optional[list["TrafficSource"]] = Field(None, description="List of sources to be fetched for insight metrics.")
+    tags: Optional[list[str]] = Field(None, description="List of tags to be fetched for insight metrics. Users can first make request to the API with the same parameters but wit")
+
+    model_config = {'populate_by_name': True}
+
+
+class InsightDimension(StrEnum):
+    DATE = "DATE"
+    PAGE = "PAGE"
+    SOURCE = "SOURCE"
+    STORE = "STORE"
+    TAG = "TAG"
 
 
 class GetInsightsForStoreRequest(BaseModel):

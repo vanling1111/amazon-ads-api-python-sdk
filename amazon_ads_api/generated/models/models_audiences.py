@@ -49,6 +49,12 @@ class ForecastBucketV1(BaseModel):
     model_config = {'populate_by_name': True}
 
 
+class SDInventoryForecastV1(BaseModel):
+    daily_reach: "ForecastBucketV1" = Field(..., alias="dailyReach", description="The forecasted unique devices reachable daily for the inventory type.")
+
+    model_config = {'populate_by_name': True}
+
+
 class STInventoryForecastV1(BaseModel):
     daily_reach: "ForecastBucketV1" = Field(..., alias="dailyReach", description="The forecasted unique devices reachable daily for the inventory type.")
 
@@ -57,12 +63,6 @@ class STInventoryForecastV1(BaseModel):
 
 class DSPInventoryForecastV1(BaseModel):
     daily_impressions: "ForecastBucketV1" = Field(..., alias="dailyImpressions", description="The forecasted available daily impressions for the inventory type.")
-    daily_reach: "ForecastBucketV1" = Field(..., alias="dailyReach", description="The forecasted unique devices reachable daily for the inventory type.")
-
-    model_config = {'populate_by_name': True}
-
-
-class SDInventoryForecastV1(BaseModel):
     daily_reach: "ForecastBucketV1" = Field(..., alias="dailyReach", description="The forecasted unique devices reachable daily for the inventory type.")
 
     model_config = {'populate_by_name': True}
@@ -107,15 +107,6 @@ class AudienceCommonFieldsV1(BaseModel):
     model_config = {'populate_by_name': True}
 
 
-class DspAudienceDeleteSuccessItem(BaseModel):
-    """The success response object."""
-    audience_id: str = Field(..., alias="audienceId", description="The audience identifier of the audience to be actioned.")
-    idempotency_key: str = Field(..., alias="idempotencyKey", description="unique request token for this request.")
-    index: int = Field(..., description="index of the DspAudienceEditRequestItem from the request. e.g. 1st item in the request will correspond to index 0 in the")
-
-    model_config = {'populate_by_name': True}
-
-
 class ErrorType(StrEnum):
     OTHER = "OTHER"
     VALUE_INVALID = "VALUE_INVALID"
@@ -139,6 +130,15 @@ class DspAudienceDeleteErrorItem(BaseModel):
     index: int = Field(..., description="Index of the DspAudienceDeleteRequestItem from the request. e.g. 1st item in the request will correspond to index 0 in t")
     message: str = Field(..., description="A human-readable description of the response.")
     request_id: str = Field(..., alias="requestId")
+
+    model_config = {'populate_by_name': True}
+
+
+class DspAudienceDeleteSuccessItem(BaseModel):
+    """The success response object."""
+    audience_id: str = Field(..., alias="audienceId", description="The audience identifier of the audience to be actioned.")
+    idempotency_key: str = Field(..., alias="idempotencyKey", description="unique request token for this request.")
+    index: int = Field(..., description="index of the DspAudienceEditRequestItem from the request. e.g. 1st item in the request will correspond to index 0 in the")
 
     model_config = {'populate_by_name': True}
 
@@ -230,6 +230,10 @@ class AudienceType(StrEnum):
     PRODUCT_VIEWS = "PRODUCT_VIEWS"
 
 
+class SDAudienceFieldsV1(BaseModel):
+    pass
+
+
 class STAudienceFieldsV1(BaseModel):
     pass
 
@@ -265,10 +269,6 @@ class DSPAudienceFieldsV1(BaseModel):
     provider_id: Optional[str] = Field(None, alias="providerId", description="The Data Management Platform provider identifier. Only applicable to Third party audience segments.")
 
     model_config = {'populate_by_name': True}
-
-
-class SDAudienceFieldsV1(BaseModel):
-    pass
 
 
 class AudienceV1(BaseModel):

@@ -13,67 +13,6 @@ from pydantic import BaseModel, Field  # noqa: F401
 
 
 
-class CurrencyCode(StrEnum):
-    USD = "USD"
-    CAD = "CAD"
-    MXN = "MXN"
-
-
-class DeliveryActivationStatus(StrEnum):
-    ACTIVE = "ACTIVE"
-    INACTIVE = "INACTIVE"
-
-
-class BiddingStrategy(StrEnum):
-    SPEND_BUDGET_IN_FULL = "SPEND_BUDGET_IN_FULL"
-    MAXIMIZE_PERFORMANCE = "MAXIMIZE_PERFORMANCE"
-
-
-class OptimizationGoal(StrEnum):
-    AWARENESS = "AWARENESS"
-    ENGAGEMENT_WITH_MY_AD = "ENGAGEMENT_WITH_MY_AD"
-    CONSIDERATIONS_ON_AMAZON = "CONSIDERATIONS_ON_AMAZON"
-    CONVERSIONS_OFF_AMAZON = "CONVERSIONS_OFF_AMAZON"
-    PURCHASES_ON_AMAZON = "PURCHASES_ON_AMAZON"
-    MOBILE_APP_INSTALLS = "MOBILE_APP_INSTALLS"
-
-
-class OptimizationGoalKpi(StrEnum):
-    VIDEO_COMPLETION_RATE = "VIDEO_COMPLETION_RATE"
-    CLICK_THROUGH_RATE = "CLICK_THROUGH_RATE"
-    COST_PER_CLICK = "COST_PER_CLICK"
-    COST_PER_ACQUISITION = "COST_PER_ACQUISITION"
-    COST_PER_DOWNLOAD = "COST_PER_DOWNLOAD"
-    DETAIL_PAGE_VIEW_RATE = "DETAIL_PAGE_VIEW_RATE"
-    COST_PER_DETAIL_PAGE_VIEW = "COST_PER_DETAIL_PAGE_VIEW"
-    RETURN_ON_AD_SPEND = "RETURN_ON_AD_SPEND"
-    TOTAL_RETURN_ON_AD_SPEND = "TOTAL_RETURN_ON_AD_SPEND"
-    COST_PER_VIDEO_COMPLETION = "COST_PER_VIDEO_COMPLETION"
-    NONE = "NONE"
-    OTHER = "OTHER"
-    REACH = "REACH"
-
-
-class ProductLocation(StrEnum):
-    SOLD_ON_AMAZON = "SOLD_ON_AMAZON"
-    NOT_SOLD_ON_AMAZON = "NOT_SOLD_ON_AMAZON"
-
-
-class AutoOptimizations(BaseModel):
-    """The list of optimizations supported. When goal=`AWARENESS`, `CONVERSIONS`, or `CONSIDERATION`, `BID` auto optimization is not supported."""
-    pass
-
-
-class OrderOptimization(BaseModel):
-    product_location: "ProductLocation" = Field(..., alias="productLocation")
-    goal: "OptimizationGoal"
-    goal_kpi: "OptimizationGoalKpi" = Field(..., alias="goalKpi")
-    auto_optimizations: Optional["AutoOptimizations"] = Field(None, alias="autoOptimizations")
-    bidding_strategy: Optional["BiddingStrategy"] = Field(None, alias="biddingStrategy")
-
-    model_config = {'populate_by_name': True}
-
-
 class BudgetCapRecurrencetimeperiod(StrEnum):
     UNCAPPED = "UNCAPPED"
     DAILY = "DAILY"
@@ -95,6 +34,11 @@ class OrderBudgetBasic(BaseModel):
     model_config = {'populate_by_name': True}
 
 
+class DeliveryActivationStatus(StrEnum):
+    ACTIVE = "ACTIVE"
+    INACTIVE = "INACTIVE"
+
+
 class OrderDeliveryStatus(StrEnum):
     DELIVERING = "DELIVERING"
     ENDED = "ENDED"
@@ -102,6 +46,62 @@ class OrderDeliveryStatus(StrEnum):
     LINEITEMS_NOT_RUNNING = "LINEITEMS_NOT_RUNNING"
     INACTIVE = "INACTIVE"
     READY_TO_DELIVER = "READY_TO_DELIVER"
+
+
+class CurrencyCode(StrEnum):
+    USD = "USD"
+    CAD = "CAD"
+    MXN = "MXN"
+
+
+class OptimizationGoal(StrEnum):
+    AWARENESS = "AWARENESS"
+    ENGAGEMENT_WITH_MY_AD = "ENGAGEMENT_WITH_MY_AD"
+    CONSIDERATIONS_ON_AMAZON = "CONSIDERATIONS_ON_AMAZON"
+    CONVERSIONS_OFF_AMAZON = "CONVERSIONS_OFF_AMAZON"
+    PURCHASES_ON_AMAZON = "PURCHASES_ON_AMAZON"
+    MOBILE_APP_INSTALLS = "MOBILE_APP_INSTALLS"
+
+
+class ProductLocation(StrEnum):
+    SOLD_ON_AMAZON = "SOLD_ON_AMAZON"
+    NOT_SOLD_ON_AMAZON = "NOT_SOLD_ON_AMAZON"
+
+
+class BiddingStrategy(StrEnum):
+    SPEND_BUDGET_IN_FULL = "SPEND_BUDGET_IN_FULL"
+    MAXIMIZE_PERFORMANCE = "MAXIMIZE_PERFORMANCE"
+
+
+class OptimizationGoalKpi(StrEnum):
+    VIDEO_COMPLETION_RATE = "VIDEO_COMPLETION_RATE"
+    CLICK_THROUGH_RATE = "CLICK_THROUGH_RATE"
+    COST_PER_CLICK = "COST_PER_CLICK"
+    COST_PER_ACQUISITION = "COST_PER_ACQUISITION"
+    COST_PER_DOWNLOAD = "COST_PER_DOWNLOAD"
+    DETAIL_PAGE_VIEW_RATE = "DETAIL_PAGE_VIEW_RATE"
+    COST_PER_DETAIL_PAGE_VIEW = "COST_PER_DETAIL_PAGE_VIEW"
+    RETURN_ON_AD_SPEND = "RETURN_ON_AD_SPEND"
+    TOTAL_RETURN_ON_AD_SPEND = "TOTAL_RETURN_ON_AD_SPEND"
+    COST_PER_VIDEO_COMPLETION = "COST_PER_VIDEO_COMPLETION"
+    NONE = "NONE"
+    OTHER = "OTHER"
+    REACH = "REACH"
+
+
+class AutoOptimizations(BaseModel):
+    """The list of optimizations supported. When goal=`AWARENESS`, `CONVERSIONS`, or `CONSIDERATION`, `BID` auto optimization is not supported."""
+    pass
+
+
+class OrderOptimization(BaseModel):
+    product_location: "ProductLocation" = Field(..., alias="productLocation")
+    goal: "OptimizationGoal"
+    goal_kpi: "OptimizationGoalKpi" = Field(..., alias="goalKpi")
+    auto_optimizations: Optional["AutoOptimizations"] = Field(None, alias="autoOptimizations")
+    bidding_strategy: Optional["BiddingStrategy"] = Field(None, alias="biddingStrategy")
+
+    model_config = {'populate_by_name': True}
 
 
 class AgencyFee(BaseModel):
@@ -188,12 +188,12 @@ class OrdersV22(BaseModel):
     model_config = {'populate_by_name': True}
 
 
-class OptimizationGoalKpiV23(StrEnum):
-    COMBINED_RETURN_ON_AD_SPEND = "COMBINED_RETURN_ON_AD_SPEND"
-
-
 class OptimizationGoalV23(StrEnum):
     PURCHASES_ON_OFF_AMAZON = "PURCHASES_ON_OFF_AMAZON"
+
+
+class OptimizationGoalKpiV23(StrEnum):
+    COMBINED_RETURN_ON_AD_SPEND = "COMBINED_RETURN_ON_AD_SPEND"
 
 
 class OrderOptimizationV23(BaseModel):
@@ -475,6 +475,21 @@ class OrderResponse(BaseModel):
     model_config = {'populate_by_name': True}
 
 
+class LineItemDeliveryStatus(StrEnum):
+    DELIVERING = "DELIVERING"
+    ENDED = "ENDED"
+    OUT_OF_BUDGET = "OUT_OF_BUDGET"
+    INACTIVE = "INACTIVE"
+    READY_TO_DELIVER = "READY_TO_DELIVER"
+    CREATIVES_NOT_RUNNING = "CREATIVES_NOT_RUNNING"
+
+
+class LineItemOptimization(BaseModel):
+    budget_optimization: bool = Field(..., alias="budgetOptimization", description="Set to `true` to enable budget optimization for the line item.")
+
+    model_config = {'populate_by_name': True}
+
+
 class PacingDeliveryprofile(StrEnum):
     FRONT_LOADED = "FRONT_LOADED"
     EVENLY = "EVENLY"
@@ -494,17 +509,10 @@ class LineItemBudget(BaseModel):
     model_config = {'populate_by_name': True}
 
 
-class LineItemDeliveryStatus(StrEnum):
-    DELIVERING = "DELIVERING"
-    ENDED = "ENDED"
-    OUT_OF_BUDGET = "OUT_OF_BUDGET"
-    INACTIVE = "INACTIVE"
-    READY_TO_DELIVER = "READY_TO_DELIVER"
-    CREATIVES_NOT_RUNNING = "CREATIVES_NOT_RUNNING"
-
-
-class LineItemOptimization(BaseModel):
-    budget_optimization: bool = Field(..., alias="budgetOptimization", description="Set to `true` to enable budget optimization for the line item.")
+class Bidding(BaseModel):
+    """The bid values associated with a line item."""
+    base_supply_bid: float = Field(..., alias="baseSupplyBid", description="The base bid per thousand impressions for ad inventory. Expressed in dollars.")
+    max_supply_bid: Optional[float] = Field(None, alias="maxSupplyBid", description="The maximum cost-per-thousand impressions bid for media supply. Expressed in dollars.")
 
     model_config = {'populate_by_name': True}
 
@@ -513,14 +521,6 @@ class LineItemType(StrEnum):
     STANDARD_DISPLAY = "STANDARD_DISPLAY"
     AMAZON_MOBILE_DISPLAY = "AMAZON_MOBILE_DISPLAY"
     AAP_MOBILE_APP = "AAP_MOBILE_APP"
-
-
-class Bidding(BaseModel):
-    """The bid values associated with a line item."""
-    base_supply_bid: float = Field(..., alias="baseSupplyBid", description="The base bid per thousand impressions for ad inventory. Expressed in dollars.")
-    max_supply_bid: Optional[float] = Field(None, alias="maxSupplyBid", description="The maximum cost-per-thousand impressions bid for media supply. Expressed in dollars.")
-
-    model_config = {'populate_by_name': True}
 
 
 class LineItemBasic(BaseModel):
@@ -583,13 +583,13 @@ class LineItemsV22(BaseModel):
     model_config = {'populate_by_name': True}
 
 
-class CreativeOptionsCreativerotationtype(StrEnum):
-    WEIGHTED = "WEIGHTED"
-    RANDOM = "RANDOM"
+class Identifier(BaseModel):
+    """The unique identifier of the DSP resource/object."""
+    pass
 
 
-class CreativeOptions(BaseModel):
-    creative_rotation_type: Optional[CreativeOptionsCreativerotationtype] = Field(None, alias="creativeRotationType", description="The creative rotation type.")
+class LineItemClassification(BaseModel):
+    product_categories: list["Identifier"] = Field(..., alias="productCategories", description="The array of identifiers of product categories associated with the line item. For `VIDEO` line item type only one parent")
 
     model_config = {'populate_by_name': True}
 
@@ -646,13 +646,13 @@ class AppliedFees(BaseModel):
     model_config = {'populate_by_name': True}
 
 
-class Identifier(BaseModel):
-    """The unique identifier of the DSP resource/object."""
-    pass
+class CreativeOptionsCreativerotationtype(StrEnum):
+    WEIGHTED = "WEIGHTED"
+    RANDOM = "RANDOM"
 
 
-class LineItemClassification(BaseModel):
-    product_categories: list["Identifier"] = Field(..., alias="productCategories", description="The array of identifiers of product categories associated with the line item. For `VIDEO` line item type only one parent")
+class CreativeOptions(BaseModel):
+    creative_rotation_type: Optional[CreativeOptionsCreativerotationtype] = Field(None, alias="creativeRotationType", description="The creative rotation type.")
 
     model_config = {'populate_by_name': True}
 
@@ -688,22 +688,21 @@ class DayPartTargeting(BaseModel):
     model_config = {'populate_by_name': True}
 
 
-class UserLocationTargeting(StrEnum):
-    US = "US"
-    EVERYWHERE = "EVERYWHERE"
-    NON_US = "NON_US"
+class SupplyDealTargeting(BaseModel):
+    deals: Optional[list["Identifier"]] = Field(None, description="The list of deal supply sources to target.")
+
+    model_config = {'populate_by_name': True}
 
 
-class GeoLocationTargetingLocationtargetingby(StrEnum):
-    IPADDRESS = "IPADDRESS"
-    IPADDRESS_POSTALCODE = "IPADDRESS_POSTALCODE"
+class SupplySourceTargeting(BaseModel):
+    supply_sources: Optional[list["Identifier"]] = Field(None, alias="supplySources", description="The list of supply sources to target. In case of OPEN_EXCHANGE, the ID is of consolidated supply source.")
+
+    model_config = {'populate_by_name': True}
 
 
-class GeoLocationTargeting(BaseModel):
-    """Targets based on city, state, country, DMA , or postal code."""
-    location_targeting_by: Optional[GeoLocationTargetingLocationtargetingby] = Field(None, alias="locationTargetingBy", description="The geographic location targeting type. IPADDRESS: includes IP address only. IPADDRESS_POSTALCODE: includes both IP addr")
-    inclusions: Optional[list["Identifier"]] = None
-    exclusions: Optional[list["Identifier"]] = None
+class SupplyTargeting(BaseModel):
+    supply_source_targeting: Optional["SupplySourceTargeting"] = Field(None, alias="supplySourceTargeting")
+    supply_deal_targeting: Optional["SupplyDealTargeting"] = Field(None, alias="supplyDealTargeting")
 
     model_config = {'populate_by_name': True}
 
@@ -736,6 +735,38 @@ class SegmentTargeting(BaseModel):
     model_config = {'populate_by_name': True}
 
 
+class MobileOsTargeting(StrEnum):
+    ALL = "ALL"
+    IOS = "IOS"
+    ANDROID = "ANDROID"
+
+
+class UserLocationTargeting(StrEnum):
+    US = "US"
+    EVERYWHERE = "EVERYWHERE"
+    NON_US = "NON_US"
+
+
+class IasBrandSafetyLevel(StrEnum):
+    ALLOW_ALL = "ALLOW_ALL"
+    BRAND_SAFETY_EXCLUE_HIGH_RISK = "BRAND_SAFETY_EXCLUE_HIGH_RISK"
+    BRAND_SAFETY_EXCLUE_HIGH_AND_MODERATE_RISK = "BRAND_SAFETY_EXCLUE_HIGH_AND_MODERATE_RISK"
+
+
+class IasBrandSafety(BaseModel):
+    ias_brand_safety_adult: "IasBrandSafetyLevel" = Field(..., alias="iasBrandSafetyAdult")
+    ias_brand_safety_alcohol: "IasBrandSafetyLevel" = Field(..., alias="iasBrandSafetyAlcohol")
+    ias_brand_safety_gambling: "IasBrandSafetyLevel" = Field(..., alias="iasBrandSafetyGambling")
+    ias_brand_safety_hate_speech: "IasBrandSafetyLevel" = Field(..., alias="iasBrandSafetyHateSpeech")
+    ias_brand_safety_illegal_downloads: "IasBrandSafetyLevel" = Field(..., alias="iasBrandSafetyIllegalDownloads")
+    ias_brand_safety_illegal_drugs: "IasBrandSafetyLevel" = Field(..., alias="iasBrandSafetyIllegalDrugs")
+    ias_brand_safety_offensive_language: "IasBrandSafetyLevel" = Field(..., alias="iasBrandSafetyOffensiveLanguage")
+    ias_brand_safety_violence: "IasBrandSafetyLevel" = Field(..., alias="iasBrandSafetyViolence")
+    exclude_content: bool = Field(..., alias="excludeContent", description="Set to `true` to exclude content that Integral Ad Science is not able to rate.")
+
+    model_config = {'populate_by_name': True}
+
+
 class ViewabilityTier(StrEnum):
     ALLOW_ALL = "ALLOW_ALL"
     VIEWABILITY_TIER_GT_70 = "VIEWABILITY_TIER_GT_70"
@@ -756,26 +787,6 @@ class IasViewability(BaseModel):
     """The IAS viewability standard."""
     standard: IasViewabilityStandard = Field(..., description="The viewability standard")
     viewability_targeting: "ViewabilityTier" = Field(..., alias="viewabilityTargeting")
-
-    model_config = {'populate_by_name': True}
-
-
-class IasBrandSafetyLevel(StrEnum):
-    ALLOW_ALL = "ALLOW_ALL"
-    BRAND_SAFETY_EXCLUE_HIGH_RISK = "BRAND_SAFETY_EXCLUE_HIGH_RISK"
-    BRAND_SAFETY_EXCLUE_HIGH_AND_MODERATE_RISK = "BRAND_SAFETY_EXCLUE_HIGH_AND_MODERATE_RISK"
-
-
-class IasBrandSafety(BaseModel):
-    ias_brand_safety_adult: "IasBrandSafetyLevel" = Field(..., alias="iasBrandSafetyAdult")
-    ias_brand_safety_alcohol: "IasBrandSafetyLevel" = Field(..., alias="iasBrandSafetyAlcohol")
-    ias_brand_safety_gambling: "IasBrandSafetyLevel" = Field(..., alias="iasBrandSafetyGambling")
-    ias_brand_safety_hate_speech: "IasBrandSafetyLevel" = Field(..., alias="iasBrandSafetyHateSpeech")
-    ias_brand_safety_illegal_downloads: "IasBrandSafetyLevel" = Field(..., alias="iasBrandSafetyIllegalDownloads")
-    ias_brand_safety_illegal_drugs: "IasBrandSafetyLevel" = Field(..., alias="iasBrandSafetyIllegalDrugs")
-    ias_brand_safety_offensive_language: "IasBrandSafetyLevel" = Field(..., alias="iasBrandSafetyOffensiveLanguage")
-    ias_brand_safety_violence: "IasBrandSafetyLevel" = Field(..., alias="iasBrandSafetyViolence")
-    exclude_content: bool = Field(..., alias="excludeContent", description="Set to `true` to exclude content that Integral Ad Science is not able to rate.")
 
     model_config = {'populate_by_name': True}
 
@@ -819,6 +830,12 @@ class DoubleVerifyViewability(BaseModel):
     mrc_viewability_targeting: Optional[DoubleVerifyViewabilityMrcviewabilitytargeting] = Field(None, alias="mrcViewabilityTargeting", description="The type of MRC viewability targeting.")
     brand_exposure_viewability_targeting: Optional[DoubleVerifyViewabilityBrandexposureviewabilitytargeting] = Field(None, alias="brandExposureViewabilityTargeting", description="The type of brand exposure viewability targeting.")
     include_unmeasurable_impressions: Optional[bool] = Field(None, alias="includeUnmeasurableImpressions", description="Set to `true` to include impressions where impressions can't be measured.")
+
+    model_config = {'populate_by_name': True}
+
+
+class DoubleVerifyAuthenticBrandSafety(BaseModel):
+    double_verify_segment_id: Optional[str] = Field(None, alias="doubleVerifySegmentId", description="The segment identifier.")
 
     model_config = {'populate_by_name': True}
 
@@ -908,12 +925,6 @@ class DoubleVerifyBrandSafety(BaseModel):
     model_config = {'populate_by_name': True}
 
 
-class DoubleVerifyAuthenticBrandSafety(BaseModel):
-    double_verify_segment_id: Optional[str] = Field(None, alias="doubleVerifySegmentId", description="The segment identifier.")
-
-    model_config = {'populate_by_name': True}
-
-
 class DoubleVerify(BaseModel):
     """Double Verify (DV) is a third party provider for digital ad verification. Double Verify offers technologies that drive high-quality advertising media."""
     brand_safety: Optional["DoubleVerifyBrandSafety"] = Field(None, alias="brandSafety")
@@ -978,14 +989,16 @@ class ThirdPartyPreBidTargeting(BaseModel):
     model_config = {'populate_by_name': True}
 
 
-class MobileAppTargetingApptargetingoption(StrEnum):
-    INCLUDE_APPS = "INCLUDE_APPS"
-    EXCLUDE_APPS = "EXCLUDE_APPS"
+class GeoLocationTargetingLocationtargetingby(StrEnum):
+    IPADDRESS = "IPADDRESS"
+    IPADDRESS_POSTALCODE = "IPADDRESS_POSTALCODE"
 
 
-class MobileAppTargeting(BaseModel):
-    app_targeting_option: MobileAppTargetingApptargetingoption = Field(..., alias="appTargetingOption", description="The mobile application targeting inclusion type.")
-    app_ids: list[str] = Field(..., alias="appIds", description="The list of application identifiers.")
+class GeoLocationTargeting(BaseModel):
+    """Targets based on city, state, country, DMA , or postal code."""
+    location_targeting_by: Optional[GeoLocationTargetingLocationtargetingby] = Field(None, alias="locationTargetingBy", description="The geographic location targeting type. IPADDRESS: includes IP address only. IPADDRESS_POSTALCODE: includes both IP addr")
+    inclusions: Optional[list["Identifier"]] = None
+    exclusions: Optional[list["Identifier"]] = None
 
     model_config = {'populate_by_name': True}
 
@@ -998,21 +1011,28 @@ class AmazonViewabilityTargeting(BaseModel):
     model_config = {'populate_by_name': True}
 
 
-class SupplySourceTargeting(BaseModel):
-    supply_sources: Optional[list["Identifier"]] = Field(None, alias="supplySources", description="The list of supply sources to target. In case of OPEN_EXCHANGE, the ID is of consolidated supply source.")
+class AmazonMobileDisplayTargeting(BaseModel):
+    user_location_targeting: Optional["UserLocationTargeting"] = Field(None, alias="userLocationTargeting")
+    amazon_viewability_targeting: Optional["AmazonViewabilityTargeting"] = Field(None, alias="amazonViewabilityTargeting")
+    third_party_pre_bid_targeting: Optional["ThirdPartyPreBidTargeting"] = Field(None, alias="thirdPartyPreBidTargeting")
+    supply_targeting: Optional["SupplyTargeting"] = Field(None, alias="supplyTargeting")
+    geo_location_targeting: Optional["GeoLocationTargeting"] = Field(None, alias="geoLocationTargeting")
+    segment_targeting: Optional["SegmentTargeting"] = Field(None, alias="segmentTargeting")
+    day_part_targeting: Optional["DayPartTargeting"] = Field(None, alias="dayPartTargeting")
+    mobile_os_targeting: Optional["MobileOsTargeting"] = Field(None, alias="mobileOsTargeting")
+    contextual_targeting: Optional[bool] = Field(None, alias="contextualTargeting", description="Set to `true` to enable contextual targeting. Contextual targeting targets the detail page of products that are frequent")
 
     model_config = {'populate_by_name': True}
 
 
-class SupplyDealTargeting(BaseModel):
-    deals: Optional[list["Identifier"]] = Field(None, description="The list of deal supply sources to target.")
+class MobileAppTargetingApptargetingoption(StrEnum):
+    INCLUDE_APPS = "INCLUDE_APPS"
+    EXCLUDE_APPS = "EXCLUDE_APPS"
 
-    model_config = {'populate_by_name': True}
 
-
-class SupplyTargeting(BaseModel):
-    supply_source_targeting: Optional["SupplySourceTargeting"] = Field(None, alias="supplySourceTargeting")
-    supply_deal_targeting: Optional["SupplyDealTargeting"] = Field(None, alias="supplyDealTargeting")
+class MobileAppTargeting(BaseModel):
+    app_targeting_option: MobileAppTargetingApptargetingoption = Field(..., alias="appTargetingOption", description="The mobile application targeting inclusion type.")
+    app_ids: list[str] = Field(..., alias="appIds", description="The list of application identifiers.")
 
     model_config = {'populate_by_name': True}
 
@@ -1046,11 +1066,6 @@ class AapMobileAppTargeting(BaseModel):
     model_config = {'populate_by_name': True}
 
 
-class SiteLanguageTargeting(StrEnum):
-    EN = "EN"
-    ES = "ES"
-
-
 class MergedDomainListDomainlistmergedtargetingtype(StrEnum):
     EXCLUDE = "EXCLUDE"
     INCLUDE = "INCLUDE"
@@ -1070,10 +1085,9 @@ class DomainList(BaseModel):
     model_config = {'populate_by_name': True}
 
 
-class MobileOsTargeting(StrEnum):
-    ALL = "ALL"
-    IOS = "IOS"
-    ANDROID = "ANDROID"
+class SiteLanguageTargeting(StrEnum):
+    EN = "EN"
+    ES = "ES"
 
 
 class StandardDisplayTargetingDevicetypetargeting(StrEnum):
@@ -1095,20 +1109,6 @@ class StandardDisplayTargeting(BaseModel):
     mobile_os_targeting: Optional["MobileOsTargeting"] = Field(None, alias="mobileOsTargeting")
     site_language_targeting: Optional["SiteLanguageTargeting"] = Field(None, alias="siteLanguageTargeting")
     content_targeting: Optional[list["Identifier"]] = Field(None, alias="contentTargeting", description="The IAB content category type. IAB content categories enable advertisers to target websites according to their subject m")
-    contextual_targeting: Optional[bool] = Field(None, alias="contextualTargeting", description="Set to `true` to enable contextual targeting. Contextual targeting targets the detail page of products that are frequent")
-
-    model_config = {'populate_by_name': True}
-
-
-class AmazonMobileDisplayTargeting(BaseModel):
-    user_location_targeting: Optional["UserLocationTargeting"] = Field(None, alias="userLocationTargeting")
-    amazon_viewability_targeting: Optional["AmazonViewabilityTargeting"] = Field(None, alias="amazonViewabilityTargeting")
-    third_party_pre_bid_targeting: Optional["ThirdPartyPreBidTargeting"] = Field(None, alias="thirdPartyPreBidTargeting")
-    supply_targeting: Optional["SupplyTargeting"] = Field(None, alias="supplyTargeting")
-    geo_location_targeting: Optional["GeoLocationTargeting"] = Field(None, alias="geoLocationTargeting")
-    segment_targeting: Optional["SegmentTargeting"] = Field(None, alias="segmentTargeting")
-    day_part_targeting: Optional["DayPartTargeting"] = Field(None, alias="dayPartTargeting")
-    mobile_os_targeting: Optional["MobileOsTargeting"] = Field(None, alias="mobileOsTargeting")
     contextual_targeting: Optional[bool] = Field(None, alias="contextualTargeting", description="Set to `true` to enable contextual targeting. Contextual targeting targets the detail page of products that are frequent")
 
     model_config = {'populate_by_name': True}
@@ -1148,32 +1148,8 @@ class LineItem(BaseModel):
     model_config = {'populate_by_name': True}
 
 
-class DoubleVerifyViewabilityV21Averagecompletionandfullyviewableratetargeting(StrEnum):
-    ALLOW_ALL = "ALLOW_ALL"
-    AVG_COMPLETION_FULLY_VIEWABLE_GTE_10 = "AVG_COMPLETION_FULLY_VIEWABLE_GTE_10"
-    AVG_COMPLETION_FULLY_VIEWABLE_GTE_20 = "AVG_COMPLETION_FULLY_VIEWABLE_GTE_20"
-    AVG_COMPLETION_FULLY_VIEWABLE_GTE_25 = "AVG_COMPLETION_FULLY_VIEWABLE_GTE_25"
-    AVG_COMPLETION_FULLY_VIEWABLE_GTE_30 = "AVG_COMPLETION_FULLY_VIEWABLE_GTE_30"
-    AVG_COMPLETION_FULLY_VIEWABLE_GTE_35 = "AVG_COMPLETION_FULLY_VIEWABLE_GTE_35"
-    AVG_COMPLETION_FULLY_VIEWABLE_GTE_40 = "AVG_COMPLETION_FULLY_VIEWABLE_GTE_40"
-
-
-class DoubleVerifyViewabilityV21(BaseModel):
-    average_completion_and_fully_viewable_rate_targeting: Optional[DoubleVerifyViewabilityV21Averagecompletionandfullyviewableratetargeting] = Field(None, alias="averageCompletionAndFullyViewableRateTargeting", description="The type of average completion and fully viewable rate targeting.")
-
-    model_config = {'populate_by_name': True}
-
-
-class DoubleVerifyV21(BaseModel):
-    viewability: Optional["DoubleVerifyViewabilityV21"] = None
-
-    model_config = {'populate_by_name': True}
-
-
-class ThirdPartyPreBidTargetingV21(BaseModel):
-    double_verify: Optional["DoubleVerifyV21"] = Field(None, alias="doubleVerify")
-
-    model_config = {'populate_by_name': True}
+class LineItemTypeV21(StrEnum):
+    VIDEO = "VIDEO"
 
 
 class OttContentGenres(StrEnum):
@@ -1211,6 +1187,34 @@ class OttTargeting(BaseModel):
     """This targeting only applies to Amazon O&O and Amazon Publisher Services (APS) inventory. It can only be provided when CONNECTED_TV is selected in deviceTypeTargeting. Currently API does not support ex"""
     ott_content_genres: Optional[list["OttContentGenres"]] = Field(None, alias="ottContentGenres", description="Select genres to exclude delivery to that audience.")
     ott_app_blocking: Optional[list[str]] = Field(None, alias="ottAppBlocking", description="Select the apps that should be excluded.")
+
+    model_config = {'populate_by_name': True}
+
+
+class DoubleVerifyViewabilityV21Averagecompletionandfullyviewableratetargeting(StrEnum):
+    ALLOW_ALL = "ALLOW_ALL"
+    AVG_COMPLETION_FULLY_VIEWABLE_GTE_10 = "AVG_COMPLETION_FULLY_VIEWABLE_GTE_10"
+    AVG_COMPLETION_FULLY_VIEWABLE_GTE_20 = "AVG_COMPLETION_FULLY_VIEWABLE_GTE_20"
+    AVG_COMPLETION_FULLY_VIEWABLE_GTE_25 = "AVG_COMPLETION_FULLY_VIEWABLE_GTE_25"
+    AVG_COMPLETION_FULLY_VIEWABLE_GTE_30 = "AVG_COMPLETION_FULLY_VIEWABLE_GTE_30"
+    AVG_COMPLETION_FULLY_VIEWABLE_GTE_35 = "AVG_COMPLETION_FULLY_VIEWABLE_GTE_35"
+    AVG_COMPLETION_FULLY_VIEWABLE_GTE_40 = "AVG_COMPLETION_FULLY_VIEWABLE_GTE_40"
+
+
+class DoubleVerifyViewabilityV21(BaseModel):
+    average_completion_and_fully_viewable_rate_targeting: Optional[DoubleVerifyViewabilityV21Averagecompletionandfullyviewableratetargeting] = Field(None, alias="averageCompletionAndFullyViewableRateTargeting", description="The type of average completion and fully viewable rate targeting.")
+
+    model_config = {'populate_by_name': True}
+
+
+class DoubleVerifyV21(BaseModel):
+    viewability: Optional["DoubleVerifyViewabilityV21"] = None
+
+    model_config = {'populate_by_name': True}
+
+
+class ThirdPartyPreBidTargetingV21(BaseModel):
+    double_verify: Optional["DoubleVerifyV21"] = Field(None, alias="doubleVerify")
 
     model_config = {'populate_by_name': True}
 
@@ -1290,13 +1294,22 @@ class LineItemTargetingV21(BaseModel):
     model_config = {'populate_by_name': True}
 
 
-class LineItemTypeV21(StrEnum):
-    VIDEO = "VIDEO"
-
-
 class LineItemV21(BaseModel):
     line_item_type: Optional["LineItemTypeV21"] = Field(None, alias="lineItemType")
     targeting: Optional["LineItemTargetingV21"] = None
+
+    model_config = {'populate_by_name': True}
+
+
+class UserLocationTargetingV3(StrEnum):
+    CA = "CA"
+    MX = "MX"
+    BR = "BR"
+
+
+class MobileDisplayDoubleVerify(BaseModel):
+    """Double Verify (DV) is a third party provider for digital ad verification. Double Verify offers technologies that drive high-quality advertising media."""
+    fraud_invalid_traffic: Optional["DoubleVerifyFraudInvalidTraffic"] = Field(None, alias="fraudInvalidTraffic")
 
     model_config = {'populate_by_name': True}
 
@@ -1305,6 +1318,35 @@ class IasFraudInvalidTraffic(StrEnum):
     ALLOW_ALL = "ALLOW_ALL"
     FRAUD_INVALID_TRAFFIC_EXCLUDE_HIGH_RISK = "FRAUD_INVALID_TRAFFIC_EXCLUDE_HIGH_RISK"
     FRAUD_INVALID_TRAFFIC_EXCLUDE_HIGH_MODERATE_RISK = "FRAUD_INVALID_TRAFFIC_EXCLUDE_HIGH_MODERATE_RISK"
+
+
+class MobileDisplayIntegralAdScience(BaseModel):
+    """Integral Ad Science (IAS) is a third party provider in digital ad verification. IAS offers technologies to drive high-quality advertising media."""
+    fraud_invalid_traffic: Optional["IasFraudInvalidTraffic"] = Field(None, alias="fraudInvalidTraffic")
+
+    model_config = {'populate_by_name': True}
+
+
+class MobileDisplayThirdPartyPreBidTargeting(BaseModel):
+    """Amazon DSP automatically filters fraudulent and invalid traffic as well as unsafe content using a combination of proprietary technology and solutions from comScore and Sizmek. This service is availabl"""
+    double_verify: Optional["MobileDisplayDoubleVerify"] = Field(None, alias="doubleVerify")
+    integral_ad_science: Optional["MobileDisplayIntegralAdScience"] = Field(None, alias="integralAdScience")
+
+    model_config = {'populate_by_name': True}
+
+
+class AmazonMobileDisplayTargetingV3(BaseModel):
+    user_location_targeting: Optional["UserLocationTargetingV3"] = Field(None, alias="userLocationTargeting")
+    amazon_viewability_targeting: Optional["AmazonViewabilityTargeting"] = Field(None, alias="amazonViewabilityTargeting")
+    third_party_pre_bid_targeting: Optional["MobileDisplayThirdPartyPreBidTargeting"] = Field(None, alias="thirdPartyPreBidTargeting")
+    supply_targeting: Optional["SupplyTargeting"] = Field(None, alias="supplyTargeting")
+    geo_location_targeting: Optional["GeoLocationTargeting"] = Field(None, alias="geoLocationTargeting")
+    segment_targeting: Optional["SegmentTargeting"] = Field(None, alias="segmentTargeting")
+    day_part_targeting: Optional["DayPartTargeting"] = Field(None, alias="dayPartTargeting")
+    mobile_os_targeting: Optional["MobileOsTargeting"] = Field(None, alias="mobileOsTargeting")
+    contextual_targeting: Optional[bool] = Field(None, alias="contextualTargeting", description="Set to `true` to enable contextual targeting. Contextual targeting targets the detail page of products that are frequent")
+
+    model_config = {'populate_by_name': True}
 
 
 class IasBrandSafetyLevelV3(StrEnum):
@@ -1326,10 +1368,11 @@ class IasBrandSafetyV3(BaseModel):
     model_config = {'populate_by_name': True}
 
 
-class MobileAppIntegralAdScience(BaseModel):
+class StandardDisplayIntegralAdScience(BaseModel):
     """Integral Ad Science (IAS) is a third party provider in digital ad verification. IAS offers technologies to drive high-quality advertising media."""
     fraud_invalid_traffic: Optional["IasFraudInvalidTraffic"] = Field(None, alias="fraudInvalidTraffic")
     brand_safety: Optional["IasBrandSafetyV3"] = Field(None, alias="brandSafety")
+    viewability: Optional["IasViewability"] = None
 
     model_config = {'populate_by_name': True}
 
@@ -1368,6 +1411,90 @@ class DvBrandSafetyContentCategories(BaseModel):
     pass
 
 
+class BrandSuitabilityRiskLevel(StrEnum):
+    ALLOW_ALL = "ALLOW_ALL"
+    HIGH = "HIGH"
+    HIGH_MEDIUM = "HIGH_MEDIUM"
+    HIGH_MEDIUM_LOW = "HIGH_MEDIUM_LOW"
+
+
+class DvBrandSafetyContentCategoriesWithRisk(BaseModel):
+    """A map from content categories to risk level to exclude from targeting. Available keys are: [`ADULT_CONTENT`, `ALCOHOL`, `CRIME`, `DISASTER_AVIATION`, `DISASTER_MAN_MADE`, `DISASTER_NATURAL`, `DISASTER"""
+    __root__: dict[str, "BrandSuitabilityRiskLevel"] = {}
+
+
+class DvBrandSafetyUnknownContent(BaseModel):
+    """Set to `true` to exclude unknown content."""
+    pass
+
+
+class StandardDisplayDoubleVerifyBrandSafety(BaseModel):
+    content_categories: Optional["DvBrandSafetyContentCategories"] = Field(None, alias="contentCategories")
+    content_categories_with_risk: Optional["DvBrandSafetyContentCategoriesWithRisk"] = Field(None, alias="contentCategoriesWithRisk")
+    unknown_content: Optional["DvBrandSafetyUnknownContent"] = Field(None, alias="unknownContent")
+
+    model_config = {'populate_by_name': True}
+
+
+class DvCustomContextualSegmentId(BaseModel):
+    """The custom segment identifier."""
+    pass
+
+
+class StandardDisplayDoubleVerify(BaseModel):
+    """Double Verify (DV) is a third party provider for digital ad verification. Double Verify offers technologies that drive high-quality advertising media."""
+    brand_safety: Optional["StandardDisplayDoubleVerifyBrandSafety"] = Field(None, alias="brandSafety")
+    fraud_invalid_traffic: Optional["DoubleVerifyFraudInvalidTraffic"] = Field(None, alias="fraudInvalidTraffic")
+    authentic_brand_safety: Optional["DoubleVerifyAuthenticBrandSafety"] = Field(None, alias="authenticBrandSafety")
+    viewability: Optional["DoubleVerifyViewabilityV21"] = None
+    custom_contextual_segment_id: Optional["DvCustomContextualSegmentId"] = Field(None, alias="customContextualSegmentId")
+
+    model_config = {'populate_by_name': True}
+
+
+class StandardDisplayThirdPartyPreBidTargeting(BaseModel):
+    """Amazon DSP automatically filters fraudulent and invalid traffic as well as unsafe content using a combination of proprietary technology and solutions from comScore and Sizmek. This service is availabl"""
+    double_verify: Optional["StandardDisplayDoubleVerify"] = Field(None, alias="doubleVerify")
+    oracle_data_cloud: Optional["OracleDataCloudV3"] = Field(None, alias="oracleDataCloud")
+    integral_ad_science: Optional["StandardDisplayIntegralAdScience"] = Field(None, alias="integralAdScience")
+
+    model_config = {'populate_by_name': True}
+
+
+class SiteLanguageTargetingV3(StrEnum):
+    FR = "FR"
+    PT = "PT"
+
+
+class StandardDisplayTargetingV3Devicetypetargeting(StrEnum):
+    DESKTOP_AND_MOBILE = "DESKTOP_AND_MOBILE"
+    MOBILE = "MOBILE"
+    DESKTOP = "DESKTOP"
+
+
+class StandardDisplayTargetingV3(BaseModel):
+    user_location_targeting: Optional["UserLocationTargetingV3"] = Field(None, alias="userLocationTargeting")
+    amazon_viewability_targeting: Optional["AmazonViewabilityTargeting"] = Field(None, alias="amazonViewabilityTargeting")
+    third_party_pre_bid_targeting: Optional["StandardDisplayThirdPartyPreBidTargeting"] = Field(None, alias="thirdPartyPreBidTargeting")
+    supply_targeting: Optional["SupplyTargeting"] = Field(None, alias="supplyTargeting")
+    geo_location_targeting: Optional["GeoLocationTargeting"] = Field(None, alias="geoLocationTargeting")
+    segment_targeting: Optional["SegmentTargeting"] = Field(None, alias="segmentTargeting")
+    day_part_targeting: Optional["DayPartTargeting"] = Field(None, alias="dayPartTargeting")
+    domain_list_targeting: Optional["DomainList"] = Field(None, alias="domainListTargeting")
+    device_type_targeting: Optional[StandardDisplayTargetingV3Devicetypetargeting] = Field(None, alias="deviceTypeTargeting", description="The targeted device type for standard display line item type. It is required input for `STANDARD_DISPLAY` line item type")
+    mobile_os_targeting: Optional["MobileOsTargeting"] = Field(None, alias="mobileOsTargeting")
+    site_language_targeting: Optional["SiteLanguageTargetingV3"] = Field(None, alias="siteLanguageTargeting")
+    content_targeting: Optional[list["Identifier"]] = Field(None, alias="contentTargeting", description="The IAB content category type. IAB content categories enable advertisers to target websites according to their subject m")
+    contextual_targeting: Optional[bool] = Field(None, alias="contextualTargeting", description="Set to `true` to enable contextual targeting. Contextual targeting targets the detail page of products that are frequent")
+
+    model_config = {'populate_by_name': True}
+
+
+class DvBrandSafetyExcludeApps(BaseModel):
+    """Set to `true` to exclude unofficial apps or apps with insufficient user ratings (<100 lifetime)."""
+    pass
+
+
 class DvBrandSafetyAppStarRating(StrEnum):
     ALLOW_ALL = "ALLOW_ALL"
     APP_STAR_RATING_LT_1_POINT_5_STARS = "APP_STAR_RATING_LT_1_POINT_5_STARS"
@@ -1379,31 +1506,9 @@ class DvBrandSafetyAppStarRating(StrEnum):
     APP_STAR_RATING_LT_4_POINT_5_STARS = "APP_STAR_RATING_LT_4_POINT_5_STARS"
 
 
-class DvBrandSafetyUnknownContent(BaseModel):
-    """Set to `true` to exclude unknown content."""
-    pass
-
-
-class DvBrandSafetyExcludeApps(BaseModel):
-    """Set to `true` to exclude unofficial apps or apps with insufficient user ratings (<100 lifetime)."""
-    pass
-
-
 class DvBrandSafetyAppAgeRating(BaseModel):
     """A list of app age ratings to be used for excluding apps. For example, `TEENS_12_PLUS` will only exclude apps with content rated for everyone ages 12 and over. `UNKNOWN` will exclude apps with content """
     pass
-
-
-class BrandSuitabilityRiskLevel(StrEnum):
-    ALLOW_ALL = "ALLOW_ALL"
-    HIGH = "HIGH"
-    HIGH_MEDIUM = "HIGH_MEDIUM"
-    HIGH_MEDIUM_LOW = "HIGH_MEDIUM_LOW"
-
-
-class DvBrandSafetyContentCategoriesWithRisk(BaseModel):
-    """A map from content categories to risk level to exclude from targeting. Available keys are: [`ADULT_CONTENT`, `ALCOHOL`, `CRIME`, `DISASTER_AVIATION`, `DISASTER_MAN_MADE`, `DISASTER_NATURAL`, `DISASTER"""
-    __root__: dict[str, "BrandSuitabilityRiskLevel"] = {}
 
 
 class MobileAppDoubleVerifyBrandSafety(BaseModel):
@@ -1417,11 +1522,6 @@ class MobileAppDoubleVerifyBrandSafety(BaseModel):
     model_config = {'populate_by_name': True}
 
 
-class DvCustomContextualSegmentId(BaseModel):
-    """The custom segment identifier."""
-    pass
-
-
 class MobileAppDoubleVerify(BaseModel):
     """Double Verify (DV) is a third party provider for digital ad verification. Double Verify offers technologies that drive high-quality advertising media."""
     brand_safety: Optional["MobileAppDoubleVerifyBrandSafety"] = Field(None, alias="brandSafety")
@@ -1433,6 +1533,14 @@ class MobileAppDoubleVerify(BaseModel):
     model_config = {'populate_by_name': True}
 
 
+class MobileAppIntegralAdScience(BaseModel):
+    """Integral Ad Science (IAS) is a third party provider in digital ad verification. IAS offers technologies to drive high-quality advertising media."""
+    fraud_invalid_traffic: Optional["IasFraudInvalidTraffic"] = Field(None, alias="fraudInvalidTraffic")
+    brand_safety: Optional["IasBrandSafetyV3"] = Field(None, alias="brandSafety")
+
+    model_config = {'populate_by_name': True}
+
+
 class MobileAppThirdPartyPreBidTargeting(BaseModel):
     """Amazon DSP automatically filters fraudulent and invalid traffic as well as unsafe content using a combination of proprietary technology and solutions from comScore and Sizmek. This service is availabl"""
     double_verify: Optional["MobileAppDoubleVerify"] = Field(None, alias="doubleVerify")
@@ -1440,12 +1548,6 @@ class MobileAppThirdPartyPreBidTargeting(BaseModel):
     integral_ad_science: Optional["MobileAppIntegralAdScience"] = Field(None, alias="integralAdScience")
 
     model_config = {'populate_by_name': True}
-
-
-class UserLocationTargetingV3(StrEnum):
-    CA = "CA"
-    MX = "MX"
-    BR = "BR"
 
 
 class AapMobileAppTargetingV3Devicetypetargeting(StrEnum):
@@ -1477,56 +1579,6 @@ class AapMobileAppTargetingV3(BaseModel):
     model_config = {'populate_by_name': True}
 
 
-class MobileDisplayIntegralAdScience(BaseModel):
-    """Integral Ad Science (IAS) is a third party provider in digital ad verification. IAS offers technologies to drive high-quality advertising media."""
-    fraud_invalid_traffic: Optional["IasFraudInvalidTraffic"] = Field(None, alias="fraudInvalidTraffic")
-
-    model_config = {'populate_by_name': True}
-
-
-class MobileDisplayDoubleVerify(BaseModel):
-    """Double Verify (DV) is a third party provider for digital ad verification. Double Verify offers technologies that drive high-quality advertising media."""
-    fraud_invalid_traffic: Optional["DoubleVerifyFraudInvalidTraffic"] = Field(None, alias="fraudInvalidTraffic")
-
-    model_config = {'populate_by_name': True}
-
-
-class MobileDisplayThirdPartyPreBidTargeting(BaseModel):
-    """Amazon DSP automatically filters fraudulent and invalid traffic as well as unsafe content using a combination of proprietary technology and solutions from comScore and Sizmek. This service is availabl"""
-    double_verify: Optional["MobileDisplayDoubleVerify"] = Field(None, alias="doubleVerify")
-    integral_ad_science: Optional["MobileDisplayIntegralAdScience"] = Field(None, alias="integralAdScience")
-
-    model_config = {'populate_by_name': True}
-
-
-class AmazonMobileDisplayTargetingV3(BaseModel):
-    user_location_targeting: Optional["UserLocationTargetingV3"] = Field(None, alias="userLocationTargeting")
-    amazon_viewability_targeting: Optional["AmazonViewabilityTargeting"] = Field(None, alias="amazonViewabilityTargeting")
-    third_party_pre_bid_targeting: Optional["MobileDisplayThirdPartyPreBidTargeting"] = Field(None, alias="thirdPartyPreBidTargeting")
-    supply_targeting: Optional["SupplyTargeting"] = Field(None, alias="supplyTargeting")
-    geo_location_targeting: Optional["GeoLocationTargeting"] = Field(None, alias="geoLocationTargeting")
-    segment_targeting: Optional["SegmentTargeting"] = Field(None, alias="segmentTargeting")
-    day_part_targeting: Optional["DayPartTargeting"] = Field(None, alias="dayPartTargeting")
-    mobile_os_targeting: Optional["MobileOsTargeting"] = Field(None, alias="mobileOsTargeting")
-    contextual_targeting: Optional[bool] = Field(None, alias="contextualTargeting", description="Set to `true` to enable contextual targeting. Contextual targeting targets the detail page of products that are frequent")
-
-    model_config = {'populate_by_name': True}
-
-
-class SiteLanguageTargetingV3(StrEnum):
-    FR = "FR"
-    PT = "PT"
-
-
-class VideoIntegralAdScience(BaseModel):
-    """Integral Ad Science (IAS) is a third party provider in digital ad verification. IAS offers technologies to drive high-quality advertising media."""
-    fraud_invalid_traffic: Optional["IasFraudInvalidTraffic"] = Field(None, alias="fraudInvalidTraffic")
-    brand_safety: Optional["IasBrandSafetyV3"] = Field(None, alias="brandSafety")
-    viewability: Optional["IasViewability"] = None
-
-    model_config = {'populate_by_name': True}
-
-
 class VideoDoubleVerifyBrandSafety(BaseModel):
     content_categories: Optional["DvBrandSafetyContentCategories"] = Field(None, alias="contentCategories")
     content_categories_with_risk: Optional["DvBrandSafetyContentCategoriesWithRisk"] = Field(None, alias="contentCategoriesWithRisk")
@@ -1545,6 +1597,15 @@ class VideoDoubleVerify(BaseModel):
     authentic_brand_safety: Optional["DoubleVerifyAuthenticBrandSafety"] = Field(None, alias="authenticBrandSafety")
     viewability: Optional["DoubleVerifyViewabilityV21"] = None
     custom_contextual_segment_id: Optional["DvCustomContextualSegmentId"] = Field(None, alias="customContextualSegmentId")
+
+    model_config = {'populate_by_name': True}
+
+
+class VideoIntegralAdScience(BaseModel):
+    """Integral Ad Science (IAS) is a third party provider in digital ad verification. IAS offers technologies to drive high-quality advertising media."""
+    fraud_invalid_traffic: Optional["IasFraudInvalidTraffic"] = Field(None, alias="fraudInvalidTraffic")
+    brand_safety: Optional["IasBrandSafetyV3"] = Field(None, alias="brandSafety")
+    viewability: Optional["IasViewability"] = None
 
     model_config = {'populate_by_name': True}
 
@@ -1627,67 +1688,6 @@ class VideoTargetingV3(BaseModel):
     model_config = {'populate_by_name': True}
 
 
-class StandardDisplayIntegralAdScience(BaseModel):
-    """Integral Ad Science (IAS) is a third party provider in digital ad verification. IAS offers technologies to drive high-quality advertising media."""
-    fraud_invalid_traffic: Optional["IasFraudInvalidTraffic"] = Field(None, alias="fraudInvalidTraffic")
-    brand_safety: Optional["IasBrandSafetyV3"] = Field(None, alias="brandSafety")
-    viewability: Optional["IasViewability"] = None
-
-    model_config = {'populate_by_name': True}
-
-
-class StandardDisplayDoubleVerifyBrandSafety(BaseModel):
-    content_categories: Optional["DvBrandSafetyContentCategories"] = Field(None, alias="contentCategories")
-    content_categories_with_risk: Optional["DvBrandSafetyContentCategoriesWithRisk"] = Field(None, alias="contentCategoriesWithRisk")
-    unknown_content: Optional["DvBrandSafetyUnknownContent"] = Field(None, alias="unknownContent")
-
-    model_config = {'populate_by_name': True}
-
-
-class StandardDisplayDoubleVerify(BaseModel):
-    """Double Verify (DV) is a third party provider for digital ad verification. Double Verify offers technologies that drive high-quality advertising media."""
-    brand_safety: Optional["StandardDisplayDoubleVerifyBrandSafety"] = Field(None, alias="brandSafety")
-    fraud_invalid_traffic: Optional["DoubleVerifyFraudInvalidTraffic"] = Field(None, alias="fraudInvalidTraffic")
-    authentic_brand_safety: Optional["DoubleVerifyAuthenticBrandSafety"] = Field(None, alias="authenticBrandSafety")
-    viewability: Optional["DoubleVerifyViewabilityV21"] = None
-    custom_contextual_segment_id: Optional["DvCustomContextualSegmentId"] = Field(None, alias="customContextualSegmentId")
-
-    model_config = {'populate_by_name': True}
-
-
-class StandardDisplayThirdPartyPreBidTargeting(BaseModel):
-    """Amazon DSP automatically filters fraudulent and invalid traffic as well as unsafe content using a combination of proprietary technology and solutions from comScore and Sizmek. This service is availabl"""
-    double_verify: Optional["StandardDisplayDoubleVerify"] = Field(None, alias="doubleVerify")
-    oracle_data_cloud: Optional["OracleDataCloudV3"] = Field(None, alias="oracleDataCloud")
-    integral_ad_science: Optional["StandardDisplayIntegralAdScience"] = Field(None, alias="integralAdScience")
-
-    model_config = {'populate_by_name': True}
-
-
-class StandardDisplayTargetingV3Devicetypetargeting(StrEnum):
-    DESKTOP_AND_MOBILE = "DESKTOP_AND_MOBILE"
-    MOBILE = "MOBILE"
-    DESKTOP = "DESKTOP"
-
-
-class StandardDisplayTargetingV3(BaseModel):
-    user_location_targeting: Optional["UserLocationTargetingV3"] = Field(None, alias="userLocationTargeting")
-    amazon_viewability_targeting: Optional["AmazonViewabilityTargeting"] = Field(None, alias="amazonViewabilityTargeting")
-    third_party_pre_bid_targeting: Optional["StandardDisplayThirdPartyPreBidTargeting"] = Field(None, alias="thirdPartyPreBidTargeting")
-    supply_targeting: Optional["SupplyTargeting"] = Field(None, alias="supplyTargeting")
-    geo_location_targeting: Optional["GeoLocationTargeting"] = Field(None, alias="geoLocationTargeting")
-    segment_targeting: Optional["SegmentTargeting"] = Field(None, alias="segmentTargeting")
-    day_part_targeting: Optional["DayPartTargeting"] = Field(None, alias="dayPartTargeting")
-    domain_list_targeting: Optional["DomainList"] = Field(None, alias="domainListTargeting")
-    device_type_targeting: Optional[StandardDisplayTargetingV3Devicetypetargeting] = Field(None, alias="deviceTypeTargeting", description="The targeted device type for standard display line item type. It is required input for `STANDARD_DISPLAY` line item type")
-    mobile_os_targeting: Optional["MobileOsTargeting"] = Field(None, alias="mobileOsTargeting")
-    site_language_targeting: Optional["SiteLanguageTargetingV3"] = Field(None, alias="siteLanguageTargeting")
-    content_targeting: Optional[list["Identifier"]] = Field(None, alias="contentTargeting", description="The IAB content category type. IAB content categories enable advertisers to target websites according to their subject m")
-    contextual_targeting: Optional[bool] = Field(None, alias="contextualTargeting", description="Set to `true` to enable contextual targeting. Contextual targeting targets the detail page of products that are frequent")
-
-    model_config = {'populate_by_name': True}
-
-
 class LineItemTargetingV3(BaseModel):
     standard_display_targeting: Optional["StandardDisplayTargetingV3"] = Field(None, alias="standardDisplayTargeting")
     aap_mobile_app_targeting: Optional["AapMobileAppTargetingV3"] = Field(None, alias="aapMobileAppTargeting")
@@ -1723,12 +1723,6 @@ class LineItemV3(BaseModel):
     model_config = {'populate_by_name': True}
 
 
-class OracleDataCloudV31(BaseModel):
-    standard_predicts_segment_ids: Optional[list[str]] = Field(None, alias="standardPredictsSegmentIds", description="The standard predict segment identifiers.")
-
-    model_config = {'populate_by_name': True}
-
-
 class PixalateFraudInvalidTraffic(BaseModel):
     exclude_ip_address_and_user_agents: Optional[bool] = Field(None, alias="excludeIpAddressAndUserAgents", description="Set to `true` to exclude traffic from IPV4 and IPV6 addresses and usger agents identified to to be fraudulent or invalid")
     exclude_ott_and_mobile_devices: Optional[bool] = Field(None, alias="excludeOttAndMobileDevices", description="Set to `true` to exclude traffic from OTT and Mobile devices identified to be fraudulent or invalid.")
@@ -1741,6 +1735,37 @@ class PixalateFraudInvalidTraffic(BaseModel):
 class Pixalate(BaseModel):
     """Pixalate is a third party provider for digital ad verification. Pixalate offers technologies that drive high-quality advertising media."""
     fraud_invalid_traffic: Optional["PixalateFraudInvalidTraffic"] = Field(None, alias="fraudInvalidTraffic")
+
+    model_config = {'populate_by_name': True}
+
+
+class MobileDisplayThirdPartyPreBidTargetingV31(BaseModel):
+    pixalate: Optional["Pixalate"] = None
+
+    model_config = {'populate_by_name': True}
+
+
+class AmazonMobileDisplayTargetingV31(BaseModel):
+    third_party_pre_bid_targeting: Optional["MobileDisplayThirdPartyPreBidTargetingV31"] = Field(None, alias="thirdPartyPreBidTargeting")
+
+    model_config = {'populate_by_name': True}
+
+
+class OracleDataCloudV31(BaseModel):
+    standard_predicts_segment_ids: Optional[list[str]] = Field(None, alias="standardPredictsSegmentIds", description="The standard predict segment identifiers.")
+
+    model_config = {'populate_by_name': True}
+
+
+class StandardDisplayThirdPartyPreBidTargetingV31(BaseModel):
+    oracle_data_cloud: Optional["OracleDataCloudV31"] = Field(None, alias="oracleDataCloud")
+    pixalate: Optional["Pixalate"] = None
+
+    model_config = {'populate_by_name': True}
+
+
+class StandardDisplayTargetingV31(BaseModel):
+    third_party_pre_bid_targeting: Optional["StandardDisplayThirdPartyPreBidTargetingV31"] = Field(None, alias="thirdPartyPreBidTargeting")
 
     model_config = {'populate_by_name': True}
 
@@ -1771,31 +1796,6 @@ class VideoTargetingV31(BaseModel):
     model_config = {'populate_by_name': True}
 
 
-class StandardDisplayThirdPartyPreBidTargetingV31(BaseModel):
-    oracle_data_cloud: Optional["OracleDataCloudV31"] = Field(None, alias="oracleDataCloud")
-    pixalate: Optional["Pixalate"] = None
-
-    model_config = {'populate_by_name': True}
-
-
-class StandardDisplayTargetingV31(BaseModel):
-    third_party_pre_bid_targeting: Optional["StandardDisplayThirdPartyPreBidTargetingV31"] = Field(None, alias="thirdPartyPreBidTargeting")
-
-    model_config = {'populate_by_name': True}
-
-
-class MobileDisplayThirdPartyPreBidTargetingV31(BaseModel):
-    pixalate: Optional["Pixalate"] = None
-
-    model_config = {'populate_by_name': True}
-
-
-class AmazonMobileDisplayTargetingV31(BaseModel):
-    third_party_pre_bid_targeting: Optional["MobileDisplayThirdPartyPreBidTargetingV31"] = Field(None, alias="thirdPartyPreBidTargeting")
-
-    model_config = {'populate_by_name': True}
-
-
 class LineItemTargetingV31(BaseModel):
     standard_display_targeting: Optional["StandardDisplayTargetingV31"] = Field(None, alias="standardDisplayTargeting")
     aap_mobile_app_targeting: Optional["AapMobileAppTargetingV31"] = Field(None, alias="aapMobileAppTargeting")
@@ -1811,37 +1811,37 @@ class LineItemV31(BaseModel):
     model_config = {'populate_by_name': True}
 
 
-class DvBrandSafetyContentCategoriesV32(BaseModel):
-    """A list of content categories to exclude from targeting. EXTREME_GRAPHIC is available since version `application/vnd.dsplineitems.v3.2+json`."""
-    pass
-
-
 class DvBrandSafetyContentCategoriesWithRiskV32(BaseModel):
     """A map from content categories to risk level to exclude from targeting. Available keys are: [`ADULT_CONTENT`, `ALCOHOL`, `CRIME`, `DEATH_INJURIES`, `DISASTER_AVIATION`, `DISASTER_MAN_MADE`, `DISASTER_N"""
     __root__: dict[str, "BrandSuitabilityRiskLevel"] = {}
 
 
-class VideoDoubleVerifyBrandSafetyV32(BaseModel):
+class DvBrandSafetyContentCategoriesV32(BaseModel):
+    """A list of content categories to exclude from targeting. EXTREME_GRAPHIC is available since version `application/vnd.dsplineitems.v3.2+json`."""
+    pass
+
+
+class StandardDisplayDoubleVerifyBrandSafetyV32(BaseModel):
     content_categories: Optional["DvBrandSafetyContentCategoriesV32"] = Field(None, alias="contentCategories")
     content_categories_with_risk: Optional["DvBrandSafetyContentCategoriesWithRiskV32"] = Field(None, alias="contentCategoriesWithRisk")
 
     model_config = {'populate_by_name': True}
 
 
-class VideoDoubleVerifyV32(BaseModel):
-    brand_safety: Optional["VideoDoubleVerifyBrandSafetyV32"] = Field(None, alias="brandSafety")
+class StandardDisplayDoubleVerifyV32(BaseModel):
+    brand_safety: Optional["StandardDisplayDoubleVerifyBrandSafetyV32"] = Field(None, alias="brandSafety")
 
     model_config = {'populate_by_name': True}
 
 
-class VideoThirdPartyPreBidTargetingV32(BaseModel):
-    double_verify: Optional["VideoDoubleVerifyV32"] = Field(None, alias="doubleVerify")
+class StandardDisplayThirdPartyPreBidTargetingV32(BaseModel):
+    double_verify: Optional["StandardDisplayDoubleVerifyV32"] = Field(None, alias="doubleVerify")
 
     model_config = {'populate_by_name': True}
 
 
-class VideoTargetingV32(BaseModel):
-    third_party_pre_bid_targeting: Optional["VideoThirdPartyPreBidTargetingV32"] = Field(None, alias="thirdPartyPreBidTargeting")
+class StandardDisplayTargetingV32(BaseModel):
+    third_party_pre_bid_targeting: Optional["StandardDisplayThirdPartyPreBidTargetingV32"] = Field(None, alias="thirdPartyPreBidTargeting")
 
     model_config = {'populate_by_name': True}
 
@@ -1871,27 +1871,27 @@ class AapMobileAppTargetingV32(BaseModel):
     model_config = {'populate_by_name': True}
 
 
-class StandardDisplayDoubleVerifyBrandSafetyV32(BaseModel):
+class VideoDoubleVerifyBrandSafetyV32(BaseModel):
     content_categories: Optional["DvBrandSafetyContentCategoriesV32"] = Field(None, alias="contentCategories")
     content_categories_with_risk: Optional["DvBrandSafetyContentCategoriesWithRiskV32"] = Field(None, alias="contentCategoriesWithRisk")
 
     model_config = {'populate_by_name': True}
 
 
-class StandardDisplayDoubleVerifyV32(BaseModel):
-    brand_safety: Optional["StandardDisplayDoubleVerifyBrandSafetyV32"] = Field(None, alias="brandSafety")
+class VideoDoubleVerifyV32(BaseModel):
+    brand_safety: Optional["VideoDoubleVerifyBrandSafetyV32"] = Field(None, alias="brandSafety")
 
     model_config = {'populate_by_name': True}
 
 
-class StandardDisplayThirdPartyPreBidTargetingV32(BaseModel):
-    double_verify: Optional["StandardDisplayDoubleVerifyV32"] = Field(None, alias="doubleVerify")
+class VideoThirdPartyPreBidTargetingV32(BaseModel):
+    double_verify: Optional["VideoDoubleVerifyV32"] = Field(None, alias="doubleVerify")
 
     model_config = {'populate_by_name': True}
 
 
-class StandardDisplayTargetingV32(BaseModel):
-    third_party_pre_bid_targeting: Optional["StandardDisplayThirdPartyPreBidTargetingV32"] = Field(None, alias="thirdPartyPreBidTargeting")
+class VideoTargetingV32(BaseModel):
+    third_party_pre_bid_targeting: Optional["VideoThirdPartyPreBidTargetingV32"] = Field(None, alias="thirdPartyPreBidTargeting")
 
     model_config = {'populate_by_name': True}
 
@@ -1911,34 +1911,15 @@ class LineItemV32(BaseModel):
     model_config = {'populate_by_name': True}
 
 
-class DspIasContextualControlTargetingV33(BaseModel):
-    vertical_segments: Optional[list[str]] = Field(None, alias="verticalSegments")
-    topical_segments: Optional[list[str]] = Field(None, alias="topicalSegments")
-
-    model_config = {'populate_by_name': True}
-
-
 class DspIasContextualControlAvoidanceV33(BaseModel):
     avoidance_segments: Optional[list[str]] = Field(None, alias="avoidanceSegments")
 
     model_config = {'populate_by_name': True}
 
 
-class VideoIntegralAdScienceV33(BaseModel):
-    contextual_targeting: Optional["DspIasContextualControlAvoidanceV33"] = Field(None, alias="contextualTargeting")
-    contextual_avoidance: Optional["DspIasContextualControlTargetingV33"] = Field(None, alias="contextualAvoidance")
-
-    model_config = {'populate_by_name': True}
-
-
-class VideoThirdPartyPreBidTargetingV33(BaseModel):
-    integral_ad_science: Optional["VideoIntegralAdScienceV33"] = Field(None, alias="integralAdScience")
-
-    model_config = {'populate_by_name': True}
-
-
-class VideoTargetingV33(BaseModel):
-    third_party_pre_bid_targeting: Optional["VideoThirdPartyPreBidTargetingV33"] = Field(None, alias="thirdPartyPreBidTargeting")
+class DspIasContextualControlTargetingV33(BaseModel):
+    vertical_segments: Optional[list[str]] = Field(None, alias="verticalSegments")
+    topical_segments: Optional[list[str]] = Field(None, alias="topicalSegments")
 
     model_config = {'populate_by_name': True}
 
@@ -1977,6 +1958,25 @@ class StandardDisplayThirdPartyPreBidTargetingV33(BaseModel):
 
 class StandardDisplayTargetingV33(BaseModel):
     third_party_pre_bid_targeting: Optional["StandardDisplayThirdPartyPreBidTargetingV33"] = Field(None, alias="thirdPartyPreBidTargeting")
+
+    model_config = {'populate_by_name': True}
+
+
+class VideoIntegralAdScienceV33(BaseModel):
+    contextual_targeting: Optional["DspIasContextualControlAvoidanceV33"] = Field(None, alias="contextualTargeting")
+    contextual_avoidance: Optional["DspIasContextualControlTargetingV33"] = Field(None, alias="contextualAvoidance")
+
+    model_config = {'populate_by_name': True}
+
+
+class VideoThirdPartyPreBidTargetingV33(BaseModel):
+    integral_ad_science: Optional["VideoIntegralAdScienceV33"] = Field(None, alias="integralAdScience")
+
+    model_config = {'populate_by_name': True}
+
+
+class VideoTargetingV33(BaseModel):
+    third_party_pre_bid_targeting: Optional["VideoThirdPartyPreBidTargetingV33"] = Field(None, alias="thirdPartyPreBidTargeting")
 
     model_config = {'populate_by_name': True}
 
@@ -2109,30 +2109,6 @@ class SupplySourceResponseV12(BaseModel):
     model_config = {'populate_by_name': True}
 
 
-class DspCreativeMarketplaceV1(StrEnum):
-    US = "US"
-
-
-class DspBaseWriteCreativeV1(BaseModel):
-    """This holds common mutable properties of all creative types update request."""
-    name: str = Field(..., description="The creative name.")
-
-    model_config = {'populate_by_name': True}
-
-
-class DspBaseCreateCreativeRequestV1(BaseModel):
-    pass
-
-
-class DspAssetV1(BaseModel):
-    """Asset to be associated with creative."""
-    asset_id: str = Field(..., alias="assetId", description="The uploaded asset Id. This Id is provided by Creative Assets API when user registers an asset with assetType after uplo")
-    version: str = Field(..., description="The uploaded asset version. This version is provided by Creative Assets API when user registers an asset with assetType ")
-    url: Optional[str] = Field(None, description="The asset's URL. This will be provided if asset linked with the creative being read is not registered in Creative Assets")
-
-    model_config = {'populate_by_name': True}
-
-
 class DspThirdPartyTrackerTypeV1(StrEnum):
     IMPRESSION = "IMPRESSION"
 
@@ -2153,33 +2129,11 @@ class DspSizeV1(BaseModel):
     model_config = {'populate_by_name': True}
 
 
-class DspAdChoicesPositionV1(StrEnum):
-    TOP_RIGHT = "TOP_RIGHT"
-    TOP_LEFT = "TOP_LEFT"
-    BOTTOM_RIGHT = "BOTTOM_RIGHT"
-    BOTTOM_LEFT = "BOTTOM_LEFT"
-
-
-class DspClickThroughSearchKeywordActionV1(BaseModel):
-    """Click through action - Search Keywords. This is applicable only to `MOBILE_AAP` and `MOBILE_OO` supply."""
-    keywords: list[str] = Field(..., description="Define the keywords to query for in the search results that will be displayed on click-through.")
-    enable_deep_linking: Optional[bool] = Field(None, alias="enableDeepLinking", description="Allow to open URL in Amazon App, if available on device. This will be considered only for `MOBILE_AAP` supply. By defaul")
-
-    model_config = {'populate_by_name': True}
-
-
-class DspClickThroughDetailPageActionV1(BaseModel):
-    """Click through Action - Detail Page. This is applicable only to `MOBILE_OO` and `MOBILE_AAP` supply."""
-    product_asin: str = Field(..., alias="productAsin", description="Define which product's detail page the customer should be taken to when tapping on the creative.")
-    enable_deep_linking: Optional[bool] = Field(None, alias="enableDeepLinking", description="Allow to open URL in Amazon App, if available on device. By default it is false. This will be considered only for `MOBIL")
-
-    model_config = {'populate_by_name': True}
-
-
-class DspClickThroughIosAppDownloadActionV1(BaseModel):
-    """Click through action - IOS App Download. This is applicable only to `MOBILE_AAP` supply."""
-    store_link: str = Field(..., alias="storeLink", description="Apple app store link for app, used to build the download URL.")
-    download_url: Optional[str] = Field(None, alias="downloadUrl", description="URL to direct users to download app. By default, This will be built automatically using `storeLink` information provided")
+class DspAssetV1(BaseModel):
+    """Asset to be associated with creative."""
+    asset_id: str = Field(..., alias="assetId", description="The uploaded asset Id. This Id is provided by Creative Assets API when user registers an asset with assetType after uplo")
+    version: str = Field(..., description="The uploaded asset version. This version is provided by Creative Assets API when user registers an asset with assetType ")
+    url: Optional[str] = Field(None, description="The asset's URL. This will be provided if asset linked with the creative being read is not registered in Creative Assets")
 
     model_config = {'populate_by_name': True}
 
@@ -2200,14 +2154,6 @@ class DspClickThroughAndroidAppDownloadActionV1(BaseModel):
     model_config = {'populate_by_name': True}
 
 
-class DspClickThroughKindleAppDownloadActionV1(BaseModel):
-    """Click through Action - Kindle App Download. This is applicable only to `MOBILE_AAP` supply."""
-    product_asin: str = Field(..., alias="productAsin", description="Amazon product Asin, used to build the download URL.")
-    download_url: Optional[str] = Field(None, alias="downloadUrl", description="URL to direct users to download app. By default, this will be built automatically using `productAsin` information provid")
-
-    model_config = {'populate_by_name': True}
-
-
 class DspClickThroughSearchAsinActionV1(BaseModel):
     """Click through Action - Search Asins. This is applicable only to `MOBILE_AAP` and `MOBILE_OO` supply."""
     product_asins: list[str] = Field(..., alias="productAsins", description="Define the Asins to query for in the search results that will be displayed on click-through.")
@@ -2216,9 +2162,41 @@ class DspClickThroughSearchAsinActionV1(BaseModel):
     model_config = {'populate_by_name': True}
 
 
+class DspClickThroughDetailPageActionV1(BaseModel):
+    """Click through Action - Detail Page. This is applicable only to `MOBILE_OO` and `MOBILE_AAP` supply."""
+    product_asin: str = Field(..., alias="productAsin", description="Define which product's detail page the customer should be taken to when tapping on the creative.")
+    enable_deep_linking: Optional[bool] = Field(None, alias="enableDeepLinking", description="Allow to open URL in Amazon App, if available on device. By default it is false. This will be considered only for `MOBIL")
+
+    model_config = {'populate_by_name': True}
+
+
+class DspClickThroughSearchKeywordActionV1(BaseModel):
+    """Click through action - Search Keywords. This is applicable only to `MOBILE_AAP` and `MOBILE_OO` supply."""
+    keywords: list[str] = Field(..., description="Define the keywords to query for in the search results that will be displayed on click-through.")
+    enable_deep_linking: Optional[bool] = Field(None, alias="enableDeepLinking", description="Allow to open URL in Amazon App, if available on device. This will be considered only for `MOBILE_AAP` supply. By defaul")
+
+    model_config = {'populate_by_name': True}
+
+
 class DspCustomUrlActionV1(BaseModel):
     """Click through Action - Custom Url."""
     url: str = Field(..., description="Define where the creative links to on click.")
+
+    model_config = {'populate_by_name': True}
+
+
+class DspClickThroughIosAppDownloadActionV1(BaseModel):
+    """Click through action - IOS App Download. This is applicable only to `MOBILE_AAP` supply."""
+    store_link: str = Field(..., alias="storeLink", description="Apple app store link for app, used to build the download URL.")
+    download_url: Optional[str] = Field(None, alias="downloadUrl", description="URL to direct users to download app. By default, This will be built automatically using `storeLink` information provided")
+
+    model_config = {'populate_by_name': True}
+
+
+class DspClickThroughKindleAppDownloadActionV1(BaseModel):
+    """Click through Action - Kindle App Download. This is applicable only to `MOBILE_AAP` supply."""
+    product_asin: str = Field(..., alias="productAsin", description="Amazon product Asin, used to build the download URL.")
+    download_url: Optional[str] = Field(None, alias="downloadUrl", description="URL to direct users to download app. By default, this will be built automatically using `productAsin` information provid")
 
     model_config = {'populate_by_name': True}
 
@@ -2236,6 +2214,13 @@ class DspImageClickThroughActionV1(BaseModel):
     model_config = {'populate_by_name': True}
 
 
+class DspAdChoicesPositionV1(StrEnum):
+    TOP_RIGHT = "TOP_RIGHT"
+    TOP_LEFT = "TOP_LEFT"
+    BOTTOM_RIGHT = "BOTTOM_RIGHT"
+    BOTTOM_LEFT = "BOTTOM_LEFT"
+
+
 class DspReadWriteImageCreativeAttributesV1(BaseModel):
     """This holds common properties that can we written and updated for image creative."""
     external_id: Optional[str] = Field(None, alias="externalId", description="The creative external Id.")
@@ -2248,6 +2233,21 @@ class DspReadWriteImageCreativeAttributesV1(BaseModel):
     ad_choices_position: Optional["DspAdChoicesPositionV1"] = Field(None, alias="adChoicesPosition")
 
     model_config = {'populate_by_name': True}
+
+
+class DspCreativeMarketplaceV1(StrEnum):
+    US = "US"
+
+
+class DspBaseWriteCreativeV1(BaseModel):
+    """This holds common mutable properties of all creative types update request."""
+    name: str = Field(..., description="The creative name.")
+
+    model_config = {'populate_by_name': True}
+
+
+class DspBaseCreateCreativeRequestV1(BaseModel):
+    pass
 
 
 class DspCreativeSupplyV1(StrEnum):
@@ -2324,13 +2324,6 @@ class DspImageCreativesResponseV1(BaseModel):
     pass
 
 
-class DspPreviewConfigurationV1(BaseModel):
-    """Configuration settings for preview"""
-    is_on_amazon: Optional[bool] = Field(None, alias="isOnAmazon", description="If it's true, shows preview in amazon websites, else shows in other websites")
-
-    model_config = {'populate_by_name': True}
-
-
 class DspImageCreativePreviewModelV1(BaseModel):
     """Image creative preview model. Populate this to preview a new creative."""
     marketplace: "DspCreativeMarketplaceV1"
@@ -2342,6 +2335,13 @@ class DspImageCreativePreviewModelV1(BaseModel):
     ad_choices_position: "DspAdChoicesPositionV1" = Field(..., alias="adChoicesPosition")
     third_party_click_trackers: Optional[list[str]] = Field(None, alias="thirdPartyClickTrackers", description="This URL is pinged when the creative is clicked. The URL can contain macros.")
     third_party_trackers: Optional[list["DspThirdPartyTrackerV1"]] = Field(None, alias="thirdPartyTrackers")
+
+    model_config = {'populate_by_name': True}
+
+
+class DspPreviewConfigurationV1(BaseModel):
+    """Configuration settings for preview"""
+    is_on_amazon: Optional[bool] = Field(None, alias="isOnAmazon", description="If it's true, shows preview in amazon websites, else shows in other websites")
 
     model_config = {'populate_by_name': True}
 
@@ -2426,6 +2426,18 @@ class DspVideoCreativePreviewRequestV1(BaseModel):
     model_config = {'populate_by_name': True}
 
 
+class DspRecOptimizationGoalV1(StrEnum):
+    PURCHASE_RATE = "PURCHASE_RATE"
+    CLICK_THROUGH_RATE = "CLICK_THROUGH_RATE"
+    DETAIL_PAGE_VIEW_RATE = "DETAIL_PAGE_VIEW_RATE"
+
+
+class DspRecFormatV1(StrEnum):
+    SHOP_NOW = "SHOP_NOW"
+    ADD_TO_CART = "ADD_TO_CART"
+    COUPON = "COUPON"
+
+
 class DspRecContentV1Logoheadline(BaseModel):
     """Creative customization field for displaying brandlogo and headline."""
     brand_logo: "DspAssetV1" = Field(..., alias="brandLogo")
@@ -2442,24 +2454,12 @@ class DspRecContentV1(BaseModel):
     model_config = {'populate_by_name': True}
 
 
-class DspRecFormatV1(StrEnum):
-    SHOP_NOW = "SHOP_NOW"
-    ADD_TO_CART = "ADD_TO_CART"
-    COUPON = "COUPON"
-
-
 class DspRecProductV1(BaseModel):
     """The object representation of a product."""
     asin: str = Field(..., description="Amazon standard identification number.")
     product_title: Optional[str] = Field(None, alias="productTitle", description="Retail product title.")
 
     model_config = {'populate_by_name': True}
-
-
-class DspRecOptimizationGoalV1(StrEnum):
-    PURCHASE_RATE = "PURCHASE_RATE"
-    CLICK_THROUGH_RATE = "CLICK_THROUGH_RATE"
-    DETAIL_PAGE_VIEW_RATE = "DETAIL_PAGE_VIEW_RATE"
 
 
 class DspReadWriteRecCreativeAttributesV1(BaseModel):

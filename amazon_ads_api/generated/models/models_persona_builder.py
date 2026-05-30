@@ -150,9 +150,34 @@ class Range(BaseModel):
     model_config = {'populate_by_name': True}
 
 
+class IncomeDemographicInsight(BaseModel):
+    currency: "Currency"
+    insight_metrics: "InsightMetric" = Field(..., alias="insightMetrics")
+    range: "Range"
+    segment_id: str = Field(..., alias="segmentId", description="Canonical ID of the segment the demographic insight attribute maps to.")
+
+    model_config = {'populate_by_name': True}
+
+
 class RangedDemographicInsight(BaseModel):
     insight_metrics: "InsightMetric" = Field(..., alias="insightMetrics")
     range: "Range"
+    segment_id: str = Field(..., alias="segmentId", description="Canonical ID of the segment the demographic insight attribute maps to.")
+
+    model_config = {'populate_by_name': True}
+
+
+class Education(StrEnum):
+    BACHELORS_DEGREE = "BACHELORS_DEGREE"
+    BACHELOR_DEGREE_OR_MORE = "BACHELOR_DEGREE_OR_MORE"
+    GRADUATE_DEGREE = "GRADUATE_DEGREE"
+    HIGH_SCHOOL = "HIGH_SCHOOL"
+    SOME_COLLEGE = "SOME_COLLEGE"
+
+
+class EducationInsight(BaseModel):
+    attribute: "Education"
+    insight_metrics: "InsightMetric" = Field(..., alias="insightMetrics")
     segment_id: str = Field(..., alias="segmentId", description="Canonical ID of the segment the demographic insight attribute maps to.")
 
     model_config = {'populate_by_name': True}
@@ -182,31 +207,6 @@ class GenderInsight(BaseModel):
     attribute: "Gender"
     insight_metrics: "InsightMetric" = Field(..., alias="insightMetrics")
     segment_id: Optional[str] = Field(None, alias="segmentId", description="Canonical ID of the segment the demographic insight attribute maps to.")
-
-    model_config = {'populate_by_name': True}
-
-
-class Education(StrEnum):
-    BACHELORS_DEGREE = "BACHELORS_DEGREE"
-    BACHELOR_DEGREE_OR_MORE = "BACHELOR_DEGREE_OR_MORE"
-    GRADUATE_DEGREE = "GRADUATE_DEGREE"
-    HIGH_SCHOOL = "HIGH_SCHOOL"
-    SOME_COLLEGE = "SOME_COLLEGE"
-
-
-class EducationInsight(BaseModel):
-    attribute: "Education"
-    insight_metrics: "InsightMetric" = Field(..., alias="insightMetrics")
-    segment_id: str = Field(..., alias="segmentId", description="Canonical ID of the segment the demographic insight attribute maps to.")
-
-    model_config = {'populate_by_name': True}
-
-
-class IncomeDemographicInsight(BaseModel):
-    currency: "Currency"
-    insight_metrics: "InsightMetric" = Field(..., alias="insightMetrics")
-    range: "Range"
-    segment_id: str = Field(..., alias="segmentId", description="Canonical ID of the segment the demographic insight attribute maps to.")
 
     model_config = {'populate_by_name': True}
 

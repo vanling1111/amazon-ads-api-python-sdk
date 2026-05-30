@@ -188,6 +188,13 @@ class CreateWorkflowExecutionRequest(BaseModel):
     model_config = {'populate_by_name': True}
 
 
+class WorkflowExecutionOutputChannelStatus(StrEnum):
+    AVAILABLE = "AVAILABLE"
+    FAILED = "FAILED"
+    PENDING = "PENDING"
+    UNAVAILABLE = "UNAVAILABLE"
+
+
 class OutputChannelType(StrEnum):
     ACR = "ACR"
     DOWNLOAD = "DOWNLOAD"
@@ -201,13 +208,6 @@ class OutputChannel(BaseModel):
     type_: "OutputChannelType" = Field(..., alias="type", description="The mechanism for retrieving output.")
 
     model_config = {'populate_by_name': True}
-
-
-class WorkflowExecutionOutputChannelStatus(StrEnum):
-    AVAILABLE = "AVAILABLE"
-    FAILED = "FAILED"
-    PENDING = "PENDING"
-    UNAVAILABLE = "UNAVAILABLE"
 
 
 class WorkflowExecutionOutputChannel(BaseModel):

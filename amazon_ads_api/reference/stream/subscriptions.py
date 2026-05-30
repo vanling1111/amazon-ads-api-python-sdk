@@ -1,149 +1,113 @@
-"""
-Amazon Marketing Stream API (异步版本)
-基于官方文档: https://advertising.amazon.com/API/docs/en-us/amazon-marketing-stream/openapi
+"""Amazon Marketing Stream subscriptions (L2 reference, OpenAPI-generated).
 
-官方端点数: 8 (普通流 4 + DSP流 4)
+Official spec: ``AmazonMarketingStream_prod_3p.json``
+Docs: https://advertising.amazon.com/API/docs/en-us/amazon-marketing-stream/overview
+
+Wire surface::
+    client.reference.stream.subscriptions.create_subscription(body)
 """
+
+from __future__ import annotations
 
 from typing import Any
+
 from amazon_ads_api.base import JSONData, JSONList
 
 try:
-    from amazon_ads_api.generated.clients.clients_marketing_stream import MarketingStreamClient as _GenBase
+    from amazon_ads_api.generated.clients.clients_marketing_stream import (
+        MarketingStreamClient as _GenBase,
+    )
 except ImportError:
     from amazon_ads_api.base import BaseAdsClient as _GenBase  # type: ignore[assignment]
 
 
-class MarketingStreamAPI(_GenBase):
-    """Amazon Marketing Stream API (全异步)
+class MarketingStreamSubscriptionsAPI(_GenBase):
+    """Thin alias layer over generated Marketing Stream operations."""
 
-    管理营销数据流订阅，包括普通流和DSP流。
-    """
-
-    # ==================== 普通订阅 (SP/SB/SD) ====================
-
-    async def list_subscriptions(self) -> JSONList:
-        """获取订阅列表
-
-        GET /streams/subscriptions
-        """
-        response = await self.get("/streams/subscriptions")
-        if isinstance(response, dict):
-            return response.get("subscriptions", [])
-        return []
+    async def list_subscriptions(
+        self,
+        *,
+        max_results: str | None = None,
+        starting_token: str | None = None,
+        amazon_ads_account_id: str | None = None,
+    ) -> JSONData | JSONList:
+        return await self.list_stream_subscriptions(
+            max_results=max_results,
+            starting_token=starting_token,
+            amazon_ads_account_id=amazon_ads_account_id,
+            amazon_advertising_api_client_id=self.client_id,
+            amazon_advertising_api_scope=self.profile_id,
+        )
 
     async def create_subscription(
         self,
-        data_set_id: str,
-        destination_arn: str,
-        client_request_token: str | None = None,
-        notes: str | None = None,
-    ) -> JSONData:
-        """创建订阅
+        body: dict[str, Any],
+        *,
+        amazon_ads_account_id: str | None = None,
+    ) -> JSONData | JSONList:
+        return await self.create_stream_subscription(
+            body=body,
+            amazon_ads_account_id=amazon_ads_account_id,
+            amazon_advertising_api_client_id=self.client_id,
+            amazon_advertising_api_scope=self.profile_id,
+        )
 
-        POST /streams/subscriptions
-        """
-        data: dict[str, Any] = {
-            "dataSetId": data_set_id,
-            "destinationArn": destination_arn,
-        }
-        if client_request_token:
-            data["clientRequestToken"] = client_request_token
-        if notes:
-            data["notes"] = notes
-
-        result = await self.post("/streams/subscriptions", json_data=data)
-        return result if isinstance(result, dict) else {}
-
-    async def get_subscription(self, subscription_id: str) -> JSONData:
-        """获取订阅详情
-
-        GET /streams/subscriptions/{subscriptionId}
-        """
-        result = await self.get(f"/streams/subscriptions/{subscription_id}")
-        return result if isinstance(result, dict) else {}
+    async def get_subscription(
+        self,
+        subscription_id: str,
+        *,
+        amazon_ads_account_id: str | None = None,
+    ) -> JSONData | JSONList:
+        return await self.get_stream_subscription(
+            subscription_id,
+            amazon_ads_account_id=amazon_ads_account_id,
+            amazon_advertising_api_client_id=self.client_id,
+            amazon_advertising_api_scope=self.profile_id,
+        )
 
     async def update_subscription(
         self,
         subscription_id: str,
-        status: str | None = None,
-        notes: str | None = None,
-    ) -> JSONData:
-        """更新订阅
-
-        PUT /streams/subscriptions/{subscriptionId}
-        """
-        data: dict[str, Any] = {}
-        if status:
-            data["status"] = status
-        if notes:
-            data["notes"] = notes
-
-        result = await self.put(
-            f"/streams/subscriptions/{subscription_id}", json_data=data
+        body: dict[str, Any],
+        *,
+        amazon_ads_account_id: str | None = None,
+    ) -> JSONData | JSONList:
+        return await self.update_stream_subscription(
+            subscription_id,
+            body=body,
+            amazon_ads_account_id=amazon_ads_account_id,
+            amazon_advertising_api_client_id=self.client_id,
+            amazon_advertising_api_scope=self.profile_id,
         )
-        return result if isinstance(result, dict) else {}
 
-    # ==================== DSP订阅 ====================
-
-    async def list_dsp_subscriptions(self) -> JSONList:
-        """获取DSP订阅列表
-
-        GET /dsp/streams/subscriptions
-        """
-        response = await self.get("/dsp/streams/subscriptions")
-        if isinstance(response, dict):
-            return response.get("subscriptions", [])
-        return []
+    async def list_dsp_subscriptions(
+        self,
+        *,
+        max_results: str | None = None,
+        starting_token: str | None = None,
+        amazon_ads_account_id: str | None = None,
+    ) -> JSONData | JSONList:
+        return await self.list_dsp_stream_subscriptions(
+            max_results=max_results,
+            starting_token=starting_token,
+            amazon_ads_account_id=amazon_ads_account_id,
+            amazon_advertising_api_client_id=self.client_id,
+        )
 
     async def create_dsp_subscription(
         self,
-        data_set_id: str,
-        destination_arn: str,
-        client_request_token: str | None = None,
-        notes: str | None = None,
-    ) -> JSONData:
-        """创建DSP订阅
-
-        POST /dsp/streams/subscriptions
-        """
-        data: dict[str, Any] = {
-            "dataSetId": data_set_id,
-            "destinationArn": destination_arn,
-        }
-        if client_request_token:
-            data["clientRequestToken"] = client_request_token
-        if notes:
-            data["notes"] = notes
-
-        result = await self.post("/dsp/streams/subscriptions", json_data=data)
-        return result if isinstance(result, dict) else {}
-
-    async def get_dsp_subscription(self, subscription_id: str) -> JSONData:
-        """获取DSP订阅详情
-
-        GET /dsp/streams/subscriptions/{subscriptionId}
-        """
-        result = await self.get(f"/dsp/streams/subscriptions/{subscription_id}")
-        return result if isinstance(result, dict) else {}
-
-    async def update_dsp_subscription(
-        self,
-        subscription_id: str,
-        status: str | None = None,
-        notes: str | None = None,
-    ) -> JSONData:
-        """更新DSP订阅
-
-        PUT /dsp/streams/subscriptions/{subscriptionId}
-        """
-        data: dict[str, Any] = {}
-        if status:
-            data["status"] = status
-        if notes:
-            data["notes"] = notes
-
-        result = await self.put(
-            f"/dsp/streams/subscriptions/{subscription_id}", json_data=data
+        body: dict[str, Any],
+        *,
+        amazon_ads_account_id: str | None = None,
+    ) -> JSONData | JSONList:
+        return await self.create_dsp_stream_subscription(
+            body=body,
+            amazon_ads_account_id=amazon_ads_account_id,
+            amazon_advertising_api_client_id=self.client_id,
         )
-        return result if isinstance(result, dict) else {}
+
+
+# Backward-compatible export name used by older imports.
+MarketingStreamAPI = MarketingStreamSubscriptionsAPI
+
+__all__ = ["MarketingStreamAPI", "MarketingStreamSubscriptionsAPI"]

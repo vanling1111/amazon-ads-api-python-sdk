@@ -2338,7 +2338,7 @@ paths:
                     
                     *Example report download*
                     
-                    `$ curl -o /tmp/report.json.gz "https://sandboxreports.s3.amazonaws.com/amzn1.clicksAPI.v1.m1.580149D6.c7aa92c1-ca5b-435d-bb8b-51cb26ad5731?AWSAccessKeyId=EXAMPLE_KEY_REDACTED&amp;Expires=1476479900&amp;Signature=I%2F2Gd%2B8TbcPbXbBUM6ix%2BSVP3qA%3D"`
+                    `$ curl -o /tmp/report.json.gz "https://sandboxreports.s3.amazonaws.com/amzn1.clicksAPI.v1.m1.580149D6.c7aa92c1-ca5b-435d-bb8b-51cb26ad5731?AWSAccessKeyId=AKIAEXAMPLE00000000&amp;Expires=1476479900&amp;Signature=I%2F2Gd%2B8TbcPbXbBUM6ix%2BSVP3qA%3D"`
       operationId: downloadReport
       parameters:
       - $ref: '#/components/parameters/clientHeader'

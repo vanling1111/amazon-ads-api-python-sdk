@@ -1,0 +1,8 @@
+#!/bin/sh
+# Strip Cursor agent attribution from commit messages (local hook).
+# Enable: git config core.hooksPath .githooks
+MSG_FILE=$1
+if [ -f "$MSG_FILE" ]; then
+  sed -i '' '/[Cc]o-authored-by:.*[Cc]ursor/d' "$MSG_FILE" 2>/dev/null || sed -i '/[Cc]o-authored-by:.*[Cc]ursor/d' "$MSG_FILE"
+  sed -i '' '/Made-with:.*[Cc]ursor/d' "$MSG_FILE" 2>/dev/null || sed -i '/Made-with:.*[Cc]ursor/d' "$MSG_FILE"
+fi

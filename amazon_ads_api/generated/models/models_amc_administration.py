@@ -259,14 +259,6 @@ class AmcpLinkUnauthorizedRequestExceptionResponseContent(BaseModel):
     model_config = {'populate_by_name': True}
 
 
-class CollaborationIdMappingJobStatus(StrEnum):
-    FAILED = "FAILED"
-    QUEUED = "QUEUED"
-    RUNNING = "RUNNING"
-    SUCCEEDED = "SUCCEEDED"
-    UNKNOWN = "UNKNOWN"
-
-
 class CollaborationIdMappingJobMetrics(BaseModel):
     """Job data record processing metrics."""
     input_records: Optional[int] = Field(None, alias="inputRecords", description="Number of input records.")
@@ -278,6 +270,14 @@ class CollaborationIdMappingJobMetrics(BaseModel):
     unique_records_loaded: Optional[int] = Field(None, alias="uniqueRecordsLoaded", description="Total number of unique mapped records.")
 
     model_config = {'populate_by_name': True}
+
+
+class CollaborationIdMappingJobStatus(StrEnum):
+    FAILED = "FAILED"
+    QUEUED = "QUEUED"
+    RUNNING = "RUNNING"
+    SUCCEEDED = "SUCCEEDED"
+    UNKNOWN = "UNKNOWN"
 
 
 class CollaborationIdMappingJob(BaseModel):

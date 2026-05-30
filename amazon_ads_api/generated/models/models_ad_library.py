@@ -20,18 +20,18 @@ class AccessDeniedExceptionResponseContent(BaseModel):
     model_config = {'populate_by_name': True}
 
 
-class TotalRecipientsRange(BaseModel):
-    max: float
-    min: float
-
-    model_config = {'populate_by_name': True}
-
-
 class TargetMethodRecipientGroup(StrEnum):
     ADS_PREFERENCES = "ADS_PREFERENCES"
     LOCATION = "LOCATION"
     PAST_ACTIVITY = "PAST_ACTIVITY"
     SEARCH_TERMS = "SEARCH_TERMS"
+
+
+class TotalRecipientsRange(BaseModel):
+    max: float
+    min: float
+
+    model_config = {'populate_by_name': True}
 
 
 class RecipientsBySite(BaseModel):

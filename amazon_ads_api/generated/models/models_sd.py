@@ -115,6 +115,56 @@ class CreateBudgetRulesResponse(BaseModel):
     model_config = {'populate_by_name': True}
 
 
+class PerformanceMetric(StrEnum):
+    ACOS = "ACOS"
+    CTR = "CTR"
+    CVR = "CVR"
+    ROAS = "ROAS"
+
+
+class PerformanceMeasureCondition(BaseModel):
+    comparison_operator: "ComparisonOperator" = Field(..., alias="comparisonOperator")
+    metric_name: "PerformanceMetric" = Field(..., alias="metricName")
+    threshold: float = Field(..., description="The performance threshold value.")
+
+    model_config = {'populate_by_name': True}
+
+
+class timeOfDay(BaseModel):
+    end_time: Optional[str] = Field(None, alias="endTime", description="The end time of intra-day budget rule window in the format 'hh:mm:ss'. Required to be greater than start-time.")
+    start_time: Optional[str] = Field(None, alias="startTime", description="The start time of intra-day budget rule window in the format 'hh:mm:ss'")
+
+    model_config = {'populate_by_name': True}
+
+
+class RecurrenceType(StrEnum):
+    DAILY = "DAILY"
+    WEEKLY = "WEEKLY"
+
+
+class DayOfWeek(StrEnum):
+    FRIDAY = "FRIDAY"
+    MONDAY = "MONDAY"
+    SATURDAY = "SATURDAY"
+    SUNDAY = "SUNDAY"
+    THURSDAY = "THURSDAY"
+    TUESDAY = "TUESDAY"
+    WEDNESDAY = "WEDNESDAY"
+
+
+class Recurrence(BaseModel):
+    days_of_week: Optional[list["DayOfWeek"]] = Field(None, alias="daysOfWeek", description="Object representing days of the week for weekly type rule. It is not required for daily recurrence type")
+    intra_day_schedule: Optional[list["timeOfDay"]] = Field(None, alias="intraDaySchedule", description="List of objects representing start and end time of desired intra-day budget rule window")
+    type_: Optional["RecurrenceType"] = Field(None, alias="type")
+
+    model_config = {'populate_by_name': True}
+
+
+class SDRuleType(StrEnum):
+    PERFORMANCE = "PERFORMANCE"
+    SCHEDULE = "SCHEDULE"
+
+
 class EventTypeRuleDuration(BaseModel):
     """Object representing event type rule duration."""
     end_date: Optional[str] = Field(None, alias="endDate", description="The event end date in YYYYMMDD format. Read-only.")
@@ -140,61 +190,11 @@ class RuleDuration(BaseModel):
     model_config = {'populate_by_name': True}
 
 
-class PerformanceMetric(StrEnum):
-    ACOS = "ACOS"
-    CTR = "CTR"
-    CVR = "CVR"
-    ROAS = "ROAS"
-
-
-class PerformanceMeasureCondition(BaseModel):
-    comparison_operator: "ComparisonOperator" = Field(..., alias="comparisonOperator")
-    metric_name: "PerformanceMetric" = Field(..., alias="metricName")
-    threshold: float = Field(..., description="The performance threshold value.")
-
-    model_config = {'populate_by_name': True}
-
-
-class timeOfDay(BaseModel):
-    end_time: Optional[str] = Field(None, alias="endTime", description="The end time of intra-day budget rule window in the format 'hh:mm:ss'. Required to be greater than start-time.")
-    start_time: Optional[str] = Field(None, alias="startTime", description="The start time of intra-day budget rule window in the format 'hh:mm:ss'")
-
-    model_config = {'populate_by_name': True}
-
-
-class DayOfWeek(StrEnum):
-    FRIDAY = "FRIDAY"
-    MONDAY = "MONDAY"
-    SATURDAY = "SATURDAY"
-    SUNDAY = "SUNDAY"
-    THURSDAY = "THURSDAY"
-    TUESDAY = "TUESDAY"
-    WEDNESDAY = "WEDNESDAY"
-
-
-class RecurrenceType(StrEnum):
-    DAILY = "DAILY"
-    WEEKLY = "WEEKLY"
-
-
-class Recurrence(BaseModel):
-    days_of_week: Optional[list["DayOfWeek"]] = Field(None, alias="daysOfWeek", description="Object representing days of the week for weekly type rule. It is not required for daily recurrence type")
-    intra_day_schedule: Optional[list["timeOfDay"]] = Field(None, alias="intraDaySchedule", description="List of objects representing start and end time of desired intra-day budget rule window")
-    type_: Optional["RecurrenceType"] = Field(None, alias="type")
-
-    model_config = {'populate_by_name': True}
-
-
 class budgetIncreaseBy(BaseModel):
     type_: "BudgetChangeType" = Field(..., alias="type")
     value: float = Field(..., description="The budget value.")
 
     model_config = {'populate_by_name': True}
-
-
-class SDRuleType(StrEnum):
-    PERFORMANCE = "PERFORMANCE"
-    SCHEDULE = "SCHEDULE"
 
 
 class SDBudgetRuleDetails(BaseModel):
@@ -280,13 +280,13 @@ class SDASIN(BaseModel):
     pass
 
 
-class SDLandingPageType(StrEnum):
-    OFF_AMAZON_LINK = "OFF_AMAZON_LINK"
-
-
 class SDLandingPageURL(BaseModel):
     """The URL where customers will land after clicking on its link. Must be provided if landingPageType field is set. This field is not supported when using asin field. ||Specifications| |------------------"""
     pass
+
+
+class SDLandingPageType(StrEnum):
+    OFF_AMAZON_LINK = "OFF_AMAZON_LINK"
 
 
 class SDAdvertisedProduct(BaseModel):
@@ -866,30 +866,6 @@ class SDTacticV31(StrEnum):
     REMARKETING = "remarketing"
 
 
-class SDTargetingPredicateV31Type(StrEnum):
-    ASINAGERANGESAMEAS = "asinAgeRangeSameAs"
-    ASINBRANDSAMEAS = "asinBrandSameAs"
-    ASINCATEGORYSAMEAS = "asinCategorySameAs"
-    ASINGENRESAMEAS = "asinGenreSameAs"
-    ASINISPRIMESHIPPINGELIGIBLE = "asinIsPrimeShippingEligible"
-    ASINPRICEBETWEEN = "asinPriceBetween"
-    ASINPRICEGREATERTHAN = "asinPriceGreaterThan"
-    ASINPRICELESSTHAN = "asinPriceLessThan"
-    ASINREVIEWRATINGBETWEEN = "asinReviewRatingBetween"
-    ASINREVIEWRATINGGREATERTHAN = "asinReviewRatingGreaterThan"
-    ASINREVIEWRATINGLESSTHAN = "asinReviewRatingLessThan"
-    ASINSAMEAS = "asinSameAs"
-    SIMILARPRODUCT = "similarProduct"
-
-
-class SDTargetingPredicateV31(BaseModel):
-    """A predicate to match against in the Targeting Expression (only applicable to Product targeting - T00020).  * All IDs passed for category and brand-targeting predicates must be valid IDs in the Amazon """
-    type_: SDTargetingPredicateV31Type = Field(..., alias="type")
-    value: Optional[str] = Field(None, description="The value to be targeted.")
-
-    model_config = {'populate_by_name': True}
-
-
 class SDTargetingPredicateBaseV31Type(StrEnum):
     ASINAGERANGESAMEAS = "asinAgeRangeSameAs"
     ASINBRANDSAMEAS = "asinBrandSameAs"
@@ -928,6 +904,30 @@ class SDTargetingPredicateNestedV31(BaseModel):
     """A behavioral event and list of targeting predicates that represents an Audience to target (only applicable to Audience targeting - T00030).  * For auto ASIN-grain targeting, the value array must conta"""
     type_: SDTargetingPredicateNestedV31Type = Field(..., alias="type")
     value: list["SDTargetingPredicateBaseV31"]
+
+    model_config = {'populate_by_name': True}
+
+
+class SDTargetingPredicateV31Type(StrEnum):
+    ASINAGERANGESAMEAS = "asinAgeRangeSameAs"
+    ASINBRANDSAMEAS = "asinBrandSameAs"
+    ASINCATEGORYSAMEAS = "asinCategorySameAs"
+    ASINGENRESAMEAS = "asinGenreSameAs"
+    ASINISPRIMESHIPPINGELIGIBLE = "asinIsPrimeShippingEligible"
+    ASINPRICEBETWEEN = "asinPriceBetween"
+    ASINPRICEGREATERTHAN = "asinPriceGreaterThan"
+    ASINPRICELESSTHAN = "asinPriceLessThan"
+    ASINREVIEWRATINGBETWEEN = "asinReviewRatingBetween"
+    ASINREVIEWRATINGGREATERTHAN = "asinReviewRatingGreaterThan"
+    ASINREVIEWRATINGLESSTHAN = "asinReviewRatingLessThan"
+    ASINSAMEAS = "asinSameAs"
+    SIMILARPRODUCT = "similarProduct"
+
+
+class SDTargetingPredicateV31(BaseModel):
+    """A predicate to match against in the Targeting Expression (only applicable to Product targeting - T00020).  * All IDs passed for category and brand-targeting predicates must be valid IDs in the Amazon """
+    type_: SDTargetingPredicateV31Type = Field(..., alias="type")
+    value: Optional[str] = Field(None, description="The value to be targeted.")
 
     model_config = {'populate_by_name': True}
 

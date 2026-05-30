@@ -136,6 +136,11 @@ class TimeGrain(StrEnum):
     WEEKLY = "WEEKLY"
 
 
+class Level(StrEnum):
+    AD_GROUP = "AD_GROUP"
+    CAMPAIGN = "CAMPAIGN"
+
+
 class FrequencyDistributionMetricName(StrEnum):
     COMBINED_ROAS = "COMBINED_ROAS"
     COMPLETION_RATE = "COMPLETION_RATE"
@@ -177,11 +182,6 @@ class FrequencyDistributionMetric(BaseModel):
     no_data_reason_code: Optional["FrequencyDistributionNoDataReasonCode"] = Field(None, alias="noDataReasonCode")
 
     model_config = {'populate_by_name': True}
-
-
-class Level(StrEnum):
-    AD_GROUP = "AD_GROUP"
-    CAMPAIGN = "CAMPAIGN"
 
 
 class FrequencyDistributionItem(BaseModel):

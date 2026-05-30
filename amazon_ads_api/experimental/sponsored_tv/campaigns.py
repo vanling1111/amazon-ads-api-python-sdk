@@ -74,6 +74,16 @@ class SponsoredTVCampaignsAPI(_GenBase):
         )
         return result if isinstance(result, dict) else {"campaigns": []}
 
+    async def get_campaign(self, campaign_id: str) -> JSONData:
+        """获取单个Sponsored TV广告活动
+
+        STV 没有独立的 GET endpoint，通过 list_campaigns 加
+        campaignIdFilter 实现。
+        """
+        result = await self.list_campaigns(campaign_ids=[campaign_id], max_results=1)
+        campaigns = result.get("campaigns", [])
+        return campaigns[0] if campaigns else {}
+
     async def update_campaigns(
         self,
         campaigns: list[dict[str, Any]],

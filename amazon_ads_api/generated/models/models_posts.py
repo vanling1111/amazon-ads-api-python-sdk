@@ -87,6 +87,13 @@ class PostStatus(StrEnum):
     WITHDRAWN = "WITHDRAWN"
 
 
+class PromotionMetadata(BaseModel):
+    """Metadata related to promoting a post to ad."""
+    is_eligible_for_promotion: Optional[bool] = Field(None, alias="isEligibleForPromotion", description="Whether the post is eligible for promotion.")
+
+    model_config = {'populate_by_name': True}
+
+
 class RejectionEvidenceType(StrEnum):
     ASIN = "ASIN"
     DUPLICATE_IMAGE = "DUPLICATE_IMAGE"
@@ -113,13 +120,6 @@ class StatusMetadata(BaseModel):
     """Additional data about the status of a post/profile."""
     media_defects: Optional[list[str]] = Field(None, alias="mediaDefects", description="Quality defects that can affect the impressions/engagement of a post.")
     rejection_reasons: Optional[list["RejectionReason"]] = Field(None, alias="rejectionReasons", description="A list of rejection reasons.")
-
-    model_config = {'populate_by_name': True}
-
-
-class PromotionMetadata(BaseModel):
-    """Metadata related to promoting a post to ad."""
-    is_eligible_for_promotion: Optional[bool] = Field(None, alias="isEligibleForPromotion", description="Whether the post is eligible for promotion.")
 
     model_config = {'populate_by_name': True}
 
@@ -155,16 +155,11 @@ class CreatePostResponseContent(BaseModel):
     model_config = {'populate_by_name': True}
 
 
-class ProductIneligibilityCode(StrEnum):
-    INVALID = "INVALID"
-    PROHIBITED = "PROHIBITED"
-    UNAUTHORIZED = "UNAUTHORIZED"
-
-
-class IneligibleProduct(BaseModel):
-    """A product that is not eligible to be added to a post, along with the reason code."""
-    asin: Optional[str] = Field(None, description="Identifier for a product on Amazon.")
-    ineligibility_code: Optional["ProductIneligibilityCode"] = Field(None, alias="ineligibilityCode")
+class ProductPriceSummary(BaseModel):
+    basis_price: Optional[str] = Field(None, alias="basisPrice")
+    max_price: Optional[str] = Field(None, alias="maxPrice")
+    min_price: Optional[str] = Field(None, alias="minPrice")
+    winning_price: Optional[str] = Field(None, alias="winningPrice")
 
     model_config = {'populate_by_name': True}
 
@@ -179,15 +174,6 @@ class ProductReviewSummary(BaseModel):
     model_config = {'populate_by_name': True}
 
 
-class ProductPriceSummary(BaseModel):
-    basis_price: Optional[str] = Field(None, alias="basisPrice")
-    max_price: Optional[str] = Field(None, alias="maxPrice")
-    min_price: Optional[str] = Field(None, alias="minPrice")
-    winning_price: Optional[str] = Field(None, alias="winningPrice")
-
-    model_config = {'populate_by_name': True}
-
-
 class Product(BaseModel):
     availability: Optional[str] = None
     customer_review_summary: Optional["ProductReviewSummary"] = Field(None, alias="customerReviewSummary")
@@ -197,6 +183,20 @@ class Product(BaseModel):
     is_prime: Optional[bool] = Field(None, alias="isPrime")
     name: Optional[str] = None
     price_summary: Optional["ProductPriceSummary"] = Field(None, alias="priceSummary")
+
+    model_config = {'populate_by_name': True}
+
+
+class ProductIneligibilityCode(StrEnum):
+    INVALID = "INVALID"
+    PROHIBITED = "PROHIBITED"
+    UNAUTHORIZED = "UNAUTHORIZED"
+
+
+class IneligibleProduct(BaseModel):
+    """A product that is not eligible to be added to a post, along with the reason code."""
+    asin: Optional[str] = Field(None, description="Identifier for a product on Amazon.")
+    ineligibility_code: Optional["ProductIneligibilityCode"] = Field(None, alias="ineligibilityCode")
 
     model_config = {'populate_by_name': True}
 
@@ -297,19 +297,28 @@ class InternalServerExceptionResponseContent(BaseModel):
     model_config = {'populate_by_name': True}
 
 
-class MetricName(StrEnum):
-    CLICKTHROUGHRATE = "clickThroughRate"
-    CLICKSTOBRANDSTORE = "clicksToBrandStore"
-    CLICKSTODETAILPAGE = "clicksToDetailPage"
-    CLICKSTOFOLLOW = "clicksToFollow"
-    ENGAGEMENT = "engagement"
-    IMPRESSIONS = "impressions"
-    REACH = "reach"
+class PostListFilterField(StrEnum):
+    CAPTION = "caption"
+    CREATEDDATE = "createdDate"
+    FLAGGEDFORQUALITY = "flaggedForQuality"
+    STATE = "state"
 
 
-class PostListSortOrder(StrEnum):
-    ASC = "ASC"
-    DESC = "DESC"
+class PostListFilterType(StrEnum):
+    RANGE = "RANGE"
+    TEXT = "TEXT"
+    VALUES = "VALUES"
+
+
+class PostListFilter(BaseModel):
+    """A post filter."""
+    end_date: Optional[str] = Field(None, alias="endDate", description="End date for a date range filter.")
+    field_name: Optional["PostListFilterField"] = Field(None, alias="fieldName")
+    filter_type: Optional["PostListFilterType"] = Field(None, alias="filterType")
+    start_date: Optional[str] = Field(None, alias="startDate", description="Start date for a date range filter.")
+    values: Optional[list[str]] = Field(None, description="Specifies a list of values to filter by. Applies only for filters of type VALUES and TEXT.")
+
+    model_config = {'populate_by_name': True}
 
 
 class PostListSortField(StrEnum):
@@ -325,6 +334,11 @@ class PostListSortField(StrEnum):
     STATE = "state"
 
 
+class PostListSortOrder(StrEnum):
+    ASC = "ASC"
+    DESC = "DESC"
+
+
 class PostListSortCriterion(BaseModel):
     """The criteria to determine how to sort a list of posts. Consists of the field to sort by, and the order."""
     sort_field: Optional["PostListSortField"] = Field(None, alias="sortField")
@@ -333,28 +347,14 @@ class PostListSortCriterion(BaseModel):
     model_config = {'populate_by_name': True}
 
 
-class PostListFilterType(StrEnum):
-    RANGE = "RANGE"
-    TEXT = "TEXT"
-    VALUES = "VALUES"
-
-
-class PostListFilterField(StrEnum):
-    CAPTION = "caption"
-    CREATEDDATE = "createdDate"
-    FLAGGEDFORQUALITY = "flaggedForQuality"
-    STATE = "state"
-
-
-class PostListFilter(BaseModel):
-    """A post filter."""
-    end_date: Optional[str] = Field(None, alias="endDate", description="End date for a date range filter.")
-    field_name: Optional["PostListFilterField"] = Field(None, alias="fieldName")
-    filter_type: Optional["PostListFilterType"] = Field(None, alias="filterType")
-    start_date: Optional[str] = Field(None, alias="startDate", description="Start date for a date range filter.")
-    values: Optional[list[str]] = Field(None, description="Specifies a list of values to filter by. Applies only for filters of type VALUES and TEXT.")
-
-    model_config = {'populate_by_name': True}
+class MetricName(StrEnum):
+    CLICKTHROUGHRATE = "clickThroughRate"
+    CLICKSTOBRANDSTORE = "clicksToBrandStore"
+    CLICKSTODETAILPAGE = "clicksToDetailPage"
+    CLICKSTOFOLLOW = "clicksToFollow"
+    ENGAGEMENT = "engagement"
+    IMPRESSIONS = "impressions"
+    REACH = "reach"
 
 
 class ListPostsRequestContent(BaseModel):

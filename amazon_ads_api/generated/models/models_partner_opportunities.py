@@ -247,6 +247,28 @@ class PartnerOpportunitiesOpportunitiesPageV1(BaseModel):
     model_config = {'populate_by_name': True}
 
 
+class PartnerOpportunitiesOpportunityProductFilterSummaryV1Value(StrEnum):
+    AMAZON_DSP = "AMAZON_DSP"
+    AMAZON_LIVE = "AMAZON_LIVE"
+    CROSS_PRODUCT = "CROSS_PRODUCT"
+    POSTS = "POSTS"
+    SPONSORED_BRANDS = "SPONSORED_BRANDS"
+    SPONSORED_BRANDS_VIDEO = "SPONSORED_BRANDS_VIDEO"
+    SPONSORED_DISPLAY = "SPONSORED_DISPLAY"
+    SPONSORED_DISPLAY_VIDEO = "SPONSORED_DISPLAY_VIDEO"
+    SPONSORED_PRODUCTS = "SPONSORED_PRODUCTS"
+    SPONSORED_TV = "SPONSORED_TV"
+    STORES = "STORES"
+    VIDEO_ADS = "VIDEO_ADS"
+
+
+class PartnerOpportunitiesOpportunityProductFilterSummaryV1(BaseModel):
+    count: float
+    value: PartnerOpportunitiesOpportunityProductFilterSummaryV1Value
+
+    model_config = {'populate_by_name': True}
+
+
 class PartnerOpportunitiesOpportunityObjectiveTypeFilterSummaryV1Value(StrEnum):
     ADVERTISER_INSIGHTS = "ADVERTISER_INSIGHTS"
     AD_API_ENDPOINT_ADOPTION = "AD_API_ENDPOINT_ADOPTION"
@@ -269,28 +291,6 @@ class PartnerOpportunitiesOpportunityObjectiveTypeFilterSummaryV1Value(StrEnum):
 class PartnerOpportunitiesOpportunityObjectiveTypeFilterSummaryV1(BaseModel):
     count: float
     value: PartnerOpportunitiesOpportunityObjectiveTypeFilterSummaryV1Value
-
-    model_config = {'populate_by_name': True}
-
-
-class PartnerOpportunitiesOpportunityProductFilterSummaryV1Value(StrEnum):
-    AMAZON_DSP = "AMAZON_DSP"
-    AMAZON_LIVE = "AMAZON_LIVE"
-    CROSS_PRODUCT = "CROSS_PRODUCT"
-    POSTS = "POSTS"
-    SPONSORED_BRANDS = "SPONSORED_BRANDS"
-    SPONSORED_BRANDS_VIDEO = "SPONSORED_BRANDS_VIDEO"
-    SPONSORED_DISPLAY = "SPONSORED_DISPLAY"
-    SPONSORED_DISPLAY_VIDEO = "SPONSORED_DISPLAY_VIDEO"
-    SPONSORED_PRODUCTS = "SPONSORED_PRODUCTS"
-    SPONSORED_TV = "SPONSORED_TV"
-    STORES = "STORES"
-    VIDEO_ADS = "VIDEO_ADS"
-
-
-class PartnerOpportunitiesOpportunityProductFilterSummaryV1(BaseModel):
-    count: float
-    value: PartnerOpportunitiesOpportunityProductFilterSummaryV1Value
 
     model_config = {'populate_by_name': True}
 

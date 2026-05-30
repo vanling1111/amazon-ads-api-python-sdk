@@ -170,6 +170,28 @@ class TestFullGeneration:
         assert len(model_files) >= 70
         assert len(client_files) >= 70
 
+    def test_generated_registry_covers_all_clients(self):
+        from scripts.audit_coverage import audit
+
+        report = audit()
+        assert report["complete"] is True
+        assert report["generated_client_modules"] >= 78
+        assert report["total_operations"] >= 690
+
+    def test_amazon_ads_client_generated_accessor(self):
+        from amazon_ads_api import AmazonAdsClient, AdsRegion
+
+        client = AmazonAdsClient(
+            client_id="x",
+            client_secret="y",
+            refresh_token="z",
+            profile_id="123",
+            region=AdsRegion.NA,
+        )
+        assert "marketing_stream" in client.generated.module_names()
+        assert hasattr(client.generated.marketing_stream, "create_stream_subscription")
+        assert hasattr(client.reference.stream.subscriptions, "create_subscription")
+
     def test_all_generated_files_valid_syntax(self):
         gen_dir = SDK_ROOT / "amazon_ads_api" / "generated"
         for subdir in ["models", "clients"]:

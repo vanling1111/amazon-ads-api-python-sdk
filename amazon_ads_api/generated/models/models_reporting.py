@@ -13,6 +13,13 @@ from pydantic import BaseModel, Field  # noqa: F401
 
 
 
+class AsyncReportFilter(BaseModel):
+    field: Optional[str] = Field(None, description="The field name of the filter")
+    values: Optional[list[str]] = Field(None, description="The values to be filtered by")
+
+    model_config = {'populate_by_name': True}
+
+
 class AsyncReportAdProduct(StrEnum):
     ALL = "ALL"
     DEMAND_SIDE_PLATFORM = "DEMAND_SIDE_PLATFORM"
@@ -20,13 +27,6 @@ class AsyncReportAdProduct(StrEnum):
     SPONSORED_DISPLAY = "SPONSORED_DISPLAY"
     SPONSORED_PRODUCTS = "SPONSORED_PRODUCTS"
     SPONSORED_TELEVISION = "SPONSORED_TELEVISION"
-
-
-class AsyncReportFilter(BaseModel):
-    field: Optional[str] = Field(None, description="The field name of the filter")
-    values: Optional[list[str]] = Field(None, description="The values to be filtered by")
-
-    model_config = {'populate_by_name': True}
 
 
 class AsyncReportConfigurationFormat(StrEnum):

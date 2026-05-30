@@ -30,18 +30,18 @@ class Property(BaseModel):
     model_config = {'populate_by_name': True}
 
 
-class SellingBusinessIdentifier(BaseModel):
-    type_: str = Field(..., alias="type")
-    value: Optional[str] = None
-
-    model_config = {'populate_by_name': True}
-
-
 class Status(StrEnum):
     PENDING = "PENDING"
     PARTIALLY_CREATED = "PARTIALLY_CREATED"
     CREATED = "CREATED"
     DISABLED = "DISABLED"
+
+
+class SellingBusinessIdentifier(BaseModel):
+    type_: str = Field(..., alias="type")
+    value: Optional[str] = None
+
+    model_config = {'populate_by_name': True}
 
 
 class Account(BaseModel):

@@ -13,6 +13,71 @@ from pydantic import BaseModel, Field  # noqa: F401
 
 
 
+class MonetaryValue(BaseModel):
+    amount: float
+    currency_code: str = Field(..., alias="currencyCode")
+
+    model_config = {'populate_by_name': True}
+
+
+class AdSpend(BaseModel):
+    value: "MonetaryValue"
+
+    model_config = {'populate_by_name': True}
+
+
+class TargetingPerformanceBaseline(StrEnum):
+    ABOVE = "ABOVE"
+    AT_BASELINE = "AT_BASELINE"
+    BELOW = "BELOW"
+
+
+class NumericMetricValue(BaseModel):
+    baseline: "TargetingPerformanceBaseline"
+    value: float
+
+    model_config = {'populate_by_name': True}
+
+
+class MonetaryMetricValue(BaseModel):
+    baseline: "TargetingPerformanceBaseline"
+    value: "MonetaryValue"
+
+    model_config = {'populate_by_name': True}
+
+
+class TargetingPerformanceTargetType(StrEnum):
+    PRODUCT_CATEGORY = "PRODUCT_CATEGORY"
+    PRODUCT_COMPLEMENTS = "PRODUCT_COMPLEMENTS"
+    PRODUCT_REMARKETING = "PRODUCT_REMARKETING"
+    PRODUCT_SIMILAR = "PRODUCT_SIMILAR"
+
+
+class Impressions(BaseModel):
+    value: int
+
+    model_config = {'populate_by_name': True}
+
+
+class TargetingPerformanceTarget(BaseModel):
+    ad_spend: "AdSpend" = Field(..., alias="adSpend")
+    cost_per_action: Optional["MonetaryMetricValue"] = Field(None, alias="costPerAction")
+    detail_page_view_rate: Optional["NumericMetricValue"] = Field(None, alias="detailPageViewRate")
+    id_: str = Field(..., alias="id")
+    impressions: "Impressions"
+    return_on_advertiser_spend: Optional["NumericMetricValue"] = Field(None, alias="returnOnAdvertiserSpend")
+    type_: "TargetingPerformanceTargetType" = Field(..., alias="type")
+    video_completion_rate: Optional["NumericMetricValue"] = Field(None, alias="videoCompletionRate")
+
+    model_config = {'populate_by_name': True}
+
+
+class TargetingPerformanceInsight(BaseModel):
+    targets: list["TargetingPerformanceTarget"]
+
+    model_config = {'populate_by_name': True}
+
+
 class PerformancePlusShopperTrait(BaseModel):
     cost: Optional[float] = None
     impression_share: float = Field(..., alias="impressionShare")
@@ -27,6 +92,13 @@ class PerformancePlusShopperTrait(BaseModel):
     model_config = {'populate_by_name': True}
 
 
+class TimeToConvertBucket(BaseModel):
+    conversion_share: float = Field(..., alias="conversionShare")
+    range: str
+
+    model_config = {'populate_by_name': True}
+
+
 class PerformancePlusTargetingTactic(StrEnum):
     ALL = "All"
     CUSTOMER_ACQUISITION = "Customer Acquisition"
@@ -34,13 +106,6 @@ class PerformancePlusTargetingTactic(StrEnum):
     REMARKETING = "Remarketing"
     RETENTION = "Retention"
     UNIFIED_CONSIDERATION = "Unified Consideration"
-
-
-class TimeToConvertBucket(BaseModel):
-    conversion_share: float = Field(..., alias="conversionShare")
-    range: str
-
-    model_config = {'populate_by_name': True}
 
 
 class PerformancePlusShopperTraitInsight(BaseModel):
@@ -147,6 +212,7 @@ class ErrorResponse(BaseModel):
 
 class InsightType(StrEnum):
     PERFORMANCE_PLUS_SHOPPER_TRAIT = "PERFORMANCE_PLUS_SHOPPER_TRAIT"
+    TARGETING_PERFORMANCE = "TARGETING_PERFORMANCE"
 
 
 class InsightRequest(BaseModel):

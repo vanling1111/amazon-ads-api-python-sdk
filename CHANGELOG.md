@@ -5,6 +5,40 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.3.0] - 2026-05-30
+
+### Added
+- **`client.generated.<module>` registry** — lazy access to all 78 OpenAPI-generated
+  client modules (`client.generated.marketing_stream.create_stream_subscription`, etc.)
+- **`scripts/audit_coverage.py`** — verifies every active spec module has a generated
+  client and registry entry
+- **Unified Ads API GA** (`unified_ga`) — codegen enabled for
+  `AmazonAdsAPIALLMerged_prod_3p.json` (+50 operations)
+
+### Changed
+- Refreshed **14 official Amazon OpenAPI specs** from CDN (billing, guidance,
+  recommendations, unified GA, ads data manager, and others)
+- Full regeneration: **699 deduplicated API operations** (723 raw across 78 specs),
+  **5978 model classes**, **78 client modules**
+- **`billing_legacy`**, **`dsp_advertiser`**, **`validation_configs`** specs kept in
+  repo for reference but `generate: false` — paths covered by `billing`, `dsp_*`, and
+  `data_provider` after conflict resolution
+- **`reference.stream.subscriptions`** now delegates to generated
+  `MarketingStreamClient` with official request/response fields
+  (`clientRequestToken`, `dataSetId`, `destinationArn` / `sqsDestination.queueArn`)
+- Codegen now emits `amazon_ads_api/generated/registry.py` on every regenerate
+
+### Fixed
+- Hand-written Marketing Stream wrapper drift vs official
+  `AmazonMarketingStream_prod_3p.json` (wrong field names, missing content-type)
+
+## [2.2.1] - 2026-05-30
+
+### Fixed
+- `client.reference.stream.subscriptions` path restored to match migration guide
+- Marketing Stream subscription calls use generated OpenAPI client instead of missing
+  `client.stream.subscriptions` shim
+
 ## [2.1.0] - 2026-04-10
 
 ### Added

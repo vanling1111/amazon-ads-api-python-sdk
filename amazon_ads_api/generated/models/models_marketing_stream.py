@@ -20,16 +20,16 @@ class AccessForbiddenErrorResponseContent(BaseModel):
     model_config = {'populate_by_name': True}
 
 
-class SqsDestination(BaseModel):
-    queue_arn: str = Field(..., alias="queueArn")
-
-    model_config = {'populate_by_name': True}
-
-
 class FirehoseDestination(BaseModel):
     delivery_stream_arn: str = Field(..., alias="deliveryStreamArn")
     subscriber_role_arn: str = Field(..., alias="subscriberRoleArn")
     subscription_role_arn: str = Field(..., alias="subscriptionRoleArn")
+
+    model_config = {'populate_by_name': True}
+
+
+class SqsDestination(BaseModel):
+    queue_arn: str = Field(..., alias="queueArn")
 
     model_config = {'populate_by_name': True}
 

@@ -24,10 +24,6 @@ class RASv1AccessDeniedExceptionResponseContent(BaseModel):
     model_config = {'populate_by_name': True}
 
 
-class RASv1AdEligibilityErrorReason(StrEnum):
-    AD_INELIGIBLE = "AD_INELIGIBLE"
-
-
 class RASv1ErrorCause(BaseModel):
     """Structure describing error cause - location in the payload and data causing error"""
     location: str = Field(..., description="Error location, JSON Path expression specifying element of API payload causing error")
@@ -40,45 +36,16 @@ class RASv1Marketplace(StrEnum):
     US = "US"
 
 
+class RASv1AdEligibilityErrorReason(StrEnum):
+    AD_INELIGIBLE = "AD_INELIGIBLE"
+
+
 class RASv1AdEligibilityError(BaseModel):
     """Errors related to ad eligibility"""
     cause: Optional["RASv1ErrorCause"] = None
     marketplace: Optional["RASv1Marketplace"] = None
     message: str = Field(..., description="Human readable error message")
     reason: "RASv1AdEligibilityErrorReason"
-
-    model_config = {'populate_by_name': True}
-
-
-class RASv1InternalServerErrorReason(StrEnum):
-    INTERNAL_ERROR = "INTERNAL_ERROR"
-
-
-class RASv1InternalServerError(BaseModel):
-    """Error that represents non-retryable API service error. Sending the same request will result in another error."""
-    cause: Optional["RASv1ErrorCause"] = None
-    message: str = Field(..., description="Human readable error message")
-    reason: "RASv1InternalServerErrorReason"
-
-    model_config = {'populate_by_name': True}
-
-
-class RASv1ValueLimitErrorReason(StrEnum):
-    INVALID_ENUM_VALUE = "INVALID_ENUM_VALUE"
-    NOT_IN_LIST = "NOT_IN_LIST"
-    TOO_HIGH = "TOO_HIGH"
-    TOO_LOW = "TOO_LOW"
-
-
-class RASv1RangeError(BaseModel):
-    """Errors related to range constraints violations"""
-    allowed: Optional[list[str]] = Field(None, description="allowed values")
-    cause: Optional["RASv1ErrorCause"] = None
-    lower_limit: Optional[str] = Field(None, alias="lowerLimit", description="optional lower limit")
-    marketplace: Optional["RASv1Marketplace"] = None
-    message: str = Field(..., description="Human readable error message")
-    reason: "RASv1ValueLimitErrorReason"
-    upper_limit: Optional[str] = Field(None, alias="upperLimit", description="optional upper limit")
 
     model_config = {'populate_by_name': True}
 
@@ -109,22 +76,15 @@ class RASv1EntityNotFoundError(BaseModel):
     model_config = {'populate_by_name': True}
 
 
-class RASv1MalformedValueErrorReason(StrEnum):
-    BLANK = "BLANK"
-    FORBIDDEN_CHARS = "FORBIDDEN_CHARS"
-    LEADING_OR_TRAILING_WHITESPACE = "LEADING_OR_TRAILING_WHITESPACE"
-    PATTERN_NOT_MATCHED = "PATTERN_NOT_MATCHED"
-    TOO_LONG = "TOO_LONG"
-    TOO_SHORT = "TOO_SHORT"
+class RASv1ThrottledErrorReason(StrEnum):
+    THROTTLED = "THROTTLED"
 
 
-class RASv1MalformedValueError(BaseModel):
-    """Errors being used to represent malformed values e.g. containing not allowed characters, not following patters etc"""
+class RASv1ThrottledError(BaseModel):
+    """Error that represents failure due to API caller exceeding allowed service limits."""
     cause: Optional["RASv1ErrorCause"] = None
-    fragment: Optional[str] = Field(None, description="fragment of the value which is wrong")
-    marketplace: Optional["RASv1Marketplace"] = None
     message: str = Field(..., description="Human readable error message")
-    reason: "RASv1MalformedValueErrorReason"
+    reason: "RASv1ThrottledErrorReason"
 
     model_config = {'populate_by_name': True}
 
@@ -143,15 +103,22 @@ class RASv1MissingValueError(BaseModel):
     model_config = {'populate_by_name': True}
 
 
-class RASv1ThrottledErrorReason(StrEnum):
-    THROTTLED = "THROTTLED"
+class RASv1ValueLimitErrorReason(StrEnum):
+    INVALID_ENUM_VALUE = "INVALID_ENUM_VALUE"
+    NOT_IN_LIST = "NOT_IN_LIST"
+    TOO_HIGH = "TOO_HIGH"
+    TOO_LOW = "TOO_LOW"
 
 
-class RASv1ThrottledError(BaseModel):
-    """Error that represents failure due to API caller exceeding allowed service limits."""
+class RASv1RangeError(BaseModel):
+    """Errors related to range constraints violations"""
+    allowed: Optional[list[str]] = Field(None, description="allowed values")
     cause: Optional["RASv1ErrorCause"] = None
+    lower_limit: Optional[str] = Field(None, alias="lowerLimit", description="optional lower limit")
+    marketplace: Optional["RASv1Marketplace"] = None
     message: str = Field(..., description="Human readable error message")
-    reason: "RASv1ThrottledErrorReason"
+    reason: "RASv1ValueLimitErrorReason"
+    upper_limit: Optional[str] = Field(None, alias="upperLimit", description="optional upper limit")
 
     model_config = {'populate_by_name': True}
 
@@ -166,6 +133,39 @@ class RASv1OtherError(BaseModel):
     marketplace: Optional["RASv1Marketplace"] = None
     message: str = Field(..., description="Human readable error message")
     reason: "RASv1OtherErrorReason"
+
+    model_config = {'populate_by_name': True}
+
+
+class RASv1InternalServerErrorReason(StrEnum):
+    INTERNAL_ERROR = "INTERNAL_ERROR"
+
+
+class RASv1InternalServerError(BaseModel):
+    """Error that represents non-retryable API service error. Sending the same request will result in another error."""
+    cause: Optional["RASv1ErrorCause"] = None
+    message: str = Field(..., description="Human readable error message")
+    reason: "RASv1InternalServerErrorReason"
+
+    model_config = {'populate_by_name': True}
+
+
+class RASv1MalformedValueErrorReason(StrEnum):
+    BLANK = "BLANK"
+    FORBIDDEN_CHARS = "FORBIDDEN_CHARS"
+    LEADING_OR_TRAILING_WHITESPACE = "LEADING_OR_TRAILING_WHITESPACE"
+    PATTERN_NOT_MATCHED = "PATTERN_NOT_MATCHED"
+    TOO_LONG = "TOO_LONG"
+    TOO_SHORT = "TOO_SHORT"
+
+
+class RASv1MalformedValueError(BaseModel):
+    """Errors being used to represent malformed values e.g. containing not allowed characters, not following patters etc"""
+    cause: Optional["RASv1ErrorCause"] = None
+    fragment: Optional[str] = Field(None, description="fragment of the value which is wrong")
+    marketplace: Optional["RASv1Marketplace"] = None
+    message: str = Field(..., description="Human readable error message")
+    reason: "RASv1MalformedValueErrorReason"
 
     model_config = {'populate_by_name': True}
 
@@ -283,19 +283,6 @@ class RASv1AdGroupExtendedData(BaseModel):
     model_config = {'populate_by_name': True}
 
 
-class RASv1ParentEntityErrorReason(StrEnum):
-    PARENT_ENTITY_NOT_FOUND = "PARENT_ENTITY_NOT_FOUND"
-
-
-class RASv1ParentEntityError(BaseModel):
-    """Errors related to parent entity"""
-    cause: Optional["RASv1ErrorCause"] = None
-    message: str = Field(..., description="Human readable error message")
-    reason: "RASv1ParentEntityErrorReason"
-
-    model_config = {'populate_by_name': True}
-
-
 class RASv1EntityStateErrorReason(StrEnum):
     ARCHIVED_ENTITY_CANNOT_BE_MODIFIED = "ARCHIVED_ENTITY_CANNOT_BE_MODIFIED"
     PARENT_ARCHIVED_FORBIDS_UPDATES = "PARENT_ARCHIVED_FORBIDS_UPDATES"
@@ -326,6 +313,19 @@ class RASv1BiddingError(BaseModel):
     message: str = Field(..., description="Human readable error message")
     reason: "RASv1BiddingErrorReason"
     upper_limit: Optional[str] = Field(None, alias="upperLimit")
+
+    model_config = {'populate_by_name': True}
+
+
+class RASv1ParentEntityErrorReason(StrEnum):
+    PARENT_ENTITY_NOT_FOUND = "PARENT_ENTITY_NOT_FOUND"
+
+
+class RASv1ParentEntityError(BaseModel):
+    """Errors related to parent entity"""
+    cause: Optional["RASv1ErrorCause"] = None
+    message: str = Field(..., description="Human readable error message")
+    reason: "RASv1ParentEntityErrorReason"
 
     model_config = {'populate_by_name': True}
 
@@ -459,6 +459,13 @@ class RASv1BudgetOutput(BaseModel):
     model_config = {'populate_by_name': True}
 
 
+class RASv1MutateAdGroupFailureItem(BaseModel):
+    errors: Optional[list["RASv1AdGroupMutationError"]] = Field(None, description="A list of validation errors")
+    index: int = Field(..., description="The index of the AdGroup in the array from the request body")
+
+    model_config = {'populate_by_name': True}
+
+
 class RASv1CreateAdGroupOutput(BaseModel):
     ad_group_id: str = Field(..., alias="adGroupId", description="The identifier of the AdGroup.")
     campaign_id: str = Field(..., alias="campaignId", description="The identifier of the campaign.")
@@ -478,13 +485,6 @@ class RASv1CreateAdGroupSuccessItem(BaseModel):
     model_config = {'populate_by_name': True}
 
 
-class RASv1MutateAdGroupFailureItem(BaseModel):
-    errors: Optional[list["RASv1AdGroupMutationError"]] = Field(None, description="A list of validation errors")
-    index: int = Field(..., description="The index of the AdGroup in the array from the request body")
-
-    model_config = {'populate_by_name': True}
-
-
 class RASv1BulkCreateAdGroupsOutcomes(BaseModel):
     error: Optional[list["RASv1MutateAdGroupFailureItem"]] = None
     success: Optional[list["RASv1CreateAdGroupSuccessItem"]] = None
@@ -492,20 +492,12 @@ class RASv1BulkCreateAdGroupsOutcomes(BaseModel):
     model_config = {'populate_by_name': True}
 
 
-class RASv1Tag(BaseModel):
-    key: str
-    value: str
-
-    model_config = {'populate_by_name': True}
-
-
-class RASv1TargetingType(StrEnum):
-    AUTO = "AUTO"
-    MANUAL = "MANUAL"
-
-
 class RASv1Placement(StrEnum):
+    PLACEMENT_BROWSE_OTHER = "PLACEMENT_BROWSE_OTHER"
+    PLACEMENT_PRODUCT_PAGE = "PLACEMENT_PRODUCT_PAGE"
+    PLACEMENT_REST_OF_SEARCH = "PLACEMENT_REST_OF_SEARCH"
     PLACEMENT_TOP = "PLACEMENT_TOP"
+    PLACEMENT_TOP_BROWSE = "PLACEMENT_TOP_BROWSE"
 
 
 class RASv1PlacementBidAdjustment(BaseModel):
@@ -520,6 +512,18 @@ class RASv1RequiredDynamicBidding(BaseModel):
     strategy: "RASv1BiddingStrategy"
 
     model_config = {'populate_by_name': True}
+
+
+class RASv1Tag(BaseModel):
+    key: str
+    value: str
+
+    model_config = {'populate_by_name': True}
+
+
+class RASv1TargetingType(StrEnum):
+    AUTO = "AUTO"
+    MANUAL = "MANUAL"
 
 
 class RASv1CreateCampaignOutput(BaseModel):
@@ -604,6 +608,25 @@ class RASv1BulkCreateCampaignsOutcomes(BaseModel):
     model_config = {'populate_by_name': True}
 
 
+class RASv1CreateProductAdOutput(BaseModel):
+    ad_group_id: str = Field(..., alias="adGroupId", description="The identifier of the ad group.")
+    campaign_id: str = Field(..., alias="campaignId", description="The identifier of the campaign.")
+    product_ad_id: str = Field(..., alias="productAdId", description="The identifier of the ProductAd.")
+    retailer_id: str = Field(..., alias="retailerId", description="Id of a retailer owning the offer to be advertised")
+    retailer_offer_id: str = Field(..., alias="retailerOfferId", description="Id of the offer to be advertised, must belong to retailer identified by retailerId field")
+    state: "RASv1EntityState"
+
+    model_config = {'populate_by_name': True}
+
+
+class RASv1CreateProductAdSuccessItem(BaseModel):
+    index: int = Field(..., description="The index of the ProductAd in the array from the request body")
+    product_ad: Optional["RASv1CreateProductAdOutput"] = Field(None, alias="productAd")
+    product_ad_id: Optional[str] = Field(None, alias="productAdId", description="The identifier of the ProductAd.")
+
+    model_config = {'populate_by_name': True}
+
+
 class RASv1ProductAdMutationErrorSelector(BaseModel):
     ad_eligibility_error: Optional["RASv1AdEligibilityError"] = Field(None, alias="adEligibilityError")
     duplicate_value_error: Optional["RASv1DuplicateValueError"] = Field(None, alias="duplicateValueError")
@@ -634,28 +657,91 @@ class RASv1MutateProductAdFailureItem(BaseModel):
     model_config = {'populate_by_name': True}
 
 
-class RASv1CreateProductAdOutput(BaseModel):
-    ad_group_id: str = Field(..., alias="adGroupId", description="The identifier of the ad group.")
-    campaign_id: str = Field(..., alias="campaignId", description="The identifier of the campaign.")
-    product_ad_id: str = Field(..., alias="productAdId", description="The identifier of the ProductAd.")
-    retailer_id: str = Field(..., alias="retailerId", description="Id of a retailer owning the offer to be advertised")
-    retailer_offer_id: str = Field(..., alias="retailerOfferId", description="Id of the offer to be advertised, must belong to retailer identified by retailerId field")
-    state: "RASv1EntityState"
-
-    model_config = {'populate_by_name': True}
-
-
-class RASv1CreateProductAdSuccessItem(BaseModel):
-    index: int = Field(..., description="The index of the ProductAd in the array from the request body")
-    product_ad: Optional["RASv1CreateProductAdOutput"] = Field(None, alias="productAd")
-    product_ad_id: Optional[str] = Field(None, alias="productAdId", description="The identifier of the ProductAd.")
-
-    model_config = {'populate_by_name': True}
-
-
 class RASv1BulkCreateProductAdsOutcomes(BaseModel):
     error: Optional[list["RASv1MutateProductAdFailureItem"]] = None
     success: Optional[list["RASv1CreateProductAdSuccessItem"]] = None
+
+    model_config = {'populate_by_name': True}
+
+
+class RASv1ProductIdType(StrEnum):
+    RETAILER_OFFER = "RETAILER_OFFER"
+
+
+class RASv1ProductMatchType(StrEnum):
+    PRODUCT_EXACT = "PRODUCT_EXACT"
+
+
+class RASv1ProductTarget(BaseModel):
+    match_type: "RASv1ProductMatchType" = Field(..., alias="matchType")
+    product_id: str = Field(..., alias="productId", description="Resource identifier")
+    product_id_type: "RASv1ProductIdType" = Field(..., alias="productIdType")
+    retailer_id: Optional[str] = Field(None, alias="retailerId", description="Resource identifier")
+
+    model_config = {'populate_by_name': True}
+
+
+class RASv1KeywordMatchType(StrEnum):
+    BROAD = "BROAD"
+    EXACT = "EXACT"
+    PHRASE = "PHRASE"
+
+
+class RASv1KeywordTarget(BaseModel):
+    keyword: str
+    match_type: "RASv1KeywordMatchType" = Field(..., alias="matchType")
+
+    model_config = {'populate_by_name': True}
+
+
+class RASv1TargetDetails(BaseModel):
+    auto_target: Optional["RASv1AutoTarget"] = Field(None, alias="autoTarget")
+    keyword_target: Optional["RASv1KeywordTarget"] = Field(None, alias="keywordTarget")
+    product_target: Optional["RASv1ProductTarget"] = Field(None, alias="productTarget")
+
+    model_config = {'populate_by_name': True}
+
+
+class RASv1CurrencyCode(StrEnum):
+    USD = "USD"
+
+
+class RASv1TargetBidOutput(BaseModel):
+    bid: float = Field(..., description="The maximum bid for a target.")
+    currency_code: "RASv1CurrencyCode" = Field(..., alias="currencyCode")
+
+    model_config = {'populate_by_name': True}
+
+
+class RASv1TargetLevel(StrEnum):
+    AD_GROUP = "AD_GROUP"
+    CAMPAIGN = "CAMPAIGN"
+
+
+class RASv1TargetType(StrEnum):
+    AUTO = "AUTO"
+    KEYWORD = "KEYWORD"
+    PRODUCT = "PRODUCT"
+
+
+class RASv1CreateTargetOutput(BaseModel):
+    ad_group_id: Optional[str] = Field(None, alias="adGroupId", description="The identifier of the ad group.")
+    bid: Optional["RASv1TargetBidOutput"] = None
+    campaign_id: str = Field(..., alias="campaignId", description="The identifier of the campaign.")
+    negative: bool = Field(..., description="Indicates whether the target is negative or not.")
+    state: "RASv1EntityState"
+    target_details: "RASv1TargetDetails" = Field(..., alias="targetDetails")
+    target_id: str = Field(..., alias="targetId", description="The identifier of the Target.")
+    target_level: "RASv1TargetLevel" = Field(..., alias="targetLevel")
+    target_type: "RASv1TargetType" = Field(..., alias="targetType")
+
+    model_config = {'populate_by_name': True}
+
+
+class RASv1CreateTargetSuccessItem(BaseModel):
+    index: int = Field(..., description="The index of the Target in the array from the request body")
+    target: Optional["RASv1CreateTargetOutput"] = None
+    target_id: Optional[str] = Field(None, alias="targetId", description="The identifier of the Target.")
 
     model_config = {'populate_by_name': True}
 
@@ -707,88 +793,6 @@ class RASv1MutateTargetFailureItem(BaseModel):
     model_config = {'populate_by_name': True}
 
 
-class RASv1ProductIdType(StrEnum):
-    RETAILER_OFFER = "RETAILER_OFFER"
-
-
-class RASv1ProductMatchType(StrEnum):
-    PRODUCT_EXACT = "PRODUCT_EXACT"
-
-
-class RASv1ProductTarget(BaseModel):
-    match_type: "RASv1ProductMatchType" = Field(..., alias="matchType")
-    product_id: str = Field(..., alias="productId", description="Resource identifier")
-    product_id_type: "RASv1ProductIdType" = Field(..., alias="productIdType")
-    retailer_id: Optional[str] = Field(None, alias="retailerId", description="Resource identifier")
-
-    model_config = {'populate_by_name': True}
-
-
-class RASv1KeywordMatchType(StrEnum):
-    BROAD = "BROAD"
-    EXACT = "EXACT"
-    PHRASE = "PHRASE"
-
-
-class RASv1KeywordTarget(BaseModel):
-    keyword: str
-    match_type: "RASv1KeywordMatchType" = Field(..., alias="matchType")
-
-    model_config = {'populate_by_name': True}
-
-
-class RASv1TargetDetails(BaseModel):
-    auto_target: Optional["RASv1AutoTarget"] = Field(None, alias="autoTarget")
-    keyword_target: Optional["RASv1KeywordTarget"] = Field(None, alias="keywordTarget")
-    product_target: Optional["RASv1ProductTarget"] = Field(None, alias="productTarget")
-
-    model_config = {'populate_by_name': True}
-
-
-class RASv1TargetLevel(StrEnum):
-    AD_GROUP = "AD_GROUP"
-    CAMPAIGN = "CAMPAIGN"
-
-
-class RASv1TargetType(StrEnum):
-    AUTO = "AUTO"
-    KEYWORD = "KEYWORD"
-    PRODUCT = "PRODUCT"
-
-
-class RASv1CurrencyCode(StrEnum):
-    USD = "USD"
-
-
-class RASv1TargetBidOutput(BaseModel):
-    bid: float = Field(..., description="The maximum bid for a target.")
-    currency_code: "RASv1CurrencyCode" = Field(..., alias="currencyCode")
-
-    model_config = {'populate_by_name': True}
-
-
-class RASv1CreateTargetOutput(BaseModel):
-    ad_group_id: Optional[str] = Field(None, alias="adGroupId", description="The identifier of the ad group.")
-    bid: Optional["RASv1TargetBidOutput"] = None
-    campaign_id: str = Field(..., alias="campaignId", description="The identifier of the campaign.")
-    negative: bool = Field(..., description="Indicates whether the target is negative or not.")
-    state: "RASv1EntityState"
-    target_details: "RASv1TargetDetails" = Field(..., alias="targetDetails")
-    target_id: str = Field(..., alias="targetId", description="The identifier of the Target.")
-    target_level: "RASv1TargetLevel" = Field(..., alias="targetLevel")
-    target_type: "RASv1TargetType" = Field(..., alias="targetType")
-
-    model_config = {'populate_by_name': True}
-
-
-class RASv1CreateTargetSuccessItem(BaseModel):
-    index: int = Field(..., description="The index of the Target in the array from the request body")
-    target: Optional["RASv1CreateTargetOutput"] = None
-    target_id: Optional[str] = Field(None, alias="targetId", description="The identifier of the Target.")
-
-    model_config = {'populate_by_name': True}
-
-
 class RASv1BulkCreateTargetsOutcomes(BaseModel):
     error: Optional[list["RASv1MutateTargetFailureItem"]] = None
     success: Optional[list["RASv1CreateTargetSuccessItem"]] = None
@@ -809,6 +813,32 @@ class RASv1BulkMutateAdGroupsOutcomes(BaseModel):
     success: Optional[list["RASv1MutateAdGroupSuccessItem"]] = None
 
     model_config = {'populate_by_name': True}
+
+
+class RASv1CampaignServingStatus(StrEnum):
+    ACCOUNT_OUT_OF_BUDGET = "ACCOUNT_OUT_OF_BUDGET"
+    ADVERTISER_ARCHIVED = "ADVERTISER_ARCHIVED"
+    ADVERTISER_OUT_OF_BUDGET = "ADVERTISER_OUT_OF_BUDGET"
+    ADVERTISER_PAUSED = "ADVERTISER_PAUSED"
+    ADVERTISER_PAYMENT_FAILURE = "ADVERTISER_PAYMENT_FAILURE"
+    ADVERTISER_POLICING_PENDING_REVIEW = "ADVERTISER_POLICING_PENDING_REVIEW"
+    ADVERTISER_POLICING_SUSPENDED = "ADVERTISER_POLICING_SUSPENDED"
+    CAMPAIGN_ARCHIVED = "CAMPAIGN_ARCHIVED"
+    CAMPAIGN_INCOMPLETE = "CAMPAIGN_INCOMPLETE"
+    CAMPAIGN_OUT_OF_BUDGET = "CAMPAIGN_OUT_OF_BUDGET"
+    CAMPAIGN_PAUSED = "CAMPAIGN_PAUSED"
+    CAMPAIGN_STATUS_ENABLED = "CAMPAIGN_STATUS_ENABLED"
+    ENDED = "ENDED"
+    OTHER = "OTHER"
+    PENDING_REVIEW = "PENDING_REVIEW"
+    PENDING_START_DATE = "PENDING_START_DATE"
+    PORTFOLIO_ARCHIVED = "PORTFOLIO_ARCHIVED"
+    PORTFOLIO_ENDED = "PORTFOLIO_ENDED"
+    PORTFOLIO_OUT_OF_BUDGET = "PORTFOLIO_OUT_OF_BUDGET"
+    PORTFOLIO_PAUSED = "PORTFOLIO_PAUSED"
+    PORTFOLIO_PENDING_START_DATE = "PORTFOLIO_PENDING_START_DATE"
+    PORTFOLIO_STATUS_ENABLED = "PORTFOLIO_STATUS_ENABLED"
+    REJECTED = "REJECTED"
 
 
 class RASv1CampaignServingStatusReason(StrEnum):
@@ -843,32 +873,6 @@ class RASv1CampaignServingStatusDetailItem(BaseModel):
     name: Optional["RASv1CampaignServingStatusReason"] = None
 
     model_config = {'populate_by_name': True}
-
-
-class RASv1CampaignServingStatus(StrEnum):
-    ACCOUNT_OUT_OF_BUDGET = "ACCOUNT_OUT_OF_BUDGET"
-    ADVERTISER_ARCHIVED = "ADVERTISER_ARCHIVED"
-    ADVERTISER_OUT_OF_BUDGET = "ADVERTISER_OUT_OF_BUDGET"
-    ADVERTISER_PAUSED = "ADVERTISER_PAUSED"
-    ADVERTISER_PAYMENT_FAILURE = "ADVERTISER_PAYMENT_FAILURE"
-    ADVERTISER_POLICING_PENDING_REVIEW = "ADVERTISER_POLICING_PENDING_REVIEW"
-    ADVERTISER_POLICING_SUSPENDED = "ADVERTISER_POLICING_SUSPENDED"
-    CAMPAIGN_ARCHIVED = "CAMPAIGN_ARCHIVED"
-    CAMPAIGN_INCOMPLETE = "CAMPAIGN_INCOMPLETE"
-    CAMPAIGN_OUT_OF_BUDGET = "CAMPAIGN_OUT_OF_BUDGET"
-    CAMPAIGN_PAUSED = "CAMPAIGN_PAUSED"
-    CAMPAIGN_STATUS_ENABLED = "CAMPAIGN_STATUS_ENABLED"
-    ENDED = "ENDED"
-    OTHER = "OTHER"
-    PENDING_REVIEW = "PENDING_REVIEW"
-    PENDING_START_DATE = "PENDING_START_DATE"
-    PORTFOLIO_ARCHIVED = "PORTFOLIO_ARCHIVED"
-    PORTFOLIO_ENDED = "PORTFOLIO_ENDED"
-    PORTFOLIO_OUT_OF_BUDGET = "PORTFOLIO_OUT_OF_BUDGET"
-    PORTFOLIO_PAUSED = "PORTFOLIO_PAUSED"
-    PORTFOLIO_PENDING_START_DATE = "PORTFOLIO_PENDING_START_DATE"
-    PORTFOLIO_STATUS_ENABLED = "PORTFOLIO_STATUS_ENABLED"
-    REJECTED = "REJECTED"
 
 
 class RASv1CampaignExtendedData(BaseModel):
@@ -909,6 +913,82 @@ class RASv1BulkMutateCampaignsOutcomes(BaseModel):
     success: Optional[list["RASv1MutateCampaignSuccessItem"]] = None
 
     model_config = {'populate_by_name': True}
+
+
+class RASv1ProductAdServingStatus(StrEnum):
+    ACCOUNT_OUT_OF_BUDGET = "ACCOUNT_OUT_OF_BUDGET"
+    ADVERTISER_ACCOUNT_OUT_OF_BUDGET = "ADVERTISER_ACCOUNT_OUT_OF_BUDGET"
+    ADVERTISER_ARCHIVED = "ADVERTISER_ARCHIVED"
+    ADVERTISER_EXCEED_SPENDS_LIMIT = "ADVERTISER_EXCEED_SPENDS_LIMIT"
+    ADVERTISER_OUT_OF_BUDGET = "ADVERTISER_OUT_OF_BUDGET"
+    ADVERTISER_PAUSED = "ADVERTISER_PAUSED"
+    ADVERTISER_PAYMENT_FAILURE = "ADVERTISER_PAYMENT_FAILURE"
+    ADVERTISER_POLICING_PENDING_REVIEW = "ADVERTISER_POLICING_PENDING_REVIEW"
+    ADVERTISER_POLICING_SUSPENDED = "ADVERTISER_POLICING_SUSPENDED"
+    ADVERTISER_STATUS_ENABLED = "ADVERTISER_STATUS_ENABLED"
+    AD_ARCHIVED = "AD_ARCHIVED"
+    AD_CREATION_FAILED = "AD_CREATION_FAILED"
+    AD_CREATION_OFFLINE_FAILED = "AD_CREATION_OFFLINE_FAILED"
+    AD_CREATION_OFFLINE_IN_PROGRESS = "AD_CREATION_OFFLINE_IN_PROGRESS"
+    AD_CREATION_OFFLINE_PENDING = "AD_CREATION_OFFLINE_PENDING"
+    AD_ELIGIBLE = "AD_ELIGIBLE"
+    AD_GROUP_ARCHIVED = "AD_GROUP_ARCHIVED"
+    AD_GROUP_INCOMPLETE = "AD_GROUP_INCOMPLETE"
+    AD_GROUP_LOW_BID = "AD_GROUP_LOW_BID"
+    AD_GROUP_PAUSED = "AD_GROUP_PAUSED"
+    AD_GROUP_POLICING_CREATIVE_REJECTED = "AD_GROUP_POLICING_CREATIVE_REJECTED"
+    AD_GROUP_POLICING_PENDING_REVIEW = "AD_GROUP_POLICING_PENDING_REVIEW"
+    AD_GROUP_STATUS_ENABLED = "AD_GROUP_STATUS_ENABLED"
+    AD_INELIGIBLE = "AD_INELIGIBLE"
+    AD_LANDING_PAGE_NOT_AVAILABLE = "AD_LANDING_PAGE_NOT_AVAILABLE"
+    AD_MISSING_DECORATION = "AD_MISSING_DECORATION"
+    AD_MISSING_IMAGE = "AD_MISSING_IMAGE"
+    AD_NOT_BUYABLE = "AD_NOT_BUYABLE"
+    AD_NOT_IN_BUYBOX = "AD_NOT_IN_BUYBOX"
+    AD_NO_PURCHASABLE_OFFER = "AD_NO_PURCHASABLE_OFFER"
+    AD_OUT_OF_STOCK = "AD_OUT_OF_STOCK"
+    AD_PAUSED = "AD_PAUSED"
+    AD_POLICING_PENDING_REVIEW = "AD_POLICING_PENDING_REVIEW"
+    AD_POLICING_SUSPENDED = "AD_POLICING_SUSPENDED"
+    AD_STATUS_LIVE = "AD_STATUS_LIVE"
+    CAMPAIGN_ADS_NOT_DELIVERING = "CAMPAIGN_ADS_NOT_DELIVERING"
+    CAMPAIGN_ARCHIVED = "CAMPAIGN_ARCHIVED"
+    CAMPAIGN_ENDED = "CAMPAIGN_ENDED"
+    CAMPAIGN_INCOMPLETE = "CAMPAIGN_INCOMPLETE"
+    CAMPAIGN_OUT_OF_BUDGET = "CAMPAIGN_OUT_OF_BUDGET"
+    CAMPAIGN_PAUSED = "CAMPAIGN_PAUSED"
+    CAMPAIGN_PENDING_START_DATE = "CAMPAIGN_PENDING_START_DATE"
+    CAMPAIGN_STATUS_ENABLED = "CAMPAIGN_STATUS_ENABLED"
+    ELIGIBLE = "ELIGIBLE"
+    ENDED = "ENDED"
+    INELIGIBLE = "INELIGIBLE"
+    LANDING_PAGE_NOT_AVAILABLE = "LANDING_PAGE_NOT_AVAILABLE"
+    MISSING_DECORATION = "MISSING_DECORATION"
+    MISSING_IMAGE = "MISSING_IMAGE"
+    NOT_BUYABLE = "NOT_BUYABLE"
+    NOT_IN_BUYBOX = "NOT_IN_BUYBOX"
+    NO_INVENTORY = "NO_INVENTORY"
+    NO_PURCHASABLE_OFFER = "NO_PURCHASABLE_OFFER"
+    OTHER = "OTHER"
+    OUT_OF_STOCK = "OUT_OF_STOCK"
+    PENDING_REVIEW = "PENDING_REVIEW"
+    PENDING_START_DATE = "PENDING_START_DATE"
+    PIR_RULE_EXCLUDED = "PIR_RULE_EXCLUDED"
+    PORTFOLIO_ARCHIVED = "PORTFOLIO_ARCHIVED"
+    PORTFOLIO_ENDED = "PORTFOLIO_ENDED"
+    PORTFOLIO_OUT_OF_BUDGET = "PORTFOLIO_OUT_OF_BUDGET"
+    PORTFOLIO_PAUSED = "PORTFOLIO_PAUSED"
+    PORTFOLIO_PENDING_START_DATE = "PORTFOLIO_PENDING_START_DATE"
+    PORTFOLIO_STATUS_ENABLED = "PORTFOLIO_STATUS_ENABLED"
+    REJECTED = "REJECTED"
+    SECURITY_SCAN_PENDING_REVIEW = "SECURITY_SCAN_PENDING_REVIEW"
+    SECURITY_SCAN_REJECTED = "SECURITY_SCAN_REJECTED"
+    STATUS_UNAVAILABLE = "STATUS_UNAVAILABLE"
+    TARGETING_CLAUSE_ARCHIVED = "TARGETING_CLAUSE_ARCHIVED"
+    TARGETING_CLAUSE_BLOCKED = "TARGETING_CLAUSE_BLOCKED"
+    TARGETING_CLAUSE_PAUSED = "TARGETING_CLAUSE_PAUSED"
+    TARGETING_CLAUSE_POLICING_SUSPENDED = "TARGETING_CLAUSE_POLICING_SUSPENDED"
+    TARGETING_CLAUSE_STATUS_LIVE = "TARGETING_CLAUSE_STATUS_LIVE"
 
 
 class RASv1ProductAdServingStatusReason(StrEnum):
@@ -1012,82 +1092,6 @@ class RASv1ProductAdServingStatusDetailItem(BaseModel):
     model_config = {'populate_by_name': True}
 
 
-class RASv1ProductAdServingStatus(StrEnum):
-    ACCOUNT_OUT_OF_BUDGET = "ACCOUNT_OUT_OF_BUDGET"
-    ADVERTISER_ACCOUNT_OUT_OF_BUDGET = "ADVERTISER_ACCOUNT_OUT_OF_BUDGET"
-    ADVERTISER_ARCHIVED = "ADVERTISER_ARCHIVED"
-    ADVERTISER_EXCEED_SPENDS_LIMIT = "ADVERTISER_EXCEED_SPENDS_LIMIT"
-    ADVERTISER_OUT_OF_BUDGET = "ADVERTISER_OUT_OF_BUDGET"
-    ADVERTISER_PAUSED = "ADVERTISER_PAUSED"
-    ADVERTISER_PAYMENT_FAILURE = "ADVERTISER_PAYMENT_FAILURE"
-    ADVERTISER_POLICING_PENDING_REVIEW = "ADVERTISER_POLICING_PENDING_REVIEW"
-    ADVERTISER_POLICING_SUSPENDED = "ADVERTISER_POLICING_SUSPENDED"
-    ADVERTISER_STATUS_ENABLED = "ADVERTISER_STATUS_ENABLED"
-    AD_ARCHIVED = "AD_ARCHIVED"
-    AD_CREATION_FAILED = "AD_CREATION_FAILED"
-    AD_CREATION_OFFLINE_FAILED = "AD_CREATION_OFFLINE_FAILED"
-    AD_CREATION_OFFLINE_IN_PROGRESS = "AD_CREATION_OFFLINE_IN_PROGRESS"
-    AD_CREATION_OFFLINE_PENDING = "AD_CREATION_OFFLINE_PENDING"
-    AD_ELIGIBLE = "AD_ELIGIBLE"
-    AD_GROUP_ARCHIVED = "AD_GROUP_ARCHIVED"
-    AD_GROUP_INCOMPLETE = "AD_GROUP_INCOMPLETE"
-    AD_GROUP_LOW_BID = "AD_GROUP_LOW_BID"
-    AD_GROUP_PAUSED = "AD_GROUP_PAUSED"
-    AD_GROUP_POLICING_CREATIVE_REJECTED = "AD_GROUP_POLICING_CREATIVE_REJECTED"
-    AD_GROUP_POLICING_PENDING_REVIEW = "AD_GROUP_POLICING_PENDING_REVIEW"
-    AD_GROUP_STATUS_ENABLED = "AD_GROUP_STATUS_ENABLED"
-    AD_INELIGIBLE = "AD_INELIGIBLE"
-    AD_LANDING_PAGE_NOT_AVAILABLE = "AD_LANDING_PAGE_NOT_AVAILABLE"
-    AD_MISSING_DECORATION = "AD_MISSING_DECORATION"
-    AD_MISSING_IMAGE = "AD_MISSING_IMAGE"
-    AD_NOT_BUYABLE = "AD_NOT_BUYABLE"
-    AD_NOT_IN_BUYBOX = "AD_NOT_IN_BUYBOX"
-    AD_NO_PURCHASABLE_OFFER = "AD_NO_PURCHASABLE_OFFER"
-    AD_OUT_OF_STOCK = "AD_OUT_OF_STOCK"
-    AD_PAUSED = "AD_PAUSED"
-    AD_POLICING_PENDING_REVIEW = "AD_POLICING_PENDING_REVIEW"
-    AD_POLICING_SUSPENDED = "AD_POLICING_SUSPENDED"
-    AD_STATUS_LIVE = "AD_STATUS_LIVE"
-    CAMPAIGN_ADS_NOT_DELIVERING = "CAMPAIGN_ADS_NOT_DELIVERING"
-    CAMPAIGN_ARCHIVED = "CAMPAIGN_ARCHIVED"
-    CAMPAIGN_ENDED = "CAMPAIGN_ENDED"
-    CAMPAIGN_INCOMPLETE = "CAMPAIGN_INCOMPLETE"
-    CAMPAIGN_OUT_OF_BUDGET = "CAMPAIGN_OUT_OF_BUDGET"
-    CAMPAIGN_PAUSED = "CAMPAIGN_PAUSED"
-    CAMPAIGN_PENDING_START_DATE = "CAMPAIGN_PENDING_START_DATE"
-    CAMPAIGN_STATUS_ENABLED = "CAMPAIGN_STATUS_ENABLED"
-    ELIGIBLE = "ELIGIBLE"
-    ENDED = "ENDED"
-    INELIGIBLE = "INELIGIBLE"
-    LANDING_PAGE_NOT_AVAILABLE = "LANDING_PAGE_NOT_AVAILABLE"
-    MISSING_DECORATION = "MISSING_DECORATION"
-    MISSING_IMAGE = "MISSING_IMAGE"
-    NOT_BUYABLE = "NOT_BUYABLE"
-    NOT_IN_BUYBOX = "NOT_IN_BUYBOX"
-    NO_INVENTORY = "NO_INVENTORY"
-    NO_PURCHASABLE_OFFER = "NO_PURCHASABLE_OFFER"
-    OTHER = "OTHER"
-    OUT_OF_STOCK = "OUT_OF_STOCK"
-    PENDING_REVIEW = "PENDING_REVIEW"
-    PENDING_START_DATE = "PENDING_START_DATE"
-    PIR_RULE_EXCLUDED = "PIR_RULE_EXCLUDED"
-    PORTFOLIO_ARCHIVED = "PORTFOLIO_ARCHIVED"
-    PORTFOLIO_ENDED = "PORTFOLIO_ENDED"
-    PORTFOLIO_OUT_OF_BUDGET = "PORTFOLIO_OUT_OF_BUDGET"
-    PORTFOLIO_PAUSED = "PORTFOLIO_PAUSED"
-    PORTFOLIO_PENDING_START_DATE = "PORTFOLIO_PENDING_START_DATE"
-    PORTFOLIO_STATUS_ENABLED = "PORTFOLIO_STATUS_ENABLED"
-    REJECTED = "REJECTED"
-    SECURITY_SCAN_PENDING_REVIEW = "SECURITY_SCAN_PENDING_REVIEW"
-    SECURITY_SCAN_REJECTED = "SECURITY_SCAN_REJECTED"
-    STATUS_UNAVAILABLE = "STATUS_UNAVAILABLE"
-    TARGETING_CLAUSE_ARCHIVED = "TARGETING_CLAUSE_ARCHIVED"
-    TARGETING_CLAUSE_BLOCKED = "TARGETING_CLAUSE_BLOCKED"
-    TARGETING_CLAUSE_PAUSED = "TARGETING_CLAUSE_PAUSED"
-    TARGETING_CLAUSE_POLICING_SUSPENDED = "TARGETING_CLAUSE_POLICING_SUSPENDED"
-    TARGETING_CLAUSE_STATUS_LIVE = "TARGETING_CLAUSE_STATUS_LIVE"
-
-
 class RASv1ProductAdExtendedData(BaseModel):
     creation_date_time: Optional[str] = Field(None, alias="creationDateTime", description="Creation date in ISO 8601.")
     last_update_date_time: Optional[str] = Field(None, alias="lastUpdateDateTime", description="Last updated date in ISO 8601.")
@@ -1122,6 +1126,44 @@ class RASv1BulkMutateProductAdsOutcomes(BaseModel):
     success: Optional[list["RASv1MutateProductAdSuccessItem"]] = None
 
     model_config = {'populate_by_name': True}
+
+
+class RASv1TargetServingStatus(StrEnum):
+    ACCOUNT_OUT_OF_BUDGET = "ACCOUNT_OUT_OF_BUDGET"
+    ADVERTISER_ARCHIVED = "ADVERTISER_ARCHIVED"
+    ADVERTISER_OUT_OF_BUDGET = "ADVERTISER_OUT_OF_BUDGET"
+    ADVERTISER_PAUSED = "ADVERTISER_PAUSED"
+    ADVERTISER_PAYMENT_FAILURE = "ADVERTISER_PAYMENT_FAILURE"
+    ADVERTISER_POLICING_PENDING_REVIEW = "ADVERTISER_POLICING_PENDING_REVIEW"
+    ADVERTISER_POLICING_SUSPENDED = "ADVERTISER_POLICING_SUSPENDED"
+    AD_GROUP_ARCHIVED = "AD_GROUP_ARCHIVED"
+    AD_GROUP_INCOMPLETE = "AD_GROUP_INCOMPLETE"
+    AD_GROUP_LOW_BID = "AD_GROUP_LOW_BID"
+    AD_GROUP_PAUSED = "AD_GROUP_PAUSED"
+    AD_GROUP_POLICING_CREATIVE_REJECTED = "AD_GROUP_POLICING_CREATIVE_REJECTED"
+    AD_GROUP_POLICING_PENDING_REVIEW = "AD_GROUP_POLICING_PENDING_REVIEW"
+    AD_GROUP_STATUS_ENABLED = "AD_GROUP_STATUS_ENABLED"
+    CAMPAIGN_ARCHIVED = "CAMPAIGN_ARCHIVED"
+    CAMPAIGN_INCOMPLETE = "CAMPAIGN_INCOMPLETE"
+    CAMPAIGN_OUT_OF_BUDGET = "CAMPAIGN_OUT_OF_BUDGET"
+    CAMPAIGN_PAUSED = "CAMPAIGN_PAUSED"
+    CAMPAIGN_STATUS_ENABLED = "CAMPAIGN_STATUS_ENABLED"
+    ENDED = "ENDED"
+    OTHER = "OTHER"
+    PENDING_REVIEW = "PENDING_REVIEW"
+    PENDING_START_DATE = "PENDING_START_DATE"
+    PORTFOLIO_ARCHIVED = "PORTFOLIO_ARCHIVED"
+    PORTFOLIO_ENDED = "PORTFOLIO_ENDED"
+    PORTFOLIO_OUT_OF_BUDGET = "PORTFOLIO_OUT_OF_BUDGET"
+    PORTFOLIO_PAUSED = "PORTFOLIO_PAUSED"
+    PORTFOLIO_PENDING_START_DATE = "PORTFOLIO_PENDING_START_DATE"
+    PORTFOLIO_STATUS_ENABLED = "PORTFOLIO_STATUS_ENABLED"
+    REJECTED = "REJECTED"
+    TARGETING_CLAUSE_ARCHIVED = "TARGETING_CLAUSE_ARCHIVED"
+    TARGETING_CLAUSE_BLOCKED = "TARGETING_CLAUSE_BLOCKED"
+    TARGETING_CLAUSE_PAUSED = "TARGETING_CLAUSE_PAUSED"
+    TARGETING_CLAUSE_POLICING_SUSPENDED = "TARGETING_CLAUSE_POLICING_SUSPENDED"
+    TARGETING_CLAUSE_STATUS_LIVE = "TARGETING_CLAUSE_STATUS_LIVE"
 
 
 class RASv1TargetServingStatusReason(StrEnum):
@@ -1168,44 +1210,6 @@ class RASv1TargetServingStatusDetailItem(BaseModel):
     name: Optional["RASv1TargetServingStatusReason"] = None
 
     model_config = {'populate_by_name': True}
-
-
-class RASv1TargetServingStatus(StrEnum):
-    ACCOUNT_OUT_OF_BUDGET = "ACCOUNT_OUT_OF_BUDGET"
-    ADVERTISER_ARCHIVED = "ADVERTISER_ARCHIVED"
-    ADVERTISER_OUT_OF_BUDGET = "ADVERTISER_OUT_OF_BUDGET"
-    ADVERTISER_PAUSED = "ADVERTISER_PAUSED"
-    ADVERTISER_PAYMENT_FAILURE = "ADVERTISER_PAYMENT_FAILURE"
-    ADVERTISER_POLICING_PENDING_REVIEW = "ADVERTISER_POLICING_PENDING_REVIEW"
-    ADVERTISER_POLICING_SUSPENDED = "ADVERTISER_POLICING_SUSPENDED"
-    AD_GROUP_ARCHIVED = "AD_GROUP_ARCHIVED"
-    AD_GROUP_INCOMPLETE = "AD_GROUP_INCOMPLETE"
-    AD_GROUP_LOW_BID = "AD_GROUP_LOW_BID"
-    AD_GROUP_PAUSED = "AD_GROUP_PAUSED"
-    AD_GROUP_POLICING_CREATIVE_REJECTED = "AD_GROUP_POLICING_CREATIVE_REJECTED"
-    AD_GROUP_POLICING_PENDING_REVIEW = "AD_GROUP_POLICING_PENDING_REVIEW"
-    AD_GROUP_STATUS_ENABLED = "AD_GROUP_STATUS_ENABLED"
-    CAMPAIGN_ARCHIVED = "CAMPAIGN_ARCHIVED"
-    CAMPAIGN_INCOMPLETE = "CAMPAIGN_INCOMPLETE"
-    CAMPAIGN_OUT_OF_BUDGET = "CAMPAIGN_OUT_OF_BUDGET"
-    CAMPAIGN_PAUSED = "CAMPAIGN_PAUSED"
-    CAMPAIGN_STATUS_ENABLED = "CAMPAIGN_STATUS_ENABLED"
-    ENDED = "ENDED"
-    OTHER = "OTHER"
-    PENDING_REVIEW = "PENDING_REVIEW"
-    PENDING_START_DATE = "PENDING_START_DATE"
-    PORTFOLIO_ARCHIVED = "PORTFOLIO_ARCHIVED"
-    PORTFOLIO_ENDED = "PORTFOLIO_ENDED"
-    PORTFOLIO_OUT_OF_BUDGET = "PORTFOLIO_OUT_OF_BUDGET"
-    PORTFOLIO_PAUSED = "PORTFOLIO_PAUSED"
-    PORTFOLIO_PENDING_START_DATE = "PORTFOLIO_PENDING_START_DATE"
-    PORTFOLIO_STATUS_ENABLED = "PORTFOLIO_STATUS_ENABLED"
-    REJECTED = "REJECTED"
-    TARGETING_CLAUSE_ARCHIVED = "TARGETING_CLAUSE_ARCHIVED"
-    TARGETING_CLAUSE_BLOCKED = "TARGETING_CLAUSE_BLOCKED"
-    TARGETING_CLAUSE_PAUSED = "TARGETING_CLAUSE_PAUSED"
-    TARGETING_CLAUSE_POLICING_SUSPENDED = "TARGETING_CLAUSE_POLICING_SUSPENDED"
-    TARGETING_CLAUSE_STATUS_LIVE = "TARGETING_CLAUSE_STATUS_LIVE"
 
 
 class RASv1TargetExtendedData(BaseModel):
@@ -1477,14 +1481,6 @@ class RASv1KeywordFilter(BaseModel):
     model_config = {'populate_by_name': True}
 
 
-class RASv1NameFilter(BaseModel):
-    """Filter entities by name"""
-    include: Optional[list[str]] = None
-    query_term_match_type: "RASv1QueryTermMatchType" = Field(..., alias="queryTermMatchType")
-
-    model_config = {'populate_by_name': True}
-
-
 class RASv1StateFilter(BaseModel):
     """Filter entities by state"""
     include: list["RASv1EntityState"]
@@ -1495,6 +1491,14 @@ class RASv1StateFilter(BaseModel):
 class RASv1ReducedEntityIdFilter(BaseModel):
     """Filter entities by the list of objectIds"""
     include: list[str]
+
+    model_config = {'populate_by_name': True}
+
+
+class RASv1NameFilter(BaseModel):
+    """Filter entities by name"""
+    include: Optional[list[str]] = None
+    query_term_match_type: "RASv1QueryTermMatchType" = Field(..., alias="queryTermMatchType")
 
     model_config = {'populate_by_name': True}
 
@@ -1556,8 +1560,8 @@ class RASv1ListProductAdsResponseContent(BaseModel):
     model_config = {'populate_by_name': True}
 
 
-class RASv1TargetLevelFilter(BaseModel):
-    include: Optional[list["RASv1TargetLevel"]] = None
+class RASv1NegativeTargetFilter(BaseModel):
+    include: Optional[list[bool]] = None
 
     model_config = {'populate_by_name': True}
 
@@ -1568,8 +1572,8 @@ class RASv1ProductIdFilter(BaseModel):
     model_config = {'populate_by_name': True}
 
 
-class RASv1NegativeTargetFilter(BaseModel):
-    include: Optional[list[bool]] = None
+class RASv1TargetLevelFilter(BaseModel):
+    include: Optional[list["RASv1TargetLevel"]] = None
 
     model_config = {'populate_by_name': True}
 

@@ -203,15 +203,150 @@ class CreateDeduplicatedReachForecastsV1ResponseContent(BaseModel):
     model_config = {'populate_by_name': True}
 
 
-class FrequencyCapTimeUnitV1(StrEnum):
-    DAYS = "DAYS"
-    MONTHS = "MONTHS"
-    WEEKS = "WEEKS"
+class IABCategoryTargetTypeV1(StrEnum):
+    IAB_CATEGORY = "IAB_CATEGORY"
+
+
+class IABCategoryTargetV1(BaseModel):
+    iab_content_category: str = Field(..., alias="iabContentCategory", description="The IAB content category to target. To get the list of valid values, see https://advertising.amazon.com/API/docs/en-us/d")
+    target_type: "IABCategoryTargetTypeV1" = Field(..., alias="targetType")
+
+    model_config = {'populate_by_name': True}
+
+
+class ThemeTargetMatchTypeV1(StrEnum):
+    KEYWORDS_RELATED_TO_YOUR_BRAND = "KEYWORDS_RELATED_TO_YOUR_BRAND"
+    KEYWORDS_RELATED_TO_YOUR_LANDING_PAGES = "KEYWORDS_RELATED_TO_YOUR_LANDING_PAGES"
+
+
+class ThemeTargetTypeV1(StrEnum):
+    THEME = "THEME"
+
+
+class ThemeTargetV1(BaseModel):
+    match_type: "ThemeTargetMatchTypeV1" = Field(..., alias="matchType")
+    target_type: "ThemeTargetTypeV1" = Field(..., alias="targetType")
+
+    model_config = {'populate_by_name': True}
+
+
+class InventorySourceTypeV1(StrEnum):
+    DEAL = "DEAL"
+    PUBLISHER = "PUBLISHER"
+
+
+class InventorySourceTargetTypeV1(StrEnum):
+    INVENTORY_SOURCE = "INVENTORY_SOURCE"
+
+
+class InventorySourceTargetV1(BaseModel):
+    inventory_source_id: str = Field(..., alias="inventorySourceId", description="The identifier of the inventory source. These can be obtained from the inventory sources discovery endpoint.")
+    inventory_source_type: "InventorySourceTypeV1" = Field(..., alias="inventorySourceType")
+    target_type: "InventorySourceTargetTypeV1" = Field(..., alias="targetType")
+
+    model_config = {'populate_by_name': True}
+
+
+class UserLocationSignalV1(StrEnum):
+    CURRENT = "CURRENT"
+    HOME = "HOME"
+    MULTIPLE_SIGNALS = "MULTIPLE_SIGNALS"
+
+
+class LocationTargetTypeV1(StrEnum):
+    LOCATION = "LOCATION"
+
+
+class LocationTargetV1(BaseModel):
+    geo_location: str = Field(..., alias="geoLocation", description="The location to target. Use the [GeoLocation API](https://advertising.amazon.com/API/docs/en-us/dsp-campaigns#tag/Discov")
+    target_type: "LocationTargetTypeV1" = Field(..., alias="targetType")
+    user_location_signal: Optional["UserLocationSignalV1"] = Field(None, alias="userLocationSignal")
+
+    model_config = {'populate_by_name': True}
+
+
+class KeywordTargetMatchTypeV1(StrEnum):
+    BROAD = "BROAD"
+    EXACT = "EXACT"
+    PHRASE = "PHRASE"
+
+
+class KeywordTargetTypeV1(StrEnum):
+    KEYWORD = "KEYWORD"
+
+
+class KeywordTargetV1(BaseModel):
+    keyword: str
+    match_type: "KeywordTargetMatchTypeV1" = Field(..., alias="matchType")
+    target_type: "KeywordTargetTypeV1" = Field(..., alias="targetType")
+
+    model_config = {'populate_by_name': True}
+
+
+class ProductTargetTypeV1(StrEnum):
+    PRODUCT = "PRODUCT"
+
+
+class ProductTargetV1(BaseModel):
+    asin: str = Field(..., description="The product asin to target.")
+    target_type: "ProductTargetTypeV1" = Field(..., alias="targetType")
+
+    model_config = {'populate_by_name': True}
+
+
+class DeviceTargetTypeV1(StrEnum):
+    DEVICE = "DEVICE"
+
+
+class DeviceTypeV1(StrEnum):
+    CONNECTED_DEVICE = "CONNECTED_DEVICE"
+    CONNECTED_TV = "CONNECTED_TV"
+    DESKTOP = "DESKTOP"
+    MOBILE = "MOBILE"
+
+
+class DeviceTargetV1(BaseModel):
+    device_type: "DeviceTypeV1" = Field(..., alias="deviceType")
+    target_type: "DeviceTargetTypeV1" = Field(..., alias="targetType")
+
+    model_config = {'populate_by_name': True}
+
+
+class ProductCategoryTargetTypeV1(StrEnum):
+    PRODUCT_CATEGORY = "PRODUCT_CATEGORY"
+
+
+class ProductCategoryTargetV1(BaseModel):
+    asin_category: str = Field(..., alias="asinCategory", description="The product category to target.")
+    target_type: "ProductCategoryTargetTypeV1" = Field(..., alias="targetType")
+
+    model_config = {'populate_by_name': True}
+
+
+class PlanningTargetDetailsV1(BaseModel):
+    pass
+
+
+class PlanningTargetV1(BaseModel):
+    negative: bool = Field(..., description="Whether to target (false) or exclude (true) the given target.")
+    target_details: "PlanningTargetDetailsV1" = Field(..., alias="targetDetails")
+
+    model_config = {'populate_by_name': True}
+
+
+class ReachTypeV1(StrEnum):
+    HOUSEHOLDS = "HOUSEHOLDS"
 
 
 class FrequencyCapTypeV1(StrEnum):
     CUSTOM = "CUSTOM"
     UNCAPPED = "UNCAPPED"
+
+
+class FrequencyCapTimeUnitV1(StrEnum):
+    DAYS = "DAYS"
+    MONTHS = "MONTHS"
+    WEEKS = "WEEKS"
 
 
 class FrequencyCapV1(BaseModel):
@@ -245,141 +380,6 @@ class SupplyV1(StrEnum):
 class DeliveryTypeV1(StrEnum):
     GUARANTEED = "GUARANTEED"
     NON_GUARANTEED = "NON_GUARANTEED"
-
-
-class ReachTypeV1(StrEnum):
-    HOUSEHOLDS = "HOUSEHOLDS"
-
-
-class KeywordTargetTypeV1(StrEnum):
-    KEYWORD = "KEYWORD"
-
-
-class KeywordTargetMatchTypeV1(StrEnum):
-    BROAD = "BROAD"
-    EXACT = "EXACT"
-    PHRASE = "PHRASE"
-
-
-class KeywordTargetV1(BaseModel):
-    keyword: str
-    match_type: "KeywordTargetMatchTypeV1" = Field(..., alias="matchType")
-    target_type: "KeywordTargetTypeV1" = Field(..., alias="targetType")
-
-    model_config = {'populate_by_name': True}
-
-
-class ProductTargetTypeV1(StrEnum):
-    PRODUCT = "PRODUCT"
-
-
-class ProductTargetV1(BaseModel):
-    asin: str = Field(..., description="The product asin to target.")
-    target_type: "ProductTargetTypeV1" = Field(..., alias="targetType")
-
-    model_config = {'populate_by_name': True}
-
-
-class ThemeTargetMatchTypeV1(StrEnum):
-    KEYWORDS_RELATED_TO_YOUR_BRAND = "KEYWORDS_RELATED_TO_YOUR_BRAND"
-    KEYWORDS_RELATED_TO_YOUR_LANDING_PAGES = "KEYWORDS_RELATED_TO_YOUR_LANDING_PAGES"
-
-
-class ThemeTargetTypeV1(StrEnum):
-    THEME = "THEME"
-
-
-class ThemeTargetV1(BaseModel):
-    match_type: "ThemeTargetMatchTypeV1" = Field(..., alias="matchType")
-    target_type: "ThemeTargetTypeV1" = Field(..., alias="targetType")
-
-    model_config = {'populate_by_name': True}
-
-
-class UserLocationSignalV1(StrEnum):
-    CURRENT = "CURRENT"
-    HOME = "HOME"
-    MULTIPLE_SIGNALS = "MULTIPLE_SIGNALS"
-
-
-class LocationTargetTypeV1(StrEnum):
-    LOCATION = "LOCATION"
-
-
-class LocationTargetV1(BaseModel):
-    geo_location: str = Field(..., alias="geoLocation", description="The location to target. Use the [GeoLocation API](https://advertising.amazon.com/API/docs/en-us/dsp-campaigns#tag/Discov")
-    target_type: "LocationTargetTypeV1" = Field(..., alias="targetType")
-    user_location_signal: Optional["UserLocationSignalV1"] = Field(None, alias="userLocationSignal")
-
-    model_config = {'populate_by_name': True}
-
-
-class ProductCategoryTargetTypeV1(StrEnum):
-    PRODUCT_CATEGORY = "PRODUCT_CATEGORY"
-
-
-class ProductCategoryTargetV1(BaseModel):
-    asin_category: str = Field(..., alias="asinCategory", description="The product category to target.")
-    target_type: "ProductCategoryTargetTypeV1" = Field(..., alias="targetType")
-
-    model_config = {'populate_by_name': True}
-
-
-class DeviceTargetTypeV1(StrEnum):
-    DEVICE = "DEVICE"
-
-
-class DeviceTypeV1(StrEnum):
-    CONNECTED_DEVICE = "CONNECTED_DEVICE"
-    CONNECTED_TV = "CONNECTED_TV"
-    DESKTOP = "DESKTOP"
-    MOBILE = "MOBILE"
-
-
-class DeviceTargetV1(BaseModel):
-    device_type: "DeviceTypeV1" = Field(..., alias="deviceType")
-    target_type: "DeviceTargetTypeV1" = Field(..., alias="targetType")
-
-    model_config = {'populate_by_name': True}
-
-
-class InventorySourceTargetTypeV1(StrEnum):
-    INVENTORY_SOURCE = "INVENTORY_SOURCE"
-
-
-class InventorySourceTypeV1(StrEnum):
-    DEAL = "DEAL"
-    PUBLISHER = "PUBLISHER"
-
-
-class InventorySourceTargetV1(BaseModel):
-    inventory_source_id: str = Field(..., alias="inventorySourceId", description="The identifier of the inventory source. These can be obtained from the inventory sources discovery endpoint.")
-    inventory_source_type: "InventorySourceTypeV1" = Field(..., alias="inventorySourceType")
-    target_type: "InventorySourceTargetTypeV1" = Field(..., alias="targetType")
-
-    model_config = {'populate_by_name': True}
-
-
-class IABCategoryTargetTypeV1(StrEnum):
-    IAB_CATEGORY = "IAB_CATEGORY"
-
-
-class IABCategoryTargetV1(BaseModel):
-    iab_content_category: str = Field(..., alias="iabContentCategory", description="The IAB content category to target. To get the list of valid values, see https://advertising.amazon.com/API/docs/en-us/d")
-    target_type: "IABCategoryTargetTypeV1" = Field(..., alias="targetType")
-
-    model_config = {'populate_by_name': True}
-
-
-class PlanningTargetDetailsV1(BaseModel):
-    pass
-
-
-class PlanningTargetV1(BaseModel):
-    negative: bool = Field(..., description="Whether to target (false) or exclude (true) the given target.")
-    target_details: "PlanningTargetDetailsV1" = Field(..., alias="targetDetails")
-
-    model_config = {'populate_by_name': True}
 
 
 class CreateReachForecastsV1RequestElement(BaseModel):
@@ -477,6 +477,12 @@ class ForbiddenExceptionResponseContent(BaseModel):
     model_config = {'populate_by_name': True}
 
 
+class PerformanceMetricV1(StrEnum):
+    CLICK = "CLICK"
+    DETAIL_PAGE_VIEW = "DETAIL_PAGE_VIEW"
+    VIDEO_COMPLETION = "VIDEO_COMPLETION"
+
+
 class PerformanceCurveDataPointV1(BaseModel):
     cpc: Optional[float] = Field(None, description="Cost Per Click")
     cpdpv: Optional[float] = Field(None, description="Cost Per Detail Page View")
@@ -488,12 +494,6 @@ class PerformanceCurveDataPointV1(BaseModel):
     vcr: Optional[float] = Field(None, description="Video Completion Rate")
 
     model_config = {'populate_by_name': True}
-
-
-class PerformanceMetricV1(StrEnum):
-    CLICK = "CLICK"
-    DETAIL_PAGE_VIEW = "DETAIL_PAGE_VIEW"
-    VIDEO_COMPLETION = "VIDEO_COMPLETION"
 
 
 class GeneratePerformanceForecastV1ResponseElement(BaseModel):
